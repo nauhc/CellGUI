@@ -12,6 +12,13 @@ MainWindow::MainWindow(QWidget *parent) :
 //                     this, SLOT(updateVideoplayerUI(QImage)));
 
     ui->setupUi(this);
+    connect(myController, SIGNAL(processedImage(QImage, QImage)), this, SLOT(updateVideoplayerUI(QImage, QImage)));
+    connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)), myController, SLOT(setAdaptThresh(int)));
+    connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)), myController, SLOT(setBlkSize(int)));
+    ui->adaptThreshSlider->setRange(1, 51);
+    ui->blkSizeSlider->setRange(1, 20);
+    ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
+    ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
 }
 
@@ -64,13 +71,6 @@ void MainWindow::on_loadVideoButton_clicked()
         myController = new Controller();
 
     }
-    connect(myController, SIGNAL(processedImage(QImage, QImage)), this, SLOT(updateVideoplayerUI(QImage, QImage)));
-    connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)), myController, SLOT(setAdaptThresh(int)));
-    connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)), myController, SLOT(setBlkSize(int)));
-    ui->adaptThreshSlider->setRange(1, 51);
-    ui->blkSizeSlider->setRange(1, 20);
-    ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
-    ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
 //    QString filename = QFileDialog::getOpenFileName(this,
 //                                                    tr("Open Video"), "../../../video/",

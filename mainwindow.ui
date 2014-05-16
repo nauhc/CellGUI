@@ -91,9 +91,9 @@
    <widget class="QSlider" name="adaptThreshSlider">
     <property name="geometry">
      <rect>
-      <x>1100</x>
+      <x>1060</x>
       <y>260</y>
-      <width>131</width>
+      <width>171</width>
       <height>22</height>
      </rect>
     </property>
@@ -107,14 +107,40 @@
    <widget class="QSlider" name="blkSizeSlider">
     <property name="geometry">
      <rect>
-      <x>1100</x>
-      <y>300</y>
-      <width>131</width>
+      <x>1060</x>
+      <y>320</y>
+      <width>171</width>
       <height>22</height>
      </rect>
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="differenceLabel">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>240</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Difference:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="blkSizeLabel">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>300</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Block Sizes:</string>
     </property>
    </widget>
   </widget>
