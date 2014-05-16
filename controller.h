@@ -6,7 +6,7 @@
 #include <cv.h>
 #include <cxcore.h>
 #include <highgui.h>
-
+#include <findcontour.h>
 
 using namespace std;
 using namespace cv;
@@ -14,20 +14,25 @@ using namespace cv;
 class Controller : public QThread
 {   Q_OBJECT
 private:
-    VideoCapture *inputVideo;
+    VideoCapture *inputVideo; //video processing -- openCV
     bool stop;
-    Mat *frame;
-    Mat *RGBframe;
-    QImage img;
+    Mat *frame; // frame from the video
+    Mat *RGBframe; // color frame from the video
+    Mat *roiFrame; // roi rectangle from frame
+    QImage img; // QImage for displaying
+    QImage roiImg; // QImage for ROI for displaying
 
-    Size videoSize;
-    int frameCnt;
-    double fps;
+    Size videoSize; // video frame size
+    int frameCnt; // total frame number
+    double fps; // fps
 
-
+    FindContour *contour;
 
 signals:
-    void processedImage(QImage image);
+    void processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT
+private slots:
+    void setAdaptThresh(int var);
+    void setBlkSize(int var);
 
 protected:
     void run();
@@ -43,6 +48,8 @@ public:
     bool isStopped();
     bool loadVideo(string filename);
     void playVideo();
+
+
 
 };
 

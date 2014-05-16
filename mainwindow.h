@@ -18,14 +18,17 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+
+
 private slots:
-    void updateVideoplayerUI(QImage img);
+    void updateVideoplayerUI(QImage img, QImage ROIimg);
 
     void on_playVideoButton_clicked();
 
     void on_pauseVideoButton_clicked();
 
     void on_loadVideoButton_clicked();
+
 
 private:
     Ui::MainWindow *ui;

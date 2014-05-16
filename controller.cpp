@@ -2,11 +2,14 @@
 
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
-   frame(new Mat()), RGBframe(new Mat())
+   frame(new Mat()), RGBframe(new Mat()), roiFrame(new Mat()),
+   contour(new FindContour())
 {
     stop = true;
 }
 Controller::~Controller(){
+    delete contour;
+    delete roiFrame;
     delete frame;
     delete RGBframe;
     delete inputVideo;
@@ -56,6 +59,14 @@ bool Controller::isNull(){
         return true;
 }
 
+void Controller::setAdaptThresh(int var){
+    contour->setAdaptThresh(double(var));
+}
+
+void Controller::setBlkSize(int var){
+    contour->setBlkSize(2*var+1);
+}
+
 void Controller::run(){
     int delay = (1000/fps);
     while(!stop){
@@ -74,7 +85,22 @@ void Controller::run(){
                 img = QImage((const unsigned char*)((*frame).data),
                              (*frame).cols,(*frame).rows,QImage::Format_Indexed8);
             }
-            emit processedImage(img);
+
+            //ROI
+            int x = videoSize.width/2- 10;
+            int y = videoSize.height/2 + 10;
+            int width = 120;
+            int height = 100;
+
+            contour->getROI(*frame, x, y, width, height);
+            Mat edgeImg;
+            contour->edgeDetection(edgeImg);
+            roiImg = QImage((const unsigned char*)(edgeImg.data),
+                            edgeImg.cols,edgeImg.rows,QImage::Format_Indexed8);
+
+
+            //emit the singnals
+            emit processedImage(img, roiImg);
             this->msleep(delay);
         }
 }
