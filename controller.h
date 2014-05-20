@@ -16,9 +16,9 @@ class Controller : public QThread
 private:
     VideoCapture *inputVideo; //video processing -- openCV
     bool stop;
-    Mat *prevFrame; // frame from the video
-    Mat *currFrame; // the next frame
-    Mat *nextFrame; // the one after the next frame
+    Mat *frame; // the next frame
+    //Mat *prevFrame; // frame from the video
+    //Mat *nextFrame; // the one after the next frame
     Mat *RGBframe; // color frame from the video
     Mat *roiFrame; // roi rectangle from frame
     QImage img; // QImage for displaying
@@ -31,7 +31,8 @@ private:
     FindContour *contour;
 
 signals:
-    void processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT
+    // signal nonnectted with updateVideoplayerUI SLOT
+    void processedImage(QImage image, QImage ROIimg);
 private slots:
     void setAdaptThresh(int var);
     void setBlkSize(int var);

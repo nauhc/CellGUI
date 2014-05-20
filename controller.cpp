@@ -1,9 +1,8 @@
 #include "controller.h"
-int cnt = 0;
 
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
-   prevFrame(new Mat()), currFrame(new Mat()), nextFrame(new Mat()),
+   frame(new Mat()), /*prevFrame(new Mat()), nextFrame(new Mat()),*/
    RGBframe(new Mat()), roiFrame(new Mat()),
    contour(new FindContour())
 {
@@ -12,9 +11,9 @@ Controller::Controller(QObject *parent) : QThread(parent),
 Controller::~Controller(){
     delete contour;
     delete roiFrame;
-    delete prevFrame;
-    delete currFrame;
-    delete nextFrame;
+    delete frame;
+//    delete prevFrame;
+//    delete nextFrame;
     delete RGBframe;
     delete inputVideo;
 }
@@ -70,44 +69,50 @@ void Controller::setBlkSize(int var){
 
 void Controller::run(){
     int delay = (1000/fps);
-    cout << cnt ++ << endl;
-    if(!inputVideo->read(*prevFrame) || !inputVideo->read(*currFrame) || !inputVideo->read(*nextFrame)){
-        stop = true;
-    }
+//    if(!inputVideo->read(*prevFrame) || !inputVideo->read(*currFrame) || !inputVideo->read(*nextFrame)){
+//        stop = true;
+//    }
 
     while(!stop){
-
-        //ROI
-        int x = videoSize.width/2- 10;
-        int y = videoSize.height/2 + 10;
-        int width = 120;
-        int height = 100;
-
-        contour->getInitialROI(*prevFrame, *currFrame, *nextFrame, x, y, width, height);
-        contour->traceMotionROI();
-        Mat edgeImg;
-        contour->edgeDetection(edgeImg);
-        roiImg = QImage((const unsigned char*)(edgeImg.data),
-                        edgeImg.cols,edgeImg.rows,QImage::Format_Indexed8);
-
-        prevFrame = currFrame; // renew previous frame
-        currFrame = nextFrame; // renew current frame
-        if(!inputVideo->read(*nextFrame)){ // renew next frame
+        if(!inputVideo->read(*frame)){ // renew next frame
             stop = true;
         }
 
-
         //Mat to QImage
-        if((*prevFrame).channels()==3){
-            cv::cvtColor(*prevFrame, *RGBframe, CV_BGR2RGB);
+        if((*frame).channels()==3){
+            cv::cvtColor(*frame, *RGBframe, CV_BGR2RGB);
             img = QImage((const unsigned char*)((*RGBframe).data),
                          (*RGBframe).cols, (*RGBframe).rows, QImage::Format_RGB888);
         }
         else{
-            img = QImage((const unsigned char*)((*prevFrame).data),
-                         (*prevFrame).cols,(*prevFrame).rows,QImage::Format_Indexed8);
+            img = QImage((const unsigned char*)((*frame).data),
+                         (*frame).cols,(*frame).rows,QImage::Format_Indexed8);
         }
 
+
+        //ROI
+        int x = videoSize.width/2- 10;
+        int y = videoSize.height/2 + 10;
+        int width = 150;
+        int height = 100;
+
+        contour->getROI(*frame, x, y, width, height);
+        //contour->getInitialROI(*prevFrame, *currFrame, *nextFrame, x, y, width, height);
+        //contour->traceMotionROI();
+        Mat edgeImg;
+        contour->edgeDetection(edgeImg);
+//        if(edgeImg.channels()==3){
+//            Mat tempFrame;
+//            cv::cvtColor(edgeImg, tempFrame, CV_BGR2RGB);
+//            roiImg = QImage((const unsigned char*)(tempFrame.data),
+//                         tempFrame.cols, tempFrame.rows, QImage::Format_RGB888);
+//        }
+//        else{
+//            roiImg = QImage((const unsigned char*)(edgeImg.data),
+//                         edgeImg.cols,edgeImg.rows,QImage::Format_Indexed8);
+//        }
+        roiImg = QImage((const unsigned char*)(edgeImg.data),
+                        edgeImg.cols,edgeImg.rows,QImage::Format_Indexed8);
 
 
         //emit the singnals
