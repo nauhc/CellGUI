@@ -26,7 +26,6 @@ LIBS+= -L/usr/local/lib/ \
 SOURCES += main.cpp\
         mainwindow.cpp \
     controller.cpp \
-    video.cpp \
     findcontour.cpp
 
 HEADERS  += mainwindow.h \
