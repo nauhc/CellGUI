@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <QFileDialog>
+#include <QPainter>
 #include <QMessageBox>
 #include "ui_mainwindow.h"
 
@@ -46,7 +47,17 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
                     Qt::KeepAspectRatio,
                     Qt::FastTransformation));
 
+//        int x = 75;
+//        int y = 110;
+//        int width = 150;
+//        int height = 100;
+
+//        QRectF rectangle(x, y, width, height);
+//        QPainter painter(ui->orgVideo);
+//        painter.drawRect(rectangle);
+
     }
+
 }
 
 void MainWindow::on_playVideoButton_clicked()

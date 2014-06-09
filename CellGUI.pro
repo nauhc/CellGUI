@@ -30,7 +30,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     controller.h \
-    video.h \
     findcontour.h
 
 FORMS    += mainwindow.ui
