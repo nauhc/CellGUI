@@ -3,16 +3,18 @@
 
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
-   frame(new Mat()), RGBframe(new Mat()), roiFrame(new Mat()),
+   frame(new Mat()), roiFrame(new Mat()), /* RGBframe(new Mat()),*/
    contour(new FindContour())
 {
     stop = true;
 }
 Controller::~Controller(){
-    delete inputVideo;
+    if(inputVideo->isOpened())
+        inputVideo->release();
+        delete inputVideo;
     delete roiFrame;
-    delete frame;
-    delete RGBframe;
+//    delete frame; // Do not delete frame here. It has been released in FindContour class!
+    //delete RGBframe;
     delete contour;
 }
 
@@ -42,9 +44,9 @@ bool Controller::loadVideo(string filename){
     }
 }
 
-void Controller::play(){
+void Controller::playVideo(){
     if((!isRunning())){
-        if(isStopped()){
+        if(videoIsStopped()){
             stop = false;
         }
         start(LowPriority);
@@ -56,11 +58,15 @@ void Controller::msleep(int ms){
     nanosleep(&ts, NULL);
 }
 
-bool Controller::isNull(){
+bool Controller::videoIsNull(){
     if(inputVideo->isOpened())
         return false;
     else
         return true;
+}
+
+void Controller::releaseVideo(){
+    inputVideo->release();
 }
 
 void Controller::setAdaptThresh(int var){
@@ -140,12 +146,12 @@ void Controller::run(){
         }
 }
 
-void Controller::Stop(){
+void Controller::stopVideo(){
     stop = true;
 }
 
 
-bool Controller::isStopped(){
+bool Controller::videoIsStopped(){
     return this->stop;
 }
 

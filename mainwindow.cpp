@@ -30,8 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    if(!myController->isNull())
-        delete myController;
+    delete myController;
     delete ui;
 }
 
@@ -67,24 +66,40 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
 
 void MainWindow::on_playVideoButton_clicked()
 {
-    if(myController->isStopped()){
-        myController->play();
+    if(myController->videoIsStopped()){
+        myController->playVideo();
         ui->playVideoButton->setText("Pause");
+        ui->stopVideoButton->setEnabled(false);
     }else{
-        myController->Stop();
+        myController->stopVideo();
         ui->playVideoButton->setText("Play");
+        ui->stopVideoButton->setEnabled(true);
     }
 }
 
 void MainWindow::on_stopVideoButton_clicked()
 {
-    if(!myController->isStopped())
-        myController->Stop();
+    if(!myController->videoIsStopped())
+        myController->stopVideo();
+    myController->releaseVideo();
+
+    QPixmap pixmap1(1,1); // Works
+    pixmap1 = pixmap1.scaled(ui->roiVideo->width(), ui->roiVideo->height());
+    pixmap1.fill(QColor(0, 0, 0));
+    ui->roiVideo->setPixmap(pixmap1);
+    QPixmap pixmap2(1,1); // Works
+    pixmap2 = pixmap2.scaled(ui->orgVideo->width(), ui->orgVideo->height());
+    pixmap2.fill(QColor(0, 0, 0));
+    ui->orgVideo->setPixmap(pixmap2);
+
+    ui->loadVideoButton->setEnabled(true);
+    ui->playVideoButton->setEnabled(false);
+    ui->stopVideoButton->setEnabled(false);
 }
 
 void MainWindow::on_loadVideoButton_clicked()
 {
-    if(!myController->isNull()){
+    if(!myController->videoIsNull()){
         delete myController;
         myController = new Controller();
 
@@ -105,7 +120,6 @@ void MainWindow::on_loadVideoButton_clicked()
             else{
                 ui->loadVideoButton->setEnabled(false);
                 ui->playVideoButton->setEnabled(true);
-                ui->stopVideoButton->setEnabled(true);
                 ui->orgVideo->setAlignment(Qt::AlignCenter);
                 //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
                 //                                            ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));

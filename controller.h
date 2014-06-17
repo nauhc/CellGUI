@@ -17,7 +17,7 @@ private:
     VideoCapture *inputVideo; //video processing -- openCV
     bool stop;
     Mat *frame; // frame from the video
-    Mat *RGBframe; // color frame from the video
+//    Mat *RGBframe; // color frame from the video
     Mat *roiFrame; // roi rectangle from frame
     QImage img; // QImage for displaying
     QImage roiImg; // QImage for ROI for displaying
@@ -27,6 +27,7 @@ private:
     double fps; // fps
 
     FindContour *contour;
+    //FindContour contour;
 
 signals:
     void processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT
@@ -42,13 +43,12 @@ public:
     Controller(QObject *parent=0);
     ~Controller();
 
-    bool isNull();
-    void play();
-    void Stop();
-    bool isStopped();
-    bool loadVideo(string filename);
+    bool videoIsNull();
     void playVideo();
-
+    void stopVideo();
+    bool videoIsStopped();
+    bool loadVideo(string filename);
+    void releaseVideo();
 
 
 };
