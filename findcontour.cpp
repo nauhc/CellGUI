@@ -9,7 +9,6 @@ FindContour::~FindContour(){
 }
 
 void FindContour::setAdaptThresh(double para1){
-
     constValue = para1;
 }
 

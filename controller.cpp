@@ -9,11 +9,11 @@ Controller::Controller(QObject *parent) : QThread(parent),
     stop = true;
 }
 Controller::~Controller(){
-    delete contour;
+    delete inputVideo;
     delete roiFrame;
     delete frame;
     delete RGBframe;
-    delete inputVideo;
+    delete contour;
 }
 
 
@@ -29,12 +29,15 @@ bool Controller::loadVideo(string filename){
         return false;
     }
     else{
+        cout << "Input video file:" << filename << " opened." << endl;
         frameCnt    = (int) inputVideo->get(CV_CAP_PROP_FRAME_COUNT);
-        fps         = (int) inputVideo->get(CV_CAP_PROP_FPS);
+        fps         = inputVideo->get(CV_CAP_PROP_FPS);
         videoSize = Size((int) inputVideo->get(CV_CAP_PROP_FRAME_WIDTH),
                          (int) inputVideo->get(CV_CAP_PROP_FRAME_HEIGHT));
-        videoSize = Size((int) inputVideo->get(CV_CAP_PROP_FRAME_WIDTH),
-                         (int) inputVideo->get(CV_CAP_PROP_FRAME_HEIGHT));
+        cout << "video size: " << videoSize << "\n";
+        cout << "frame count: " << frameCnt << "\n";
+        cout << "fps:" << fps << endl;
+
         return true;
     }
 }
@@ -100,7 +103,10 @@ void Controller::run(){
     int delay = (1000/fps);
     while(!stop){
             if(!inputVideo->read(*frame)){
+                //cout << inputVideo->get(CV_CAP_PROP_POS_FRAMES) << endl;
+                cout << "Unable to retrieve frame from video stream." << endl;
                 stop = true;
+                continue;
             }
 
             int frameIdx = inputVideo->get(CV_CAP_PROP_POS_FRAMES);
@@ -108,7 +114,6 @@ void Controller::run(){
             //Mat to QImage for display
             img = cvMatToQImage(*frame);
             //roiImg = cvMatToQImage(Mat::zeros(roiFrame->size(), CV_8UC1));
-
 
             //ROI
             int x = videoSize.width/2 - 5;
@@ -139,6 +144,8 @@ void Controller::Stop(){
     stop = true;
 }
 
+
 bool Controller::isStopped(){
     return this->stop;
 }
+

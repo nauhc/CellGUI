@@ -25,10 +25,9 @@ private slots:
 
     void on_playVideoButton_clicked();
 
-    void on_pauseVideoButton_clicked();
-
     void on_loadVideoButton_clicked();
 
+    void on_stopVideoButton_clicked();
 
 private:
     Ui::MainWindow *ui;
