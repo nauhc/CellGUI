@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1254</width>
-    <height>505</height>
+    <width>1715</width>
+    <height>904</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <widget class="QPushButton" name="loadVideoButton">
     <property name="geometry">
      <rect>
-      <x>1050</x>
-      <y>30</y>
-      <width>191</width>
+      <x>640</x>
+      <y>110</y>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
@@ -30,8 +30,8 @@
    <widget class="QLabel" name="roiVideo">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>30</y>
+      <x>40</x>
+      <y>460</y>
       <width>491</width>
       <height>361</height>
      </rect>
@@ -65,9 +65,9 @@
    <widget class="QPushButton" name="playVideoButton">
     <property name="geometry">
      <rect>
-      <x>1050</x>
-      <y>90</y>
-      <width>191</width>
+      <x>640</x>
+      <y>170</y>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
@@ -78,9 +78,9 @@
    <widget class="QPushButton" name="stopVideoButton">
     <property name="geometry">
      <rect>
-      <x>1050</x>
-      <y>150</y>
-      <width>191</width>
+      <x>640</x>
+      <y>230</y>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
@@ -91,9 +91,9 @@
    <widget class="QSlider" name="adaptThreshSlider">
     <property name="geometry">
      <rect>
-      <x>1060</x>
-      <y>300</y>
-      <width>171</width>
+      <x>870</x>
+      <y>150</y>
+      <width>251</width>
       <height>22</height>
      </rect>
     </property>
@@ -107,9 +107,9 @@
    <widget class="QSlider" name="blkSizeSlider">
     <property name="geometry">
      <rect>
-      <x>1060</x>
-      <y>360</y>
-      <width>171</width>
+      <x>870</x>
+      <y>220</y>
+      <width>251</width>
       <height>22</height>
      </rect>
     </property>
@@ -120,8 +120,8 @@
    <widget class="QLabel" name="differenceLabel">
     <property name="geometry">
      <rect>
-      <x>1060</x>
-      <y>280</y>
+      <x>870</x>
+      <y>130</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -133,8 +133,8 @@
    <widget class="QLabel" name="blkSizeLabel">
     <property name="geometry">
      <rect>
-      <x>1060</x>
-      <y>340</y>
+      <x>870</x>
+      <y>200</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -143,13 +143,64 @@
      <string>Block Sizes:</string>
     </property>
    </widget>
+   <widget class="QLabel" name="cellVis">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>460</y>
+      <width>1121</width>
+      <height>361</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">Background-color:rgb(255, 255, 255)</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="coordVis">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>20</y>
+      <width>481</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">Background-color:rgb(255, 255, 255)</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>410</y>
+      <width>471</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1254</width>
+     <width>1715</width>
      <height>22</height>
     </rect>
    </property>

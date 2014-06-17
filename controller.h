@@ -14,41 +14,42 @@ using namespace cv;
 class Controller : public QThread
 {   Q_OBJECT
 private:
-    VideoCapture *inputVideo; //video processing -- openCV
-    bool stop;
-    Mat *frame; // frame from the video
-//    Mat *RGBframe; // color frame from the video
-    Mat *roiFrame; // roi rectangle from frame
-    QImage img; // QImage for displaying
-    QImage roiImg; // QImage for ROI for displaying
+    VideoCapture    *inputVideo; //video processing -- openCV
+    bool            stop;
+    Mat             *frame; // frame from the video
+//    Mat             *RGBframe; // color frame from the video
+    Mat             *roiFrame; // roi rectangle from frame
+    QImage          img; // QImage for displaying
+    QImage          roiImg; // QImage for ROI for displaying
 
-    Size videoSize; // video frame size
-    int frameCnt; // total frame number
-    double fps; // fps
+    Size            videoSize; // video frame size
+    int             frameCnt; // total frame number
+    double          fps; // fps
 
-    FindContour *contour;
-    //FindContour contour;
+    FindContour     *contour;
 
 signals:
-    void processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT
+    void    processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT
 private slots:
-    void setAdaptThresh(int var);
-    void setBlkSize(int var);
+    void    setAdaptThresh(int var);
+    void    setBlkSize(int var);
 
 protected:
-    void run();
-    void msleep(int ms);
+    void    run();
+    void    msleep(int ms);
 
 public:
     Controller(QObject *parent=0);
     ~Controller();
 
-    bool videoIsNull();
-    void playVideo();
-    void stopVideo();
-    bool videoIsStopped();
-    bool loadVideo(string filename);
-    void releaseVideo();
+    bool    videoIsNull();
+    void    playVideo();
+    void    stopVideo();
+    bool    videoIsStopped();
+    bool    loadVideo(string filename);
+    double  getNumberOfFrames();
+    double  getCurrentFrame();
+    void    releaseVideo();
 
 
 };

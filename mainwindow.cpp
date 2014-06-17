@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->loadVideoButton->setEnabled(true);
     ui->playVideoButton->setEnabled(false);
     ui->stopVideoButton->setEnabled(false);
+    ui->horizontalSlider->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
     ui->blkSizeSlider->setRange(1, 20);
     ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
@@ -50,6 +51,7 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
                     ui->roiVideo->size(),
                     Qt::KeepAspectRatio,
                     Qt::FastTransformation));
+        ui->horizontalSlider->setValue(myController->getCurrentFrame());
 
 //        int x = 75;
 //        int y = 110;
@@ -95,6 +97,7 @@ void MainWindow::on_stopVideoButton_clicked()
     ui->loadVideoButton->setEnabled(true);
     ui->playVideoButton->setEnabled(false);
     ui->stopVideoButton->setEnabled(false);
+    ui->horizontalSlider->setValue(0);
 }
 
 void MainWindow::on_loadVideoButton_clicked()
@@ -120,6 +123,8 @@ void MainWindow::on_loadVideoButton_clicked()
             else{
                 ui->loadVideoButton->setEnabled(false);
                 ui->playVideoButton->setEnabled(true);
+                //ui->horizontalSlider->setEnabled(true);
+                ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
                 ui->orgVideo->setAlignment(Qt::AlignCenter);
                 //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
                 //                                            ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));

@@ -150,8 +150,14 @@ void Controller::stopVideo(){
     stop = true;
 }
 
-
 bool Controller::videoIsStopped(){
     return this->stop;
 }
 
+double Controller::getNumberOfFrames(){
+    return frameCnt;
+}
+
+double Controller::getCurrentFrame(){
+    return inputVideo->get(CV_CAP_PROP_POS_FRAMES);
+}

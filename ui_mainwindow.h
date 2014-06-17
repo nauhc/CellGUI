@@ -38,6 +38,9 @@ public:
     QSlider *blkSizeSlider;
     QLabel *differenceLabel;
     QLabel *blkSizeLabel;
+    QLabel *cellVis;
+    QLabel *coordVis;
+    QSlider *horizontalSlider;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -46,15 +49,15 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1254, 505);
+        MainWindow->resize(1715, 904);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         loadVideoButton = new QPushButton(centralWidget);
         loadVideoButton->setObjectName(QStringLiteral("loadVideoButton"));
-        loadVideoButton->setGeometry(QRect(1050, 30, 191, 51));
+        loadVideoButton->setGeometry(QRect(640, 110, 151, 51));
         roiVideo = new QLabel(centralWidget);
         roiVideo->setObjectName(QStringLiteral("roiVideo"));
-        roiVideo->setGeometry(QRect(540, 30, 491, 361));
+        roiVideo->setGeometry(QRect(40, 460, 491, 361));
         roiVideo->setStyleSheet(QStringLiteral("Background-color:rgb(0, 0, 0)"));
         orgVideo = new QLabel(centralWidget);
         orgVideo->setObjectName(QStringLiteral("orgVideo"));
@@ -63,29 +66,43 @@ public:
         orgVideo->setStyleSheet(QStringLiteral("Background-color: rgb(0, 0, 0)"));
         playVideoButton = new QPushButton(centralWidget);
         playVideoButton->setObjectName(QStringLiteral("playVideoButton"));
-        playVideoButton->setGeometry(QRect(1050, 90, 191, 51));
+        playVideoButton->setGeometry(QRect(640, 170, 151, 51));
         stopVideoButton = new QPushButton(centralWidget);
         stopVideoButton->setObjectName(QStringLiteral("stopVideoButton"));
-        stopVideoButton->setGeometry(QRect(1050, 150, 191, 51));
+        stopVideoButton->setGeometry(QRect(640, 230, 151, 51));
         adaptThreshSlider = new QSlider(centralWidget);
         adaptThreshSlider->setObjectName(QStringLiteral("adaptThreshSlider"));
-        adaptThreshSlider->setGeometry(QRect(1060, 300, 171, 22));
+        adaptThreshSlider->setGeometry(QRect(870, 150, 251, 22));
         adaptThreshSlider->setSingleStep(2);
         adaptThreshSlider->setOrientation(Qt::Horizontal);
         blkSizeSlider = new QSlider(centralWidget);
         blkSizeSlider->setObjectName(QStringLiteral("blkSizeSlider"));
-        blkSizeSlider->setGeometry(QRect(1060, 360, 171, 22));
+        blkSizeSlider->setGeometry(QRect(870, 220, 251, 22));
         blkSizeSlider->setOrientation(Qt::Horizontal);
         differenceLabel = new QLabel(centralWidget);
         differenceLabel->setObjectName(QStringLiteral("differenceLabel"));
-        differenceLabel->setGeometry(QRect(1060, 280, 81, 16));
+        differenceLabel->setGeometry(QRect(870, 130, 81, 16));
         blkSizeLabel = new QLabel(centralWidget);
         blkSizeLabel->setObjectName(QStringLiteral("blkSizeLabel"));
-        blkSizeLabel->setGeometry(QRect(1060, 340, 81, 16));
+        blkSizeLabel->setGeometry(QRect(870, 200, 81, 16));
+        cellVis = new QLabel(centralWidget);
+        cellVis->setObjectName(QStringLiteral("cellVis"));
+        cellVis->setGeometry(QRect(560, 460, 1121, 361));
+        cellVis->setAutoFillBackground(false);
+        cellVis->setStyleSheet(QStringLiteral("Background-color:rgb(255, 255, 255)"));
+        coordVis = new QLabel(centralWidget);
+        coordVis->setObjectName(QStringLiteral("coordVis"));
+        coordVis->setGeometry(QRect(1200, 20, 481, 401));
+        coordVis->setAutoFillBackground(false);
+        coordVis->setStyleSheet(QStringLiteral("Background-color:rgb(255, 255, 255)"));
+        horizontalSlider = new QSlider(centralWidget);
+        horizontalSlider->setObjectName(QStringLiteral("horizontalSlider"));
+        horizontalSlider->setGeometry(QRect(50, 410, 471, 22));
+        horizontalSlider->setOrientation(Qt::Horizontal);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1254, 22));
+        menuBar->setGeometry(QRect(0, 0, 1715, 22));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -109,6 +126,8 @@ public:
         stopVideoButton->setText(QApplication::translate("MainWindow", "Stop", 0));
         differenceLabel->setText(QApplication::translate("MainWindow", "Difference:", 0));
         blkSizeLabel->setText(QApplication::translate("MainWindow", "Block Sizes:", 0));
+        cellVis->setText(QString());
+        coordVis->setText(QString());
     } // retranslateUi
 
 };
