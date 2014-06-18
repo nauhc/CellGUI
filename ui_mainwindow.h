@@ -41,6 +41,7 @@ public:
     QLabel *cellVis;
     QLabel *coordVis;
     QSlider *horizontalSlider;
+    QLabel *frameLabel;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -97,8 +98,17 @@ public:
         coordVis->setStyleSheet(QStringLiteral("Background-color:rgb(255, 255, 255)"));
         horizontalSlider = new QSlider(centralWidget);
         horizontalSlider->setObjectName(QStringLiteral("horizontalSlider"));
-        horizontalSlider->setGeometry(QRect(50, 410, 471, 22));
+        horizontalSlider->setGeometry(QRect(40, 400, 491, 22));
         horizontalSlider->setOrientation(Qt::Horizontal);
+        frameLabel = new QLabel(centralWidget);
+        frameLabel->setObjectName(QStringLiteral("frameLabel"));
+        frameLabel->setGeometry(QRect(230, 420, 111, 21));
+        QFont font;
+        font.setFamily(QStringLiteral("Helvetica"));
+        font.setPointSize(12);
+        frameLabel->setFont(font);
+        frameLabel->setLayoutDirection(Qt::LeftToRight);
+        frameLabel->setStyleSheet(QStringLiteral("qproperty-alignment: AlignCenter"));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -128,6 +138,7 @@ public:
         blkSizeLabel->setText(QApplication::translate("MainWindow", "Block Sizes:", 0));
         cellVis->setText(QString());
         coordVis->setText(QString());
+        frameLabel->setText(QString());
     } // retranslateUi
 
 };

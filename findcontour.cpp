@@ -32,16 +32,28 @@ void FindContour::edgeDetection(Mat &adapThreshImg){
 //    double constValue = 7;
 //    adaptiveThreshold(*roi, adapThreshImg, 255.0, CV_ADAPTIVE_THRESH_MEAN_C,
 //                      CV_THRESH_BINARY_INV, blockSize, constValue);
-    adaptiveThreshold(*roi, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
+    Mat roi_temp;
+    adaptiveThreshold(*roi, roi_temp, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                       CV_THRESH_BINARY_INV, blockSize, constValue);
+
+    //remove noise from roi image
+    medianBlur(roi_temp, adapThreshImg, 5);
 
 }
 
+
 void FindContour::boundingBox(Mat &img){
 
+//    Mat thresholdImg, roi_temp;
+//    adaptiveThreshold(*roi, roi_temp, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
+//                      CV_THRESH_BINARY_INV, blockSize, constValue);
+
+//    //remove noise from roi image
+//    medianBlur(roi_temp, thresholdImg, 5);
+
     Mat thresholdImg;
-    adaptiveThreshold(*roi, thresholdImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
-                      CV_THRESH_BINARY_INV, blockSize, constValue);
+    edgeDetection(thresholdImg);
+
     //cv::cvtColor(*currFrame, img, CV_RGB2GRAY);
     img = frame->clone();
     vector<Point> points;

@@ -24,13 +24,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSlider->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
     ui->blkSizeSlider->setRange(1, 20);
-    ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
+    ui->adaptThreshSlider->setValue(3); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete myController;
     delete ui;
 }
@@ -52,6 +51,8 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
                     Qt::KeepAspectRatio,
                     Qt::FastTransformation));
         ui->horizontalSlider->setValue(myController->getCurrentFrame());
+        ui->frameLabel->setText(QString::number(int(myController->getCurrentFrame()))
+                                +" / "+ QString::number(myController->getNumberOfFrames()));
 
 //        int x = 75;
 //        int y = 110;
@@ -108,10 +109,10 @@ void MainWindow::on_loadVideoButton_clicked()
 
     }
 
-    QString filename = QFileDialog::getOpenFileName(this,
-                                                    tr("Open Video"), "../../../video/",
-                                                    tr("Video Files (*.avi *.mpg *.mp4"));
-//    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.mp4";
+//    QString filename = QFileDialog::getOpenFileName(this,
+//                                                    tr("Open Video"), "../../../video/",
+//                                                    tr("Video Files (*.avi *.mpg *.mp4"));
+    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.mp4";
 //    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.avi";
 
     if (!filename.isEmpty()){
@@ -125,6 +126,7 @@ void MainWindow::on_loadVideoButton_clicked()
                 ui->playVideoButton->setEnabled(true);
                 //ui->horizontalSlider->setEnabled(true);
                 ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
+                ui->frameLabel->setText("0 / " + QString::number(myController->getNumberOfFrames()));
                 ui->orgVideo->setAlignment(Qt::AlignCenter);
                 //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
                 //                                            ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
