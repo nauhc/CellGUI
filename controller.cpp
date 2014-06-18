@@ -128,17 +128,19 @@ void Controller::run(){
             int height = 100;
 
             contour->getROI(*frame, x, y, width, height);
-
             //adaptive threshold for getting edges from current image
             Mat edgeImg;
             contour->edgeDetection(edgeImg);
             roiImg = cvMatToQImage(edgeImg); //Mat to QImage for display
 
-            if(frameIdx > 80){
+            if (frameIdx <= 80)
+                roiImg = img;
+            else{
                 //bounding box
                 Mat boxImg;
                 contour->boundingBox(boxImg);
                 img = cvMatToQImage(boxImg);
+
             }
             //emit the singnals
             emit processedImage(img, roiImg);
