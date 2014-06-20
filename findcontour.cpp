@@ -33,11 +33,11 @@ void FindContour::edgeDetection(Mat &adapThreshImg){
 //    adaptiveThreshold(*roi, adapThreshImg, 255.0, CV_ADAPTIVE_THRESH_MEAN_C,
 //                      CV_THRESH_BINARY_INV, blockSize, constValue);
     Mat roi_temp;
-    adaptiveThreshold(*roi, roi_temp, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
+    adaptiveThreshold(*roi, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                       CV_THRESH_BINARY_INV, blockSize, constValue);
 
     //remove noise from roi image
-    medianBlur(roi_temp, adapThreshImg, 5);
+    //medianBlur(adapThreshImg, adapThreshImg, 5);
 
 }
 

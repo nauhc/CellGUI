@@ -109,10 +109,10 @@ void MainWindow::on_loadVideoButton_clicked()
 
     }
 
-//    QString filename = QFileDialog::getOpenFileName(this,
-//                                                    tr("Open Video"), "../../../video/",
-//                                                    tr("Video Files (*.avi *.mpg *.mp4"));
-    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.mp4";
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Open Video"), "../../../video/",
+                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
+//    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.mp4";
 //    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.avi";
 
     if (!filename.isEmpty()){
