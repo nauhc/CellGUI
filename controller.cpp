@@ -69,6 +69,12 @@ void Controller::releaseVideo(){
     inputVideo->release();
 }
 
+void Controller::getVideoSize(int &width, int &height)
+{
+    width = videoSize.width;
+    height = videoSize.height;
+}
+
 void Controller::setAdaptThresh(int var){
     contour->setAdaptThresh(double(var));
 }

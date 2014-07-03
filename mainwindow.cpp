@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->adaptThreshSlider->setValue(3); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
+    drawMode = false;
 }
 
 MainWindow::~MainWindow(){
@@ -127,9 +128,27 @@ void MainWindow::on_loadVideoButton_clicked()
                 //ui->horizontalSlider->setEnabled(true);
                 ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
                 ui->frameLabel->setText("0 / " + QString::number(myController->getNumberOfFrames()));
+
+                //set video player label size and postion
+                //according to the size of the selected video
+                int w, h;
+                myController->getVideoSize(w, h);
+                int x, y, width, height;
+                if(w>h){
+                    width   = 500;
+                    height  = 500*h/w;
+                    x = 40; y = 30+(width-height)/2;
+                }else{
+                    width   = 500*w/h;
+                    height  = 500;
+                    x = 40+(height-width)/2; y = 30;
+                }
+                ui->orgVideo->setGeometry(x, y, width, height);
                 ui->orgVideo->setAlignment(Qt::AlignCenter);
                 //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
-                //                                            ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
+                //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
+                ui->roiVideo->setGeometry(x, y + 580, width, height);
+                ui->roiVideo->setAlignment(Qt::AlignCenter);
             }
     }
     else{
@@ -139,6 +158,35 @@ void MainWindow::on_loadVideoButton_clicked()
     }
 
 }
+
+
+
+
+void MainWindow::on_drawROIButton_clicked(){
+    ui->playVideoButton->setEnabled(false);
+    if(!drawMode){
+        drawMode = true;
+        myController->stopVideo();
+        ui->drawROIButton->setText("track");
+
+    }
+    else{
+        drawMode = false;
+        myController->playVideo();
+        ui->drawROIButton->setText("draw ROI");
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

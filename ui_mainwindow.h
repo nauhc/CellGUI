@@ -42,6 +42,7 @@ public:
     QLabel *coordVis;
     QSlider *horizontalSlider;
     QLabel *frameLabel;
+    QPushButton *drawROIButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -50,7 +51,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1715, 904);
+        MainWindow->resize(1711, 1199);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         loadVideoButton = new QPushButton(centralWidget);
@@ -58,11 +59,11 @@ public:
         loadVideoButton->setGeometry(QRect(640, 110, 151, 51));
         roiVideo = new QLabel(centralWidget);
         roiVideo->setObjectName(QStringLiteral("roiVideo"));
-        roiVideo->setGeometry(QRect(40, 460, 491, 361));
+        roiVideo->setGeometry(QRect(40, 610, 500, 500));
         roiVideo->setStyleSheet(QStringLiteral("Background-color:rgb(0, 0, 0)"));
         orgVideo = new QLabel(centralWidget);
         orgVideo->setObjectName(QStringLiteral("orgVideo"));
-        orgVideo->setGeometry(QRect(40, 30, 491, 361));
+        orgVideo->setGeometry(QRect(40, 30, 500, 500));
         orgVideo->setAutoFillBackground(false);
         orgVideo->setStyleSheet(QStringLiteral("Background-color: rgb(0, 0, 0)"));
         playVideoButton = new QPushButton(centralWidget);
@@ -88,31 +89,34 @@ public:
         blkSizeLabel->setGeometry(QRect(870, 200, 81, 16));
         cellVis = new QLabel(centralWidget);
         cellVis->setObjectName(QStringLiteral("cellVis"));
-        cellVis->setGeometry(QRect(560, 460, 1121, 361));
+        cellVis->setGeometry(QRect(560, 610, 1121, 501));
         cellVis->setAutoFillBackground(false);
         cellVis->setStyleSheet(QStringLiteral("Background-color:rgb(255, 255, 255)"));
         coordVis = new QLabel(centralWidget);
         coordVis->setObjectName(QStringLiteral("coordVis"));
-        coordVis->setGeometry(QRect(1200, 20, 481, 401));
+        coordVis->setGeometry(QRect(1200, 30, 481, 471));
         coordVis->setAutoFillBackground(false);
         coordVis->setStyleSheet(QStringLiteral("Background-color:rgb(255, 255, 255)"));
         horizontalSlider = new QSlider(centralWidget);
         horizontalSlider->setObjectName(QStringLiteral("horizontalSlider"));
-        horizontalSlider->setGeometry(QRect(40, 400, 491, 22));
+        horizontalSlider->setGeometry(QRect(50, 550, 481, 22));
         horizontalSlider->setOrientation(Qt::Horizontal);
         frameLabel = new QLabel(centralWidget);
         frameLabel->setObjectName(QStringLiteral("frameLabel"));
-        frameLabel->setGeometry(QRect(230, 420, 111, 21));
+        frameLabel->setGeometry(QRect(230, 570, 111, 21));
         QFont font;
         font.setFamily(QStringLiteral("Helvetica"));
         font.setPointSize(12);
         frameLabel->setFont(font);
         frameLabel->setLayoutDirection(Qt::LeftToRight);
         frameLabel->setStyleSheet(QStringLiteral("qproperty-alignment: AlignCenter"));
+        drawROIButton = new QPushButton(centralWidget);
+        drawROIButton->setObjectName(QStringLiteral("drawROIButton"));
+        drawROIButton->setGeometry(QRect(640, 350, 151, 51));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1715, 22));
+        menuBar->setGeometry(QRect(0, 0, 1711, 22));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -139,6 +143,7 @@ public:
         cellVis->setText(QString());
         coordVis->setText(QString());
         frameLabel->setText(QString());
+        drawROIButton->setText(QApplication::translate("MainWindow", "DrawROI", 0));
     } // retranslateUi
 
 };

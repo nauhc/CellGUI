@@ -29,9 +29,12 @@ private slots:
 
     void on_stopVideoButton_clicked();
 
+    void on_drawROIButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Controller *myController;
+    bool drawMode;
 };
 
 #endif // MAINWINDOW_H

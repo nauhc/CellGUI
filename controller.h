@@ -51,6 +51,8 @@ public:
     double  getCurrentFrame();
     void    releaseVideo();
 
+    void    getVideoSize(int &width, int &height);
+
 
 };
 
