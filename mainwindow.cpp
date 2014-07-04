@@ -22,15 +22,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->playVideoButton->setEnabled(false);
     ui->stopVideoButton->setEnabled(false);
     ui->horizontalSlider->setEnabled(false);
+    ui->drawROIButton->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
     ui->blkSizeSlider->setRange(1, 20);
     ui->adaptThreshSlider->setValue(3); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
+    encircle = new Encircle(this->centralWidget());
+    encircle->setGeometry(40, 30, 500, 500);
+
     drawMode = false;
+
 }
 
 MainWindow::~MainWindow(){
+    delete encircle;
     delete myController;
     delete ui;
 }
@@ -55,14 +61,6 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
         ui->frameLabel->setText(QString::number(int(myController->getCurrentFrame()))
                                 +" / "+ QString::number(myController->getNumberOfFrames()));
 
-//        int x = 75;
-//        int y = 110;
-//        int width = 150;
-//        int height = 100;
-
-//        QRectF rectangle(x, y, width, height);
-//        QPainter painter(ui->orgVideo);
-//        painter.drawRect(rectangle);
 
     }
 
@@ -110,11 +108,12 @@ void MainWindow::on_loadVideoButton_clicked()
 
     }
 
-    QString filename = QFileDialog::getOpenFileName(this,
-                                                    tr("Open Video"), "../../../video/",
-                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
+//    QString filename = QFileDialog::getOpenFileName(this,
+//                                                    tr("Open Video"), "../../../video/",
+//                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
 //    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.mp4";
 //    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.avi";
+    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
 
     if (!filename.isEmpty()){
             if (!myController->loadVideo(filename.toStdString())){
@@ -125,7 +124,7 @@ void MainWindow::on_loadVideoButton_clicked()
             else{
                 ui->loadVideoButton->setEnabled(false);
                 ui->playVideoButton->setEnabled(true);
-                //ui->horizontalSlider->setEnabled(true);
+                ui->drawROIButton->setEnabled(true);
                 ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
                 ui->frameLabel->setText("0 / " + QString::number(myController->getNumberOfFrames()));
 
@@ -163,17 +162,21 @@ void MainWindow::on_loadVideoButton_clicked()
 
 
 void MainWindow::on_drawROIButton_clicked(){
-    ui->playVideoButton->setEnabled(false);
+
     if(!drawMode){
+        ui->playVideoButton->setEnabled(false);
         drawMode = true;
         myController->stopVideo();
         ui->drawROIButton->setText("track");
+
+
 
     }
     else{
         drawMode = false;
         myController->playVideo();
         ui->drawROIButton->setText("draw ROI");
+
     }
 }
 

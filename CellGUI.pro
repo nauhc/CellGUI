@@ -26,10 +26,12 @@ LIBS+= -L/usr/local/lib/ \
 SOURCES += main.cpp\
         mainwindow.cpp \
     controller.cpp \
-    findcontour.cpp
+    findcontour.cpp \
+    encircle.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
-    findcontour.h
+    findcontour.h \
+    encircle.h
 
 FORMS    += mainwindow.ui

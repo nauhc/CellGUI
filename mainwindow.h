@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "controller.h"
+#include "encircle.h"
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,7 @@ private:
     Ui::MainWindow *ui;
     Controller *myController;
     bool drawMode;
+    Encircle *encircle;
 };
 
 #endif // MAINWINDOW_H
