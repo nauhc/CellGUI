@@ -12,10 +12,11 @@ class Encircle : public QWidget
     Q_OBJECT
 public:
     //explicit Encircle(QWidget *parent = 0);
-    explicit Encircle(QWidget *parent = 0);
+    explicit Encircle(bool enabled, QWidget *parent = 0);
     ~Encircle();
-    bool isEncircled() const { return encircled; }
-    void setCirclingArea(QRect rect);
+    bool isEncircled() const { return encircleMode; }
+    void setEncircle(bool mode);
+
 signals:
 
 public slots:
@@ -29,12 +30,11 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 private:
-    bool    encircled; // when the encicling is done, it changes to true
+    bool    encircleMode; // when the encicling is done, it changes to true
     bool    encircling; // when the encicling is started, it changes to true
     int     penWidth;
     QColor  penColor;
     QImage  image;
-    QPixmap *pixmap;
 
     QPoint  startPoint;
     QPoint  lastPoint;

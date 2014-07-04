@@ -2,31 +2,29 @@
 #include "QPainter"
 #include "QMouseEvent"
 #include "math.h"
+#include "qdebug.h"
 
-Encircle::Encircle(QWidget *parent) : QWidget(parent)
+Encircle::Encircle(bool enabled, QWidget *parent) : QWidget(parent)
 //Encircle::Encircle(QWidget *parent) : (parent)*/
 {
+    qDebug() << "initialize a new encircler.";
     penWidth = 3;
     penColor = QColor(0, 225, 255, 127);
     encircling = false;
-    encircled = false;
+    encircleMode = enabled;
     image = QImage(QSize(500, 500), QImage::Format_ARGB32);
     image.fill(Qt::transparent);
     //image.fill(QColor(qRgba(0, 0, 255, 127)));
-    pixmap = new QPixmap(this->width(), this->height());
-    //pixmap->fill(Qt::/*transparent*/white);
-
 }
 
-Encircle::~Encircle()
+Encircle::~Encircle(){
+}
+
+void Encircle::setEncircle(bool mode)
 {
-    delete pixmap;
+    encircleMode = mode;
 }
 
-void Encircle::setCirclingArea(QRect rect)
-{
-
-}
 
 void Encircle::clearCircle()
 {
@@ -40,7 +38,8 @@ void Encircle::saveCircle()
 
 void Encircle::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton) {
+    if (encircleMode && event->button() == Qt::LeftButton) {
+        qDebug() << 'mouse pressed';
         currPoint = event->pos();
         if(points.size() == 0){
             startPoint = currPoint;
@@ -54,7 +53,8 @@ void Encircle::mousePressEvent(QMouseEvent *event)
 
 void Encircle::mouseMoveEvent(QMouseEvent *event)
 {
-    if((event->buttons() & Qt::LeftButton) && encircling){
+    if(encircleMode && (event->buttons() & Qt::LeftButton) && encircling){
+        qDebug() << 'mouse moved';
         currPoint = event->pos();
         drawLineTo(currPoint);
         lastPoint = currPoint;
@@ -64,7 +64,8 @@ void Encircle::mouseMoveEvent(QMouseEvent *event)
 
 void Encircle::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton && encircling) {
+    if (encircleMode && event->button() == Qt::LeftButton && encircling) {
+        qDebug() << 'mouse released';
         currPoint = event->pos();
         drawLineTo(currPoint);
         encircling = false;
@@ -78,8 +79,6 @@ void Encircle::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     QRect dirtyRect = event->rect();
     painter.drawImage(dirtyRect, image, dirtyRect);
-//    painter.drawRect(15, 15, 200, 200);
-//    painter.fillRect(this->rect(), QBrush(*pixmap));
 
 }
 
@@ -90,6 +89,7 @@ void Encircle::drawLineTo(const QPoint &endPoint)
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawLine(lastPoint, endPoint);
     lastPoint = endPoint;
+    this->update();
 }
 
 //void Encircle::clearCircle(){

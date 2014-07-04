@@ -28,10 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->adaptThreshSlider->setValue(3); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
-    encircle = new Encircle(this->centralWidget());
-    encircle->setGeometry(40, 30, 500, 500);
-
     drawMode = false;
+    encircle = new Encircle(drawMode, this->centralWidget());
+    encircle->setGeometry(40, 30, 500, 500);
 
 }
 
@@ -159,21 +158,24 @@ void MainWindow::on_loadVideoButton_clicked()
 }
 
 
-
-
 void MainWindow::on_drawROIButton_clicked(){
 
     if(!drawMode){
         ui->playVideoButton->setEnabled(false);
         drawMode = true;
+//        encircle = new Encircle(true, this->centralWidget());
+//        encircle->setGeometry(40, 30, 500, 500);
+
+        encircle->setEncircle(true);
         myController->stopVideo();
         ui->drawROIButton->setText("track");
-
-
 
     }
     else{
         drawMode = false;
+        encircle->setEncircle(false);
+//        delete encircle;
+        ui->playVideoButton->setEnabled(true);
         myController->playVideo();
         ui->drawROIButton->setText("draw ROI");
 
