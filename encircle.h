@@ -16,14 +16,10 @@ public:
     explicit Encircle(bool enabled, QWidget *parent = 0);
     ~Encircle();
     bool isEncircled() const { return encircleMode; }
-    void setEncircle(bool mode);
+    void turnOnEncircleMode();
+    void turnOffEncircleMode();
     void getRegion(QVector<QPoint> &circle);
-
-signals:
-
-public slots:
     void clearCircle();
-    void saveCircle();
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -44,7 +40,8 @@ private:
     QVector<QPoint> points;
 
     void drawLineTo(const QPoint &endPoint);
-//    void clearCircle();
+
 };
+
 
 #endif // ENCIRCLE_H

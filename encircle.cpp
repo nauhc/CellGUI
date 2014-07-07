@@ -20,9 +20,14 @@ Encircle::Encircle(bool enabled, QWidget *parent) : QWidget(parent)
 Encircle::~Encircle(){
 }
 
-void Encircle::setEncircle(bool mode)
+void Encircle::turnOnEncircleMode()
 {
-    encircleMode = mode;
+    encircleMode = true;
+}
+
+void Encircle::turnOffEncircleMode()
+{
+    encircleMode = false;
 }
 
 void Encircle::getRegion(QVector<QPoint> &circle)
@@ -30,16 +35,11 @@ void Encircle::getRegion(QVector<QPoint> &circle)
     circle = points;
 }
 
-
 void Encircle::clearCircle()
 {
     points.clear();
 }
 
-void Encircle::saveCircle()
-{
-
-}
 
 void Encircle::mousePressEvent(QMouseEvent *event)
 {
@@ -84,6 +84,9 @@ void Encircle::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     QRect dirtyRect = event->rect();
+    if(!encircleMode){
+        image.fill(Qt::transparent);
+    }
     painter.drawImage(dirtyRect, image, dirtyRect);
 
 }
@@ -98,7 +101,4 @@ void Encircle::drawLineTo(const QPoint &endPoint)
     this->update();
 }
 
-//void Encircle::clearCircle(){
-//    image.fill(QColor(qRgba(0, 0, 0, 255)));
-//}
 

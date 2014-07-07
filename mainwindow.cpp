@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->drawROIButton->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
     ui->blkSizeSlider->setRange(1, 20);
-    ui->adaptThreshSlider->setValue(3); // initial value of constValue for adaptiveThreshold
+    ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
     drawMode = false;
@@ -60,7 +60,6 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
         ui->horizontalSlider->setValue(myController->getCurrentFrame());
         ui->frameLabel->setText(QString::number(int(myController->getCurrentFrame()))
                                 +" / "+ QString::number(myController->getNumberOfFrames()));
-
 
     }
 
@@ -160,28 +159,30 @@ void MainWindow::on_loadVideoButton_clicked()
 
 
 void MainWindow::on_drawROIButton_clicked(){
-
+    // when it is circling mode
+    // user can circle the cell of interest
     if(!drawMode){
         ui->playVideoButton->setEnabled(false);
         drawMode = true;
 //        encircle = new Encircle(true, this->centralWidget());
 //        encircle->setGeometry(40, 30, 500, 500);
         encircle->clearCircle();
-        encircle->setEncircle(true);
+        encircle->turnOnEncircleMode();
         myController->stopVideo();
         ui->drawROIButton->setText("track");
 
     }
+    // when circling mode is turned off
+    // pass the circled region to controoller
+    // and clear the drawing
     else{
         drawMode = false;
-        encircle->setEncircle(false);
+        encircle->turnOffEncircleMode();
         //delete encircle;
         QVector<QPoint> circle;
         encircle->getRegion(circle);
-        for(int i = 0; i < circle.size(); i++)
-            qDebug() << circle[i];
-
         myController->setCircle(circle);
+
         ui->playVideoButton->setEnabled(true);
         myController->playVideo();
         ui->drawROIButton->setText("draw ROI");
