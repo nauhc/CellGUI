@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -13,6 +14,21 @@
 <h1>Cell Video Processing Project Log</h1>
 
 Chuan Wang @ ViDi
+
+<h2> ----- Jul 6<sup>th</sup> 2014 ----- </h2>
+<h3> Data </h3>
+    Preprocessed the images into videos. Tried to convert all of the images to a OpenCV-readable format. But the images from one of the two microscope channels was not usable due to the none-standard format.
+    Analysis is based on the images from the other channel so far.
+
+<h3> Detection </h3>
+    In order to let the user choose (from the amount of cells) which cell is the one of interest, a transparent panel was added on the top of video player.
+As it shows in the graph, user is able to circling a cell by drawing a rough hull outside of the cell of interest. And the ROI window updates the detection region according to the circling result.
+This is also for tracking the cell in the following frames. (Please ignore the white region on the bottom right. It is for future visualization use.)
+<br>
+
+<img src = "circling.png" alt = "" height = "550" width = "600">
+
+
 
 <h2> ----- Jun 20<sup>th</sup> 2014 ----- </h2>
 
@@ -38,7 +54,7 @@ Two aspects for visualization
     <li> Plan to show an animation of a cell moving on a area-shape plan showing the current precise area and shape.
         And use the changing of color to show the number of blebs of the cell.
         The area and the number of blebs are supposed to be detected the program. The shape can be quantified by the distance between the outline pixels and the centroid.
-        </li>
+    </li>
 </ul>
 
 
