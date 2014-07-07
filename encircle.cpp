@@ -25,10 +25,15 @@ void Encircle::setEncircle(bool mode)
     encircleMode = mode;
 }
 
+void Encircle::getRegion(QVector<QPoint> &circle)
+{
+    circle = points;
+}
+
 
 void Encircle::clearCircle()
 {
-
+    points.clear();
 }
 
 void Encircle::saveCircle()
@@ -39,7 +44,7 @@ void Encircle::saveCircle()
 void Encircle::mousePressEvent(QMouseEvent *event)
 {
     if (encircleMode && event->button() == Qt::LeftButton) {
-        qDebug() << 'mouse pressed';
+        //qDebug() << 'mouse pressed';
         currPoint = event->pos();
         if(points.size() == 0){
             startPoint = currPoint;
@@ -54,7 +59,7 @@ void Encircle::mousePressEvent(QMouseEvent *event)
 void Encircle::mouseMoveEvent(QMouseEvent *event)
 {
     if(encircleMode && (event->buttons() & Qt::LeftButton) && encircling){
-        qDebug() << 'mouse moved';
+        //qDebug() << 'mouse moved';
         currPoint = event->pos();
         drawLineTo(currPoint);
         lastPoint = currPoint;
@@ -65,13 +70,14 @@ void Encircle::mouseMoveEvent(QMouseEvent *event)
 void Encircle::mouseReleaseEvent(QMouseEvent *event)
 {
     if (encircleMode && event->button() == Qt::LeftButton && encircling) {
-        qDebug() << 'mouse released';
+        //qDebug() << 'mouse released';
         currPoint = event->pos();
         drawLineTo(currPoint);
         encircling = false;
         drawLineTo(startPoint);
     }
-    points.clear();
+//    for(int i = 0; i < points.size(); i++)
+//        qDebug() << points[i];
 }
 
 void Encircle::paintEvent(QPaintEvent *event)

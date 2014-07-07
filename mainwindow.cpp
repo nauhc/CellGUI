@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QMessageBox>
 #include "ui_mainwindow.h"
+#include "qdebug.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -165,7 +166,7 @@ void MainWindow::on_drawROIButton_clicked(){
         drawMode = true;
 //        encircle = new Encircle(true, this->centralWidget());
 //        encircle->setGeometry(40, 30, 500, 500);
-
+        encircle->clearCircle();
         encircle->setEncircle(true);
         myController->stopVideo();
         ui->drawROIButton->setText("track");
@@ -174,7 +175,13 @@ void MainWindow::on_drawROIButton_clicked(){
     else{
         drawMode = false;
         encircle->setEncircle(false);
-//        delete encircle;
+        //delete encircle;
+        QVector<QPoint> circle;
+        encircle->getRegion(circle);
+        for(int i = 0; i < circle.size(); i++)
+            qDebug() << circle[i];
+
+        myController->setCircle(circle);
         ui->playVideoButton->setEnabled(true);
         myController->playVideo();
         ui->drawROIButton->setText("draw ROI");

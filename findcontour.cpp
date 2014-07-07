@@ -27,6 +27,14 @@ void FindContour::getROI(const Mat &img, int x, int y, int width, int height){
     //imwrite("../../../video/roigray.tiff", *roi);
 }
 
+void FindContour::getROI(const Mat &img, vector<Point> circle)
+{
+    frame = &img;
+    Rect roi_rect = boundingRect(Mat(circle));
+    Mat sub = (*frame)(roi_rect);
+    cv::cvtColor(sub, *roi, CV_RGB2GRAY); // convert color image to grayscale image
+}
+
 void FindContour::edgeDetection(Mat &adapThreshImg){
 //    int blockSize = 17;
 //    double constValue = 7;
@@ -42,14 +50,9 @@ void FindContour::edgeDetection(Mat &adapThreshImg){
 }
 
 
+
 void FindContour::boundingBox(Mat &img){
 
-//    Mat thresholdImg, roi_temp;
-//    adaptiveThreshold(*roi, roi_temp, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
-//                      CV_THRESH_BINARY_INV, blockSize, constValue);
-
-//    //remove noise from roi image
-//    medianBlur(roi_temp, thresholdImg, 5);
 
     Mat thresholdImg;
     edgeDetection(thresholdImg);
@@ -80,10 +83,20 @@ void FindContour::boundingBox(Mat &img){
         Point x(x1, y1);
         Point y(x2, y2);
         Rect rect(x,y);
-        Scalar color(0,255,255);
-        rectangle(img, rect, color, 1);
+//        Scalar color(0,255,255); // draw a yellow rectangle on the image
+//        rectangle(img, rect, color, 1);
 
     }
 
 
+
+
+}
+
+void FindContour::boundingBox(Mat &img, vector<Point> circle)
+{
+    img = frame->clone();
+    Rect rect = boundingRect(Mat(circle));
+    Scalar color(0,255,255); // draw a yellow rectangle on the image
+    rectangle(img, rect, color, 1);
 }

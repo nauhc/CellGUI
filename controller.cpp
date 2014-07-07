@@ -7,6 +7,7 @@ Controller::Controller(QObject *parent) : QThread(parent),
    contour(new FindContour())
 {
     stop = true;
+    circled = false;
 }
 Controller::~Controller(){
     if(inputVideo->isOpened())
@@ -75,6 +76,15 @@ void Controller::getVideoSize(int &width, int &height)
     height = videoSize.height;
 }
 
+void Controller::setCircle(QVector<QPoint> points)
+{
+    circled = true;
+    for(int i = 0; i < points.size(); i++){
+        Point p =  Point(points[i].x(), points[i].y());
+        circle.push_back(p);
+    }
+}
+
 void Controller::setAdaptThresh(int var){
     contour->setAdaptThresh(double(var));
 }
@@ -127,27 +137,43 @@ void Controller::run(){
             img = cvMatToQImage(*frame);
             //roiImg = cvMatToQImage(Mat::zeros(roiFrame->size(), CV_8UC1));
 
-            //ROI
-            int x = videoSize.width/2 - 5;
-            int y = videoSize.height/2 + 10;
-            int width = 150;
-            int height = 100;
-
-            contour->getROI(*frame, x, y, width, height);
-            //adaptive threshold for getting edges from current image
-            Mat edgeImg;
-            contour->edgeDetection(edgeImg);
-            roiImg = cvMatToQImage(edgeImg); //Mat to QImage for display
-
-            if (frameIdx <= 80)
+            if(!circled)
                 roiImg = img;
             else{
-                //bounding box
-                Mat boxImg;
-                contour->boundingBox(boxImg);
-                img = cvMatToQImage(boxImg);
+                contour->getROI(*frame, circle);
+                Mat edgeImg;
+                contour->edgeDetection(edgeImg);
+                roiImg = cvMatToQImage(edgeImg);
+//                Mat boxImg;
+//                contour->boundingBox(boxImg, circle);
+//                img = cvMatToQImage(boxImg);
 
             }
+
+
+//            //ROI
+//            int x = videoSize.width/2 - 5;
+//            int y = videoSize.height/2 + 10;
+//            int width = 150;
+//            int height = 100;
+
+//            contour->getROI(*frame, x, y, width, height);
+//            //adaptive threshold for getting edges from current image
+//            Mat edgeImg;
+//            contour->edgeDetection(edgeImg);
+//            roiImg = cvMatToQImage(edgeImg); //Mat to QImage for display
+
+//            if (!circled)
+//                roiImg = img;
+//            else{
+//                //bounding box
+//                Mat boxImg;
+//                contour->boundingBox(boxImg);
+//                img = cvMatToQImage(boxImg);
+
+//            }
+
+
             //emit the singnals
             emit processedImage(img, roiImg);
             this->msleep(delay);

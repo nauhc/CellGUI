@@ -27,6 +27,8 @@ private:
     double          fps; // fps
 
     FindContour     *contour;
+    bool            circled;
+    vector<Point>   circle;
 
 signals:
     void    processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT
@@ -50,8 +52,9 @@ public:
     double  getNumberOfFrames();
     double  getCurrentFrame();
     void    releaseVideo();
-
     void    getVideoSize(int &width, int &height);
+
+    void    setCircle(QVector<QPoint> points);
 
 
 };

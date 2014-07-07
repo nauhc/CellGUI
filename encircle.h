@@ -5,6 +5,7 @@
 #include <QPoint>
 #include <QWidget>
 #include <QLabel>
+#include <vector>
 
 //class Encircle : public QWidget
 class Encircle : public QWidget
@@ -16,6 +17,7 @@ public:
     ~Encircle();
     bool isEncircled() const { return encircleMode; }
     void setEncircle(bool mode);
+    void getRegion(QVector<QPoint> &circle);
 
 signals:
 
