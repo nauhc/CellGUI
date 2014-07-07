@@ -137,42 +137,48 @@ void Controller::run(){
             img = cvMatToQImage(*frame);
             //roiImg = cvMatToQImage(Mat::zeros(roiFrame->size(), CV_8UC1));
 
+
+            qDebug() << frameIdx;
             if(!circled)
                 roiImg = img;
             else{
-                contour->getROI(*frame, circle);
+                Mat mask;
+                contour->getROI(*frame, circle, mask);
+                //imshow("mask", mask);
+
                 Mat edgeImg;
-                contour->edgeDetection(edgeImg);
+                contour->edgeDetection(edgeImg, mask);
+
                 roiImg = cvMatToQImage(edgeImg);
-//                Mat boxImg;
-//                contour->boundingBox(boxImg, circle);
-//                img = cvMatToQImage(boxImg);
+                Mat boxImg;
+                contour->boundingBox(boxImg, circle);
+                img = cvMatToQImage(boxImg);
 
             }
 
+            /*
+            //ROI
+            int x = videoSize.width/2 - 5;
+            int y = videoSize.height/2 + 10;
+            int width = 150;
+            int height = 100;
 
-//            //ROI
-//            int x = videoSize.width/2 - 5;
-//            int y = videoSize.height/2 + 10;
-//            int width = 150;
-//            int height = 100;
+            contour->getROI(*frame, x, y, width, height);
+            //adaptive threshold for getting edges from current image
+            Mat edgeImg;
+            contour->edgeDetection(edgeImg);
+            roiImg = cvMatToQImage(edgeImg); //Mat to QImage for display
 
-//            contour->getROI(*frame, x, y, width, height);
-//            //adaptive threshold for getting edges from current image
-//            Mat edgeImg;
-//            contour->edgeDetection(edgeImg);
-//            roiImg = cvMatToQImage(edgeImg); //Mat to QImage for display
+            if (frameIdx <= 80)
+                roiImg = img;
+            else{
+                //bounding box
+                Mat boxImg;
+                contour->boundingBox(boxImg);
+                img = cvMatToQImage(boxImg);
 
-//            if (!circled)
-//                roiImg = img;
-//            else{
-//                //bounding box
-//                Mat boxImg;
-//                contour->boundingBox(boxImg);
-//                img = cvMatToQImage(boxImg);
-
-//            }
-
+            }
+            */
 
             //emit the singnals
             emit processedImage(img, roiImg);

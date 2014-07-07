@@ -162,7 +162,7 @@ void MainWindow::on_drawROIButton_clicked(){
     // when it is circling mode
     // user can circle the cell of interest
     if(!drawMode){
-        ui->playVideoButton->setEnabled(false);
+        //ui->playVideoButton->setEnabled(false);
         drawMode = true;
 //        encircle = new Encircle(true, this->centralWidget());
 //        encircle->setGeometry(40, 30, 500, 500);
@@ -183,7 +183,7 @@ void MainWindow::on_drawROIButton_clicked(){
         encircle->getRegion(circle);
         myController->setCircle(circle);
 
-        ui->playVideoButton->setEnabled(true);
+        //ui->playVideoButton->setEnabled(true);
         myController->playVideo();
         ui->drawROIButton->setText("draw ROI");
 

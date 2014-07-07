@@ -27,29 +27,19 @@ void FindContour::getROI(const Mat &img, int x, int y, int width, int height){
     //imwrite("../../../video/roigray.tiff", *roi);
 }
 
-void FindContour::getROI(const Mat &img, vector<Point> circle)
-{
-    frame = &img;
-    Rect roi_rect = boundingRect(Mat(circle));
-    Mat sub = (*frame)(roi_rect);
-    cv::cvtColor(sub, *roi, CV_RGB2GRAY); // convert color image to grayscale image
-}
-
 void FindContour::edgeDetection(Mat &adapThreshImg){
 //    int blockSize = 17;
 //    double constValue = 7;
 //    adaptiveThreshold(*roi, adapThreshImg, 255.0, CV_ADAPTIVE_THRESH_MEAN_C,
 //                      CV_THRESH_BINARY_INV, blockSize, constValue);
-    Mat roi_temp;
     adaptiveThreshold(*roi, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                       CV_THRESH_BINARY_INV, blockSize, constValue);
+
 
     //remove noise from roi image
     //medianBlur(adapThreshImg, adapThreshImg, 5);
 
 }
-
-
 
 void FindContour::boundingBox(Mat &img){
 
@@ -87,11 +77,44 @@ void FindContour::boundingBox(Mat &img){
 //        rectangle(img, rect, color, 1);
 
     }
-
-
-
-
 }
+
+
+
+void FindContour::getROI(const Mat &img, vector<Point> circle, Mat &mask)
+{
+    frame = &img;
+    Rect roi_rect = boundingRect(Mat(circle));
+
+    Mat sub; // the rectangle region of ROI
+    cv::cvtColor((*frame)(roi_rect), sub, CV_RGB2GRAY);
+
+    //filter the image inside the circle
+    vector<Point> circle_ROI;
+    for (unsigned int i = 0; i < circle.size(); i++){
+        Point p = Point(circle[i].x - roi_rect.x, circle[i].y - roi_rect.y);
+        circle_ROI.push_back(p);
+    }
+    mask = Mat::zeros(sub.rows, sub.cols, CV_8UC1);
+    fillConvexPoly(mask, circle_ROI, Scalar(255));
+    *roi = sub.clone();
+    //cv::cvtColor(sub_filter, *roi, CV_RGB2GRAY); // convert color image to grayscale image
+}
+
+void FindContour::edgeDetection(Mat &adapThreshImg, Mat &mask)
+{
+    adaptiveThreshold(*roi, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
+                          CV_THRESH_BINARY_INV, blockSize, constValue);
+
+    //let roi only display the region inside the circle
+    for(int j = 0; j < roi->rows; j++){
+        for(int i = 0; i < roi->cols; i++){
+            if(mask.at<uchar>(j,i) == 0)
+                adapThreshImg.at<uchar>(j,i) = 0;
+        }
+    }
+}
+
 
 void FindContour::boundingBox(Mat &img, vector<Point> circle)
 {
