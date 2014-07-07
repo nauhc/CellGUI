@@ -98,7 +98,8 @@ void FindContour::getROI(const Mat &img, vector<Point> circle, Mat &mask)
     mask = Mat::zeros(sub.rows, sub.cols, CV_8UC1);
     fillConvexPoly(mask, circle_ROI, Scalar(255));
     *roi = sub.clone();
-    //cv::cvtColor(sub_filter, *roi, CV_RGB2GRAY); // convert color image to grayscale image
+    //convert color image to grayscale image
+    //cv::cvtColor(sub_filter, *roi, CV_RGB2GRAY);
 }
 
 void FindContour::edgeDetection(Mat &adapThreshImg, Mat &mask)

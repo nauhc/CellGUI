@@ -112,7 +112,8 @@ void MainWindow::on_loadVideoButton_clicked()
 //                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
 //    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.mp4";
 //    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.avi";
-    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
+//    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
+    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/test.mov";
 
     if (!filename.isEmpty()){
             if (!myController->loadVideo(filename.toStdString())){

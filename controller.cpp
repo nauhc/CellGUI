@@ -142,18 +142,18 @@ void Controller::run(){
             if(!circled)
                 roiImg = img;
             else{
-                Mat mask;
-                contour->getROI(*frame, circle, mask);
-                //imshow("mask", mask);
-
-                Mat edgeImg;
-                contour->edgeDetection(edgeImg, mask);
-
-                roiImg = cvMatToQImage(edgeImg);
+                //draw bounding box on ROI and show in original video player
                 Mat boxImg;
                 contour->boundingBox(boxImg, circle);
                 img = cvMatToQImage(boxImg);
 
+                // get coi mask (COI: cell of interest)
+                Mat mask;
+                contour->getROI(*frame, circle, mask);
+
+                Mat edgeImg;
+                contour->edgeDetection(edgeImg, mask);
+                roiImg = cvMatToQImage(edgeImg);
             }
 
             /*
@@ -183,6 +183,7 @@ void Controller::run(){
             //emit the singnals
             emit processedImage(img, roiImg);
             this->msleep(delay);
+
         }
 }
 
