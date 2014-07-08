@@ -28,7 +28,7 @@ private:
 
     FindContour     *contour; // findcontour class object
     bool            encircled;
-    vector<Point>   circle; // contour of the cell of interest
+    vector<Point>   hull; // contour of the cell of interest
 
 signals:
     void    processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT

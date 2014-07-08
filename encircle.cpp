@@ -24,13 +24,13 @@ Encircle::~Encircle(){
 void Encircle::turnOnEncircleMode()
 {
     encircleMode = true;
-    std::cout << "encircle mode: on\n" << std::endl;
+    std::cout << "encircle mode: on" << std::endl;
 }
 
 void Encircle::turnOffEncircleMode()
 {
     encircleMode = false;
-    std::cout << "encircle mode: off\n" << std::endl;
+    std::cout << "encircle mode: off" << std::endl;
 }
 
 void Encircle::getRegion(QVector<QPoint> &circle)

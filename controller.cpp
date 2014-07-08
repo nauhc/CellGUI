@@ -81,7 +81,7 @@ void Controller::setCircle(QVector<QPoint> points)
     encircled = true;
     for(int i = 0; i < points.size(); i++){
         Point p =  Point(points[i].x(), points[i].y());
-        circle.push_back(p);
+        hull.push_back(p);
     }
 }
 
@@ -142,16 +142,19 @@ void Controller::run(){
                 roiImg = img;
             else{
                 //draw bounding box on ROI and show in original video player
-                Mat boxImg;
-                contour->boundingBox(boxImg, circle);
-                img = cvMatToQImage(boxImg);
+                Mat boxedImg;
+                contour->boundingBox(boxedImg);
+                img = cvMatToQImage(boxedImg);
 
-                // get coi mask (COI: cell of interest)
-                Mat mask;
-                contour->getROI(*frame, circle, mask);
+//                // get coi mask (COI: cell of interest)
+//                Mat mask;
+//                contour->getROI(*frame, circle, mask);
+
+//                Mat edgeImg;
+//                contour->edgeDetection(edgeImg, mask, circle);
 
                 Mat edgeImg;
-                contour->edgeDetection(edgeImg, mask, circle);
+                contour->cellDetection(*frame, hull, edgeImg);
                 roiImg = cvMatToQImage(edgeImg);
             }
 
