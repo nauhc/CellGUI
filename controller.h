@@ -26,9 +26,9 @@ private:
     int             frameCnt; // total frame number
     double          fps; // fps
 
-    FindContour     *contour;
-    bool            circled;
-    vector<Point>   circle;
+    FindContour     *contour; // findcontour class object
+    bool            encircled;
+    vector<Point>   circle; // contour of the cell of interest
 
 signals:
     void    processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT

@@ -3,11 +3,12 @@
 #include "QMouseEvent"
 #include "math.h"
 #include "qdebug.h"
+#include <iostream>
 
 Encircle::Encircle(bool enabled, QWidget *parent) : QWidget(parent)
 //Encircle::Encircle(QWidget *parent) : (parent)*/
 {
-    qDebug() << "initialize a new encircler.";
+    std::cout << "encircler initialized\n" << std::endl;
     penWidth = 3;
     penColor = QColor(0, 225, 255, 127);
     encircling = false;
@@ -23,11 +24,13 @@ Encircle::~Encircle(){
 void Encircle::turnOnEncircleMode()
 {
     encircleMode = true;
+    std::cout << "encircle mode: on\n" << std::endl;
 }
 
 void Encircle::turnOffEncircleMode()
 {
     encircleMode = false;
+    std::cout << "encircle mode: off\n" << std::endl;
 }
 
 void Encircle::getRegion(QVector<QPoint> &circle)

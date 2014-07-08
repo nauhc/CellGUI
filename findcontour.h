@@ -15,8 +15,9 @@ private:
     int blockSize;
     double constValue;
 
-    int x_start;
-    int y_start;
+    int x_start; // offset of roi rect - x
+    int y_start; // offset of roi rect - y
+    Rect roi_rect;
 
 public:
 
@@ -30,9 +31,12 @@ public:
     void edgeDetection(Mat &adapThreshImg); // detect the edges in the image and remove the noises
     void boundingBox(Mat &img);
 
-    void getROI(const Mat &img, vector<Point> circle, Mat &mask);
-    void edgeDetection(Mat &adapThreshImg, Mat &mask); // detect the edges in the image and remove the noises
-    void boundingBox(Mat &img, vector<Point> circle);
+    // get the region of interest by the updated circle
+    void getROI(const Mat &img, vector<Point> &circle, Mat &mask);
+    // detect the edges in the image and remove the noises
+    void edgeDetection(Mat &adapThreshImg, Mat &mask, vector<Point> &circle);
+    // draw a bounding box of roi rect
+    void boundingBox(Mat &img, vector<Point> &circle);
 };
 
 #endif // FINDCONTOUR_H

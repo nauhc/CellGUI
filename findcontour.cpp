@@ -80,11 +80,10 @@ void FindContour::boundingBox(Mat &img){
 }
 
 
-
-void FindContour::getROI(const Mat &img, vector<Point> circle, Mat &mask)
+void FindContour::getROI(const Mat &img, vector<Point> &circle, Mat &mask)
 {
     frame = &img;
-    Rect roi_rect = boundingRect(Mat(circle));
+    roi_rect = boundingRect(Mat(circle));
 
     Mat sub; // the rectangle region of ROI
     cv::cvtColor((*frame)(roi_rect), sub, CV_RGB2GRAY);
@@ -102,22 +101,46 @@ void FindContour::getROI(const Mat &img, vector<Point> circle, Mat &mask)
     //cv::cvtColor(sub_filter, *roi, CV_RGB2GRAY);
 }
 
-void FindContour::edgeDetection(Mat &adapThreshImg, Mat &mask)
+void FindContour::edgeDetection(Mat &adapThreshImg, Mat &mask, vector<Point> &circle)
 {
+    //adaptive threshold method to detect edges in the roi
     adaptiveThreshold(*roi, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
 
+    vector<Point> whiteArea;
     //let roi only display the region inside the circle
     for(int j = 0; j < roi->rows; j++){
         for(int i = 0; i < roi->cols; i++){
             if(mask.at<uchar>(j,i) == 0)
                 adapThreshImg.at<uchar>(j,i) = 0;
+            if(adapThreshImg.at<uchar>(j,i) != 0)
+                whiteArea.push_back(Point(i,j));
         }
     }
+
+    //renew circle
+    vector<Point> convHull;
+    convexHull(whiteArea, convHull);
+
+    /*for(unsigned int i = 0; i < circle.size(); i++)
+        //std::cout << circle[i].x << ", " << circle[i].y << "   ";
+    cout << "\n";*/
+
+    circle.clear();
+    for(unsigned int i = 0; i < convHull.size(); i++)
+        circle.push_back(Point(convHull[i].x + roi_rect.x, convHull[i].y + roi_rect.y));
+
+    /*for(unsigned int i = 0; i < circle.size(); i++)
+        //std::cout << circle[i].x << ", " << circle[i].y << "   ";
+    cout << "\n\n" << endl;*/
+
+    //Rect rect_temp = boundingRect(Mat(convHull));
+    //rectangle(adapThreshImg, rect_temp, Scalar(128), 1);
+
 }
 
 
-void FindContour::boundingBox(Mat &img, vector<Point> circle)
+void FindContour::boundingBox(Mat &img, vector<Point> &circle)
 {
     img = frame->clone();
     Rect rect = boundingRect(Mat(circle));

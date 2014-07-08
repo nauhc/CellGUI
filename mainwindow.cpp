@@ -110,10 +110,12 @@ void MainWindow::on_loadVideoButton_clicked()
 //    QString filename = QFileDialog::getOpenFileName(this,
 //                                                    tr("Open Video"), "../../../video/",
 //                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
-//    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.mp4";
-//    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/movie.avi";
-//    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
-    QString filename = "/Users/chuanwang/Sourcecode/CellGUI/video/test.mov";
+
+    QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
+    QString name        = "test.mov";
+//    QString name = "movie.mp4";
+//    QString name = "05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
+    QString filename = filepath + name;
 
     if (!filename.isEmpty()){
             if (!myController->loadVideo(filename.toStdString())){

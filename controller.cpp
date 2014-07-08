@@ -7,7 +7,7 @@ Controller::Controller(QObject *parent) : QThread(parent),
    contour(new FindContour())
 {
     stop = true;
-    circled = false;
+    encircled = false;
 }
 Controller::~Controller(){
     if(inputVideo->isOpened())
@@ -78,7 +78,7 @@ void Controller::getVideoSize(int &width, int &height)
 
 void Controller::setCircle(QVector<QPoint> points)
 {
-    circled = true;
+    encircled = true;
     for(int i = 0; i < points.size(); i++){
         Point p =  Point(points[i].x(), points[i].y());
         circle.push_back(p);
@@ -137,9 +137,8 @@ void Controller::run(){
             img = cvMatToQImage(*frame);
             //roiImg = cvMatToQImage(Mat::zeros(roiFrame->size(), CV_8UC1));
 
-
-            qDebug() << frameIdx;
-            if(!circled)
+            //qDebug() << frameIdx;
+            if(!encircled)
                 roiImg = img;
             else{
                 //draw bounding box on ROI and show in original video player
@@ -152,7 +151,7 @@ void Controller::run(){
                 contour->getROI(*frame, circle, mask);
 
                 Mat edgeImg;
-                contour->edgeDetection(edgeImg, mask);
+                contour->edgeDetection(edgeImg, mask, circle);
                 roiImg = cvMatToQImage(edgeImg);
             }
 
