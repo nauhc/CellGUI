@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "controller.h"
 #include "encircle.h"
+#include "areavis.h"
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +38,7 @@ private:
     Controller *myController;
     bool drawMode;
     Encircle *encircle;
+    AreaVis  *areaVis;
 };
 
 #endif // MAINWINDOW_H

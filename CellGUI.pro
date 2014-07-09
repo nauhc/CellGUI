@@ -27,11 +27,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     controller.cpp \
     findcontour.cpp \
-    encircle.cpp
+    encircle.cpp \
+    areavis.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
     findcontour.h \
-    encircle.h
+    encircle.h \
+    areavis.h
 
 FORMS    += mainwindow.ui

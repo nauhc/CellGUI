@@ -122,7 +122,7 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
 }
 
 void Controller::run(){
-    int delay = (1000/fps);
+    int delay = (1500/fps);
     while(!stop){
             if(!inputVideo->read(*frame)){
                 //cout << inputVideo->get(CV_CAP_PROP_POS_FRAMES) << endl;
@@ -146,15 +146,11 @@ void Controller::run(){
                 contour->boundingBox(boxedImg);
                 img = cvMatToQImage(boxedImg);
 
-//                // get coi mask (COI: cell of interest)
-//                Mat mask;
-//                contour->getROI(*frame, circle, mask);
-
-//                Mat edgeImg;
-//                contour->edgeDetection(edgeImg, mask, circle);
 
                 Mat edgeImg;
-                contour->cellDetection(*frame, hull, edgeImg);
+                int area;
+                contour->cellDetection(*frame, hull, edgeImg, area);
+                cout << "frame " << frameIdx << " cell area: " << area << endl;
                 roiImg = cvMatToQImage(edgeImg);
             }
 
@@ -185,7 +181,6 @@ void Controller::run(){
             //emit the singnals
             emit processedImage(img, roiImg);
             this->msleep(delay);
-
         }
 }
 

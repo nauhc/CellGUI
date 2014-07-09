@@ -33,9 +33,13 @@ MainWindow::MainWindow(QWidget *parent) :
     encircle = new Encircle(drawMode, this->centralWidget());
     encircle->setGeometry(40, 30, 500, 500);
 
+    areaVis = new AreaVis(this->centralWidget());
+    areaVis->setGeometry(560, 610, 1120, 500);
+
 }
 
 MainWindow::~MainWindow(){
+    delete areaVis;
     delete encircle;
     delete myController;
     delete ui;
@@ -112,10 +116,10 @@ void MainWindow::on_loadVideoButton_clicked()
 //                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
 
     QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
+//    QString name        = "movie.mp4";
+//    QString name        = "05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
     QString name        = "test.mov";
-//    QString name = "movie.mp4";
-//    QString name = "05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
-    QString filename = filepath + name;
+    QString filename    = filepath + name;
 
     if (!filename.isEmpty()){
             if (!myController->loadVideo(filename.toStdString())){
@@ -165,8 +169,11 @@ void MainWindow::on_drawROIButton_clicked(){
     // when it is circling mode
     // user can circle the cell of interest
     if(!drawMode){
-        //ui->playVideoButton->setEnabled(false);
         drawMode = true;
+
+        areaVis->turnVisOn();
+
+        //ui->playVideoButton->setEnabled(false);
 //        encircle = new Encircle(true, this->centralWidget());
 //        encircle->setGeometry(40, 30, 500, 500);
         encircle->clearCircle();
@@ -180,11 +187,15 @@ void MainWindow::on_drawROIButton_clicked(){
     // and clear the drawing
     else{
         drawMode = false;
+
+//        areaVis->turnVisOff();
+
         encircle->turnOffEncircleMode();
         //delete encircle;
         QVector<QPoint> circle;
         encircle->getRegion(circle);
         myController->setCircle(circle);
+
 
         //ui->playVideoButton->setEnabled(true);
         myController->playVideo();

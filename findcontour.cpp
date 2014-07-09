@@ -16,7 +16,6 @@ void FindContour::setBlkSize(int para2){
     blockSize = para2;
 }
 
-
 /*
 //void FindContour::getROI(const Mat &img, vector<Point> &circle, Mat &mask)
 //{
@@ -71,9 +70,37 @@ void FindContour::setBlkSize(int para2){
 //}*/
 
 // get ROI + edgeDectection
-void FindContour::cellDetection(const Mat &img, vector<Point> &circle, Mat &adapThreshImg){
+void FindContour::cellDetection(const Mat &img, vector<Point> &circle,
+                                Mat &adapThreshImg, int &area){
     frame = &img;
     rect = boundingRect(Mat(circle));
+
+
+
+    /*
+    Rect rect_roi = boundingRect(Mat(circle));
+    int e = 1;
+    int x = rect_roi.x > e? rect_roi.x - e : 0;
+    int y = rect_roi.y > e? rect_roi.y - e : 0;
+    int w = x+rect_roi.width+2*e < img.cols? rect_roi.width+2*e : img.cols-x;
+    int h = y+rect_roi.height+2*e < img.rows? rect_roi.height+2*e : img.rows-y;
+    rect = Rect(x, y, w, h);
+
+//    Mat sub_0; // the rectangle region of ROI
+//    cv::cvtColor((*frame)(rect_roi), sub_0, CV_RGB2GRAY);
+
+//    //filter the image inside the circle
+//    vector<Point> circle_ROI_0;
+//    for (unsigned int i = 0; i < circle.size(); i++){
+//        Point p = Point(circle[i].x - rect_roi.x, circle[i].y - rect_roi.y);
+//        circle_ROI_0.push_back(p);
+//    }
+
+//    //mask for filtering out the cell of interest
+//    Mat mask_0 = Mat::zeros(sub_0.rows, sub_0.cols, CV_8UC1);
+//    fillConvexPoly(mask_0, circle_ROI_0, Scalar(255));
+
+//    imshow("mask_0", mask_0); */
 
     Mat sub; // the rectangle region of ROI
     cv::cvtColor((*frame)(rect), sub, CV_RGB2GRAY);
@@ -89,6 +116,23 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &circle, Mat &adap
     Mat mask = Mat::zeros(sub.rows, sub.cols, CV_8UC1);
     fillConvexPoly(mask, circle_ROI, Scalar(255));
 
+//    vector<Point> concaveHull;
+//    approxPolyDP(circle, concaveHull, 0.01*arcLength(circle,true), true);
+//    fillConvexPoly(mask, concaveHull, Scalar(128));
+//    imshow("mask", mask);
+
+    for(unsigned int c = 0; c < circle_ROI.size(); c++){
+        for(int j = -2; j < 2; j++){
+            int jj = circle_ROI[c].y+j;
+            for(int i = -2; i < 2; i++){
+                int ii = circle_ROI[c].x+i;
+                if(ii < 0 || jj < 0 || ii >= mask.cols || jj >= mask.rows)
+                    continue;
+                mask.at<uchar>(jj, ii) = 255;
+            }
+        }
+    }
+
     //image edge detection for the sub region (roi rect)
     adaptiveThreshold(sub, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
@@ -103,6 +147,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &circle, Mat &adap
                 whiteArea.push_back(Point(i,j));
         }
     }
+    area = whiteArea.size();
 
     //renew circle
     vector<Point> convHull;
