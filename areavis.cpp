@@ -67,18 +67,22 @@ void AreaVis::paintEvent(QPaintEvent *event)
     if(on){
         //initial line
         painter.drawLine(0, (this->height()/2), startX, (this->height()/2));
-        //painter.drawPoint(startX, this->height()/2);
 
-        //realtime line chart
         if (track && currFrm>= startFrm+2){
+            //realtime line chart
             painter.drawPolyline(polyline);
-            for(int i = 0; i < polyline.size(); i++)
-                std::cout << polyline[i].x() << " " << polyline[i].y() << "\n";
-            std::cout<<std::endl;
-
             myPen.setWidth(20);
             painter.setPen(myPen);
             painter.drawPoint(currPoint);
+
+            myPen.setColor(QColor(128, 128, 128));
+            myPen.setWidth(3);
+            painter.setPen(myPen);
+            //draw text showing the cell area
+            QRectF rect = QRectF(QPointF(currPoint.x()-30, currPoint.y()-70),
+                                 QPointF(currPoint.x()+30, currPoint.y()-30));
+            QString textArea = QString::number(area);
+            painter.drawText(rect, Qt::AlignCenter, textArea);
         }
     }
     /*
