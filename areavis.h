@@ -11,15 +11,28 @@ public:
     explicit AreaVis(QWidget *parent = 0);
     void turnVisOn();
     void turnVisOff();
-    void turnTrackOn();
+    void turnTrackOn(int fn, int f);
     void turnTrackOff();
+    void updateArea(int a, int currFrame);
 
 protected:
     void paintEvent(QPaintEvent *event);
 
 private:
-    bool on;
-    bool track;
+    int     area;
+    int     currFrm;
+    int     startArea;
+    int     startFrm;
+    float   step;
+    bool    on;
+    bool    track;
+
+    int gridStepX = 20;
+    int gridStepY = 20;
+
+    QPoint  currPoint;
+    QPolygon polyline;
+
 };
 
 #endif // AREAVIS_H

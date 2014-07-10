@@ -31,7 +31,10 @@ private:
     vector<Point>   hull; // contour of the cell of interest
 
 signals:
-    void    processedImage(QImage image, QImage ROIimg); // signal nonnectted with updateVideoplayerUI SLOT
+    // signal nonnectted with updateVideoplayerUI SLOT
+    void    processedImage(QImage image, QImage ROIimg);
+    void    detectedArea(int area);
+
 private slots:
     void    setAdaptThresh(int var);
     void    setBlkSize(int var);
@@ -55,7 +58,6 @@ public:
     void    getVideoSize(int &width, int &height);
 
     void    setCircle(QVector<QPoint> points);
-
 
 };
 

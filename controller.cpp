@@ -1,5 +1,5 @@
 #include "controller.h"
-#include "QDebug"
+#include "qdebug.h"
 
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
@@ -108,6 +108,11 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
         QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
         return image.rgbSwapped();
     }
+    case CV_32FC3:
+    {
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
+        return image.rgbSwapped();
+    }
     // 8-bit, 1 channel
     case CV_8UC1:
     {
@@ -142,7 +147,7 @@ void Controller::run(){
                 roiImg = img;
             else{
                 //draw bounding box on ROI and show in original video player
-                Mat boxedImg;
+                Mat boxedImg = Mat(frame->rows, frame->cols, CV_8UC3);
                 contour->boundingBox(boxedImg);
                 img = cvMatToQImage(boxedImg);
 
@@ -150,6 +155,7 @@ void Controller::run(){
                 Mat edgeImg;
                 int area;
                 contour->cellDetection(*frame, hull, edgeImg, area);
+                emit detectedArea(area);
                 cout << "frame " << frameIdx << " cell area: " << area << endl;
                 roiImg = cvMatToQImage(edgeImg);
             }

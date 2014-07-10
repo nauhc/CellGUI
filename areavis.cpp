@@ -2,6 +2,9 @@
 #include "qdebug.h"
 #include <iostream>
 
+int startX  = 20;
+int scale   = 200;
+
 AreaVis::AreaVis(QWidget *parent) : QWidget(parent){
     on      = false;
     track   = false;
@@ -17,12 +20,29 @@ void AreaVis::turnVisOff(){
     std::cout << "areaVis is OFF " << std::endl;
 }
 
-void AreaVis::turnTrackOn(){
-    track = true;
+void AreaVis::turnTrackOn(int fn, int f){
+    track       = true;
+    startFrm    = f;
+    step        = float(this->width()-startX)/float(fn-f);
 }
 
 void AreaVis::turnTrackOff(){
     track = false;
+}
+
+void AreaVis::updateArea(int a, int currFrame){
+    if(currFrm == startFrm+2)
+        startArea = a;
+    area = a;
+    currFrm = currFrame;
+
+    if(currFrm - startFrm - 2 > 0){
+        int x = startX + step*(currFrm-startFrm-2);
+        int y = this->height()/2 + (area-startArea)*gridStepY/scale;
+        currPoint = QPoint(x, y);
+        polyline <<  currPoint;
+    }
+
 }
 
 void AreaVis::paintEvent(QPaintEvent *event)
@@ -33,32 +53,38 @@ void AreaVis::paintEvent(QPaintEvent *event)
     painter.setPen(myPen);
 
     // draw background grid
-    int stepX = 20;
-    int stepY = 20;
-    for(int j = 0; j < this->height(); j+=stepY )
+    for(int j = 0; j < this->height(); j+=gridStepY)
         painter.drawLine(0, j, this->width(), j);
-    for(int i = 0; i < this->width(); i+=stepX )
+    for(int i = 0; i < this->width(); i+=gridStepX)
         painter.drawLine(i, 0, i, this->height());
 
+    // draw area
     myPen.setColor(QColor(153, 204, 49)); //green color
     myPen.setWidth(10);
     myPen.setCapStyle(Qt::RoundCap);
     painter.setPen(myPen);
-    if(on){
-//        QRectF rectangle(30.0, 50.0, 500.0, 300.0);
-//        painter.drawRoundedRect(rectangle, 20.0, 15.0);
-        painter.drawLine(0, (this->height()/2), 20, (this->height()/2));
-        myPen.setWidth(16);
-        painter.setPen(myPen);
-        painter.drawPoint(20, this->height()/2);
-        if (track){
 
+    if(on){
+        //initial line
+        painter.drawLine(0, (this->height()/2), startX, (this->height()/2));
+        //painter.drawPoint(startX, this->height()/2);
+
+        //realtime line chart
+        if (track && currFrm>= startFrm+2){
+            painter.drawPolyline(polyline);
+            for(int i = 0; i < polyline.size(); i++)
+                std::cout << polyline[i].x() << " " << polyline[i].y() << "\n";
+            std::cout<<std::endl;
+
+            myPen.setWidth(20);
+            painter.setPen(myPen);
+            painter.drawPoint(currPoint);
         }
     }
-
-
-
     /*
+//        QRectF rectangle(30.0, 50.0, 500.0, 300.0);
+//        painter.drawRoundedRect(rectangle, 20.0, 15.0);
+
 //    //draw an ellipse
 //    //The setRenderHint() call enables antialiasing, telling QPainter to use different
 //    //color intensities on the edges to reduce the visual distortion that normally

@@ -163,6 +163,6 @@ void FindContour::boundingBox(Mat &img)
 {
     img = frame->clone();
     //Rect rect = boundingRect(Mat(circle));
-    Scalar color(0,255,255); // draw a yellow rectangle on the image
-    rectangle(img, rect, color, 1);
+    Scalar color(128, 255, 0); // draw a green rectangle on the image
+    rectangle(img, rect, color, 2);
 }

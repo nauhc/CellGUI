@@ -9,7 +9,7 @@
 #include "areavis.h"
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -26,12 +26,11 @@ private slots:
     void updateVideoplayerUI(QImage img, QImage ROIimg);
 
     void on_playVideoButton_clicked();
-
     void on_loadVideoButton_clicked();
-
     void on_stopVideoButton_clicked();
-
     void on_drawROIButton_clicked();
+
+    void updateAreaVisUI(int area);
 
 private:
     Ui::MainWindow *ui;

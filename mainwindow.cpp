@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(myController, SIGNAL(processedImage(QImage, QImage)), this, SLOT(updateVideoplayerUI(QImage, QImage)));
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)), myController, SLOT(setAdaptThresh(int)));
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)), myController, SLOT(setBlkSize(int)));
+    connect(myController, SIGNAL(detectedArea(int)), this, SLOT(updateAreaVisUI(int)));
 
     ui->loadVideoButton->setEnabled(true);
     ui->playVideoButton->setEnabled(false);
@@ -164,6 +165,9 @@ void MainWindow::on_loadVideoButton_clicked()
 
 }
 
+void MainWindow::updateAreaVisUI(int area){
+    areaVis->updateArea(area, myController->getCurrentFrame());
+}
 
 void MainWindow::on_drawROIButton_clicked(){
     // when it is circling mode
@@ -189,6 +193,8 @@ void MainWindow::on_drawROIButton_clicked(){
         drawMode = false;
 
 //        areaVis->turnVisOff();
+        areaVis->turnTrackOn(myController->getNumberOfFrames(),
+                             myController->getCurrentFrame());
 
         encircle->turnOffEncircleMode();
         //delete encircle;

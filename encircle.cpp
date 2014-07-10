@@ -10,7 +10,8 @@ Encircle::Encircle(bool enabled, QWidget *parent) : QWidget(parent)
 {
     std::cout << "encircler initialized\n" << std::endl;
     penWidth = 3;
-    penColor = QColor(0, 225, 255, 127);
+    //penColor = QColor(0, 225, 255, 127);//blue
+    penColor = QColor(153, 204, 49, 150);
     encircling = false;
     encircleMode = enabled;
     image = QImage(QSize(500, 500), QImage::Format_ARGB32);
