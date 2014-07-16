@@ -16,7 +16,7 @@ public:
     void turnTrackOn(int fn, int f);
     void turnTrackOff();
     void updateArea(int a, int currFrame);
-    //void clearLineChart();
+    void releaseAreaVis();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -27,8 +27,8 @@ private:
     int     startArea;
     int     startFrm;
     float   step;
-    bool    on;
-    bool    track;
+    bool    on; // if visualization is activated
+    bool    track; // if tracking is activated
 
     int gridStepX = 20;
     int gridStepY = 20;

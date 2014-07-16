@@ -6,8 +6,8 @@
 #include "qdebug.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
-                                          ui(new Ui::MainWindow),
-                                          myController(new Controller())
+    ui(new Ui::MainWindow),
+    myController(new Controller())
 {
     ui->setupUi(this);
     connect(myController, SIGNAL(processedImage(QImage, QImage)),
@@ -50,16 +50,16 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
         ui->orgVideo->setAlignment(Qt::AlignCenter);
         ui->orgVideo->setPixmap(
                     QPixmap::fromImage(img).scaled(
-                    ui->orgVideo->size(),
-                    Qt::KeepAspectRatio,
-                    Qt::FastTransformation));
+                        ui->orgVideo->size(),
+                        Qt::KeepAspectRatio,
+                        Qt::FastTransformation));
         //roi video display
         ui->roiVideo->setAlignment(Qt::AlignCenter);
         ui->roiVideo->setPixmap(
                     QPixmap::fromImage(ROIimg).scaled(
-                    ui->roiVideo->size(),
-                    Qt::KeepAspectRatio,
-                    Qt::FastTransformation));
+                        ui->roiVideo->size(),
+                        Qt::KeepAspectRatio,
+                        Qt::FastTransformation));
         ui->horizontalSlider->setValue(myController->getCurrentFrame());
         ui->frameLabel->setText(QString::number(int(myController->getCurrentFrame()))
                                 +" / "+ QString::number(myController->getNumberOfFrames()));
@@ -94,10 +94,10 @@ void MainWindow::on_stopVideoButton_clicked()
         myController->pauseVideo();
     myController->releaseVideo();
     ui->frameLabel->clear();
+
     encircled = false;
 
-    areaVis->turnTrackOff();
-    areaVis->turnVisOff();
+    areaVis->releaseAreaVis();
 
     QPixmap pixmap1(1,1); // Works
     pixmap1 = pixmap1.scaled(ui->roiVideo->width(), ui->roiVideo->height());
@@ -120,55 +120,55 @@ void MainWindow::on_loadVideoButton_clicked()
 {
     cout << "'Load Video' Button clicked." << endl;
 
-    /*if(!myController->videoIsNull()){
+    /*
+     if(!myController->videoIsNull()){
         cout << "*******check point*******" << endl;
         delete myController;
         myController = new Controller();
     }*/
 
-
-//    QString filename = QFileDialog::getOpenFileName(this,
-//                                                    tr("Open Video"), "../../../video/",
-//                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
+    //    QString filename = QFileDialog::getOpenFileName(this,
+    //                                                    tr("Open Video"), "../../../video/",
+    //                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
 
     QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
     QString name        = "test.mov";
     QString filename    = filepath + name;
 
     if (!filename.isEmpty()){
-            if (!myController->loadVideo(filename.toStdString())){
-                QMessageBox msgBox;
-                msgBox.setText("The selected video could not be opened!");
-                msgBox.exec();
-            }
-            else{
-                ui->loadVideoButton->setEnabled(false);
-                ui->playVideoButton->setEnabled(true);
-                ui->drawROIButton->setEnabled(true);
-                ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
-                ui->frameLabel->setText("0 / " + QString::number(myController->getNumberOfFrames()));
+        if (!myController->loadVideo(filename.toStdString())){
+            QMessageBox msgBox;
+            msgBox.setText("The selected video could not be opened!");
+            msgBox.exec();
+        }
+        else{
+            ui->loadVideoButton->setEnabled(false);
+            ui->playVideoButton->setEnabled(true);
+            ui->drawROIButton->setEnabled(true);
+            ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
+            ui->frameLabel->setText("0 / " + QString::number(myController->getNumberOfFrames()));
 
-                //set video player label size and postion
-                //according to the size of the selected video
-                int w, h;
-                myController->getVideoSize(w, h);
-                int x, y, width, height;
-                if(w>h){
-                    width   = 500;
-                    height  = 500*h/w;
-                    x = 40; y = 30+(width-height)/2;
-                }else{
-                    width   = 500*w/h;
-                    height  = 500;
-                    x = 40+(height-width)/2; y = 30;
-                }
-                ui->orgVideo->setGeometry(x, y, width, height);
-                ui->orgVideo->setAlignment(Qt::AlignCenter);
-                //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
-                //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
-                ui->roiVideo->setGeometry(x, y + 580, width, height);
-                ui->roiVideo->setAlignment(Qt::AlignCenter);
+            //set video player label size and postion
+            //according to the size of the selected video
+            int w, h;
+            myController->getVideoSize(w, h);
+            int x, y, width, height;
+            if(w>h){
+                width   = 500;
+                height  = 500*h/w;
+                x = 40; y = 30+(width-height)/2;
+            }else{
+                width   = 500*w/h;
+                height  = 500;
+                x = 40+(height-width)/2; y = 30;
             }
+            ui->orgVideo->setGeometry(x, y, width, height);
+            ui->orgVideo->setAlignment(Qt::AlignCenter);
+            //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
+            //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
+            ui->roiVideo->setGeometry(x, y + 580, width, height);
+            ui->roiVideo->setAlignment(Qt::AlignCenter);
+        }
     }
     else{
         QMessageBox msgBox;
@@ -194,35 +194,31 @@ void MainWindow::on_drawROIButton_clicked(){
 
         myController->pauseVideo();
 
-        areaVis->turnVisOn();
-
         encircle->clearCircle();
         encircle->turnOnEncircleMode();
         encircled = true;
+
+        areaVis->turnVisOn();
     }
 
     // when circling mode is turned off, track starts
     // pass the circled region to controller
     // and clear the drawing
     else{
-//        if(!encircled){
-            //ui->stopVideoButton->setEnabled(true);
-            ui->playVideoButton->setEnabled(true);
-            on_playVideoButton_clicked();
-            ui->drawROIButton->setText("Encircle Cell");
+        //ui->stopVideoButton->setEnabled(true);
+        ui->playVideoButton->setEnabled(true);
+        on_playVideoButton_clicked();
+        ui->drawROIButton->setText("Encircle Cell");
 
-            areaVis->turnTrackOn(myController->getNumberOfFrames(),
-                                 myController->getCurrentFrame());
+        areaVis->turnTrackOn(myController->getNumberOfFrames(),
+                             myController->getCurrentFrame());
 
-            encircle->turnOffEncircleMode();
-            //delete encircle;
-            QVector<QPoint> circle;
-            encircle->getRegion(circle);
+        encircle->turnOffEncircleMode();
+        //delete encircle;
+        QVector<QPoint> circle;
+        encircle->getRegion(circle);
 
-            myController->setCircle(circle);
-//        }
-
-
+        myController->setCircle(circle);
     }
 }
 

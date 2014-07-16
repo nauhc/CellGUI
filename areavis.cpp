@@ -46,12 +46,16 @@ void AreaVis::updateArea(int a, int currFrame){
         currPoint = QPoint(x, y);
         polyline <<  currPoint;
     }
-
 }
 
-//void AreaVis::clearLineChart(){
-//    polyline.clear();
-//}
+void AreaVis::releaseAreaVis(){
+    std::cout << "Area visualization is off." << std::endl;
+    track   = false;
+    on      = false;
+    polyline.clear(); // clear polyline
+    currPoint = QPoint(); // construct a null point
+
+}
 
 void AreaVis::paintEvent(QPaintEvent *event)
 {
@@ -76,17 +80,17 @@ void AreaVis::paintEvent(QPaintEvent *event)
         //initial line
         painter.drawLine(0, (this->height()/2), startX, (this->height()/2));
 
-        if (track && currFrm>= startFrm+2){
+        if (track && (currFrm >= startFrm+2)){
             //realtime line chart
             painter.drawPolyline(polyline);
             myPen.setWidth(20);
             painter.setPen(myPen);
             painter.drawPoint(currPoint);
 
+            //draw text showing the cell area
             myPen.setColor(QColor(128, 128, 128));
             myPen.setWidth(3);
             painter.setPen(myPen);
-            //draw text showing the cell area
             QRectF rect = QRectF(QPointF(currPoint.x()-50, currPoint.y()-70),
                                  QPointF(currPoint.x()+50, currPoint.y()-30));
             QString textArea = /*"cell area: "+ */QString::number(area);
