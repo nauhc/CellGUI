@@ -29,9 +29,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
-    continueDrawing = true;
     encircle = new Encircle(this->centralWidget());
     encircle->setGeometry(40, 30, 500, 500);
+    encircled = false;
 
     areaVis = new AreaVis(this->centralWidget());
     areaVis->setGeometry(560, 610, 1120, 500);
@@ -80,7 +80,8 @@ void MainWindow::on_playVideoButton_clicked()
         myController->pauseVideo();
         ui->playVideoButton->setText("Play");
         ui->stopVideoButton->setEnabled(true);
-        ui->drawROIButton->setEnabled(true);
+        if(!encircled)
+            ui->drawROIButton->setEnabled(true);
     }
 }
 
@@ -93,7 +94,7 @@ void MainWindow::on_stopVideoButton_clicked()
         myController->pauseVideo();
     myController->releaseVideo();
     ui->frameLabel->clear();
-    continueDrawing = false;
+    encircled = false;
 
     areaVis->turnTrackOff();
     areaVis->turnVisOff();
@@ -167,7 +168,6 @@ void MainWindow::on_loadVideoButton_clicked()
                 //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
                 ui->roiVideo->setGeometry(x, y + 580, width, height);
                 ui->roiVideo->setAlignment(Qt::AlignCenter);
-                continueDrawing = true;
             }
     }
     else{
@@ -178,12 +178,7 @@ void MainWindow::on_loadVideoButton_clicked()
 }
 
 void MainWindow::updateAreaVisUI(int area){
-    if(!continueDrawing){
-        //clear polyline
-        //areaVis->clearLineChart();
-    }else{
-        areaVis->updateArea(area, myController->getCurrentFrame());
-    }
+    areaVis->updateArea(area, myController->getCurrentFrame());
 }
 
 void MainWindow::on_drawROIButton_clicked(){
@@ -192,6 +187,7 @@ void MainWindow::on_drawROIButton_clicked(){
     // when it is circling mode
     // user can circle the cell of interest
     if(!encircle->isEncircled()){
+
         ui->playVideoButton->setEnabled(false);
         ui->stopVideoButton->setEnabled(false);
         ui->drawROIButton->setText("Track Cell");
@@ -202,27 +198,30 @@ void MainWindow::on_drawROIButton_clicked(){
 
         encircle->clearCircle();
         encircle->turnOnEncircleMode();
+        encircled = true;
     }
 
     // when circling mode is turned off, track starts
     // pass the circled region to controller
     // and clear the drawing
     else{
-        //ui->stopVideoButton->setEnabled(true);
-        ui->playVideoButton->setEnabled(true);
-        on_playVideoButton_clicked();
-        ui->drawROIButton->setText("Encircle Cell");
+//        if(!encircled){
+            //ui->stopVideoButton->setEnabled(true);
+            ui->playVideoButton->setEnabled(true);
+            on_playVideoButton_clicked();
+            ui->drawROIButton->setText("Encircle Cell");
 
-        areaVis->turnTrackOn(myController->getNumberOfFrames(),
-                             myController->getCurrentFrame());
+            areaVis->turnTrackOn(myController->getNumberOfFrames(),
+                                 myController->getCurrentFrame());
 
-        encircle->turnOffEncircleMode();
-        //delete encircle;
-        QVector<QPoint> circle;
-        encircle->getRegion(circle);
+            encircle->turnOffEncircleMode();
+            //delete encircle;
+            QVector<QPoint> circle;
+            encircle->getRegion(circle);
 
-        myController->setCircle(circle);
-        //myController->playVideo();
+            myController->setCircle(circle);
+//        }
+
 
     }
 }

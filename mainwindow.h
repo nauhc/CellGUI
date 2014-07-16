@@ -34,10 +34,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    Controller *myController;
-    bool continueDrawing;
-    Encircle *encircle;
-    AreaVis  *areaVis;
+    Controller  *myController;
+    Encircle    *encircle;
+    AreaVis     *areaVis;
+    bool        encircled;
 };
 
 #endif // MAINWINDOW_H
