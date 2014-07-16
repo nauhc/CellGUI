@@ -9,11 +9,14 @@ class AreaVis : public QWidget
     Q_OBJECT
 public:
     explicit AreaVis(QWidget *parent = 0);
+    ~AreaVis();
+
     void turnVisOn();
     void turnVisOff();
     void turnTrackOn(int fn, int f);
     void turnTrackOff();
     void updateArea(int a, int currFrame);
+    //void clearLineChart();
 
 protected:
     void paintEvent(QPaintEvent *event);

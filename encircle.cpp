@@ -5,15 +5,14 @@
 #include "qdebug.h"
 #include <iostream>
 
-Encircle::Encircle(bool enabled, QWidget *parent) : QWidget(parent)
-//Encircle::Encircle(QWidget *parent) : (parent)*/
+Encircle::Encircle(QWidget *parent) : QWidget(parent)
 {
     std::cout << "encircler initialized\n" << std::endl;
     penWidth = 3;
     //penColor = QColor(0, 225, 255, 127);//blue
     penColor = QColor(153, 204, 49, 150);
     encircling = false;
-    encircleMode = enabled;
+    encircleMode = false;
     image = QImage(QSize(500, 500), QImage::Format_ARGB32);
     image.fill(Qt::transparent);
     //image.fill(QColor(qRgba(0, 0, 255, 127)));
@@ -65,7 +64,6 @@ void Encircle::mousePressEvent(QMouseEvent *event)
 void Encircle::mouseMoveEvent(QMouseEvent *event)
 {
     if(encircleMode && (event->buttons() & Qt::LeftButton) && encircling){
-        //qDebug() << 'mouse moved';
         currPoint = event->pos();
         drawLineTo(currPoint);
         lastPoint = currPoint;
@@ -76,7 +74,6 @@ void Encircle::mouseMoveEvent(QMouseEvent *event)
 void Encircle::mouseReleaseEvent(QMouseEvent *event)
 {
     if (encircleMode && event->button() == Qt::LeftButton && encircling) {
-        //qDebug() << 'mouse released';
         currPoint = event->pos();
         drawLineTo(currPoint);
         encircling = false;

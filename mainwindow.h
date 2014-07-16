@@ -35,7 +35,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Controller *myController;
-    bool drawMode;
+    bool continueDrawing;
     Encircle *encircle;
     AreaVis  *areaVis;
 };

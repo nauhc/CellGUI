@@ -10,6 +10,10 @@ AreaVis::AreaVis(QWidget *parent) : QWidget(parent){
     track   = false;
 }
 
+AreaVis::~AreaVis(){
+
+}
+
 void AreaVis::turnVisOn(){
     on = true;
     std::cout << "areaVis is ON " << std::endl;
@@ -44,6 +48,10 @@ void AreaVis::updateArea(int a, int currFrame){
     }
 
 }
+
+//void AreaVis::clearLineChart(){
+//    polyline.clear();
+//}
 
 void AreaVis::paintEvent(QPaintEvent *event)
 {
@@ -85,17 +93,6 @@ void AreaVis::paintEvent(QPaintEvent *event)
             painter.drawText(rect, Qt::AlignCenter, textArea);
         }
     }
-    /*
-//        QRectF rectangle(30.0, 50.0, 500.0, 300.0);
-//        painter.drawRoundedRect(rectangle, 20.0, 15.0);
 
-//    //draw an ellipse
-//    //The setRenderHint() call enables antialiasing, telling QPainter to use different
-//    //color intensities on the edges to reduce the visual distortion that normally
-//    //occurs when the edges of a shape are converted into pixels
-//    painter.setRenderHint(QPainter::Antialiasing, true);
-//    painter.setPen(QPen(Qt::black, 3, Qt::DashDotLine, Qt::RoundCap));
-//    painter.setBrush(QBrush(Qt::green, Qt::SolidPattern));
-//    painter.drawEllipse(200, 80, 400, 240); */
     this->update();
 }

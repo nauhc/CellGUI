@@ -13,7 +13,7 @@ class Encircle : public QWidget
     Q_OBJECT
 public:
     //explicit Encircle(QWidget *parent = 0);
-    explicit Encircle(bool enabled, QWidget *parent = 0);
+    explicit Encircle(QWidget *parent = 0);
     ~Encircle();
     bool isEncircled() const { return encircleMode; }
     void turnOnEncircleMode();
