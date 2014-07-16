@@ -42,6 +42,8 @@ public:
                        Mat &adapThreshImg, int &area);
     // draw a bounding box of roi rect
     void boundingBox(Mat &img/*, vector<Point> &circle*/);
+
+    void clearCountour();
 };
 
 #endif // FINDCONTOUR_H

@@ -168,7 +168,7 @@
       <x>1200</x>
       <y>30</y>
       <width>481</width>
-      <height>471</height>
+      <height>531</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -229,7 +229,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>DrawROI</string>
+     <string>Encircle Cell</string>
     </property>
    </widget>
   </widget>

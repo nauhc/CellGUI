@@ -42,6 +42,8 @@ void Encircle::getRegion(QVector<QPoint> &circle)
 void Encircle::clearCircle()
 {
     points.clear();
+    encircleMode = false;
+    encircling = false;
 }
 
 

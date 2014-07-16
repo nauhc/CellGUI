@@ -3,10 +3,11 @@
 
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
-   frame(new Mat()), roiFrame(new Mat()), /* RGBframe(new Mat()),*/
+   frame(new Mat()), roiFrame(new Mat()),
    contour(new FindContour())
 {
-    stop = true;
+    cout << "controller initialzed." << endl;
+    pause = true;
     encircled = false;
 }
 Controller::~Controller(){
@@ -15,17 +16,12 @@ Controller::~Controller(){
         delete inputVideo;
     delete roiFrame;
 //    delete frame; // Do not delete frame here. It has been released in FindContour class!
-    //delete RGBframe;
     delete contour;
+    cout << "controller deleted" << endl;
 }
 
 
 bool Controller::loadVideo(string filename){
-//    const string source = "/Users/chuanwang/Sourcecode/Cell/video/movie.avi";
-//    Video *inputVideo = new Video();
-//    if(inputVideo->readVideo(source)){
-//        inputVideo->edgeDetection();
-//    }
     inputVideo->open(filename);
     if(!inputVideo->isOpened()){
         cout << "Could not open the input video:" << filename << endl;
@@ -35,7 +31,7 @@ bool Controller::loadVideo(string filename){
         cout << "Input video file:" << filename << " opened." << endl;
         frameCnt    = (int) inputVideo->get(CV_CAP_PROP_FRAME_COUNT);
         fps         = inputVideo->get(CV_CAP_PROP_FPS);
-        videoSize = Size((int) inputVideo->get(CV_CAP_PROP_FRAME_WIDTH),
+        videoSize   = Size((int) inputVideo->get(CV_CAP_PROP_FRAME_WIDTH),
                          (int) inputVideo->get(CV_CAP_PROP_FRAME_HEIGHT));
         cout << "video size: " << videoSize << "\n";
         cout << "frame count: " << frameCnt << "\n";
@@ -47,8 +43,8 @@ bool Controller::loadVideo(string filename){
 
 void Controller::playVideo(){
     if((!isRunning())){
-        if(videoIsStopped()){
-            stop = false;
+        if(videoIsPaused()){
+            pause = false;
         }
         start(LowPriority);
     }
@@ -67,8 +63,13 @@ bool Controller::videoIsNull(){
 }
 
 void Controller::releaseVideo(){
+    // release video
     inputVideo->release();
+    //clear contour
+    encircled = false;
+
 }
+
 
 void Controller::getVideoSize(int &width, int &height)
 {
@@ -128,11 +129,11 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
 
 void Controller::run(){
     int delay = (1500/fps);
-    while(!stop){
+    while(!pause){
             if(!inputVideo->read(*frame)){
                 //cout << inputVideo->get(CV_CAP_PROP_POS_FRAMES) << endl;
                 cout << "Unable to retrieve frame from video stream." << endl;
-                stop = true;
+                pause = true;
                 continue;
             }
 
@@ -150,7 +151,6 @@ void Controller::run(){
                 Mat boxedImg = Mat(frame->rows, frame->cols, CV_8UC3);
                 contour->boundingBox(boxedImg);
                 img = cvMatToQImage(boxedImg);
-
 
                 Mat edgeImg;
                 int area;
@@ -190,12 +190,12 @@ void Controller::run(){
         }
 }
 
-void Controller::stopVideo(){
-    stop = true;
+void Controller::pauseVideo(){
+    pause = true;
 }
 
-bool Controller::videoIsStopped(){
-    return this->stop;
+bool Controller::videoIsPaused(){
+    return this->pause;
 }
 
 double Controller::getNumberOfFrames(){

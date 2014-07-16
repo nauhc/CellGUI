@@ -15,7 +15,7 @@ class Controller : public QThread
 {   Q_OBJECT
 private:
     VideoCapture    *inputVideo; //video processing -- openCV
-    bool            stop;
+    bool            pause;
     Mat             *frame; // frame from the video
 //    Mat             *RGBframe; // color frame from the video
     Mat             *roiFrame; // roi rectangle from frame
@@ -49,8 +49,8 @@ public:
 
     bool    videoIsNull();
     void    playVideo();
-    void    stopVideo();
-    bool    videoIsStopped();
+    void    pauseVideo();
+    bool    videoIsPaused();
     bool    loadVideo(string filename);
     double  getNumberOfFrames();
     double  getCurrentFrame();

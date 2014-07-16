@@ -75,9 +75,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &circle,
     frame = &img;
     rect = boundingRect(Mat(circle));
 
-
-
-    /*
+/*
     Rect rect_roi = boundingRect(Mat(circle));
     int e = 1;
     int x = rect_roi.x > e? rect_roi.x - e : 0;
@@ -165,4 +163,9 @@ void FindContour::boundingBox(Mat &img)
     //Rect rect = boundingRect(Mat(circle));
     Scalar color(128, 255, 0); // draw a green rectangle on the image
     rectangle(img, rect, color, 2);
+}
+
+void FindContour::clearCountour()
+{
+
 }

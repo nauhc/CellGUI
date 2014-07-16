@@ -79,9 +79,9 @@ void AreaVis::paintEvent(QPaintEvent *event)
             myPen.setWidth(3);
             painter.setPen(myPen);
             //draw text showing the cell area
-            QRectF rect = QRectF(QPointF(currPoint.x()-30, currPoint.y()-70),
-                                 QPointF(currPoint.x()+30, currPoint.y()-30));
-            QString textArea = QString::number(area);
+            QRectF rect = QRectF(QPointF(currPoint.x()-50, currPoint.y()-70),
+                                 QPointF(currPoint.x()+50, currPoint.y()-30));
+            QString textArea = /*"cell area: "+ */QString::number(area);
             painter.drawText(rect, Qt::AlignCenter, textArea);
         }
     }

@@ -5,20 +5,19 @@
 #include "ui_mainwindow.h"
 #include "qdebug.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    myController(new Controller())
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+                                          ui(new Ui::MainWindow),
+                                          myController(new Controller())
 {
-//    myController = new Controller();
-//    QObject::connect(myController, SIGNAL(processedImage(QImage)),
-//                     this, SLOT(updateVideoplayerUI(QImage)));
-
     ui->setupUi(this);
-    connect(myController, SIGNAL(processedImage(QImage, QImage)), this, SLOT(updateVideoplayerUI(QImage, QImage)));
-    connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)), myController, SLOT(setAdaptThresh(int)));
-    connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)), myController, SLOT(setBlkSize(int)));
-    connect(myController, SIGNAL(detectedArea(int)), this, SLOT(updateAreaVisUI(int)));
+    connect(myController, SIGNAL(processedImage(QImage, QImage)),
+            this, SLOT(updateVideoplayerUI(QImage, QImage)));
+    connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
+            myController, SLOT(setAdaptThresh(int)));
+    connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
+            myController, SLOT(setBlkSize(int)));
+    connect(myController, SIGNAL(detectedArea(int)),
+            this, SLOT(updateAreaVisUI(int)));
 
     ui->loadVideoButton->setEnabled(true);
     ui->playVideoButton->setEnabled(false);
@@ -36,7 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     areaVis = new AreaVis(this->centralWidget());
     areaVis->setGeometry(560, 610, 1120, 500);
-
 }
 
 MainWindow::~MainWindow(){
@@ -65,29 +63,40 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
         ui->horizontalSlider->setValue(myController->getCurrentFrame());
         ui->frameLabel->setText(QString::number(int(myController->getCurrentFrame()))
                                 +" / "+ QString::number(myController->getNumberOfFrames()));
-
     }
 
 }
 
+// paly or pause video
 void MainWindow::on_playVideoButton_clicked()
 {
-    if(myController->videoIsStopped()){
+    cout << "'Play/Pause Video' Button clicked." << endl;
+    if(myController->videoIsPaused()){
         myController->playVideo();
         ui->playVideoButton->setText("Pause");
         ui->stopVideoButton->setEnabled(false);
+        ui->drawROIButton->setEnabled(false);
     }else{
-        myController->stopVideo();
+        myController->pauseVideo();
         ui->playVideoButton->setText("Play");
         ui->stopVideoButton->setEnabled(true);
+        ui->drawROIButton->setEnabled(true);
     }
 }
 
+//stop and release video
 void MainWindow::on_stopVideoButton_clicked()
 {
-    if(!myController->videoIsStopped())
-        myController->stopVideo();
+    cout << "'Stop Video' Button clicked." << endl;
+
+    if(!myController->videoIsPaused())
+        myController->pauseVideo();
     myController->releaseVideo();
+
+    ui->frameLabel->clear();
+
+    areaVis->turnTrackOff();
+    areaVis->turnVisOff();
 
     QPixmap pixmap1(1,1); // Works
     pixmap1 = pixmap1.scaled(ui->roiVideo->width(), ui->roiVideo->height());
@@ -102,23 +111,26 @@ void MainWindow::on_stopVideoButton_clicked()
     ui->playVideoButton->setEnabled(false);
     ui->stopVideoButton->setEnabled(false);
     ui->horizontalSlider->setValue(0);
+
+    ui->drawROIButton->setEnabled(false);
 }
 
 void MainWindow::on_loadVideoButton_clicked()
 {
-    if(!myController->videoIsNull()){
+    cout << "'Load Video' Button clicked." << endl;
+
+    /*if(!myController->videoIsNull()){
+        cout << "*******check point*******" << endl;
         delete myController;
         myController = new Controller();
+    }*/
 
-    }
 
 //    QString filename = QFileDialog::getOpenFileName(this,
 //                                                    tr("Open Video"), "../../../video/",
 //                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
 
     QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
-//    QString name        = "movie.mp4";
-//    QString name        = "05232014_BV2_37C_neg___07_oif_images_C002 (Converted).mov";
     QString name        = "test.mov";
     QString filename    = filepath + name;
 
@@ -162,7 +174,6 @@ void MainWindow::on_loadVideoButton_clicked()
         msgBox.setText("Filename empty!");
         msgBox.exec();
     }
-
 }
 
 void MainWindow::updateAreaVisUI(int area){
@@ -170,29 +181,36 @@ void MainWindow::updateAreaVisUI(int area){
 }
 
 void MainWindow::on_drawROIButton_clicked(){
+    cout << "Encircle Cell Button clicked." << endl;
+
     // when it is circling mode
     // user can circle the cell of interest
     if(!drawMode){
         drawMode = true;
 
+        ui->playVideoButton->setEnabled(false);
+        ui->stopVideoButton->setEnabled(false);
+        ui->drawROIButton->setText("Track Cell");
+
+        myController->pauseVideo();
+
         areaVis->turnVisOn();
 
-        //ui->playVideoButton->setEnabled(false);
-//        encircle = new Encircle(true, this->centralWidget());
-//        encircle->setGeometry(40, 30, 500, 500);
         encircle->clearCircle();
         encircle->turnOnEncircleMode();
-        myController->stopVideo();
-        ui->drawROIButton->setText("track");
-
     }
-    // when circling mode is turned off
-    // pass the circled region to controoller
+
+    // when circling mode is turned off, track starts
+    // pass the circled region to controller
     // and clear the drawing
     else{
         drawMode = false;
 
-//        areaVis->turnVisOff();
+        //ui->stopVideoButton->setEnabled(true);
+        ui->playVideoButton->setEnabled(true);
+        on_playVideoButton_clicked();
+        ui->drawROIButton->setText("Encircle Cell");
+
         areaVis->turnTrackOn(myController->getNumberOfFrames(),
                              myController->getCurrentFrame());
 
@@ -200,12 +218,9 @@ void MainWindow::on_drawROIButton_clicked(){
         //delete encircle;
         QVector<QPoint> circle;
         encircle->getRegion(circle);
+
         myController->setCircle(circle);
-
-
-        //ui->playVideoButton->setEnabled(true);
-        myController->playVideo();
-        ui->drawROIButton->setText("draw ROI");
+        //myController->playVideo();
 
     }
 }

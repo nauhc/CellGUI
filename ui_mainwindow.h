@@ -94,7 +94,7 @@ public:
         cellVis->setStyleSheet(QStringLiteral("Background-color:rgb(255, 255, 255)"));
         coordVis = new QLabel(centralWidget);
         coordVis->setObjectName(QStringLiteral("coordVis"));
-        coordVis->setGeometry(QRect(1200, 30, 481, 471));
+        coordVis->setGeometry(QRect(1200, 30, 481, 531));
         coordVis->setAutoFillBackground(false);
         coordVis->setStyleSheet(QStringLiteral("Background-color:rgb(255, 255, 255)"));
         horizontalSlider = new QSlider(centralWidget);
@@ -143,7 +143,7 @@ public:
         cellVis->setText(QString());
         coordVis->setText(QString());
         frameLabel->setText(QString());
-        drawROIButton->setText(QApplication::translate("MainWindow", "DrawROI", 0));
+        drawROIButton->setText(QApplication::translate("MainWindow", "Encircle Cell", 0));
     } // retranslateUi
 
 };
