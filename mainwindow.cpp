@@ -60,9 +60,14 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
                         ui->roiVideo->size(),
                         Qt::KeepAspectRatio,
                         Qt::FastTransformation));
-        ui->horizontalSlider->setValue(myController->getCurrentFrame());
-        ui->frameLabel->setText(QString::number(int(myController->getCurrentFrame()))
-                                +" / "+ QString::number(myController->getNumberOfFrames()));
+        int currFrm     = myController->getCurrentFrame();
+        int totalFrm    = myController->getNumberOfFrames();
+        ui->horizontalSlider->setValue(currFrm);
+        ui->frameLabel->setText(QString::number(currFrm) +" / "+ QString::number(totalFrm));
+        if(currFrm == totalFrm){
+            ui->playVideoButton->setEnabled(false);
+            ui->stopVideoButton->setEnabled(true);
+        }
     }
 
 }
@@ -109,6 +114,7 @@ void MainWindow::on_stopVideoButton_clicked()
     ui->orgVideo->setPixmap(pixmap2);
 
     ui->loadVideoButton->setEnabled(true);
+    ui->playVideoButton->setText("play");
     ui->playVideoButton->setEnabled(false);
     ui->stopVideoButton->setEnabled(false);
     ui->horizontalSlider->setValue(0);
@@ -143,7 +149,7 @@ void MainWindow::on_loadVideoButton_clicked()
         }
         else{
             ui->loadVideoButton->setEnabled(false);
-            ui->playVideoButton->setEnabled(true);
+            ui->playVideoButton->setEnabled(true); //
             ui->drawROIButton->setEnabled(true);
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
             ui->frameLabel->setText("0 / " + QString::number(myController->getNumberOfFrames()));
@@ -156,11 +162,13 @@ void MainWindow::on_loadVideoButton_clicked()
             if(w>h){
                 width   = 500;
                 height  = 500*h/w;
-                x = 40; y = 30+(width-height)/2;
+                x = 40;
+                y = 30+(width-height)/2;
             }else{
                 width   = 500*w/h;
                 height  = 500;
-                x = 40+(height-width)/2; y = 30;
+                x = 40+(height-width)/2;
+                y = 30;
             }
             ui->orgVideo->setGeometry(x, y, width, height);
             ui->orgVideo->setAlignment(Qt::AlignCenter);
