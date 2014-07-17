@@ -54,7 +54,6 @@ void AreaVis::releaseAreaVis(){
     on      = false;
     polyline.clear(); // clear polyline
     currPoint = QPoint(); // construct a null point
-
 }
 
 void AreaVis::paintEvent(QPaintEvent *event)

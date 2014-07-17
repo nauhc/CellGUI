@@ -1,4 +1,5 @@
 #include "findcontour.h"
+#include "imgproc/imgproc.hpp"
 
 FindContour::FindContour(): frame(new Mat())/*, roi(new Mat())*/{
 }
@@ -70,10 +71,10 @@ void FindContour::setBlkSize(int para2){
 //}*/
 
 // get ROI + edgeDectection
-void FindContour::cellDetection(const Mat &img, vector<Point> &circle,
-                                Mat &adapThreshImg, int &area){
+void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
+                                Mat &openclose, int &area){
     frame = &img;
-    rect = boundingRect(Mat(circle));
+    rect = boundingRect(Mat(cir));
 
 /*
     Rect rect_roi = boundingRect(Mat(circle));
@@ -105,8 +106,8 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &circle,
 
     //filter the image inside the circle
     vector<Point> circle_ROI;
-    for (unsigned int i = 0; i < circle.size(); i++){
-        Point p = Point(circle[i].x - rect.x, circle[i].y - rect.y);
+    for (unsigned int i = 0; i < cir.size(); i++){
+        Point p = Point(cir[i].x - rect.x, cir[i].y - rect.y);
         circle_ROI.push_back(p);
     }
 
@@ -130,7 +131,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &circle,
             }
         }
     }
-
+    Mat adapThreshImg;
     //image edge detection for the sub region (roi rect)
     adaptiveThreshold(sub, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
@@ -147,12 +148,40 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &circle,
     }
     area = whiteArea.size();
 
-    //renew circle
+    // mophological opening and closing
+    Mat open;
+    int dilation_size = 3;
+    Mat element = getStructuringElement( MORPH_ELLIPSE,
+                                         Size( 2*dilation_size+1, 2*dilation_size+1 ),
+                                         Point( dilation_size, dilation_size ) );
+    dilate(adapThreshImg, open, element);
+    //Mat openclose;
+    erode(open, openclose, element);
+
+    GaussianBlur( openclose, openclose, Size(5, 5), 2, 2 );
+    imshow("blured openclose", openclose);
+//    vector<Vec3f> circles;
+//    HoughCircles(sub, circles, CV_HOUGH_GRADIENT, 1, adapThreshImg.rows/10, 100, 100, 0, 0 );
+
+//    cout << "circle found:" << circles.size();
+//    for( size_t i = 0; i < circles.size(); i++ )
+//    {
+//       Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+//       int radius = cvRound(circles[i][2]);
+//       cout << "center " << center << " radius " << radius << "\n";
+//       // circle center
+//       circle(openclose, center, 3, Scalar(0,255,0), -1, 8, 0 );
+//       // circle outline
+//       circle(openclose, center, radius, Scalar(0,0,255), 3, 8, 0 );
+//     }
+//    cout<< endl;
+
+    //renew circle points as the convex hull
     vector<Point> convHull;
     convexHull(whiteArea, convHull);
-    circle.clear();
+    cir.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)
-        circle.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
+        cir.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
 
 }
 
@@ -165,7 +194,3 @@ void FindContour::boundingBox(Mat &img)
     rectangle(img, rect, color, 2);
 }
 
-void FindContour::clearCountour()
-{
-
-}
