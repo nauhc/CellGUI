@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -12,25 +13,38 @@
 <h1>Cell Video Processing Project Log</h1>
 
 Chuan Wang @ ViDi
+<h2> ----- Jul 18<sup>th</sup> 2014 ----- </h2>
+<h3> Implementation </h3>
+The previous implementation was rather ad-hoc, did refactor them.
+
+<h3> Detection </h3>
+In order to recognize the cell and find the cell contour accurately, a new method using hough circle transform is discussed. It will detect the circle-like shapes in the image. <br>
+If this is well done, there are two benefits. First, the recognition of the contour will be more accurate. Second, it is easier to get ride of nearby cells by its morphological specificity.
+Dilation and erosion are applied to the edge images with circular templates. Hough transform will be applied to see the detection effect.
+<br><br>
+<img src = "v005.png" alt = "dilation and erosion" height = "600" width = "500">
+<br><br>
+If the HCT method does not effect well enough, machine learning approaches might be applied for cell recognition.
+<br><br>
 
 <h2> ----- Jul 11<sup>th</sup> 2014 ----- </h2>
 
 <h3> Detection </h3>
-The software is able to track isolated cells that selected by the user, and detecting the area of the cell in each frame.
+The software is able to track isolated cells that selected by the user, and detect the area of the cell in each frame.
 The detection is not accurate enough as the area is calculated by the convex hull of the cell. Need to find the concave hull instead.
 Also, if the cell is not isolated, the nearby cell will influence the detection badly due to the limitation of current algorithm.
 
 <h3> Visualization </h3>
 A line chart is added to the software to show the area changing of the cell. The horizontal axis represents time/frame, while the vertical represents area.
-More feature (other than area) such as the blebbing extent, the changing of shape along time will be measured and visualized.
+More feature (other than area) such as the perimeter, the blebbing extent, the changing of shape along time will be measured and visualized.<br>
 <!--<embed src="cellDetection_v004.mp4" width="750" height="600" scale="aspect" controller="false">-->
 
-    <video width="750" height="600" controls  poster="v004.png">
-        <source src="cellDetection_v004.mp4" type="video/mp4" />
-        <!--<source src="cellDetection_v004.ogg" type="video/ogg" />-->
-        Your browser does not support the video tag.
-    </video>
-
+<video width="750" height="600" controls  poster="v004.png">
+    <source src="cellDetection_v004.mp4" type="video/mp4" />
+    <!--<source src="cellDetection_v004.ogg" type="video/ogg" />-->
+    Your browser does not support the video tag.
+</video>
+<br><br>
 
 <h2> ----- Jul 7<sup>th</sup> 2014 ----- </h2>
 <h3> Data </h3>
@@ -45,54 +59,54 @@ This is also for tracking the cell in the following frames. (Please ignore the w
 
 <!--<img src = "circling.png" alt = "" height = "550" width = "600">-->
 <!--<embed src="cellDetection_v001.mov" width="500" height="600" scale="aspect" controller="false">-->
-    <video width="500" height="600" controls  poster="v001.png">
-        <source src="cellDetection_v001.mp4" type="video/mp4" />
-        <!--<source src="cellDetection_v004.ogg" type="video/ogg" />-->
-        Your browser does not support the video tag.
-    </video>
+<video width="500" height="600" controls  poster="v001.png">
+    <source src="cellDetection_v001.mp4" type="video/mp4" />
+    <!--<source src="cellDetection_v004.ogg" type="video/ogg" />-->
+    Your browser does not support the video tag.
+</video>
 
 
-    <h2> ----- Jun 20<sup>th</sup> 2014 ----- </h2>
+<h2> ----- Jun 20<sup>th</sup> 2014 ----- </h2>
 
-    <h3> Data </h3>
-    Visited the chemistry lab and got the original data (images) from the microscope,
-    which has a better quality than the compressed images in the previous video. <br>
-    However, the data is not in a standard format. Need to convert those images to a OpenCV-readable format.<br>
+<h3> Data </h3>
+Visited the chemistry lab and got the original data (images) from the microscope,
+which has a better quality than the compressed images in the previous video. <br>
+However, the data is not in a standard format. Need to convert those images to a OpenCV-readable format.<br>
 
-    <img src = "C002_181.png" alt = "standard format - converted image" height = "300" width = "300">
-
-
-    <h3> Detection </h3>
-    <ul>
-        <li> Plan to build an interactive system letting the user choose which cell is the "cell of interest".
-            The program is expected to track the cell automatically and be able to let the user modify the region when necessary. </li>
-    </ul>
-
-    <h3> Visualization </h3>
-    Two aspects for visualization
-    <ul>
-        <li> Plan to draw snapshots of the cell's outline at regular intervals (key frames in the future) on a timeline,
-            which should give a good sense of how the cell's shape and size changed over time. </li>
-        <li> Plan to show an animation of a cell moving on a area-shape plan showing the current precise area and shape.
-            And use the changing of color to show the number of blebs of the cell.
-            The area and the number of blebs are supposed to be detected the program. The shape can be quantified by the distance between the outline pixels and the centroid.
-        </li>
-    </ul>
+<img src = "C002_181.png" alt = "standard format - converted image" height = "300" width = "300">
 
 
-    <h2> ----- Jun 16<sup>th</sup> 2014 ----- </h2>
+<h3> Detection </h3>
+<ul>
+    <li> Plan to build an interactive system letting the user choose which cell is the "cell of interest".
+        The program is expected to track the cell automatically and be able to let the user modify the region when necessary. </li>
+</ul>
 
-    <h3> Project Description </h3>
+<h3> Visualization </h3>
+Two aspects for visualization
+<ul>
+    <li> Plan to draw snapshots of the cell's outline at regular intervals (key frames in the future) on a timeline,
+        which should give a good sense of how the cell's shape and size changed over time. </li>
+    <li> Plan to show an animation of a cell moving on a area-shape plan showing the current precise area and shape.
+        And use the changing of color to show the number of blebs of the cell.
+        The area and the number of blebs are supposed to be detected the program. The shape can be quantified by the distance between the outline pixels and the centroid.
+    </li>
+</ul>
+
+
+<h2> ----- Jun 16<sup>th</sup> 2014 ----- </h2>
+
+<h3> Project Description </h3>
 <pre><a href="https://docs.google.com/document/d/1VQU2IYTTcP19bVfPGE4a5Yt-bTelsC2CYhAt7RWs8aU/edit?usp=sharing">[Google Docs Documentation]</a>
 </pre>
 
-    <h3> Preliminary Software </h3>
+<h3> Preliminary Software </h3>
 
-    <img src = "preliminary3.png" alt = "preliminary program - no interaction available" height = "400" width = "900">
+<img src = "preliminary3.png" alt = "preliminary program - no interaction available" height = "400" width = "900">
 
 
 
-    <h3> </h3>
+<h3> </h3>
 
 
 </body>
