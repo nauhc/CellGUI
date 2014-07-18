@@ -159,7 +159,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     erode(open, openclose, element);
 
     GaussianBlur( openclose, openclose, Size(5, 5), 2, 2 );
-    imshow("blured openclose", openclose);
+    imshow("blurred openclose", openclose);
 //    vector<Vec3f> circles;
 //    HoughCircles(sub, circles, CV_HOUGH_GRADIENT, 1, adapThreshImg.rows/10, 100, 100, 0, 0 );
 
