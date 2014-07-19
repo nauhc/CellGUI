@@ -1,12 +1,17 @@
 
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
     <title>Cell Video Processing Project Log</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet"  href="mediaElement/mediaelementplayer.min.css">
 </head>
-<body style="margin: 30px">
+<body style="margin: 30px; text-align: justify; text-justify:newspaper">
+<div class="container" >
+    max-width:720px;
+
 <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
 
@@ -22,7 +27,11 @@ In order to recognize the cell and find the cell contour accurately, a new metho
 If this is well done, there are two benefits. First, the recognition of the contour will be more accurate. Second, it is easier to get ride of nearby cells by its morphological specificity.
 Dilation and erosion are applied to the edge images with circular templates. Hough transform will be applied to see the detection effect.
 <br><br>
-<img src = "v005.png" alt = "dilation and erosion" height = "600" width = "500">
+    <div class="row">
+        <div class="col-md-7 thumbnail" >
+            <img src = "v005.png" alt = "dilation and erosion">
+        </div>
+    </div>
 <br><br>
 If the HCT method does not effect well enough, machine learning approaches might be applied for cell recognition.
 <br><br>
@@ -39,11 +48,14 @@ A line chart is added to the software to show the area changing of the cell. The
 More feature (other than area) such as the perimeter, the blebbing extent, the changing of shape along time will be measured and visualized.<br>
 <!--<embed src="cellDetection_v004.mp4" width="750" height="600" scale="aspect" controller="false">-->
 
-<video width="750" height="600" controls  poster="v004.png">
-    <source src="cellDetection_v004.mp4" type="video/mp4" />
-    <!--<source src="cellDetection_v004.ogg" type="video/ogg" />-->
-    Your browser does not support the video tag.
-</video>
+<div class='row'>
+    <div class='col-md-12'>
+        <video width="100%" height="100%" >
+            <source src="cellDetection_v004.mp4" type="video/mp4" />
+        </video>
+    </div>
+</div>
+
 <br><br>
 
 <h2> ----- Jul 7<sup>th</sup> 2014 ----- </h2>
@@ -56,13 +68,12 @@ In order to let the user choose (from the amount of cells) which cell is the one
 As it shows in the graph, user is able to circling a cell by drawing a rough hull outside of the cell of interest. And the ROI window updates the detection region according to the circling result.
 This is also for tracking the cell in the following frames. (Please ignore the white region on the bottom right. It is for future visualization use.)
 <br>
-
-<!--<img src = "circling.png" alt = "" height = "550" width = "600">-->
-<!--<embed src="cellDetection_v001.mov" width="500" height="600" scale="aspect" controller="false">-->
-<video width="500" height="600" controls  poster="v001.png">
-    <source src="cellDetection_v001.mp4" type="video/mp4" />
-    <!--<source src="cellDetection_v004.ogg" type="video/ogg" />-->
-    Your browser does not support the video tag.
+<div class='row'>
+    <div class='col-md-8'>
+        <video width="100%" height="100%" poster="v001.png">
+            <source src="cellDetection_v001.mp4" type="video/mp4" />
+        </div>
+    </div>
 </video>
 
 
@@ -72,9 +83,11 @@ This is also for tracking the cell in the following frames. (Please ignore the w
 Visited the chemistry lab and got the original data (images) from the microscope,
 which has a better quality than the compressed images in the previous video. <br>
 However, the data is not in a standard format. Need to convert those images to a OpenCV-readable format.<br>
-
-<img src = "C002_181.png" alt = "standard format - converted image" height = "300" width = "300">
-
+    <div class="row">
+        <div class="col-md-6 thumbnail" >
+            <img src = "C002_181.png" alt = "standard format - converted image" >
+        </div>
+    </div>
 
 <h3> Detection </h3>
 <ul>
@@ -101,13 +114,28 @@ Two aspects for visualization
 </pre>
 
 <h3> Preliminary Software </h3>
-
-<img src = "preliminary3.png" alt = "preliminary program - no interaction available" height = "400" width = "900">
-
+    <div class="row">
+        <div class="col-md-12 thumbnail" >
+            <img src = "preliminary3.png" alt = "preliminary program - no interaction available" >
+        </div>
+    </div>
 
 
 <h3> </h3>
 
+</div>
+
+<script src="mediaElement/mediaelement-and-player.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function($){
+    console.log($('video').mediaelementplayer)
+    $('video').mediaelementplayer({
+        loop:false,
+        features:['playpause', 'progress', 'fullscreen'],
+        pauseOtherPlayers:false
+    });
+});
+</script>
 
 </body>
 </html>
