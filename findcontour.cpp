@@ -104,12 +104,32 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
                                          Size( 2*dilation_size+1, 2*dilation_size+1 ),
                                          Point( dilation_size, dilation_size ) );
     dilate(adapThreshImg, open, element);
-    //Mat openclose;
     erode(open, openclose, element);
+    //GaussianBlur( openclose, openclose, Size(3, 3), 2, 2 );
 
-    GaussianBlur( openclose, openclose, Size(3, 3), 2, 2 );
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    // Find contours
+    Mat openclose_clone = openclose.clone();
+    findContours( openclose_clone, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+    Mat drawing = (*frame)(rect).clone();
+//            Mat::zeros( sub.size(), CV_8UC3 );
+    for(unsigned int i = 0; i < contours.size(); i++){
+        drawContours( drawing, contours, i, Scalar(255,255,0), 1, 8, hierarchy, 0, Point() );
+//        vector<Point> contour = contours[i];
+//        for(unsigned int j = 0; j < contour.size(); j++){
+//            sub.at<Vec3f>(contour[j].y, contour[j].x)[0] = 255;
+//            sub.at<Vec3f>(contour[j].y, contour[j].x)[1] = 0;
+//            sub.at<Vec3f>(contour[j].y, contour[j].x)[2] = 0;
+//            //openclose.at<uchar>(contour[j].y, contour[j].x) = 128;
+//        }
+    }
+    openclose = drawing;
+
+    /*
     vector<Vec3f> circles;
-    HoughCircles(openclose, circles, CV_HOUGH_GRADIENT, 3, /*width/20*/2,
+    HoughCircles(openclose, circles, CV_HOUGH_GRADIENT, 3, width/20,
                  50, 90, width/20, width);
 
     cout << "circle found:" << circles.size();
@@ -130,7 +150,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
         circle(openclose, center, radius+3, Scalar(255,255,255), 1, 8, 0 );
     }
     cout<< endl;
-    //imshow("blurred_openclose.tiff", openclose);
+    //imshow("blurred_openclose.tiff", openclose);*/
 
     //renew circle points as the convex hull
     vector<Point> convHull;
@@ -146,7 +166,7 @@ void FindContour::boundingBox(Mat &img)
 {
     img = frame->clone();
     //Rect rect = boundingRect(Mat(circle));
-    Scalar color(128, 255, 0); // draw a green rectangle on the image
+    Scalar color(255, 255, 0); // draw a green rectangle on the image
     rectangle(img, rect, color, 2);
 }
 
