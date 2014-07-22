@@ -19,9 +19,11 @@ void FindContour::setBlkSize(int para2){
 
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
-                                Mat &openclose, int &area){
+                                Mat &dispImg, int &area){
     frame = &img;
     rect = boundingRect(Mat(cir));
+    dispImg = (*frame)(rect).clone();
+
 
 /*
     Rect rect_roi = boundingRect(Mat(cir));
@@ -49,7 +51,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
 //    imshow("mask_0", mask_0); */
 
     Mat sub; // the rectangle region of ROI
-    cv::cvtColor((*frame)(rect), sub, CV_RGB2GRAY);
+    cv::cvtColor(dispImg, sub, CV_RGB2GRAY);
     int width = sub.cols;
     int height = sub.rows;
 
@@ -103,6 +105,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     Mat element = getStructuringElement( MORPH_ELLIPSE,
                                          Size( 2*dilation_size+1, 2*dilation_size+1 ),
                                          Point( dilation_size, dilation_size ) );
+    Mat openclose;
     dilate(adapThreshImg, open, element);
     erode(open, openclose, element);
     //GaussianBlur( openclose, openclose, Size(3, 3), 2, 2 );
@@ -113,19 +116,9 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     Mat openclose_clone = openclose.clone();
     findContours( openclose_clone, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
-    Mat drawing = (*frame)(rect).clone();
-//            Mat::zeros( sub.size(), CV_8UC3 );
     for(unsigned int i = 0; i < contours.size(); i++){
-        drawContours( drawing, contours, i, Scalar(255,255,0), 1, 8, hierarchy, 0, Point() );
-//        vector<Point> contour = contours[i];
-//        for(unsigned int j = 0; j < contour.size(); j++){
-//            sub.at<Vec3f>(contour[j].y, contour[j].x)[0] = 255;
-//            sub.at<Vec3f>(contour[j].y, contour[j].x)[1] = 0;
-//            sub.at<Vec3f>(contour[j].y, contour[j].x)[2] = 0;
-//            //openclose.at<uchar>(contour[j].y, contour[j].x) = 128;
-//        }
+        drawContours( dispImg, contours, i, Scalar(255,255,0), 1, 8, hierarchy, 0, Point() );
     }
-    openclose = drawing;
 
     /*
     vector<Vec3f> circles;
