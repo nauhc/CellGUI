@@ -144,20 +144,24 @@ void Controller::run(){
             //roiImg = cvMatToQImage(Mat::zeros(roiFrame->size(), CV_8UC1));
 
             //qDebug() << frameIdx;
-            if(!encircled)
-                roiImg = img;
+            if(!encircled){
+                roiImg1 = img;
+                roiImg2 = img;
+            }
             else{
                 //draw bounding box on ROI and show in original video player
                 Mat boxedImg = Mat(frame->rows, frame->cols, CV_8UC3);
                 contour->boundingBox(boxedImg);
                 img = cvMatToQImage(boxedImg);
 
+                Mat contourImg;
                 Mat edgeImg;
                 int area;
-                contour->cellDetection(*frame, hull, edgeImg, area);
+                contour->cellDetection(*frame, hull, contourImg, edgeImg, area);
                 emit detectedArea(area);
                 cout << "frame " << frameIdx << " cell area: " << area << endl;
-                roiImg = cvMatToQImage(edgeImg);
+                roiImg1 = cvMatToQImage(contourImg);
+                roiImg2 = cvMatToQImage(edgeImg);
             }
 
             /*
@@ -185,7 +189,7 @@ void Controller::run(){
             */
 
             //emit the singnals
-            emit processedImage(img, roiImg);
+            emit processedImage(img, roiImg1, roiImg2);
             this->msleep(delay);
         }
 }

@@ -20,7 +20,8 @@ private:
 //    Mat             *RGBframe; // color frame from the video
     Mat             *roiFrame; // roi rectangle from frame
     QImage          img; // QImage for displaying
-    QImage          roiImg; // QImage for ROI for displaying
+    QImage          roiImg1; // QImage for ROI for displaying
+    QImage          roiImg2; // QImage for ROI for displaying
 
     Size            videoSize; // video frame size
     int             frameCnt; // total frame number
@@ -32,7 +33,7 @@ private:
 
 signals:
     // signal nonnectted with updateVideoplayerUI SLOT
-    void    processedImage(QImage image, QImage ROIimg);
+    void    processedImage(QImage image, QImage ROIimg1, QImage ROIimg2);
     void    detectedArea(int area);
 
 private slots:

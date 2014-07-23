@@ -10,8 +10,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     myController(new Controller())
 {
     ui->setupUi(this);
-    connect(myController, SIGNAL(processedImage(QImage, QImage)),
-            this, SLOT(updateVideoplayerUI(QImage, QImage)));
+    connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
+            this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setAdaptThresh(int)));
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
@@ -34,7 +34,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     encircled = false;
 
     areaVis = new AreaVis(this->centralWidget());
-    areaVis->setGeometry(560, 610, 1120, 500);
+    areaVis->setGeometry(40, 610, 1640, 500
+                         /*this->centralWidget()->width()-40,
+                         this->centralWidget()->height()-40*/);
 }
 
 MainWindow::~MainWindow(){
@@ -44,7 +46,7 @@ MainWindow::~MainWindow(){
     delete ui;
 }
 
-void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
+void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2){
     if(!img.isNull()){
         //original video display
         ui->orgVideo->setAlignment(Qt::AlignCenter);
@@ -53,13 +55,20 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg){
                         ui->orgVideo->size(),
                         Qt::KeepAspectRatio,
                         Qt::FastTransformation));
-        //roi video display
-        ui->roiVideo->setAlignment(Qt::AlignCenter);
-        ui->roiVideo->setPixmap(
-                    QPixmap::fromImage(ROIimg).scaled(
-                        ui->roiVideo->size(),
+        //roi video display 1
+        ui->roiVideo1->setAlignment(Qt::AlignCenter);
+        ui->roiVideo1->setPixmap(
+                    QPixmap::fromImage(ROIimg1).scaled(
+                        ui->roiVideo1->size(),
                         Qt::KeepAspectRatio,
                         Qt::FastTransformation));
+        ui->roiVideo2->setAlignment(Qt::AlignCenter);
+        ui->roiVideo2->setPixmap(
+                    QPixmap::fromImage(ROIimg2).scaled(
+                        ui->roiVideo2->size(),
+                        Qt::KeepAspectRatio,
+                        Qt::FastTransformation));
+
         int currFrm     = myController->getCurrentFrame();
         int totalFrm    = myController->getNumberOfFrames();
         ui->horizontalSlider->setValue(currFrm);
@@ -104,14 +113,18 @@ void MainWindow::on_stopVideoButton_clicked()
 
     areaVis->releaseAreaVis();
 
+    QPixmap pixmap(1,1); // Works
+    pixmap = pixmap.scaled(ui->orgVideo->width(), ui->orgVideo->height());
+    pixmap.fill(QColor(0, 0, 0));
+    ui->orgVideo->setPixmap(pixmap);
     QPixmap pixmap1(1,1); // Works
-    pixmap1 = pixmap1.scaled(ui->roiVideo->width(), ui->roiVideo->height());
+    pixmap1 = pixmap1.scaled(ui->roiVideo1->width(), ui->roiVideo1->height());
     pixmap1.fill(QColor(0, 0, 0));
-    ui->roiVideo->setPixmap(pixmap1);
+    ui->roiVideo1->setPixmap(pixmap1);
     QPixmap pixmap2(1,1); // Works
-    pixmap2 = pixmap2.scaled(ui->orgVideo->width(), ui->orgVideo->height());
+    pixmap2 = pixmap2.scaled(ui->roiVideo2->width(), ui->roiVideo2->height());
     pixmap2.fill(QColor(0, 0, 0));
-    ui->orgVideo->setPixmap(pixmap2);
+    ui->roiVideo2->setPixmap(pixmap2);
 
     ui->loadVideoButton->setEnabled(true);
     ui->playVideoButton->setText("play");
@@ -174,8 +187,11 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->orgVideo->setAlignment(Qt::AlignCenter);
             //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
             //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
-            ui->roiVideo->setGeometry(x, y + 580, width, height);
-            ui->roiVideo->setAlignment(Qt::AlignCenter);
+            ui->roiVideo1->setGeometry(600, 30, width/2-10, height/2-10);
+            ui->roiVideo1->setAlignment(Qt::AlignCenter);
+            ui->roiVideo2->setGeometry(600, 290, width/2-10, height/2-10);
+            ui->roiVideo2->setAlignment(Qt::AlignCenter);
+
         }
     }
     else{

@@ -19,10 +19,10 @@ void FindContour::setBlkSize(int para2){
 
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
-                                Mat &dispImg, int &area){
+                                Mat &dispImg1, Mat &dispImg2, int &area){
     frame = &img;
     rect = boundingRect(Mat(cir));
-    dispImg = (*frame)(rect).clone();
+    dispImg1 = (*frame)(rect).clone();
 
 
 /*
@@ -51,7 +51,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
 //    imshow("mask_0", mask_0); */
 
     Mat sub; // the rectangle region of ROI
-    cv::cvtColor(dispImg, sub, CV_RGB2GRAY);
+    cv::cvtColor(dispImg1, sub, CV_RGB2GRAY);
     int width = sub.cols;
     int height = sub.rows;
 
@@ -108,7 +108,6 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     Mat openclose;
     dilate(adapThreshImg, open, element);
     erode(open, openclose, element);
-    //GaussianBlur( openclose, openclose, Size(3, 3), 2, 2 );
 
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
@@ -117,8 +116,12 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     findContours( openclose_clone, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
     for(unsigned int i = 0; i < contours.size(); i++){
-        drawContours( dispImg, contours, i, Scalar(255,255,0), 1, 8, hierarchy, 0, Point() );
+        drawContours( dispImg1, contours, i, Scalar(255,255,0), 1, 8, hierarchy, 0, Point() );
     }
+
+
+    GaussianBlur( openclose, openclose, Size(3, 3), 2, 2 );
+    dispImg2 = openclose;
 
     /*
     vector<Vec3f> circles;

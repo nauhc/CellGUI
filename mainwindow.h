@@ -23,7 +23,7 @@ public:
 
 
 private slots:
-    void updateVideoplayerUI(QImage img, QImage ROIimg);
+    void updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2);
 
     void on_playVideoButton_clicked();
     void on_loadVideoButton_clicked();
