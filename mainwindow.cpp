@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     encircled = false;
 
     areaVis = new AreaVis(this->centralWidget());
-    areaVis->setGeometry(40, 610, 1640, 500
+    areaVis->setGeometry(40, 610, 1170, 500
                          /*this->centralWidget()->width()-40,
                          this->centralWidget()->height()-40*/);
 }
@@ -187,9 +187,9 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->orgVideo->setAlignment(Qt::AlignCenter);
             //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
             //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
-            ui->roiVideo1->setGeometry(600, 30, width/2-10, height/2-10);
+            ui->roiVideo1->setGeometry(650, 30, width/2-10, height/2-10);
             ui->roiVideo1->setAlignment(Qt::AlignCenter);
-            ui->roiVideo2->setGeometry(600, 290, width/2-10, height/2-10);
+            ui->roiVideo2->setGeometry(650, 290, width/2-10, height/2-10);
             ui->roiVideo2->setAlignment(Qt::AlignCenter);
 
         }
