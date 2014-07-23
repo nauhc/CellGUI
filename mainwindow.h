@@ -32,6 +32,22 @@ private slots:
 
     void updateDataVisUI(int area, int perimeter);
 
+    void on_loadVideoButton_pressed();
+
+    void on_loadVideoButton_released();
+
+    void on_playVideoButton_pressed();
+
+    void on_playVideoButton_released();
+
+    void on_stopVideoButton_pressed();
+
+    void on_stopVideoButton_released();
+
+    void on_drawROIButton_pressed();
+
+    void on_drawROIButton_released();
+
 private:
     Ui::MainWindow *ui;
     Controller  *myController;

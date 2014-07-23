@@ -86,8 +86,8 @@ void DataVis::paintEvent(QPaintEvent *event)
     painter.setPen(myPen);
 
     if(on){
-        //initial line
-        painter.drawLine(0, (this->height()/2), startX, (this->height()/2));
+        ////initial line
+        //painter.drawLine(0, (this->height()/2), startX, (this->height()/2));
 
 
         if (track && (currFrm >= startFrm+2)){

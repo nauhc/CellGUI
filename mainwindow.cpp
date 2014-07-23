@@ -5,12 +5,16 @@
 #include "ui_mainwindow.h"
 #include "qdebug.h"
 
+const QString button_pressed      = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
+const QString button_released_on  = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
+const QString button_released_off = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
+const QString frameLabelStyle     = "color:white; font:12px; background-color:rgba(0,0,0,0%) ";
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow),
     myController(new Controller())
 {
     ui->setupUi(this);
-//    this->setStyleSheet("background-color:rgb(38,42,43)");
+    this->setStyleSheet("background-color:rgb(38,42,43)");
     connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
             this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
@@ -20,35 +24,45 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(myController, SIGNAL(detectedArea(int, int)),
             this, SLOT(updateDataVisUI(int, int)));
 
-//    const QString style = "border-style:outset; border-width:5px;border-color:rgb(28,120,159); border-radius: 8px;";
-//    ui->orgVideo->setStyleSheet(style);
-//    ui->roiVideo1->setStyleSheet(style);
-//    ui->roiVideo2->setStyleSheet(style);
-//    ui->loadVideoButton->setStyleSheet(style);
-//    ui->playVideoButton->setStyleSheet(style);
-//    ui->stopVideoButton->setStyleSheet(style);
-//    ui->drawROIButton->setStyleSheet(style);
+    //const QString style = "border-style:outset; border-width:2px; border-color:rgb(128,128,128); border-radius: 4px;"; //border-color:rgb(28,120,159);
+    //ui->orgVideo->setStyleSheet(style);
+    //ui->roiVideo1->setStyleSheet(style);
+    //ui->roiVideo2->setStyleSheet(style);
+    ui->loadVideoButton->setStyleSheet(button_released_on);
     ui->loadVideoButton->setEnabled(true);
+    ui->playVideoButton->setStyleSheet(button_released_off);
     ui->playVideoButton->setEnabled(false);
+    ui->stopVideoButton->setStyleSheet(button_released_off);
     ui->stopVideoButton->setEnabled(false);
+    ui->drawROIButton->setStyleSheet(button_released_off);
+    ui->drawROIButton->setEnabled(false);
 
     ui->horizontalSlider->setEnabled(false);
-    ui->drawROIButton->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
     ui->blkSizeSlider->setRange(1, 20);
     ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
-//    ui->videoDisplayerLabel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->videoDisplayerLabel->setText("<span style='color:#FFFFFF;'>Video</span>");
-//    ui->videoDisplayerLabel->setFont(QFont("Helvetica", 20));
-//    ui->contourDisplayerLabel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->contourDisplayerLabel->setText("<span style='color:#FFFFFF;'>Cell Contour</span>");
-//    ui->contourDisplayerLabel->setFont(QFont("Helvetica", 14));
-//    ui->cellDetectionDisplayerLabel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->cellDetectionDisplayerLabel->setText("<span style='color:#FFFFFF;'>Cell Detection</span>");
-//    ui->cellDetectionDisplayerLabel->setFont(QFont("Helvetica", 14));
+    const QString style_label = "background-color: rgba(0,0,0,0%); color:rgb(255,255,255);";
+    const QString font20 = "font: 20px";
+    const QString font14 = "font: 14px";
+    ui->videoDisplayerLabel->setStyleSheet(style_label+font20);
+    ui->videoDisplayerLabel->setText("Video");
+    ui->contourDisplayerLabel->setStyleSheet(style_label+font14);
+    ui->contourDisplayerLabel->setText("Cell Contour");
+    ui->cellDetectionDisplayerLabel->setStyleSheet(style_label+font14);
+    ui->cellDetectionDisplayerLabel->setText("Cell Detection");
+    ui->differenceLabel->setStyleSheet(style_label+font14);
+    ui->differenceLabel->setText("Difference:");
+    ui->blkSizeLabel->setStyleSheet(style_label+font14);
+    ui->blkSizeLabel->setText("Block Size:");
 
+    ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
+    ui->frameLabelLeft->setText("Frame");
+    ui->frameLabelRight->setStyleSheet(frameLabelStyle);
+    //ui->frameLabelRight->setText("0");
+
+    ui->cellVis->setStyleSheet("background-color: rgb(54,58,59)");
 
     encircle = new Encircle(this->centralWidget());
     encircle->setGeometry(40, 30, 500, 500);
@@ -91,33 +105,64 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2)
         int currFrm     = myController->getCurrentFrame();
         int totalFrm    = myController->getNumberOfFrames();
         ui->horizontalSlider->setValue(currFrm);
-        ui->frameLabel->setText(QString::number(currFrm) +" / "+ QString::number(totalFrm));
+        ui->frameLabelRight->setText(QString::number(currFrm) +" / "+ QString::number(totalFrm));
+        ui->frameLabelRight->setStyleSheet(frameLabelStyle);
         if(currFrm == totalFrm){
             ui->playVideoButton->setEnabled(false);
+            ui->playVideoButton->setStyleSheet(button_released_off);
             ui->stopVideoButton->setEnabled(true);
+            ui->stopVideoButton->setStyleSheet(button_released_on);
+            ui->drawROIButton->setEnabled(false);
+            ui->drawROIButton->setStyleSheet(button_released_off);
         }
     }
 
 }
 
-// paly or pause video
+void MainWindow::on_playVideoButton_pressed(){
+    ui->playVideoButton->setStyleSheet(button_pressed);
+}
+void MainWindow::on_playVideoButton_released(){
+    if(ui->playVideoButton->isEnabled())
+        ui->playVideoButton->setStyleSheet(button_released_on);
+    else
+        ui->playVideoButton->setStyleSheet(button_released_off);
+}
+// play or pause video
 void MainWindow::on_playVideoButton_clicked()
 {
+
     cout << "'Play/Pause Video' Button clicked." << endl;
     if(myController->videoIsPaused()){
         myController->playVideo();
         ui->playVideoButton->setText("Pause");
+        ui->playVideoButton->setStyleSheet(button_released_on);
         ui->stopVideoButton->setEnabled(false);
+        ui->stopVideoButton->setStyleSheet(button_released_off);
         ui->drawROIButton->setEnabled(false);
+        ui->drawROIButton->setStyleSheet(button_released_off);
     }else{
         myController->pauseVideo();
         ui->playVideoButton->setText("Play");
+        ui->playVideoButton->setStyleSheet(button_released_on);
         ui->stopVideoButton->setEnabled(true);
-        if(!encircled)
+        ui->stopVideoButton->setStyleSheet(button_released_on);
+        if(!encircled){
             ui->drawROIButton->setEnabled(true);
+            ui->drawROIButton->setStyleSheet(button_released_on);
+        }
     }
 }
 
+void MainWindow::on_stopVideoButton_pressed(){
+    ui->stopVideoButton->setStyleSheet(button_pressed);
+}
+void MainWindow::on_stopVideoButton_released(){
+    if(ui->stopVideoButton->isEnabled())
+        ui->stopVideoButton->setStyleSheet(button_released_on);
+    else
+        ui->stopVideoButton->setStyleSheet(button_released_off);
+}
 //stop and release video
 void MainWindow::on_stopVideoButton_clicked()
 {
@@ -126,7 +171,7 @@ void MainWindow::on_stopVideoButton_clicked()
     if(!myController->videoIsPaused())
         myController->pauseVideo();
     myController->releaseVideo();
-    ui->frameLabel->clear();
+    ui->frameLabelRight->clear();
 
     encircled = false;
 
@@ -146,25 +191,30 @@ void MainWindow::on_stopVideoButton_clicked()
     ui->roiVideo2->setPixmap(pixmap2);
 
     ui->loadVideoButton->setEnabled(true);
+    ui->loadVideoButton->setStyleSheet(button_released_on);
     ui->playVideoButton->setText("play");
     ui->playVideoButton->setEnabled(false);
+    ui->playVideoButton->setStyleSheet(button_released_off);
     ui->stopVideoButton->setEnabled(false);
+    ui->stopVideoButton->setStyleSheet(button_released_off);
     ui->horizontalSlider->setValue(0);
-
     ui->drawROIButton->setEnabled(false);
+    ui->drawROIButton->setStyleSheet(button_released_off);
+}
+
+void MainWindow::on_loadVideoButton_pressed(){
+    ui->loadVideoButton->setStyleSheet(button_pressed);
+}
+void MainWindow::on_loadVideoButton_released(){
+    if(ui->loadVideoButton->isEnabled())
+        ui->loadVideoButton->setStyleSheet(button_released_on);
+    else
+        ui->loadVideoButton->setStyleSheet(button_released_off);
 }
 
 void MainWindow::on_loadVideoButton_clicked()
 {
     cout << "'Load Video' Button clicked." << endl;
-
-    /*
-     if(!myController->videoIsNull()){
-        cout << "*******check point*******" << endl;
-        delete myController;
-        myController = new Controller();
-    }*/
-
 //    QFileDialog dialog = new QFileDialog();
 //    dialog.setNameFilter("All C++ files (*.avi *.mov *.mpg *.mp4)");
 
@@ -184,10 +234,14 @@ void MainWindow::on_loadVideoButton_clicked()
         }
         else{
             ui->loadVideoButton->setEnabled(false);
-            ui->playVideoButton->setEnabled(true); //
-            ui->drawROIButton->setEnabled(true);
+            ui->loadVideoButton->setStyleSheet(button_released_off);
+            ui->playVideoButton->setEnabled(true);
+            ui->playVideoButton->setStyleSheet(button_released_on);
+            ui->drawROIButton->setEnabled(false);
+            ui->drawROIButton->setStyleSheet(button_released_off);
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
-            ui->frameLabel->setText("0 / " + QString::number(myController->getNumberOfFrames()));
+            ui->frameLabelRight->setText(" 0 / " + QString::number(myController->getNumberOfFrames()));
+
 
             //set video player label size and postion
             //according to the size of the selected video
@@ -213,7 +267,6 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->roiVideo1->setAlignment(Qt::AlignCenter);
             ui->roiVideo2->setGeometry(650, 290, width/2-10, height/2-10);
             ui->roiVideo2->setAlignment(Qt::AlignCenter);
-
         }
     }
     else{
@@ -227,6 +280,15 @@ void MainWindow::updateDataVisUI(int area, int perimeter){
     areaVis->updateData(area, perimeter, myController->getCurrentFrame());
 }
 
+void MainWindow::on_drawROIButton_pressed(){
+    ui->drawROIButton->setStyleSheet(button_pressed);
+}
+void MainWindow::on_drawROIButton_released(){
+    if(ui->drawROIButton->isEnabled())
+        ui->drawROIButton->setStyleSheet(button_released_on);
+    else
+        ui->drawROIButton->setStyleSheet(button_released_off);
+}
 void MainWindow::on_drawROIButton_clicked(){
     cout << "Encircle Cell Button clicked." << endl;
 
@@ -235,7 +297,9 @@ void MainWindow::on_drawROIButton_clicked(){
     if(!encircle->isEncircled()){
 
         ui->playVideoButton->setEnabled(false);
+        ui->playVideoButton->setStyleSheet(button_released_off);
         ui->stopVideoButton->setEnabled(false);
+        ui->stopVideoButton->setStyleSheet(button_released_off);
         ui->drawROIButton->setText("Track Cell");
 
         myController->pauseVideo();
@@ -253,8 +317,10 @@ void MainWindow::on_drawROIButton_clicked(){
     else{
         //ui->stopVideoButton->setEnabled(true);
         ui->playVideoButton->setEnabled(true);
+        ui->playVideoButton->setStyleSheet(button_released_on);
         on_playVideoButton_clicked();
         ui->drawROIButton->setText("Encircle Cell");
+        ui->drawROIButton->setStyleSheet(button_released_on);
 
         areaVis->turnTrackOn(myController->getNumberOfFrames(),
                              myController->getCurrentFrame());
@@ -267,14 +333,6 @@ void MainWindow::on_drawROIButton_clicked(){
         myController->setCircle(circle);
     }
 }
-
-
-
-
-
-
-
-
 
 
 
