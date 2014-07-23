@@ -4,18 +4,18 @@
 #include <QWidget>
 #include <QPainter>
 
-class AreaVis : public QWidget
+class DataVis : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AreaVis(QWidget *parent = 0);
-    ~AreaVis();
+    explicit DataVis(QWidget *parent = 0);
+    ~DataVis();
 
     void turnVisOn();
     void turnVisOff();
     void turnTrackOn(int fn, int f);
     void turnTrackOff();
-    void updateArea(int a, int currFrame);
+    void updateData(int a, int perimtr, int currFrame);
     void releaseAreaVis();
 
 protected:
@@ -23,8 +23,10 @@ protected:
 
 private:
     int     area;
-    int     currFrm;
     int     startArea;
+    int     perimeter;
+    int     startPerimeter;
+    int     currFrm;
     int     startFrm;
     float   step;
     bool    on; // if visualization is activated
@@ -33,8 +35,10 @@ private:
     int gridStepX = 20;
     int gridStepY = 20;
 
-    QPoint  currPoint;
-    QPolygon polyline;
+    QPoint      currPoint_area;
+    QPolygon    polyline_area;
+    QPoint      currPoint_perimeter;
+    QPolygon    polyline_perimeter;
 
 };
 

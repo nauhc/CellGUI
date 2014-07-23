@@ -157,8 +157,9 @@ void Controller::run(){
                 Mat contourImg;
                 Mat edgeImg;
                 int area;
-                contour->cellDetection(*frame, hull, contourImg, edgeImg, area);
-                emit detectedArea(area);
+                int perimeter;
+                contour->cellDetection(*frame, hull, contourImg, edgeImg, area, perimeter);
+                emit detectedArea(area, perimeter);
                 cout << "frame " << frameIdx << " cell area: " << area << endl;
                 roiImg1 = cvMatToQImage(contourImg);
                 roiImg2 = cvMatToQImage(edgeImg);

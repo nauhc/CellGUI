@@ -43,6 +43,9 @@ public:
     QLabel *frameLabel;
     QPushButton *drawROIButton;
     QLabel *roiVideo2;
+    QLabel *videoDisplayerLabel;
+    QLabel *contourDisplayerLabel;
+    QLabel *cellDetectionDisplayerLabel;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -112,6 +115,15 @@ public:
         roiVideo2->setObjectName(QStringLiteral("roiVideo2"));
         roiVideo2->setGeometry(QRect(650, 290, 240, 240));
         roiVideo2->setStyleSheet(QStringLiteral("Background-color:rgb(0, 0, 0)"));
+        videoDisplayerLabel = new QLabel(centralWidget);
+        videoDisplayerLabel->setObjectName(QStringLiteral("videoDisplayerLabel"));
+        videoDisplayerLabel->setGeometry(QRect(60, 40, 81, 31));
+        contourDisplayerLabel = new QLabel(centralWidget);
+        contourDisplayerLabel->setObjectName(QStringLiteral("contourDisplayerLabel"));
+        contourDisplayerLabel->setGeometry(QRect(660, 40, 101, 21));
+        cellDetectionDisplayerLabel = new QLabel(centralWidget);
+        cellDetectionDisplayerLabel->setObjectName(QStringLiteral("cellDetectionDisplayerLabel"));
+        cellDetectionDisplayerLabel->setGeometry(QRect(660, 300, 121, 21));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -143,6 +155,9 @@ public:
         frameLabel->setText(QString());
         drawROIButton->setText(QApplication::translate("MainWindow", "Encircle Cell", 0));
         roiVideo2->setText(QString());
+        videoDisplayerLabel->setText(QString());
+        contourDisplayerLabel->setText(QString());
+        cellDetectionDisplayerLabel->setText(QString());
     } // retranslateUi
 
 };

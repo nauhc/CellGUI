@@ -10,18 +10,28 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     myController(new Controller())
 {
     ui->setupUi(this);
+//    this->setStyleSheet("background-color:rgb(38,42,43)");
     connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
             this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setAdaptThresh(int)));
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setBlkSize(int)));
-    connect(myController, SIGNAL(detectedArea(int)),
-            this, SLOT(updateAreaVisUI(int)));
+    connect(myController, SIGNAL(detectedArea(int, int)),
+            this, SLOT(updateDataVisUI(int, int)));
 
+//    const QString style = "border-style:outset; border-width:5px;border-color:rgb(28,120,159); border-radius: 8px;";
+//    ui->orgVideo->setStyleSheet(style);
+//    ui->roiVideo1->setStyleSheet(style);
+//    ui->roiVideo2->setStyleSheet(style);
+//    ui->loadVideoButton->setStyleSheet(style);
+//    ui->playVideoButton->setStyleSheet(style);
+//    ui->stopVideoButton->setStyleSheet(style);
+//    ui->drawROIButton->setStyleSheet(style);
     ui->loadVideoButton->setEnabled(true);
     ui->playVideoButton->setEnabled(false);
     ui->stopVideoButton->setEnabled(false);
+
     ui->horizontalSlider->setEnabled(false);
     ui->drawROIButton->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
@@ -29,14 +39,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
+//    ui->videoDisplayerLabel->setAttribute(Qt::WA_TranslucentBackground);
+    ui->videoDisplayerLabel->setText("<span style='color:#FFFFFF;'>Video</span>");
+//    ui->videoDisplayerLabel->setFont(QFont("Helvetica", 20));
+//    ui->contourDisplayerLabel->setAttribute(Qt::WA_TranslucentBackground);
+    ui->contourDisplayerLabel->setText("<span style='color:#FFFFFF;'>Cell Contour</span>");
+//    ui->contourDisplayerLabel->setFont(QFont("Helvetica", 14));
+//    ui->cellDetectionDisplayerLabel->setAttribute(Qt::WA_TranslucentBackground);
+    ui->cellDetectionDisplayerLabel->setText("<span style='color:#FFFFFF;'>Cell Detection</span>");
+//    ui->cellDetectionDisplayerLabel->setFont(QFont("Helvetica", 14));
+
+
     encircle = new Encircle(this->centralWidget());
     encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 
-    areaVis = new AreaVis(this->centralWidget());
-    areaVis->setGeometry(40, 610, 1170, 500
-                         /*this->centralWidget()->width()-40,
-                         this->centralWidget()->height()-40*/);
+    areaVis = new DataVis(this->centralWidget());
+    areaVis->setGeometry(40, 610, 1170, 500);
 }
 
 MainWindow::~MainWindow(){
@@ -146,9 +165,12 @@ void MainWindow::on_loadVideoButton_clicked()
         myController = new Controller();
     }*/
 
-    //    QString filename = QFileDialog::getOpenFileName(this,
-    //                                                    tr("Open Video"), "../../../video/",
-    //                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
+//    QFileDialog dialog = new QFileDialog();
+//    dialog.setNameFilter("All C++ files (*.avi *.mov *.mpg *.mp4)");
+
+//    QString filename = QFileDialog::getOpenFileName(this,
+//                                                    tr("Open Video"), "../../../video/",
+//                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
 
     QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
     QString name        = "test.mov";
@@ -201,8 +223,8 @@ void MainWindow::on_loadVideoButton_clicked()
     }
 }
 
-void MainWindow::updateAreaVisUI(int area){
-    areaVis->updateArea(area, myController->getCurrentFrame());
+void MainWindow::updateDataVisUI(int area, int perimeter){
+    areaVis->updateData(area, perimeter, myController->getCurrentFrame());
 }
 
 void MainWindow::on_drawROIButton_clicked(){

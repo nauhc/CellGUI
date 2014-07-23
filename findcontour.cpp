@@ -19,11 +19,12 @@ void FindContour::setBlkSize(int para2){
 
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
-                                Mat &dispImg1, Mat &dispImg2, int &area){
+                                Mat &dispImg1, Mat &dispImg2,
+                                int &area, int &perimeter){
     frame = &img;
     rect = boundingRect(Mat(cir));
     dispImg1 = (*frame)(rect).clone();
-
+    dispImg2 = dispImg1.clone();
 
 /*
     Rect rect_roi = boundingRect(Mat(cir));
@@ -82,7 +83,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
             }
         }
     }
-    Mat adapThreshImg;
+    Mat adapThreshImg = Mat::zeros(height, width, CV_8UC1);
     //image edge detection for the sub region (roi rect)
     adaptiveThreshold(sub, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
@@ -115,12 +116,14 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     Mat openclose_clone = openclose.clone();
     findContours( openclose_clone, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
+    perimeter = 0;
     for(unsigned int i = 0; i < contours.size(); i++){
         drawContours( dispImg1, contours, i, Scalar(255,255,0), 1, 8, hierarchy, 0, Point() );
+        perimeter += contours[i].size();
     }
 
 
-    GaussianBlur( openclose, openclose, Size(3, 3), 2, 2 );
+    GaussianBlur(openclose, openclose, Size(3, 3), 2, 2 );
     dispImg2 = openclose;
 
     /*

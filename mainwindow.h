@@ -30,13 +30,13 @@ private slots:
     void on_stopVideoButton_clicked();
     void on_drawROIButton_clicked();
 
-    void updateAreaVisUI(int area);
+    void updateDataVisUI(int area, int perimeter);
 
 private:
     Ui::MainWindow *ui;
     Controller  *myController;
     Encircle    *encircle;
-    AreaVis     *areaVis;
+    DataVis     *areaVis;
     bool        encircled;
 };
 
