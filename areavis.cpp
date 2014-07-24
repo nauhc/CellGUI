@@ -2,14 +2,16 @@
 #include "qdebug.h"
 #include <iostream>
 
-int startX  = 20;
-int scale   = 200;
+//int scale   = 200;
 
-DataVis::DataVis(QWidget *parent, QColor clr, QString str) : QWidget(parent){
+DataVis::DataVis(QWidget *parent, QColor clr,
+                 int v_min, int v_max) : QWidget(parent){
     on      = false;
     track   = false;
     color   = clr;
-    string  = str;
+//    string  = str;
+    value_min = v_min;
+    value_max = v_max;
 }
 
 DataVis::~DataVis(){
@@ -29,8 +31,10 @@ void DataVis::turnVisOff(){
 void DataVis::turnTrackOn(int fn, int f){
     track       = true;
     startFrm    = f;
-    step        = float(this->width()-2*startX)/float(fn-f);
-    gridStepX   = int(step)*3;
+    step        = float(this->width()-2*float(fn-f)/5)/float(fn-f);
+    gridStepX   = int(step)*5;
+    gridStepY   = int(this->height()/15);
+    //scale       = int(value_max - value_min)/15;
 }
 
 void DataVis::turnTrackOff(){
@@ -45,9 +49,9 @@ void DataVis::updateData(int v, int currFrame){
     currFrm = currFrame;
 
     if(currFrm - startFrm - 2 > 0){
-        int x = startX + step*(currFrm-startFrm-2);
-        int y_a = this->height()/2 + (value-startValue)*gridStepY/scale;
-        currPoint_value = QPoint(x, y_a);
+        int x = gridStepX*2 + step*(currFrm-startFrm-2);
+        int y = this->height() - int(double(value-value_min)/double(value_max-value_min)*double(this->height()));
+        currPoint_value = QPoint(x, y);
         polyline_value << currPoint_value;
     }
 }
@@ -74,37 +78,46 @@ void DataVis::paintEvent(QPaintEvent *event)
     for(int i = gridStepX; i < this->width(); i+=gridStepX)
         painter.drawLine(i, 0, i, this->height());
 
-    //draw y-axis with graduation
-    myPen.setColor(QColor(128, 128, 128, 250));
-    myPen.setWidth(3);
-    painter.setPen(myPen);
-    painter.drawLine(2*gridStepX, 0, 2*gridStepX,
-                     this->height()/*-this->height()%gridStepX*/);
-    for(int j = gridStepY; j < this->height(); j+=gridStepY)
-        painter.drawLine(2*gridStepX-10, j, 2*gridStepX+10, j);
-
+    /*
+    //text showing what is y-axis for
     QRectF rectY = QRectF(QPointF(60, 5), QPointF(250, 50));
-    QString textY = string+" (pixel)";
+    QString textY = string+" (pixels)";
     myPen.setColor(color);
     painter.setPen(myPen);
     painter.setFont(QFont("Arial", 20));
-    painter.drawText(rectY, Qt::AlignLeft, textY);
-
-//    //draw x-axis
-//    painter.drawLine(0, this->height()-this->height()%gridStepX,
-//                     this->width(), this->height()-this->height()%gridStepX);
-
-    // pen for drawing data line chart
-    myPen.setColor(color);
-    myPen.setWidth(3);
-    myPen.setCapStyle(Qt::RoundCap);
-    painter.setPen(myPen);
+    painter.drawText(rectY, Qt::AlignLeft, textY);*/
 
     if(on){
         ////initial line
-        //painter.drawLine(0, (this->height()/2), startX, (this->height()/2));
+        //painter.drawLine(0, (this->height()/2), gridStepX, (this->height()/2));
 
         if (track && (currFrm >= startFrm+2)){
+            //draw y-axis with graduation
+            myPen.setColor(QColor(128, 128, 128, 250));
+            myPen.setWidth(3);
+            painter.setPen(myPen);
+            painter.drawLine(2*gridStepX, 0, 2*gridStepX,
+                             this->height()/*-this->height()%gridStepX*/);
+            for(int j = gridStepY; j < this->height(); j+=gridStepY)
+                painter.drawLine(2*gridStepX-5, j, 2*gridStepX+5, j);
+
+            // pen for drawing data line chart
+            myPen.setColor(color);
+            myPen.setWidth(3);
+            myPen.setCapStyle(Qt::RoundCap);
+            painter.setPen(myPen);
+
+            // text for y-axis graduation
+            for(int n = 0; n < 15; n+=2){
+                QRectF rect = QRectF(QPointF(0, 5+gridStepY*n), QPointF(gridStepX*2-3, gridStepY*(n+2)));
+                QString textGrad = QString::number(value_max-n*(value_max-value_min)/15);
+                if(n%4 == 0)
+                    painter.setFont(QFont("Arial", 16));
+                else
+                    painter.setFont(QFont("Arial", 12));
+                painter.drawText(rect, Qt::AlignRight, textGrad);
+            }
+
             //realtime line chart - area
             painter.drawPolyline(polyline_value);
             myPen.setWidth(10);
@@ -116,7 +129,7 @@ void DataVis::paintEvent(QPaintEvent *event)
             myPen.setWidth(4);
             painter.setPen(myPen);
             QRectF rect_a = QRectF(QPointF(currPoint_value.x()-50, currPoint_value.y()-60),
-                                 QPointF(currPoint_value.x()+50, currPoint_value.y()-20));
+                                   QPointF(currPoint_value.x()+50, currPoint_value.y()-20));
             QString textArea = QString::number(value);
             painter.setFont(QFont("Arial", 16));
             painter.drawText(rect_a, Qt::AlignCenter, textArea);

@@ -49,6 +49,8 @@ public:
     QLabel *frameLabelRight;
     QLabel *blebbingVis;
     QLabel *frameAxis;
+    QLabel *areaVisLabel;
+    QLabel *blebbingVisLabel;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -57,7 +59,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1251, 1199);
+        MainWindow->resize(1250, 1250);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         loadVideoButton = new QPushButton(centralWidget);
@@ -95,7 +97,7 @@ public:
         blkSizeLabel->setGeometry(QRect(1000, 490, 181, 16));
         areaVis = new QLabel(centralWidget);
         areaVis->setObjectName(QStringLiteral("areaVis"));
-        areaVis->setGeometry(QRect(40, 610, 1171, 241));
+        areaVis->setGeometry(QRect(40, 610, 1170, 250));
         areaVis->setAutoFillBackground(false);
         areaVis->setStyleSheet(QStringLiteral(""));
         horizontalSlider = new QSlider(centralWidget);
@@ -130,7 +132,7 @@ public:
         frameLabelRight->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         blebbingVis = new QLabel(centralWidget);
         blebbingVis->setObjectName(QStringLiteral("blebbingVis"));
-        blebbingVis->setGeometry(QRect(40, 880, 1171, 241));
+        blebbingVis->setGeometry(QRect(40, 880, 1170, 250));
         blebbingVis->setAutoFillBackground(false);
         blebbingVis->setStyleSheet(QStringLiteral(""));
         frameAxis = new QLabel(centralWidget);
@@ -138,10 +140,16 @@ public:
         frameAxis->setGeometry(QRect(50, 1080, 1151, 31));
         frameAxis->setAutoFillBackground(false);
         frameAxis->setStyleSheet(QStringLiteral(""));
+        areaVisLabel = new QLabel(centralWidget);
+        areaVisLabel->setObjectName(QStringLiteral("areaVisLabel"));
+        areaVisLabel->setGeometry(QRect(50, 590, 62, 16));
+        blebbingVisLabel = new QLabel(centralWidget);
+        blebbingVisLabel->setObjectName(QStringLiteral("blebbingVisLabel"));
+        blebbingVisLabel->setGeometry(QRect(60, 840, 62, 16));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1251, 22));
+        menuBar->setGeometry(QRect(0, 0, 1250, 22));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -175,6 +183,8 @@ public:
         frameLabelRight->setText(QString());
         blebbingVis->setText(QString());
         frameAxis->setText(QString());
+        areaVisLabel->setText(QString());
+        blebbingVisLabel->setText(QString());
     } // retranslateUi
 
 };

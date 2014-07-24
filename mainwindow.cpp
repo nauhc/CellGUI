@@ -14,7 +14,8 @@ const QString halfTransBkgrd        = "background-color: rgba(128,128,128,80%);"
 const QString forgrdWhite           = "color:white;";
 const QString forgrdGreen           = "color:rgb(153, 204, 49);";
 const QString forgrdOrage           = "color:rgb(251, 172, 81);";
-const QString font20bld             = "font: bold 20px";
+const QString font20                = "font: 20px";
+const QString font16                = "font: 16px";
 const QString font16bld             = "font: bold 16px";
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
@@ -52,38 +53,62 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
-    ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font20bld);
+    ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font20);
     ui->videoDisplayerLabel->setText("Video");
 
-    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
+    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16);
     ui->contourDisplayerLabel->setText("Cell Contour");
-    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
+    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16);
     ui->cellDetectionDisplayerLabel->setText("Cell Detection");
 
     ui->differenceLabel->setStyleSheet(transBkgrd+forgrdWhite+"font:12px");
-    ui->differenceLabel->setText("Difference from Neighbors:  "/*+QString::number(ui->adaptThreshSlider->value())*/);
+    ui->differenceLabel->setText("Difference from Neighbors"/*+QString::number(ui->adaptThreshSlider->value())*/);
     ui->blkSizeLabel->setStyleSheet(transBkgrd+forgrdWhite+"font:12px");
-    ui->blkSizeLabel->setText("Referecing-neighbor Size:  "/*+QString::number(ui->blkSizeSlider->value())*/);
+    ui->blkSizeLabel->setText("Referecing-neighbor Size"/*+QString::number(ui->blkSizeSlider->value())*/);
 
     ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
     ui->frameLabelLeft->setText("Frame No.");
     ui->frameLabelRight->setStyleSheet(frameLabelStyle);
 
-    ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)"); // areaVis
-    ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)"); // prmtVis
+    // areaVis
+    QRect areaVisRect = QRect(40, 620, 1170, 250);
+    QColor areaVisColor = QColor(153, 204, 49); // green color
+    ui->areaVis->setGeometry(areaVisRect);
+    ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)");
+    areaVis = new DataVis(this->centralWidget(), areaVisColor, 500, 8000);
+    areaVis->setGeometry(areaVisRect);
+    QRect areaRectLabel = QRect(areaVisRect.x()+20, areaVisRect.y()-25, 200, 20);
+    ui->areaVisLabel->setGeometry(areaRectLabel);
+    ui->areaVisLabel->setStyleSheet(transBkgrd+"color:rgb("+
+                                    QString::number(areaVisColor.red())+","+
+                                    QString::number(areaVisColor.green())+","+
+                                    QString::number(areaVisColor.blue())+");"+font20);
+    ui->areaVisLabel->setText("Area (pixels)");
+
+    // prmtVis
+    QRect prmtVisRect = QRect(areaVisRect.x(), areaVisRect.y()+areaVisRect.height()+35, areaVisRect.width(), areaVisRect.height());
+    QColor prmtVisColor = QColor(251, 172, 81); // orange color
+    ui->blebbingVis->setGeometry(prmtVisRect);
+    ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)");
+    prmtVis = new DataVis(this->centralWidget(), prmtVisColor, 500, 2000);
+    prmtVis->setGeometry(prmtVisRect);
+    QRect prmtRectLabel = QRect(prmtVisRect.x()+20, prmtVisRect.y()-25, 200, 20);
+    ui->blebbingVisLabel->setGeometry(prmtRectLabel);
+    ui->blebbingVisLabel->setStyleSheet(transBkgrd+"color:rgb("+
+                                    QString::number(prmtVisColor.red())+","+
+                                    QString::number(prmtVisColor.green())+","+
+                                    QString::number(prmtVisColor.blue())+");"+font20);
+    ui->blebbingVisLabel->setText("Perimeter (pixels)");
+
+
 
     encircle = new Encircle(this->centralWidget());
     encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 
-    areaVis = new DataVis(this->centralWidget(), QColor(153, 204, 49), "Area"); // green color
-    areaVis->setGeometry(40, 610, 1170, 250);
-
-    prmtVis = new DataVis(this->centralWidget(), QColor(251, 172, 81), "Perimeter"); // orange color
-    prmtVis->setGeometry(40, 610+250+20, 1170, 250);
-
-    ui->frameAxis->setGeometry(40, 610+250*2+10, 1170, 50);
-//    ui->frameAxis->setStyleSheet("background-color: rgba(0,0,0,0%)");
+    //Time/Frame Axis (h)
+    ui->frameAxis->setGeometry(areaVisRect.x(), areaVisRect.y(), areaVisRect.width(), 2*areaVisRect.height()+20+50);
+    ui->frameAxis->setStyleSheet(transBkgrd);
     QPixmap pixmap(1,1); // Works
     pixmap = pixmap.scaled(ui->frameAxis->width(), ui->frameAxis->height());
     pixmap.fill(Qt::transparent);
@@ -91,10 +116,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QPen myPen(QColor(128, 128, 128, 250));
     myPen.setWidth(3);
     painter.setPen(myPen);
-    painter.drawLine(0, pixmap.height()*2/3, pixmap.width(), pixmap.height()*2/3);
-    QRectF rectX = QRectF(QPointF(pixmap.width()-200, 10),
-                          QPointF(pixmap.width()-10, pixmap.height()*2/3-5));
-    QString textX = "Time / Frame";
+    painter.drawLine(0, pixmap.height()-5, pixmap.width(), pixmap.height()-5);
+    QRectF rectX = QRectF(QPointF(pixmap.width()-250, pixmap.height()-30),
+                          QPointF(pixmap.width()-10, pixmap.height()-10));
+    QString textX = "Time (5 frames)";
     painter.setFont(QFont("Arial", 20));
     painter.drawText(rectX, Qt::AlignRight, textX);
     ui->frameAxis->setPixmap(pixmap);

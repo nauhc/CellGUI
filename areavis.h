@@ -8,7 +8,9 @@ class DataVis : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DataVis(QWidget *parent = 0, QColor clr = QColor(153, 204, 49), QString str = "Data");
+    explicit DataVis(QWidget *parent = 0,
+                     QColor clr = QColor(153, 204, 49),
+                     int v_min = 500, int v_max = 10000);
     ~DataVis();
 
     void turnVisOn();
@@ -24,8 +26,6 @@ protected:
 private:
     int     value;
     int     startValue;
-//    int     perimeter;
-//    int     startPerimeter;
     int     currFrm;
     int     startFrm;
     float   step;
@@ -35,12 +35,13 @@ private:
     int gridStepX = 20;
     int gridStepY = 20;
 
+    int     value_max;
+    int     value_min;
+
     QColor   color;
-    QString  string;
+//    QString  string;
     QPoint   currPoint_value;
     QPolygon polyline_value;
-//    QPoint      currPoint_perimeter;
-//    QPolygon    polyline_perimeter;
 
 };
 
