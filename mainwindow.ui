@@ -143,13 +143,13 @@
      <string>Block Sizes:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="cellVis">
+   <widget class="QLabel" name="areaVis">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>610</y>
       <width>1171</width>
-      <height>501</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -246,9 +246,9 @@
    <widget class="QLabel" name="frameLabelLeft">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>40</x>
       <y>550</y>
-      <width>51</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -273,6 +273,25 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="blebbingVis">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>880</y>
+      <width>1171</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

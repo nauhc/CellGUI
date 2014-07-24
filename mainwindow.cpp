@@ -58,21 +58,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->blkSizeLabel->setText("Block Size:");
 
     ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
-    ui->frameLabelLeft->setText("Frame");
+    ui->frameLabelLeft->setText("Frame No.");
     ui->frameLabelRight->setStyleSheet(frameLabelStyle);
     //ui->frameLabelRight->setText("0");
 
-    ui->cellVis->setStyleSheet("background-color: rgb(54,58,59)");
+    ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)"); // areaVis
+    ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)"); // prmtVis
 
     encircle = new Encircle(this->centralWidget());
     encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 
-    areaVis = new DataVis(this->centralWidget());
-    areaVis->setGeometry(40, 610, 1170, 500);
+    areaVis = new DataVis(this->centralWidget(), QColor(153, 204, 49)); // green color
+    areaVis->setGeometry(40, 610, 1170, 250);
+
+    prmtVis = new DataVis(this->centralWidget(), QColor(251, 172, 81)); // orange color
+    prmtVis->setGeometry(40, 610+250+20, 1170, 250);
 }
 
 MainWindow::~MainWindow(){
+    delete prmtVis;
     delete areaVis;
     delete encircle;
     delete myController;
@@ -175,7 +180,8 @@ void MainWindow::on_stopVideoButton_clicked()
 
     encircled = false;
 
-    areaVis->releaseAreaVis();
+    prmtVis->releaseDataVis();
+    areaVis->releaseDataVis();
 
     QPixmap pixmap(1,1); // Works
     pixmap = pixmap.scaled(ui->orgVideo->width(), ui->orgVideo->height());
@@ -277,7 +283,8 @@ void MainWindow::on_loadVideoButton_clicked()
 }
 
 void MainWindow::updateDataVisUI(int area, int perimeter){
-    areaVis->updateData(area, perimeter, myController->getCurrentFrame());
+    areaVis->updateData(area, myController->getCurrentFrame());
+    prmtVis->updateData(perimeter, myController->getCurrentFrame());
 }
 
 void MainWindow::on_drawROIButton_pressed(){
@@ -309,6 +316,7 @@ void MainWindow::on_drawROIButton_clicked(){
         encircled = true;
 
         areaVis->turnVisOn();
+        prmtVis->turnVisOn();
     }
 
     // when circling mode is turned off, track starts
@@ -323,6 +331,8 @@ void MainWindow::on_drawROIButton_clicked(){
         ui->drawROIButton->setStyleSheet(button_released_on);
 
         areaVis->turnTrackOn(myController->getNumberOfFrames(),
+                             myController->getCurrentFrame());
+        prmtVis->turnTrackOn(myController->getNumberOfFrames(),
                              myController->getCurrentFrame());
 
         encircle->turnOffEncircleMode();

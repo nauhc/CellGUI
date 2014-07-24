@@ -38,7 +38,7 @@ public:
     QSlider *blkSizeSlider;
     QLabel *differenceLabel;
     QLabel *blkSizeLabel;
-    QLabel *cellVis;
+    QLabel *areaVis;
     QSlider *horizontalSlider;
     QPushButton *drawROIButton;
     QLabel *roiVideo2;
@@ -47,6 +47,7 @@ public:
     QLabel *cellDetectionDisplayerLabel;
     QLabel *frameLabelLeft;
     QLabel *frameLabelRight;
+    QLabel *blebbingVis;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -91,11 +92,11 @@ public:
         blkSizeLabel = new QLabel(centralWidget);
         blkSizeLabel->setObjectName(QStringLiteral("blkSizeLabel"));
         blkSizeLabel->setGeometry(QRect(1000, 490, 121, 16));
-        cellVis = new QLabel(centralWidget);
-        cellVis->setObjectName(QStringLiteral("cellVis"));
-        cellVis->setGeometry(QRect(40, 610, 1171, 501));
-        cellVis->setAutoFillBackground(false);
-        cellVis->setStyleSheet(QStringLiteral(""));
+        areaVis = new QLabel(centralWidget);
+        areaVis->setObjectName(QStringLiteral("areaVis"));
+        areaVis->setGeometry(QRect(40, 610, 1171, 241));
+        areaVis->setAutoFillBackground(false);
+        areaVis->setStyleSheet(QStringLiteral(""));
         horizontalSlider = new QSlider(centralWidget);
         horizontalSlider->setObjectName(QStringLiteral("horizontalSlider"));
         horizontalSlider->setGeometry(QRect(120, 550, 341, 22));
@@ -118,12 +119,17 @@ public:
         cellDetectionDisplayerLabel->setGeometry(QRect(660, 300, 121, 21));
         frameLabelLeft = new QLabel(centralWidget);
         frameLabelLeft->setObjectName(QStringLiteral("frameLabelLeft"));
-        frameLabelLeft->setGeometry(QRect(60, 550, 51, 21));
+        frameLabelLeft->setGeometry(QRect(40, 550, 81, 21));
         frameLabelLeft->setAlignment(Qt::AlignCenter);
         frameLabelRight = new QLabel(centralWidget);
         frameLabelRight->setObjectName(QStringLiteral("frameLabelRight"));
         frameLabelRight->setGeometry(QRect(470, 550, 61, 21));
         frameLabelRight->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        blebbingVis = new QLabel(centralWidget);
+        blebbingVis->setObjectName(QStringLiteral("blebbingVis"));
+        blebbingVis->setGeometry(QRect(40, 880, 1171, 241));
+        blebbingVis->setAutoFillBackground(false);
+        blebbingVis->setStyleSheet(QStringLiteral(""));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -151,7 +157,7 @@ public:
         stopVideoButton->setText(QApplication::translate("MainWindow", "Stop", 0));
         differenceLabel->setText(QApplication::translate("MainWindow", "Difference:", 0));
         blkSizeLabel->setText(QApplication::translate("MainWindow", "Block Sizes:", 0));
-        cellVis->setText(QString());
+        areaVis->setText(QString());
         drawROIButton->setText(QApplication::translate("MainWindow", "Encircle Cell", 0));
         roiVideo2->setText(QString());
         videoDisplayerLabel->setText(QString());
@@ -159,6 +165,7 @@ public:
         cellDetectionDisplayerLabel->setText(QString());
         frameLabelLeft->setText(QString());
         frameLabelRight->setText(QString());
+        blebbingVis->setText(QString());
     } // retranslateUi
 
 };

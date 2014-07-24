@@ -53,6 +53,7 @@ private:
     Controller  *myController;
     Encircle    *encircle;
     DataVis     *areaVis;
+    DataVis     *prmtVis;
     bool        encircled;
 };
 

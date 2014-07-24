@@ -8,24 +8,24 @@ class DataVis : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DataVis(QWidget *parent = 0);
+    explicit DataVis(QWidget *parent = 0, QColor clr = QColor(153, 204, 49));
     ~DataVis();
 
     void turnVisOn();
     void turnVisOff();
     void turnTrackOn(int fn, int f);
     void turnTrackOff();
-    void updateData(int a, int perimtr, int currFrame);
-    void releaseAreaVis();
+    void updateData(int v, int currFrame);
+    void releaseDataVis();
 
 protected:
     void paintEvent(QPaintEvent *event);
 
 private:
-    int     area;
-    int     startArea;
-    int     perimeter;
-    int     startPerimeter;
+    int     value;
+    int     startValue;
+//    int     perimeter;
+//    int     startPerimeter;
     int     currFrm;
     int     startFrm;
     float   step;
@@ -35,10 +35,11 @@ private:
     int gridStepX = 20;
     int gridStepY = 20;
 
-    QPoint      currPoint_area;
-    QPolygon    polyline_area;
-    QPoint      currPoint_perimeter;
-    QPolygon    polyline_perimeter;
+    QColor   color;
+    QPoint   currPoint_value;
+    QPolygon polyline_value;
+//    QPoint      currPoint_perimeter;
+//    QPolygon    polyline_perimeter;
 
 };
 
