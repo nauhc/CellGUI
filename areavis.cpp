@@ -48,9 +48,9 @@ void DataVis::updateData(int v, int currFrame){
     value = v;
     currFrm = currFrame;
 
-    if(currFrm - startFrm - 2 > 0){
+    if(currFrm - startFrm > 2){
         int x = gridStepX*2 + step*(currFrm-startFrm-2);
-        int y = this->height() - int(double(value-value_min)/double(value_max-value_min)*double(this->height()));
+        int y = (1.0+double(value_max-value)/double(value_max-value_min)*15.0)*double(gridStepY);
         currPoint_value = QPoint(x, y);
         polyline_value << currPoint_value;
     }
@@ -96,8 +96,7 @@ void DataVis::paintEvent(QPaintEvent *event)
             myPen.setColor(QColor(128, 128, 128, 250));
             myPen.setWidth(3);
             painter.setPen(myPen);
-            painter.drawLine(2*gridStepX, 0, 2*gridStepX,
-                             this->height()/*-this->height()%gridStepX*/);
+            painter.drawLine(2*gridStepX, 0, 2*gridStepX, this->height()/*-this->height()%gridStepX*/);
             for(int j = gridStepY; j < this->height(); j+=gridStepY)
                 painter.drawLine(2*gridStepX-5, j, 2*gridStepX+5, j);
 
@@ -109,7 +108,7 @@ void DataVis::paintEvent(QPaintEvent *event)
 
             // text for y-axis graduation
             for(int n = 0; n < 15; n+=2){
-                QRectF rect = QRectF(QPointF(0, 5+gridStepY*n), QPointF(gridStepX*2-3, gridStepY*(n+2)));
+                QRectF rect = QRectF(QPointF(0, gridStepY*n+9), QPointF(gridStepX*2-5, gridStepY*(n+2)));
                 QString textGrad = QString::number(value_max-n*(value_max-value_min)/15);
                 if(n%4 == 0)
                     painter.setFont(QFont("Arial", 16));
@@ -125,7 +124,6 @@ void DataVis::paintEvent(QPaintEvent *event)
             painter.drawPoint(currPoint_value);
 
             //draw text showing the cell area
-            //myPen.setColor(QColor(128, 128, 128));
             myPen.setWidth(4);
             painter.setPen(myPen);
             QRectF rect_a = QRectF(QPointF(currPoint_value.x()-50, currPoint_value.y()-60),
