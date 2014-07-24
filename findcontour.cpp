@@ -118,7 +118,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
 
     perimeter = 0;
     for(unsigned int i = 0; i < contours.size(); i++){
-        drawContours( dispImg1, contours, i, Scalar(255,255,0), 1, 8, hierarchy, 0, Point() );
+        drawContours( dispImg1, contours, i, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
         perimeter += contours[i].size();
     }
 
@@ -165,7 +165,7 @@ void FindContour::boundingBox(Mat &img)
 {
     img = frame->clone();
     //Rect rect = boundingRect(Mat(circle));
-    Scalar color(255, 255, 0); // draw a green rectangle on the image
+    Scalar color(49, 204, 152); // draw a green rectangle on the image
     rectangle(img, rect, color, 2);
 }
 

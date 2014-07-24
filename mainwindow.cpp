@@ -5,16 +5,25 @@
 #include "ui_mainwindow.h"
 #include "qdebug.h"
 
-const QString button_pressed      = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
-const QString button_released_on  = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
-const QString button_released_off = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
-const QString frameLabelStyle     = "color:white; font:12px; background-color:rgba(0,0,0,0%) ";
+const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
+const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
+const QString button_released_off   = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
+const QString frameLabelStyle       = "color:white; font:12px; background-color:rgba(0,0,0,0%) ";
+const QString transBkgrd            = "background-color: rgba(0,0,0,0%);";
+const QString halfTransBkgrd        = "background-color: rgba(128,128,128,80%);";
+const QString forgrdWhite           = "color:white;";
+const QString forgrdGreen           = "color:rgb(153, 204, 49);";
+const QString forgrdOrage           = "color:rgb(251, 172, 81);";
+const QString font20bld             = "font: bold 20px";
+const QString font16bld             = "font: bold 16px";
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow),
     myController(new Controller())
 {
     ui->setupUi(this);
     this->setStyleSheet("background-color:rgb(38,42,43)");
+    this->setFixedSize(this->width(), this->height());
     connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
             this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
@@ -43,24 +52,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
-    const QString style_label = "background-color: rgba(0,0,0,0%); color:rgb(255,255,255);";
-    const QString font20 = "font: 20px";
-    const QString font14 = "font: 14px";
-    ui->videoDisplayerLabel->setStyleSheet(style_label+font20);
+    ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font20bld);
     ui->videoDisplayerLabel->setText("Video");
-    ui->contourDisplayerLabel->setStyleSheet(style_label+font14);
+
+    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
     ui->contourDisplayerLabel->setText("Cell Contour");
-    ui->cellDetectionDisplayerLabel->setStyleSheet(style_label+font14);
+    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
     ui->cellDetectionDisplayerLabel->setText("Cell Detection");
-    ui->differenceLabel->setStyleSheet(style_label+font14);
-    ui->differenceLabel->setText("Difference:");
-    ui->blkSizeLabel->setStyleSheet(style_label+font14);
-    ui->blkSizeLabel->setText("Block Size:");
+
+    ui->differenceLabel->setStyleSheet(transBkgrd+forgrdWhite+"font:12px");
+    ui->differenceLabel->setText("Difference from Neighbors:  "/*+QString::number(ui->adaptThreshSlider->value())*/);
+    ui->blkSizeLabel->setStyleSheet(transBkgrd+forgrdWhite+"font:12px");
+    ui->blkSizeLabel->setText("Referecing-neighbor Size:  "/*+QString::number(ui->blkSizeSlider->value())*/);
 
     ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
     ui->frameLabelLeft->setText("Frame No.");
     ui->frameLabelRight->setStyleSheet(frameLabelStyle);
-    //ui->frameLabelRight->setText("0");
 
     ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)"); // areaVis
     ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)"); // prmtVis
@@ -69,11 +76,28 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 
-    areaVis = new DataVis(this->centralWidget(), QColor(153, 204, 49)); // green color
+    areaVis = new DataVis(this->centralWidget(), QColor(153, 204, 49), "Area"); // green color
     areaVis->setGeometry(40, 610, 1170, 250);
 
-    prmtVis = new DataVis(this->centralWidget(), QColor(251, 172, 81)); // orange color
+    prmtVis = new DataVis(this->centralWidget(), QColor(251, 172, 81), "Perimeter"); // orange color
     prmtVis->setGeometry(40, 610+250+20, 1170, 250);
+
+    ui->frameAxis->setGeometry(40, 610+250*2+10, 1170, 50);
+//    ui->frameAxis->setStyleSheet("background-color: rgba(0,0,0,0%)");
+    QPixmap pixmap(1,1); // Works
+    pixmap = pixmap.scaled(ui->frameAxis->width(), ui->frameAxis->height());
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    QPen myPen(QColor(128, 128, 128, 250));
+    myPen.setWidth(3);
+    painter.setPen(myPen);
+    painter.drawLine(0, pixmap.height()*2/3, pixmap.width(), pixmap.height()*2/3);
+    QRectF rectX = QRectF(QPointF(pixmap.width()-200, 10),
+                          QPointF(pixmap.width()-10, pixmap.height()*2/3-5));
+    QString textX = "Time / Frame";
+    painter.setFont(QFont("Arial", 20));
+    painter.drawText(rectX, Qt::AlignRight, textX);
+    ui->frameAxis->setPixmap(pixmap);
 }
 
 MainWindow::~MainWindow(){
@@ -206,6 +230,9 @@ void MainWindow::on_stopVideoButton_clicked()
     ui->horizontalSlider->setValue(0);
     ui->drawROIButton->setEnabled(false);
     ui->drawROIButton->setStyleSheet(button_released_off);
+    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
+    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
+
 }
 
 void MainWindow::on_loadVideoButton_pressed(){
@@ -273,6 +300,7 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->roiVideo1->setAlignment(Qt::AlignCenter);
             ui->roiVideo2->setGeometry(650, 290, width/2-10, height/2-10);
             ui->roiVideo2->setAlignment(Qt::AlignCenter);
+
         }
     }
     else{
@@ -302,7 +330,7 @@ void MainWindow::on_drawROIButton_clicked(){
     // when it is circling mode
     // user can circle the cell of interest
     if(!encircle->isEncircled()){
-
+        this->setCursor(Qt::CrossCursor);
         ui->playVideoButton->setEnabled(false);
         ui->playVideoButton->setStyleSheet(button_released_off);
         ui->stopVideoButton->setEnabled(false);
@@ -328,8 +356,10 @@ void MainWindow::on_drawROIButton_clicked(){
         ui->playVideoButton->setStyleSheet(button_released_on);
         on_playVideoButton_clicked();
         ui->drawROIButton->setText("Encircle Cell");
-        ui->drawROIButton->setStyleSheet(button_released_on);
-
+        ui->drawROIButton->setStyleSheet(button_released_off);
+        ui->contourDisplayerLabel->setStyleSheet(halfTransBkgrd+forgrdOrage+"border-radius:4px;"+font16bld);
+        ui->cellDetectionDisplayerLabel->setStyleSheet(halfTransBkgrd+forgrdGreen+"border-radius:4px;"+font16bld);
+        this->setCursor(Qt::ArrowCursor);
         areaVis->turnTrackOn(myController->getNumberOfFrames(),
                              myController->getCurrentFrame());
         prmtVis->turnTrackOn(myController->getNumberOfFrames(),
