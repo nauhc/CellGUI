@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <QWidget>
 #include <QFileDialog>
 #include <QPainter>
 #include <QMessageBox>
@@ -273,16 +274,17 @@ void MainWindow::on_loadVideoButton_released(){
 void MainWindow::on_loadVideoButton_clicked()
 {
     cout << "'Load Video' Button clicked." << endl;
-//    QFileDialog dialog = new QFileDialog();
-//    dialog.setNameFilter("All C++ files (*.avi *.mov *.mpg *.mp4)");
 
-//    QString filename = QFileDialog::getOpenFileName(this,
-//                                                    tr("Open Video"), "../../../video/",
-//                                                    tr("Video Files (*.avi *.mov *.mpg *.mp4"));
 
-    QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
-    QString name        = "test.mov";
-    QString filename    = filepath + name;
+    QFileDialog *dialog = new QFileDialog();
+    QString filename = dialog->getOpenFileName(this,
+                                               tr("Open Video"),
+                                               "./video",
+                                               tr("Video Files (*.mov)"));
+    delete dialog;
+//    QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
+//    QString name        = "test.mov";
+//    QString filename    = filepath + name;
 
     if (!filename.isEmpty()){
         if (!myController->loadVideo(filename.toStdString())){
@@ -325,7 +327,6 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->roiVideo1->setAlignment(Qt::AlignCenter);
             ui->roiVideo2->setGeometry(650, 290, width/2-10, height/2-10);
             ui->roiVideo2->setAlignment(Qt::AlignCenter);
-
         }
     }
     else{

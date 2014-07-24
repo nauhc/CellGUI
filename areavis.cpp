@@ -1,7 +1,7 @@
 #include "areavis.h"
 #include "qdebug.h"
 #include <iostream>
-
+#include <QTimer>
 //int scale   = 200;
 
 DataVis::DataVis(QWidget *parent, QColor clr,
@@ -12,6 +12,10 @@ DataVis::DataVis(QWidget *parent, QColor clr,
 //    string  = str;
     value_min = v_min;
     value_max = v_max;
+
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1);
 }
 
 DataVis::~DataVis(){
@@ -95,6 +99,7 @@ void DataVis::paintEvent(QPaintEvent *event)
             //draw y-axis with graduation
             myPen.setColor(QColor(128, 128, 128, 250));
             myPen.setWidth(3);
+            painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setPen(myPen);
             painter.drawLine(2*gridStepX, 0, 2*gridStepX, this->height()/*-this->height()%gridStepX*/);
             for(int j = gridStepY; j < this->height(); j+=gridStepY)
@@ -134,5 +139,5 @@ void DataVis::paintEvent(QPaintEvent *event)
         }
     }
 
-    this->update();
+//    this->update();
 }
