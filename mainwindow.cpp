@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->horizontalSlider->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
     ui->blkSizeSlider->setRange(1, 20);
-    ui->adaptThreshSlider->setValue(7); // initial value of constValue for adaptiveThreshold
+    ui->adaptThreshSlider->setValue(4); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
     ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font20);
@@ -91,39 +91,59 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QColor prmtVisColor = QColor(251, 172, 81); // orange color
     ui->blebbingVis->setGeometry(prmtVisRect);
     ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)");
-    prmtVis = new DataVis(this->centralWidget(), prmtVisColor, 500, 2000);
+    prmtVis = new DataVis(this->centralWidget(), prmtVisColor, 0, 1350);
     prmtVis->setGeometry(prmtVisRect);
     QRect prmtRectLabel = QRect(prmtVisRect.x(), prmtVisRect.y()-25, prmtVisRect.width(), 20);
     ui->blebbingVisLabel->setGeometry(prmtRectLabel);
     ui->blebbingVisLabel->setStyleSheet(transBkgrd+"color:rgb("+
-                                    QString::number(prmtVisColor.red())+","+
-                                    QString::number(prmtVisColor.green())+","+
-                                    QString::number(prmtVisColor.blue())+");"+font20);
+                                        QString::number(prmtVisColor.red())+","+
+                                        QString::number(prmtVisColor.green())+","+
+                                        QString::number(prmtVisColor.blue())+");"+font20);
     ui->blebbingVisLabel->setText("  Perimeter (pixels)");
-
-
 
     encircle = new Encircle(this->centralWidget());
     encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 
-    //Time/Frame Axis (h)
-    ui->frameAxis->setGeometry(areaVisRect.x(), areaVisRect.y(), areaVisRect.width(), 2*areaVisRect.height()+20+60);
-    ui->frameAxis->setStyleSheet(transBkgrd);
-    QPixmap pixmap(1,1); // Works
-    pixmap = pixmap.scaled(ui->frameAxis->width(), ui->frameAxis->height());
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-    QPen myPen(QColor(128, 128, 128, 128));
-    myPen.setWidth(3);
-    painter.setPen(myPen);
-    painter.drawLine(0, pixmap.height()-18, pixmap.width(), pixmap.height()-18);
-    QRectF rectX = QRectF(QPointF(pixmap.width()-250, pixmap.height()-40),
-                          QPointF(pixmap.width()-10, pixmap.height()-20));
-    QString textX = "Frame";
-    painter.setFont(QFont("Arial", 18));
-    painter.drawText(rectX, Qt::AlignRight, textX);
-    ui->frameAxis->setPixmap(pixmap);
+//    //Time/Frame Axis (h)
+//    ui->frameAxis->setGeometry(areaVisRect.x(), areaVisRect.y(), areaVisRect.width(), 2*areaVisRect.height()+20+60);
+//    ui->frameAxis->setStyleSheet(transBkgrd);
+//    QPixmap pixmap(1,1); // Works
+//    pixmap = pixmap.scaled(ui->frameAxis->width(), ui->frameAxis->height());
+//    pixmap.fill(Qt::transparent);
+//    QPainter painter(&pixmap);
+//    QPen myPen(QColor(128, 128, 128, 128));
+//    myPen.setWidth(3);
+//    painter.setPen(myPen);
+//    painter.drawLine(0, pixmap.height()-18, pixmap.width(), pixmap.height()-18);
+//    QRectF rectX = QRectF(QPointF(pixmap.width()-250, pixmap.height()-40),
+//                          QPointF(pixmap.width()-10, pixmap.height()-20));
+//    QString textX = "Frame";
+//    painter.setFont(QFont("Arial", 18));
+//    painter.drawText(rectX, Qt::AlignRight, textX);
+//    ui->frameAxis->setPixmap(pixmap);
+
+//    ui->frameAxisSlider->setGeometry(prmtVisRect.x(), prmtVisRect.y()+prmtVisRect.height()+10,
+//                                     prmtVisRect.width(), 30);
+//    ui->frameAxisSlider->setStyleSheet(transBkgrd);
+//    QString str = "\
+//            QSlider::groove:horizontal {\
+//            color: rgba(128,128,128,128)\
+//            border: 0px solid #999999;\
+//            height: 2px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */\
+//            background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);\
+//            margin: 2px 0;\
+//            }\
+//            QSlider::handle:horizontal {\
+//            background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);\
+//            border: 1px solid #5c5c5c;\
+//            width: 2px;\
+//            height: 4px;\
+//            margin: -4px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */\
+//            border-radius: 3px;\
+//            }\
+//            ";
+//    ui->frameAxisSlider->setStyleSheet(str);
 }
 
 MainWindow::~MainWindow(){
@@ -282,9 +302,9 @@ void MainWindow::on_loadVideoButton_clicked()
                                                "./video",
                                                tr("Video Files (*.mov)"));
     delete dialog;
-//    QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
-//    QString name        = "test.mov";
-//    QString filename    = filepath + name;
+    //    QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
+    //    QString name        = "test.mov";
+    //    QString filename    = filepath + name;
 
     if (!filename.isEmpty()){
         if (!myController->loadVideo(filename.toStdString())){

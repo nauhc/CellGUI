@@ -107,6 +107,20 @@ void DataVis::paintEvent(QPaintEvent *event)
             for(int j = gridStepY; j < this->height(); j+=gridStepY)
                 painter.drawLine(2*gridStepX-5, j, 2*gridStepX+5, j);
 
+            //draw x-axis
+            painter.drawLine(2*gridStepX-5, gridStepY*15, this->width(), gridStepY*15);
+            painter.drawLine(currPoint_value.x(), gridStepY*15-2, currPoint_value.x(), gridStepY*15+1);
+            QRectF rect_f = QRectF(QPointF(currPoint_value.x()-15, gridStepY*15-15),
+                                   QPointF(currPoint_value.x()+15, gridStepY*15-5));
+            QString textFrm = QString::number(currFrm);
+            painter.setFont(QFont("Arial", 11));
+            painter.drawText(rect_f, Qt::AlignCenter, textFrm);
+            painter.setFont(QFont("Arial", 15));
+            QRectF rect_frmLbl = QRectF(QPointF(this->width()-55, this->height()-40),
+                                   QPointF(this->width()-5, this->height()-25));
+            QString textFrmLbl = "Frame";
+            painter.drawText(rect_frmLbl, Qt::AlignLeft, textFrmLbl);
+
             // pen for drawing data line chart
             myPen.setColor(color);
             myPen.setWidth(3);

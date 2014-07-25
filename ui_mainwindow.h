@@ -48,7 +48,6 @@ public:
     QLabel *frameLabelLeft;
     QLabel *frameLabelRight;
     QLabel *blebbingVis;
-    QLabel *frameAxis;
     QLabel *areaVisLabel;
     QLabel *blebbingVisLabel;
     QMenuBar *menuBar;
@@ -59,7 +58,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1250, 1250);
+        MainWindow->resize(1250, 1210);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         loadVideoButton = new QPushButton(centralWidget);
@@ -135,11 +134,6 @@ public:
         blebbingVis->setGeometry(QRect(40, 880, 1170, 250));
         blebbingVis->setAutoFillBackground(false);
         blebbingVis->setStyleSheet(QStringLiteral(""));
-        frameAxis = new QLabel(centralWidget);
-        frameAxis->setObjectName(QStringLiteral("frameAxis"));
-        frameAxis->setGeometry(QRect(50, 1080, 1151, 31));
-        frameAxis->setAutoFillBackground(false);
-        frameAxis->setStyleSheet(QStringLiteral(""));
         areaVisLabel = new QLabel(centralWidget);
         areaVisLabel->setObjectName(QStringLiteral("areaVisLabel"));
         areaVisLabel->setGeometry(QRect(50, 590, 62, 16));
@@ -182,7 +176,6 @@ public:
         frameLabelLeft->setText(QString());
         frameLabelRight->setText(QString());
         blebbingVis->setText(QString());
-        frameAxis->setText(QString());
         areaVisLabel->setText(QString());
         blebbingVisLabel->setText(QString());
     } // retranslateUi
