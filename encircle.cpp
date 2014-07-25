@@ -9,13 +9,11 @@ Encircle::Encircle(QWidget *parent) : QWidget(parent)
 {
     std::cout << "encircler initialized\n" << std::endl;
     penWidth = 3;
-    //penColor = QColor(0, 225, 255, 127);//blue
     penColor = QColor(153, 204, 49, 200);
     encircling = false;
     encircleMode = false;
     image = QImage(QSize(500, 500), QImage::Format_ARGB32);
     image.fill(Qt::transparent);
-    //image.fill(QColor(qRgba(0, 0, 255, 127)));
 }
 
 Encircle::~Encircle(){
@@ -24,13 +22,13 @@ Encircle::~Encircle(){
 void Encircle::turnOnEncircleMode()
 {
     encircleMode = true;
-    std::cout << "encircle mode: on" << std::endl;
+    //std::cout << "encircle mode: on" << std::endl;
 }
 
 void Encircle::turnOffEncircleMode()
 {
     encircleMode = false;
-    std::cout << "encircle mode: off" << std::endl;
+    //std::cout << "encircle mode: off" << std::endl;
 }
 
 void Encircle::getRegion(QVector<QPoint> &circle)

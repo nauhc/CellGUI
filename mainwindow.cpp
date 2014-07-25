@@ -78,13 +78,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)");
     areaVis = new DataVis(this->centralWidget(), areaVisColor, 500, 8000);
     areaVis->setGeometry(areaVisRect);
-    QRect areaRectLabel = QRect(areaVisRect.x()+20, areaVisRect.y()-25, 200, 20);
+    QRect areaRectLabel = QRect(areaVisRect.x(), areaVisRect.y()-25, areaVisRect.width(), 20);
     ui->areaVisLabel->setGeometry(areaRectLabel);
     ui->areaVisLabel->setStyleSheet(transBkgrd+"color:rgb("+
                                     QString::number(areaVisColor.red())+","+
                                     QString::number(areaVisColor.green())+","+
                                     QString::number(areaVisColor.blue())+");"+font20);
-    ui->areaVisLabel->setText("Area (pixels)");
+    ui->areaVisLabel->setText("  Area (pixels)");
 
     // prmtVis
     QRect prmtVisRect = QRect(areaVisRect.x(), areaVisRect.y()+areaVisRect.height()+35, areaVisRect.width(), areaVisRect.height());
@@ -93,13 +93,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)");
     prmtVis = new DataVis(this->centralWidget(), prmtVisColor, 500, 2000);
     prmtVis->setGeometry(prmtVisRect);
-    QRect prmtRectLabel = QRect(prmtVisRect.x()+20, prmtVisRect.y()-25, 200, 20);
+    QRect prmtRectLabel = QRect(prmtVisRect.x(), prmtVisRect.y()-25, prmtVisRect.width(), 20);
     ui->blebbingVisLabel->setGeometry(prmtRectLabel);
     ui->blebbingVisLabel->setStyleSheet(transBkgrd+"color:rgb("+
                                     QString::number(prmtVisColor.red())+","+
                                     QString::number(prmtVisColor.green())+","+
                                     QString::number(prmtVisColor.blue())+");"+font20);
-    ui->blebbingVisLabel->setText("Perimeter (pixels)");
+    ui->blebbingVisLabel->setText("  Perimeter (pixels)");
 
 
 
@@ -108,20 +108,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     encircled = false;
 
     //Time/Frame Axis (h)
-    ui->frameAxis->setGeometry(areaVisRect.x(), areaVisRect.y(), areaVisRect.width(), 2*areaVisRect.height()+20+50);
+    ui->frameAxis->setGeometry(areaVisRect.x(), areaVisRect.y(), areaVisRect.width(), 2*areaVisRect.height()+20+60);
     ui->frameAxis->setStyleSheet(transBkgrd);
     QPixmap pixmap(1,1); // Works
     pixmap = pixmap.scaled(ui->frameAxis->width(), ui->frameAxis->height());
     pixmap.fill(Qt::transparent);
     QPainter painter(&pixmap);
-    QPen myPen(QColor(128, 128, 128, 250));
+    QPen myPen(QColor(128, 128, 128, 128));
     myPen.setWidth(3);
     painter.setPen(myPen);
-    painter.drawLine(0, pixmap.height()-5, pixmap.width(), pixmap.height()-5);
-    QRectF rectX = QRectF(QPointF(pixmap.width()-250, pixmap.height()-30),
-                          QPointF(pixmap.width()-10, pixmap.height()-10));
-    QString textX = "Time (5 frames)";
-    painter.setFont(QFont("Arial", 20));
+    painter.drawLine(0, pixmap.height()-18, pixmap.width(), pixmap.height()-18);
+    QRectF rectX = QRectF(QPointF(pixmap.width()-250, pixmap.height()-40),
+                          QPointF(pixmap.width()-10, pixmap.height()-20));
+    QString textX = "Frame";
+    painter.setFont(QFont("Arial", 18));
     painter.drawText(rectX, Qt::AlignRight, textX);
     ui->frameAxis->setPixmap(pixmap);
 }

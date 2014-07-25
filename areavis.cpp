@@ -2,7 +2,6 @@
 #include "qdebug.h"
 #include <iostream>
 #include <QTimer>
-//int scale   = 200;
 
 DataVis::DataVis(QWidget *parent, QColor clr,
                  int v_min, int v_max) : QWidget(parent){
@@ -24,12 +23,12 @@ DataVis::~DataVis(){
 
 void DataVis::turnVisOn(){
     on = true;
-    std::cout << "dataVis is ON " << std::endl;
+    //std::cout << "dataVis is ON " << std::endl;
 }
 
 void DataVis::turnVisOff(){
     on = false;
-    std::cout << "dataVis is OFF " << std::endl;
+    //std::cout << "dataVis is OFF " << std::endl;
 }
 
 void DataVis::turnTrackOn(int fn, int f){
@@ -38,7 +37,6 @@ void DataVis::turnTrackOn(int fn, int f){
     step        = float(this->width()-2*float(fn-f)/5)/float(fn-f);
     gridStepX   = int(step)*5;
     gridStepY   = int(this->height()/15);
-    //scale       = int(value_max - value_min)/15;
 }
 
 void DataVis::turnTrackOff(){
@@ -61,7 +59,7 @@ void DataVis::updateData(int v, int currFrame){
 }
 
 void DataVis::releaseDataVis(){
-    std::cout << "Area visualization is off." << std::endl;
+    //std::cout << "Area visualization is off." << std::endl;
     track   = false;
     on      = false;
     value = 0;
@@ -139,5 +137,5 @@ void DataVis::paintEvent(QPaintEvent *event)
         }
     }
 
-//    this->update();
+//    this->update(); //This consumes too much resources
 }

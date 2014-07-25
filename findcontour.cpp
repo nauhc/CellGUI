@@ -122,7 +122,6 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
         perimeter += contours[i].size();
     }
 
-
     GaussianBlur(openclose, openclose, Size(3, 3), 2, 2 );
     dispImg2 = openclose;
 
