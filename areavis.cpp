@@ -3,6 +3,8 @@
 #include <iostream>
 #include <QTimer>
 
+int scaleX = 5;
+
 DataVis::DataVis(QWidget *parent, QColor clr,
                  int v_min, int v_max) : QWidget(parent){
     on      = false;
@@ -34,8 +36,10 @@ void DataVis::turnVisOff(){
 void DataVis::turnTrackOn(int fn, int f){
     track       = true;
     startFrm    = f;
-    step        = float(this->width()-2*float(fn-f)/5)/float(fn-f);
-    gridStepX   = int(step)*5;
+    step        = float(this->width()-75)/float(fn-f);
+    scaleX      = int(25/step)+1;
+    gridStepX   = int(step*scaleX);
+    std::cout << "step " << step << " scaleX " << scaleX <<  " gridStep " << gridStepX << std::endl;
     gridStepY   = int(this->height()/15);
 }
 
