@@ -40,7 +40,7 @@ void DataVis::turnTrackOn(int fn, int f){
     scaleX      = int(25/step)+1;
     gridStepX   = int(step*scaleX);
     std::cout << "step " << step << " scaleX " << scaleX <<  " gridStep " << gridStepX << std::endl;
-    gridStepY   = int(this->height()/15);
+    gridStepY   = int(this->height()/16);
 }
 
 void DataVis::turnTrackOff(){
@@ -56,7 +56,7 @@ void DataVis::updateData(int v, int currFrame){
 
     if(currFrm - startFrm > 2){
         int x = gridStepX*2 + step*(currFrm-startFrm-2);
-        int y = (1.0+double(value_max-value)/double(value_max-value_min)*15.0)*double(gridStepY);
+        int y = (1.0+double(value_max-value)/double(value_max-value_min)*16.0)*double(gridStepY);
         currPoint_value = QPoint(x, y);
         polyline_value << currPoint_value;
     }
@@ -99,7 +99,7 @@ void DataVis::paintEvent(QPaintEvent *event)
 
         if (track && (currFrm >= startFrm+2)){
             //draw y-axis with graduation
-            myPen.setColor(QColor(128, 128, 128, 250));
+            myPen.setColor(QColor(160, 160, 160, 250));
             myPen.setWidth(3);
             painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setPen(myPen);
@@ -108,16 +108,17 @@ void DataVis::paintEvent(QPaintEvent *event)
                 painter.drawLine(2*gridStepX-5, j, 2*gridStepX+5, j);
 
             //draw x-axis
-            painter.drawLine(2*gridStepX-5, gridStepY*15, this->width(), gridStepY*15);
-            painter.drawLine(currPoint_value.x(), gridStepY*15-2, currPoint_value.x(), gridStepY*15+1);
-            QRectF rect_f = QRectF(QPointF(currPoint_value.x()-15, gridStepY*15-15),
-                                   QPointF(currPoint_value.x()+15, gridStepY*15-5));
+            int verticalPos = gridStepY*15;
+            painter.drawLine(2*gridStepX-5, verticalPos, this->width(), verticalPos);
+            painter.drawLine(currPoint_value.x(), verticalPos-2, currPoint_value.x(), verticalPos+1);
+            QRectF rect_f = QRectF(QPointF(currPoint_value.x()-15, verticalPos+5),
+                                   QPointF(currPoint_value.x()+15, verticalPos+15));
             QString textFrm = QString::number(currFrm);
-            painter.setFont(QFont("Arial", 11));
+            painter.setFont(QFont("Arial", 14));
             painter.drawText(rect_f, Qt::AlignCenter, textFrm);
-            painter.setFont(QFont("Arial", 15));
-            QRectF rect_frmLbl = QRectF(QPointF(this->width()-55, this->height()-40),
-                                   QPointF(this->width()-5, this->height()-25));
+            painter.setFont(QFont("Arial", 17));
+            QRectF rect_frmLbl = QRectF(QPointF(this->width()-55, verticalPos-20),
+                                   QPointF(this->width()-5, verticalPos-5));
             QString textFrmLbl = "Frame";
             painter.drawText(rect_frmLbl, Qt::AlignLeft, textFrmLbl);
 

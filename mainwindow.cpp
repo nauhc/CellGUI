@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->frameLabelRight->setStyleSheet(frameLabelStyle);
 
     // areaVis
-    QRect areaVisRect = QRect(40, 620, 1170, 250);
+    QRect areaVisRect = QRect(40, 620, 1170, 280);
     QColor areaVisColor = QColor(153, 204, 49); // green color
     ui->areaVis->setGeometry(areaVisRect);
     ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)");

@@ -58,7 +58,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1250, 1210);
+        MainWindow->resize(1250, 1250);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         loadVideoButton = new QPushButton(centralWidget);
@@ -96,7 +96,7 @@ public:
         blkSizeLabel->setGeometry(QRect(1000, 490, 181, 16));
         areaVis = new QLabel(centralWidget);
         areaVis->setObjectName(QStringLiteral("areaVis"));
-        areaVis->setGeometry(QRect(40, 610, 1170, 250));
+        areaVis->setGeometry(QRect(40, 610, 1170, 270));
         areaVis->setAutoFillBackground(false);
         areaVis->setStyleSheet(QStringLiteral(""));
         horizontalSlider = new QSlider(centralWidget);
@@ -131,7 +131,7 @@ public:
         frameLabelRight->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         blebbingVis = new QLabel(centralWidget);
         blebbingVis->setObjectName(QStringLiteral("blebbingVis"));
-        blebbingVis->setGeometry(QRect(40, 880, 1170, 250));
+        blebbingVis->setGeometry(QRect(40, 880, 1170, 270));
         blebbingVis->setAutoFillBackground(false);
         blebbingVis->setStyleSheet(QStringLiteral(""));
         areaVisLabel = new QLabel(centralWidget);
