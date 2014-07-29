@@ -24,7 +24,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     frame = &img;
     rect = boundingRect(Mat(cir));
     dispImg1 = (*frame)(rect).clone();
-    dispImg2 = dispImg1.clone();
+    //dispImg2 = Mat(dispImg1.rows, dispImg1.cols, CV_8UC3);;
 
 /*
     Rect rect_roi = boundingRect(Mat(cir));
@@ -67,11 +67,6 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     Mat mask = Mat::zeros(height, width, CV_8UC1);
     fillConvexPoly(mask, circle_ROI, Scalar(255));
 
-//    vector<Point> concaveHull;
-//    approxPolyDP(circle, concaveHull, 0.01*arcLength(circle,true), true);
-//    fillConvexPoly(mask, concaveHull, Scalar(128));
-//    imshow("mask", mask);
-
     for(unsigned int c = 0; c < circle_ROI.size(); c++){
         for(int j = -2; j < 2; j++){
             int jj = circle_ROI[c].y+j;
@@ -83,7 +78,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
             }
         }
     }
-    Mat adapThreshImg = Mat::zeros(height, width, CV_8UC1);
+    Mat adapThreshImg = Mat::zeros(height, width, sub.type());
     //image edge detection for the sub region (roi rect)
     adaptiveThreshold(sub, adapThreshImg, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
@@ -123,7 +118,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     }
 
     GaussianBlur(openclose, openclose, Size(3, 3), 2, 2 );
-    dispImg2 = openclose;
+    cvtColor(openclose, dispImg2, CV_GRAY2RGB);
 
     /*
     vector<Vec3f> circles;

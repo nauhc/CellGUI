@@ -117,6 +117,7 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
     // 8-bit, 1 channel
     case CV_8UC1:
     {
+        //cout << "cv_8uc1 to qimage" << endl;
         QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_Indexed8 );
         return image;
     }
@@ -138,18 +139,18 @@ void Controller::run(){
             }
 
             int frameIdx = inputVideo->get(CV_CAP_PROP_POS_FRAMES);
+            cout << "frame " << frameIdx << endl;
 
-            //Mat to QImage for display
-            img = cvMatToQImage(*frame);
-            //roiImg = cvMatToQImage(Mat::zeros(roiFrame->size(), CV_8UC1));
-
-            //qDebug() << frameIdx;
+            QImage          roiImg1; // QImage for ROI for displaying
+            QImage          roiImg2; // QImage for ROI for displaying
             if(!encircled){
+                img = cvMatToQImage(*frame);
                 roiImg1 = img;
                 roiImg2 = img;
             }
             else{
                 //draw bounding box on ROI and show in original video player
+
                 Mat boxedImg = Mat(frame->rows, frame->cols, CV_8UC3);
                 contour->boundingBox(boxedImg);
                 img = cvMatToQImage(boxedImg);

@@ -39,7 +39,7 @@ void DataVis::turnTrackOn(int fn, int f){
     step        = float(this->width()-75)/float(fn-f);
     scaleX      = int(25/step)+1;
     gridStepX   = int(step*scaleX);
-    std::cout << "step " << step << " scaleX " << scaleX <<  " gridStep " << gridStepX << std::endl;
+    //std::cout << "step " << step << " scaleX " << scaleX <<  " gridStep " << gridStepX << std::endl;
     gridStepY   = int(this->height()/16);
 }
 

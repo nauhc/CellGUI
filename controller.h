@@ -17,11 +17,8 @@ private:
     VideoCapture    *inputVideo; //video processing -- openCV
     bool            pause;
     Mat             *frame; // frame from the video
-//    Mat             *RGBframe; // color frame from the video
     Mat             *roiFrame; // roi rectangle from frame
-    QImage          img; // QImage for displaying
-    QImage          roiImg1; // QImage for ROI for displaying
-    QImage          roiImg2; // QImage for ROI for displaying
+    QImage          img; // QImage for displaying video (with box)
 
     Size            videoSize; // video frame size
     int             frameCnt; // total frame number
