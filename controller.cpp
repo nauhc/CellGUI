@@ -67,7 +67,7 @@ void Controller::releaseVideo(){
     inputVideo->release();
     //clear contour
     encircled = false;
-
+    hull.clear();
 }
 
 

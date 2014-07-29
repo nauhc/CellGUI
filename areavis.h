@@ -32,14 +32,13 @@ private:
     bool    on; // if visualization is activated
     bool    track; // if tracking is activated
 
-    int gridStepX = 20;
-    int gridStepY = 20;
+    int     gridStepX = 20;
+    int     gridStepY = 20;
 
     int     value_max;
     int     value_min;
 
     QColor   color;
-//    QString  string;
     QPoint   currPoint_value;
     QPolygon polyline_value;
 

@@ -302,6 +302,7 @@ void MainWindow::on_loadVideoButton_clicked()
                                                "./video",
                                                tr("Video Files (*.mov)"));
     delete dialog;
+
     //    QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
     //    QString name        = "test.mov";
     //    QString filename    = filepath + name;
@@ -321,7 +322,6 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->drawROIButton->setStyleSheet(button_released_off);
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
             ui->frameLabelRight->setText(" 0 / " + QString::number(myController->getNumberOfFrames()));
-
 
             //set video player label size and postion
             //according to the size of the selected video
