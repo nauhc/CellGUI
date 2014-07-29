@@ -8,8 +8,9 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = CellGUI
-TEMPLATE = app
+TARGET      = CellGUI
+TEMPLATE    = app
+ICON        = cell.icns
 
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
 #opencv
@@ -37,3 +38,6 @@ HEADERS  += mainwindow.h \
     areavis.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    cell.icns

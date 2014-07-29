@@ -300,6 +300,7 @@ void MainWindow::on_loadVideoButton_clicked()
     QString filename = dialog->getOpenFileName(this,
                                                tr("Open Video"),
                                                "./video",
+//                                               QDir::homePath()+"/Desktop/",
                                                tr("Video Files (*.mov)"));
     delete dialog;
 
