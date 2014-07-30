@@ -109,6 +109,7 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
         QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
         return image.rgbSwapped();
     }
+    // 32-bit, 3 channel
     case CV_32FC3:
     {
         QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );

@@ -296,17 +296,17 @@ void MainWindow::on_loadVideoButton_clicked()
     cout << "'Load Video' Button clicked." << endl;
 
 
-    QFileDialog *dialog = new QFileDialog();
-    QString filename = dialog->getOpenFileName(this,
-                                               tr("Open Video"),
-                                               "./video",
-//                                               QDir::homePath()+"/Desktop/",
-                                               tr("Video Files (*.mov)"));
-    delete dialog;
+//    QFileDialog *dialog = new QFileDialog();
+//    QString filename = dialog->getOpenFileName(this,
+//                                               tr("Open Video"),
+//                                               "./video",
+////                                               QDir::homePath()+"/Desktop/",
+//                                               tr("Video Files (*.mov)"));
+//    delete dialog;
 
-    //    QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
-    //    QString name        = "test.mov";
-    //    QString filename    = filepath + name;
+        QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
+        QString name        = "0523_08_C2.mov";
+        QString filename    = filepath + name;
 
     if (!filename.isEmpty()){
         if (!myController->loadVideo(filename.toStdString())){
