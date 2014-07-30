@@ -48,7 +48,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
 
     //enlarge the bounding rect by adding a margin (e) to it
     Rect rect_roi = boundingRect(Mat(cir));
-    int e = 5;
+    int e = 2;
     int x = rect_roi.x > e? rect_roi.x - e : 0;
     int y = rect_roi.y > e? rect_roi.y - e : 0;
     int w = x+rect_roi.width+2*e < img.cols? rect_roi.width+2*e : img.cols-x;
@@ -140,10 +140,10 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
 //        }
 //        perimeter += contours[i].size();
 //    }*/
-    drawContours( dispImg1, contours, largest_contour_index, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
+    //drawContours( dispImg1, contours, largest_contour_index, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
     RotatedRect elps = minEllipse[largest_contour_index];
-    ellipse( dispImg1, elps, Scalar(81,172,251), 2, 8 );
-    perimeter = contours[largest_contour_index].size();
+    //ellipse( dispImg1, elps, Scalar(81,172,251), 2, 8 );
+    //perimeter = contours[largest_contour_index].size();
 
 
     //** remove all the points outside the ellipse to be used as the circle in the next frame **
@@ -170,18 +170,31 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
             }
         }
     }
+//    imshow("mask", mask); //good
 
     vector<Point> whiteArea;
     //let roi only display the region inside the circle
     for(int j = 0; j < height; j++){
         for(int i = 0; i < width; i++){
             if(mask.at<uchar>(j,i) == 0)
-                adapThreshImg.at<uchar>(j,i) = 0;
-            if(adapThreshImg.at<uchar>(j,i) != 0)
+                dilerod.at<uchar>(j,i) = 0;
+            if(dilerod.at<uchar>(j,i) != 0)
                 whiteArea.push_back(Point(i,j));
         }
     }
     area = whiteArea.size();
+
+    vector<vector<Point> > contours_update;
+    vector<Vec4i> hierarchy_update;
+    // Find contours again
+    Mat dilerod_clone = dilerod.clone();
+    findContours( dilerod_clone, contours_update, hierarchy_update, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+    perimeter = 0;
+    for(unsigned int i = 0; i < contours_update.size(); i++){
+        if(contours_update[i].size() > 100)
+            drawContours( dispImg1, contours_update, i, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
+        perimeter += contours[i].size();
+    }
 
 
     GaussianBlur(dilerod, dilerod, Size(3, 3), 2, 2 );
