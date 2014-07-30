@@ -9,10 +9,11 @@ class DataVis : public QWidget
     Q_OBJECT
 public:
     explicit DataVis(QWidget *parent = 0,
-                     QColor clr = QColor(153, 204, 49),
-                     int v_min = 500, int v_max = 10000);
+                     QColor clr = QColor(153, 204, 49)/*,
+                     int v_min = 500, int v_max = 10000*/);
     ~DataVis();
 
+    void setMinMax(int v_min, int v_max);
     void turnVisOn();
     void turnVisOff();
     void turnTrackOn(int fn, int f);
@@ -35,8 +36,8 @@ private:
     int     gridStepX = 20;
     int     gridStepY = 20;
 
-    int     value_max;
-    int     value_min;
+    int     value_max = 10000;
+    int     value_min = 500;
 
     QColor   color;
     QPoint   currPoint_value;

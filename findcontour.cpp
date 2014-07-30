@@ -131,18 +131,18 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     }
 
     // draw contours and the enclosing ellipse
-/*
-//    perimeter = 0;
-//    for(unsigned int i = 0; i < contours.size(); i++){
-//        drawContours( dispImg1, contours, i, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
-//        if(i == largest_contour_index){
-//            ellipse( dispImg1, minEllipse[i], Scalar(81,172,251), 2, 8 );
-//        }
-//        perimeter += contours[i].size();
-//    }*/
+
+    perimeter = 0;
+    for(unsigned int i = 0; i < contours.size(); i++){
+        drawContours( dispImg1, contours, i, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
+        //if(i == largest_contour_index){
+            ellipse( dispImg1, minEllipse[i], Scalar(81,172,251), 2, 8 );
+        //}
+        perimeter += contours[i].size();
+    }
     //drawContours( dispImg1, contours, largest_contour_index, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
     RotatedRect elps = minEllipse[largest_contour_index];
-    //ellipse( dispImg1, elps, Scalar(81,172,251), 2, 8 );
+    //ellipse( dispImg1, elps, Scalar(81,172,251), 1, 8 );
     //perimeter = contours[largest_contour_index].size();
 
 
@@ -193,7 +193,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir,
     for(unsigned int i = 0; i < contours_update.size(); i++){
         if(contours_update[i].size() > 100)
             drawContours( dispImg1, contours_update, i, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
-        perimeter += contours[i].size();
+        perimeter += contours_update[i].size();
     }
 
 

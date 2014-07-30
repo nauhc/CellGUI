@@ -5,18 +5,20 @@
 
 int scaleX = 5;
 
-DataVis::DataVis(QWidget *parent, QColor clr,
-                 int v_min, int v_max) : QWidget(parent){
+DataVis::DataVis(QWidget *parent, QColor clr) : QWidget(parent){
     on      = false;
     track   = false;
     color   = clr;
 //    string  = str;
-    value_min = v_min;
-    value_max = v_max;
 
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1);
+}
+
+void DataVis::setMinMax(int v_min, int v_max){
+    value_min = v_min;
+    value_max = v_max;
 }
 
 DataVis::~DataVis(){
@@ -56,7 +58,7 @@ void DataVis::updateData(int v, int currFrame){
 
     if(currFrm - startFrm > 2){
         int x = gridStepX*2 + step*(currFrm-startFrm-2);
-        int y = (1.0+double(value_max-value)/double(value_max-value_min)*16.0)*double(gridStepY);
+        int y = (1.0+double(value_max-value)/double(value_max-value_min)*15.0)*double(gridStepY);
         currPoint_value = QPoint(x, y);
         polyline_value << currPoint_value;
     }
@@ -70,6 +72,7 @@ void DataVis::releaseDataVis(){
     polyline_value.clear(); // clear polyline
     currPoint_value = QPoint(); // construct a null point
 }
+
 
 void DataVis::paintEvent(QPaintEvent *event)
 {

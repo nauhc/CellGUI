@@ -6,6 +6,8 @@
 #include "ui_mainwindow.h"
 #include "qdebug.h"
 
+#define PI 3.14159265
+
 const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
 const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
 const QString button_released_off   = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
@@ -18,6 +20,11 @@ const QString forgrdOrage           = "color:rgb(251, 172, 81);";
 const QString font20                = "font: 20px";
 const QString font16                = "font: 16px";
 const QString font16bld             = "font: bold 16px";
+
+template <class T>
+inline T square(T value){
+    return value*value;
+}
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -76,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QColor areaVisColor = QColor(153, 204, 49); // green color
     ui->areaVis->setGeometry(areaVisRect);
     ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)");
-    areaVis = new DataVis(this->centralWidget(), areaVisColor, 500, 8000);
+    areaVis = new DataVis(this->centralWidget(), areaVisColor/*, 500, 8000*/);
     areaVis->setGeometry(areaVisRect);
     QRect areaRectLabel = QRect(areaVisRect.x(), areaVisRect.y()-25, areaVisRect.width(), 20);
     ui->areaVisLabel->setGeometry(areaRectLabel);
@@ -91,7 +98,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QColor prmtVisColor = QColor(251, 172, 81); // orange color
     ui->blebbingVis->setGeometry(prmtVisRect);
     ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)");
-    prmtVis = new DataVis(this->centralWidget(), prmtVisColor, 0, 1350);
+    prmtVis = new DataVis(this->centralWidget(), prmtVisColor/*, 0, 1350*/);
     prmtVis->setGeometry(prmtVisRect);
     QRect prmtRectLabel = QRect(prmtVisRect.x(), prmtVisRect.y()-25, prmtVisRect.width(), 20);
     ui->blebbingVisLabel->setGeometry(prmtRectLabel);
@@ -206,7 +213,6 @@ void MainWindow::on_playVideoButton_released(){
 // play or pause video
 void MainWindow::on_playVideoButton_clicked()
 {
-
     cout << "'Play/Pause Video' Button clicked." << endl;
     if(myController->videoIsPaused()){
         myController->playVideo();
@@ -296,17 +302,17 @@ void MainWindow::on_loadVideoButton_clicked()
     cout << "'Load Video' Button clicked." << endl;
 
 
-//    QFileDialog *dialog = new QFileDialog();
-//    QString filename = dialog->getOpenFileName(this,
-//                                               tr("Open Video"),
-//                                               "./video",
-////                                               QDir::homePath()+"/Desktop/",
-//                                               tr("Video Files (*.mov)"));
-//    delete dialog;
+    QFileDialog *dialog = new QFileDialog();
+    QString filename = dialog->getOpenFileName(this,
+                                               tr("Open Video"),
+                                               "./video",
+//                                               QDir::homePath()+"/Desktop/",
+                                               tr("Video Files (*.mov)"));
+    delete dialog;
 
-        QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
-        QString name        = "0523_08_C2.mov";
-        QString filename    = filepath + name;
+//        QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
+//        QString name        = "0523_08_C2.mov";
+//        QString filename    = filepath + name;
 
     if (!filename.isEmpty()){
         if (!myController->loadVideo(filename.toStdString())){
@@ -416,8 +422,18 @@ void MainWindow::on_drawROIButton_clicked(){
         //delete encircle;
         QVector<QPoint> circle;
         encircle->getRegion(circle);
-
-        myController->setCircle(circle);
+        int circleSize = circle.size();
+        if(circleSize < 5){
+            cout << "circle not found." << endl;
+        }
+        else{
+            int a = square(circleSize/2)/PI;
+            int p = PI*circleSize;
+            cout << p << " " << a << endl;
+            areaVis->setMinMax(a/5, a*5);
+            prmtVis->setMinMax(p/5, p*3);
+            myController->setCircle(circle);
+        }
     }
 }
 

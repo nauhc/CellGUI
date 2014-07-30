@@ -140,7 +140,7 @@ void Controller::run(){
             }
 
             int frameIdx = inputVideo->get(CV_CAP_PROP_POS_FRAMES);
-            cout << "frame " << frameIdx << endl;
+            //cout << "frame " << frameIdx << endl;
 
             QImage          roiImg1; // QImage for ROI for displaying
             QImage          roiImg2; // QImage for ROI for displaying
