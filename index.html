@@ -19,6 +19,23 @@
 <h1>Cell Video Processing Project Log</h1>
 
 Chuan Wang @ ViDi
+<h2> ----- Aug 1<sup>th</sup> 2014 ----- </h2>
+<h3> Data </h3>
+More data (about 20-25 video clips) with various of resolutions, quality and formats were given.
+
+<h3> Detection </h3>
+In order to remove the influence of the nearby cell, watershed method is applied to the data to separate the cells. However it does not work well due to the inconsistent of gradient of the pixels inside the cell causing by the blebbing.
+
+<h3> Implementation </h3>
+The tool is being made more robust to different input data. <br>
+Short-term To Do List:
+<ul>
+    <li> Output data to csv (Required by Arpad.) </li>
+    <li> Make tracking robust to quick cell deformation.</li>
+    <li> Quantify more features such as the cell shapes, and the velocity of it. </li>
+    <li> Visualization of the cell it self as well as it's features.</li>
+</ul>
+
 
 <h2> ----- Jul 28<sup>th</sup> 2014 ----- </h2>
 <h3> Detection </h3>
