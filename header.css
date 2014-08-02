@@ -1,0 +1,14 @@
+.fixedheader {  
+  display: block;  
+  position: fixed;  
+  top: -35px;  
+  padding-top: 25px;  
+  margin: 3;  
+  height: auto;  
+  width: 720px;  
+  background: #303030;  
+  z-index: 9999;  
+  -webkit-box-shadow:  0 -3px 4px 0px #222;  
+  -moz-box-shadow:  0 -3px 4px 0px #222;  
+  box-shadow: 0 -3px 4px 0px #222;  
+} 
