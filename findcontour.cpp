@@ -61,52 +61,37 @@ void CannyWithBlur(Mat &in, Mat &out){
 
 void dilErod(Mat &in, Mat&dilerod){
     // mophological dialate and erode
-    Mat element3 = getStructuringElement( MORPH_ELLIPSE, Size( 2*3+1, 2*3+1 ), Point(3, 3));
+    int dilation_size = 3;
+    Mat element = getStructuringElement( MORPH_ELLIPSE,
+                                         Size( 2*dilation_size+1, 2*dilation_size+1 ),
+                                         Point( dilation_size, dilation_size ) );
     Mat dil;
-    dilate(in, dil, element3);
-    erode(dil, dilerod, element3);
+    dilate(in, dil, element);
+    erode(dil, dilerod, element);
 }
 
 void dilErodContours(Mat &dilerod,
                      vector<vector<Point> > &contours,
                      vector<Vec4i> &hierarchy,
-                     RotatedRect &elps,
+                     unsigned int &largest_contour_index,
                      int &perimeter,
                      Mat &drawTarget){ //drawTarget-> dispImg1
     // Find contours
     findContours( dilerod.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-
-    //find the min enclosing ellipse of the contours
-    vector<RotatedRect> minEllipse( contours.size() );
-    unsigned int largest_contour_index = 0;
+    largest_contour_index = 0;
     int s_tmp = contours[0].size();
-    for(unsigned int i = 0; i < contours.size(); i++ ){
-        if( contours[i].size() > 50 ){
-            minEllipse[i] = fitEllipse( Mat(contours[i]) );
-        }
+    for(unsigned int i = 0; i < contours.size(); i++){
+        drawContours( drawTarget, contours, i, Scalar(51,100,175), 1, 8, hierarchy, 0, Point() );
         if( contours[i].size() > s_tmp){
             s_tmp = contours[i].size();
             largest_contour_index = i;
         }
     }
-
-
-    // draw contours and the enclosing ellipse
-    perimeter = 0;
-    for(unsigned int i = 0; i < contours.size(); i++){
-        drawContours( drawTarget, contours, i, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
-        if(i == largest_contour_index){
-            ellipse( drawTarget, minEllipse[i], Scalar(153, 204, 49), 1, 8 );
-        }else{
-            //ellipse( drawTarget, minEllipse[i], Scalar(0,172,251), 1, 8 );
-        }
-        perimeter += contours[i].size();
-    }
-    //drawContours( drawTarget, contours, largest_contour_index, Scalar(255,255,255), 1, 8, hierarchy, 0, Point() );
-    elps = minEllipse[largest_contour_index];
-    ellipse( drawTarget, elps, Scalar(255,172,251), 1, 8 );
-    //perimeter = contours[largest_contour_index].size();
+    perimeter = contours[largest_contour_index].size();
+    //draw only the largest contour
+    drawContours( drawTarget, contours, largest_contour_index, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
 }
+
 
 void watershedWithErosion(Mat &in, Mat &dispImg1, Mat &out){ //in->adapThreshImg1
     Mat element1 = getStructuringElement( MORPH_ELLIPSE, Size( 2*1+1, 2*1+1 ), Point(1, 1));
@@ -127,15 +112,16 @@ void watershedWithErosion(Mat &in, Mat &dispImg1, Mat &out){ //in->adapThreshImg
     out = segmenter.process(dispImg1Clone);
     out.convertTo(out,CV_8UC3);
     imshow("final_result", out);
-    //    for(int j = 0; j < height; j++){
-    //        for(int i = 0; i < width; i++){
-    //            if(markers.at<uchar>(j,i) == 0){
-    //                dispImg1.data[dispImg1.channels()*(dispImg1.cols*j + i)+0] = 81;
-    //                dispImg1.data[dispImg1.channels()*(dispImg1.cols*j + i)+1] = 172;
-    //                dispImg1.data[dispImg1.channels()*(dispImg1.cols*j + i)+2] = 251;
-    //            }
-    //        }
-    //    }
+    /*
+        for(int j = 0; j < height; j++){
+            for(int i = 0; i < width; i++){
+                if(markers.at<uchar>(j,i) == 0){
+                    dispImg1.data[dispImg1.channels()*(dispImg1.cols*j + i)+0] = 81;
+                    dispImg1.data[dispImg1.channels()*(dispImg1.cols*j + i)+1] = 172;
+                    dispImg1.data[dispImg1.channels()*(dispImg1.cols*j + i)+2] = 251;
+                }
+            }
+        }*/
 }
 
 // get ROI + edgeDectection
@@ -162,8 +148,8 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     int width = sub.cols;
     int height = sub.rows;
 
-    Mat canny;
-    CannyWithBlur(sub, canny);
+    //Mat canny;
+    //CannyWithBlur(sub, canny);
 
     vector<Point> circle_ROI; //***local coordinates of circle***
     for (unsigned int i = 0; i < cir.size(); i++){
@@ -175,89 +161,43 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //image edge detection for the sub region (roi rect)
     adaptiveThreshold(sub, adapThreshImg1, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
-    imshow("adapThreshImg1", adapThreshImg1);
+    //imshow("adapThreshImg1", adapThreshImg1);
 
-
+    // dilation and erosion
     Mat dilerod;
     dilErod(adapThreshImg1, dilerod);
 
     //display image 2 -- dilerod of adaptive threshold image
     GaussianBlur(dilerod, dilerod, Size(3, 3), 2, 2 );
-    cvtColor(dilerod, dispImg2, CV_GRAY2RGB);
-
-    // findcontours and constrain shape
-    vector<vector<Point> > contours;
-    vector<Vec4i> hierarchy;
-    RotatedRect elps;
-    dilErodContours(adapThreshImg1, contours, hierarchy, elps, perimeter, dispImg1);
-
-    //** remove all the points outside the ellipse to be used as the circle in the next frame **
-    int wth = elps.size.width, hgt = elps.size.height;
-    Point2f cntr = elps.center;
 
     //mask for filtering out the cell of interest
     Mat mask_conv = Mat::zeros(height, width, CV_8UC1);
     fillConvexPoly(mask_conv, circle_ROI, Scalar(255));
-    imshow("mask_conv", mask_conv);
+    //imshow("mask_conv", mask_conv);
 
-    Mat mask_elps = Mat::zeros(height, width, CV_8UC1);
-    ellipse(mask_elps, elps, Scalar(255), -1);
-    imshow("mask_elps", mask_elps);
+    //bitwise AND on mask and dilerod
+    bitwise_and(mask_conv, dilerod, dispImg2);
 
-    Mat mask_and;
-    bitwise_and(mask_conv, mask_elps, mask_and);
-    imshow("AND", mask_and);
+    // findcontours
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    unsigned int largest_contour_index;
+    dilErodContours(dispImg2, contours, hierarchy, largest_contour_index, perimeter, dispImg1);
 
-    for(unsigned int c = 0; c < circle_ROI.size(); c++){
-        Point p = circle_ROI[c];
-        // if circle point is outside the ellipse, then dont consider as the mask
-        if( (square(p.x-cntr.x)/square(wth/2) + square(p.y-cntr.y)/square(hgt/2)) > 1 ){
-            circle(dispImg1, p, 2, Scalar(255, 255, 0), -1);
-            continue;
-        }
-        if(abs((square(p.x-cntr.x)/square(wth/2) + square(p.y-cntr.y)/square(hgt/2))-1) > 5)
-            circle(dispImg1, p, 1, Scalar(0, 255, 0), -1);
-        for(int j = -2; j < 2; j++){
-            int jj = circle_ROI[c].y+j;
-            for(int i = -2; i < 2; i++){
-                int ii = circle_ROI[c].x+i;
-                if(ii < 0 || jj < 0 || ii >= width || jj >= height)
-                    continue;
-                mask_conv.at<uchar>(jj, ii) = 255;
-            }
-        }
-    }
-    //imshow("mask_after", mask); //good
+    // find the area of the cell by counting the white area inside the largest contour
+    Mat cell = Mat::zeros(height, width, CV_8UC1);
+    drawContours(cell, contours, largest_contour_index, Scalar(255), -1, 8, hierarchy, 0, Point() );
+    //imshow("cell", cell);
+    area = countNonZero(cell);
 
-    vector<Point> whiteArea;
-    //let roi only display the region inside the circle
-    for(int j = 0; j < height; j++){
-        for(int i = 0; i < width; i++){
-            if(mask_conv.at<uchar>(j,i) == 0)
-                dilerod.at<uchar>(j,i) = 0;
-            if(dilerod.at<uchar>(j,i) != 0)
-                whiteArea.push_back(Point(i,j));
-        }
-    }
-    area = whiteArea.size();
 
-    vector<vector<Point> > contours_update;
-    vector<Vec4i> hierarchy_update;
-    // Find contours again
-    Mat dilerod_clone = dilerod.clone();
-    findContours( dilerod_clone, contours_update, hierarchy_update, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-    perimeter = 0;
-    for(unsigned int i = 0; i < contours_update.size(); i++){
-        if(contours_update[i].size() > 200)
-            drawContours( dispImg1, contours_update, i, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
-        perimeter += contours_update[i].size();
-    }
-
+    //change dispImg2 from gray to rgb for displaying
+    cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
 
 
     //renew circle points as the convex hull
     vector<Point> convHull;
-    convexHull(whiteArea, convHull);
+    convexHull(contours[largest_contour_index], convHull);
     cir.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)
         cir.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));

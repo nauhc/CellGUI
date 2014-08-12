@@ -111,46 +111,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     encircle = new Encircle(this->centralWidget());
     //encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
-
-//    //Time/Frame Axis (h)
-//    ui->frameAxis->setGeometry(areaVisRect.x(), areaVisRect.y(), areaVisRect.width(), 2*areaVisRect.height()+20+60);
-//    ui->frameAxis->setStyleSheet(transBkgrd);
-//    QPixmap pixmap(1,1); // Works
-//    pixmap = pixmap.scaled(ui->frameAxis->width(), ui->frameAxis->height());
-//    pixmap.fill(Qt::transparent);
-//    QPainter painter(&pixmap);
-//    QPen myPen(QColor(128, 128, 128, 128));
-//    myPen.setWidth(3);
-//    painter.setPen(myPen);
-//    painter.drawLine(0, pixmap.height()-18, pixmap.width(), pixmap.height()-18);
-//    QRectF rectX = QRectF(QPointF(pixmap.width()-250, pixmap.height()-40),
-//                          QPointF(pixmap.width()-10, pixmap.height()-20));
-//    QString textX = "Frame";
-//    painter.setFont(QFont("Arial", 18));
-//    painter.drawText(rectX, Qt::AlignRight, textX);
-//    ui->frameAxis->setPixmap(pixmap);
-
-//    ui->frameAxisSlider->setGeometry(prmtVisRect.x(), prmtVisRect.y()+prmtVisRect.height()+10,
-//                                     prmtVisRect.width(), 30);
-//    ui->frameAxisSlider->setStyleSheet(transBkgrd);
-//    QString str = "\
-//            QSlider::groove:horizontal {\
-//            color: rgba(128,128,128,128)\
-//            border: 0px solid #999999;\
-//            height: 2px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */\
-//            background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);\
-//            margin: 2px 0;\
-//            }\
-//            QSlider::handle:horizontal {\
-//            background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);\
-//            border: 1px solid #5c5c5c;\
-//            width: 2px;\
-//            height: 4px;\
-//            margin: -4px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */\
-//            border-radius: 3px;\
-//            }\
-//            ";
-//    ui->frameAxisSlider->setStyleSheet(str);
 }
 
 MainWindow::~MainWindow(){
@@ -336,7 +296,7 @@ void MainWindow::on_loadVideoButton_clicked()
             int x, y, width, height;
             int x_s = 650, y_s, width_s, height_s;
             double scale; // could be larger than 1 or smaller
-            cout << "scale " << scale;
+
             if(w>=h){
                 scale = 512.0/double(w);
                 width   = 512;
@@ -360,6 +320,7 @@ void MainWindow::on_loadVideoButton_clicked()
             encircle->setGeometry(x, y, width, height);
             cout << "video pos:  x " << x << " y " << y << " width " << width << " height " << height << endl;
             myController->setScale(scale);
+            cout << "scale " << scale;
 
             ui->orgVideo->setAlignment(Qt::AlignCenter);
             //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
@@ -443,7 +404,7 @@ void MainWindow::on_drawROIButton_clicked(){
         }
         else{
             int a = square(circleSize/2)/PI;
-            int p = PI*circleSize;
+            int p = /*PI**/circleSize;
             cout << p << " " << a << endl;
             areaVis->setMinMax(a/5, a*5);
             prmtVis->setMinMax(p/5, p*3);
