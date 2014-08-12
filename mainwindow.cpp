@@ -109,7 +109,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->blebbingVisLabel->setText("  Perimeter (pixels)");
 
     encircle = new Encircle(this->centralWidget());
-    encircle->setGeometry(40, 30, 500, 500);
+    //encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 
 //    //Time/Frame Axis (h)
@@ -245,8 +245,7 @@ void MainWindow::on_stopVideoButton_released(){
         ui->stopVideoButton->setStyleSheet(button_released_off);
 }
 //stop and release video
-void MainWindow::on_stopVideoButton_clicked()
-{
+void MainWindow::on_stopVideoButton_clicked(){
     cout << "'Stop Video' Button clicked." << endl;
 
     if(!myController->videoIsPaused())
@@ -307,7 +306,7 @@ void MainWindow::on_loadVideoButton_clicked()
                                                tr("Open Video"),
                                                "./video",
 //                                               QDir::homePath()+"/Desktop/",
-                                               tr("Video Files (*.mov)"));
+                                               tr("Video Files (*.mov *mp4 *wmv)"));
     delete dialog;
 
 //        QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
@@ -335,24 +334,40 @@ void MainWindow::on_loadVideoButton_clicked()
             int w, h;
             myController->getVideoSize(w, h);
             int x, y, width, height;
-            if(w>h){
-                width   = 500;
-                height  = 500*h/w;
+            int x_s = 650, y_s, width_s, height_s;
+            double scale; // could be larger than 1 or smaller
+            cout << "scale " << scale;
+            if(w>=h){
+                scale = 512.0/double(w);
+                width   = 512;
+                height  = 512*h/w;
                 x = 40;
                 y = 30+(width-height)/2;
+                y_s = 30 + width/4 - height/4;
+                width_s = width/2-10;
+                height_s = height/2-10;
             }else{
-                width   = 500*w/h;
-                height  = 500;
+                scale = 512.0/double(h);
+                height  = 512;
+                width   = 512*w/h;
                 x = 40+(height-width)/2;
                 y = 30;
+                y_s = 30 + height/4 - width/4; // 30 - (height/2-width/2)/2
+                width_s = width/2-10;
+                height_s = height/2-10;
             }
             ui->orgVideo->setGeometry(x, y, width, height);
+            encircle->setGeometry(x, y, width, height);
+            cout << "video pos:  x " << x << " y " << y << " width " << width << " height " << height << endl;
+            myController->setScale(scale);
+
             ui->orgVideo->setAlignment(Qt::AlignCenter);
             //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
             //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
-            ui->roiVideo1->setGeometry(650, 30, width/2-10, height/2-10);
+//            ui->roiVideo1->setGeometry(650, 30, width/2-10, height/2-10);
+            ui->roiVideo1->setGeometry(x_s, y_s, width_s, height_s);
             ui->roiVideo1->setAlignment(Qt::AlignCenter);
-            ui->roiVideo2->setGeometry(650, 290, width/2-10, height/2-10);
+            ui->roiVideo2->setGeometry(x_s, 250+y_s, width_s, height_s);
             ui->roiVideo2->setAlignment(Qt::AlignCenter);
         }
     }

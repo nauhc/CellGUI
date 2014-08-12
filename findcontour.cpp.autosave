@@ -212,7 +212,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
         Point p = circle_ROI[c];
         // if circle point is outside the ellipse, then dont consider as the mask
         if( (square(p.x-cntr.x)/square(wth/2) + square(p.y-cntr.y)/square(hgt/2)) > 1 ){
-            circle(dispImg1, p, 2, Scalar(255, 255, 0), -1);
+            //circle(dispImg1, p, 2, Scalar(255, 255, 0), -1);
             continue;
         }
         if(abs((square(p.x-cntr.x)/square(wth/2) + square(p.y-cntr.y)/square(hgt/2))-1) > 5)

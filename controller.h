@@ -27,6 +27,7 @@ private:
     FindContour     *contour; // findcontour class object
     bool            encircled;
     vector<Point>   hull; // contour of the cell of interest
+    //double          scale; // scale = display / real size
 
 signals:
     // signal nonnectted with updateVideoplayerUI SLOT
@@ -55,6 +56,7 @@ public:
     void    releaseVideo();
     void    getVideoSize(int &width, int &height);
 
+    void    setScale(double scl);
     void    setCircle(QVector<QPoint> points);
 
 };

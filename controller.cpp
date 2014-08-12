@@ -77,6 +77,10 @@ void Controller::getVideoSize(int &width, int &height)
     height = videoSize.height;
 }
 
+void Controller::setScale(double scl){
+    contour->setScale(scl);
+}
+
 void Controller::setCircle(QVector<QPoint> points)
 {
     encircled = true;
