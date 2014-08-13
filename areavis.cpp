@@ -134,7 +134,7 @@ void DataVis::paintEvent(QPaintEvent *event)
             // text for y-axis graduation
             for(int n = 0; n < 15; n+=2){
                 QRectF rect = QRectF(QPointF(0, gridStepY*n+9), QPointF(gridStepX*2-5, gridStepY*(n+2)));
-                QString textGrad = QString::number(value_max-n*(value_max-value_min)/15);
+                QString textGrad = QString::number(value_max-n*(value_max-value_min)/14);
                 if(n%4 == 0)
                     painter.setFont(QFont("Arial", 16));
                 else

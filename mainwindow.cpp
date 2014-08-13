@@ -403,11 +403,21 @@ void MainWindow::on_drawROIButton_clicked(){
             cout << "circle not found." << endl;
         }
         else{
-            int a = square(circleSize/2)/PI;
-            int p = /*PI**/circleSize;
-            cout << p << " " << a << endl;
-            areaVis->setMinMax(a/5, a*5);
-            prmtVis->setMinMax(p/5, p*3);
+            double a = square(circleSize/2)/PI;
+            double p = /*PI**/circleSize;
+            //cout << p << " " << a << endl;
+            int area_min = ((int)a/3/100-1)*100;
+            area_min = area_min > 0 ? area_min : 0;
+            int area_max = ((int)a*5/100+1)*100;
+            int prmt_min = ((int)p/5/100-1)*100;
+            prmt_min = prmt_min > 0 ? prmt_min : 0;
+            int prmt_max = ((int)p*3/100+1)*100;
+            areaVis->setMinMax(area_min, area_max);
+            prmtVis->setMinMax(prmt_min, prmt_max);
+            cout << "area min " << area_min << " max " << area_max << endl;
+            cout << "prmt min " << prmt_min << " max " << prmt_max << endl;
+//            areaVis->setMinMax(a/3, a*5);
+//            prmtVis->setMinMax(p/5, p*3);
             myController->setCircle(circle);
         }
     }

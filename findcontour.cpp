@@ -190,10 +190,13 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //imshow("cell", cell);
     area = countNonZero(cell);
 
+    // find the centroid of the contour
+    Moments mu = moments(contours[largest_contour_index]);
+    Point2f ctroid = Point2f(mu.m10/mu.m00 + rect.x, mu.m01/mu.m00 + rect.y);
+    cout << "centroid " << ctroid << endl;
 
     //change dispImg2 from gray to rgb for displaying
     cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
-
 
     //renew circle points as the convex hull
     vector<Point> convHull;
