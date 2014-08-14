@@ -33,7 +33,9 @@ public:
 
     // getROI+edgeDetection
     void cellDetection(const Mat &img, vector<Point> &circle,
-                       Mat &dispImg1, Mat &dispImg2, int &area, int &perimeter);
+                       Mat &dispImg1, Mat &dispImg2,
+                       int &area, int &perimeter, Point2f &ctroid);
+
     // draw a bounding box of roi rect
     void boundingBox(Mat &img/*, vector<Point> &circle*/);
 

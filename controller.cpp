@@ -162,9 +162,12 @@ void Controller::run(){
 
                 Mat contourImg;
                 Mat edgeImg;
-                int area;
-                int perimeter;
-                contour->cellDetection(*frame, hull, contourImg, edgeImg, area, perimeter);
+                int area; // area of the cell getting from cellDetection
+                int perimeter; // perimeter of the cell getting from cellDetection
+                Point2f centroid; // centroid of the cell getting from cellDetection
+                contour->cellDetection(*frame, hull, contourImg, edgeImg, area, perimeter, centroid);
+                cout << "centroid " << centroid << endl;
+
                 emit detectedArea(area, perimeter);
                 //cout << "frame " << frameIdx << " cell area: " << area << endl;
                 roiImg1 = cvMatToQImage(contourImg);

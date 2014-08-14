@@ -127,7 +127,7 @@ void watershedWithErosion(Mat &in, Mat &dispImg1, Mat &out){ //in->adapThreshImg
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
                                 Mat &dispImg1, Mat &dispImg2,
-                                int &area, int &perimeter){
+                                int &area, int &perimeter, Point2f &ctroid){
     frame = &img;
     //rect = boundingRect(Mat(cir));
 
@@ -173,7 +173,12 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //mask for filtering out the cell of interest
     Mat mask_conv = Mat::zeros(height, width, CV_8UC1);
     fillConvexPoly(mask_conv, circle_ROI, Scalar(255));
-    //imshow("mask_conv", mask_conv);
+    imshow("mask_before", mask_conv);
+
+    //dilate the mask
+    Mat element = getStructuringElement( MORPH_ELLIPSE, Size( 2*3+1, 2*3+1 ), Point(3,3) );
+    dilate(mask_conv, mask_conv, element);
+    imshow("mask_after", mask_conv);
 
     //bitwise AND on mask and dilerod
     bitwise_and(mask_conv, dilerod, dispImg2);
@@ -192,8 +197,8 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
 
     // find the centroid of the contour
     Moments mu = moments(contours[largest_contour_index]);
-    Point2f ctroid = Point2f(mu.m10/mu.m00 + rect.x, mu.m01/mu.m00 + rect.y);
-    cout << "centroid " << ctroid << endl;
+    ctroid = Point2f(mu.m10/mu.m00 + rect.x, mu.m01/mu.m00 + rect.y);
+
 
     //change dispImg2 from gray to rgb for displaying
     cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
@@ -201,9 +206,9 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //renew circle points as the convex hull
     vector<Point> convHull;
     convexHull(contours[largest_contour_index], convHull);
-    cir.clear();
+    cir_org.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)
-        cir.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
+        cir_org.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
 
 }
 
