@@ -7,6 +7,7 @@
 #include <cxcore.h>
 #include <highgui.h>
 #include <findcontour.h>
+#include <video/tracking.hpp>
 
 using namespace std;
 using namespace cv;
@@ -16,6 +17,7 @@ class Controller : public QThread
 private:
     VideoCapture    *inputVideo; //video processing -- openCV
     bool            pause;
+    Mat             previousFrame;
     Mat             *frame; // frame from the video
     Mat             *roiFrame; // roi rectangle from frame
     QImage          img; // QImage for displaying video (with box)
@@ -23,6 +25,8 @@ private:
     Size            videoSize; // video frame size
     int             frameCnt; // total frame number
     double          fps; // fps
+
+
 
     FindContour     *contour; // findcontour class object
     bool            encircled;
@@ -55,6 +59,8 @@ public:
     double  getCurrentFrame();
     void    releaseVideo();
     void    getVideoSize(int &width, int &height);
+
+    bool    optflow(Mat &frame1, Mat &frame2, vector<Point2f> &points1, vector<Point2f> &points2);
 
     void    setScale(double scl);
     void    setCircle(QVector<QPoint> points);

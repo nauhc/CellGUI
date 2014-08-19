@@ -1,5 +1,6 @@
 #include "findcontour.h"
 #include "imgproc/imgproc.hpp"
+#include "qstring.h"
 
 template <class T>
 inline T square(T value){
@@ -124,12 +125,75 @@ void watershedWithErosion(Mat &in, Mat &dispImg1, Mat &out){ //in->adapThreshImg
         }*/
 }
 
+
+
+void FindBlobs(const Mat &binary, vector<vector<Point2i> > &blobs){
+    blobs.clear();
+
+    // Fill the label_image with the blobs
+    // 0  - background
+    // 1  - unlabelled foreground
+    // 2+ - labelled foreground
+
+    Mat label_image;
+    binary.convertTo(label_image, CV_32SC1);
+
+    int label_count = 64; // starts at 2 because 0,1 are used already
+
+    for(int y=0; y < label_image.rows; y++) {
+        int *row = (int*)label_image.ptr(y);
+        for(int x=0; x < label_image.cols; x++) {
+            if(row[x] != 1) {
+                continue;
+            }
+
+            Rect rect_b;
+            floodFill(label_image, Point(x,y), label_count, &rect_b, 0, 0, 4);
+
+            vector <Point2i> blob;
+
+            for(int i=rect_b.y; i < (rect_b.y+rect_b.height); i++) {
+                int *row2 = (int*)label_image.ptr(i);
+                for(int j=rect_b.x; j < (rect_b.x+rect_b.width); j++) {
+                    if(row2[j] != label_count) {
+                        continue;
+                    }
+
+                    blob.push_back(Point2i(j,i));
+                }
+            }
+
+            blobs.push_back(blob);
+
+            label_count++;
+        }
+    }
+}
+
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
                                 Mat &dispImg1, Mat &dispImg2,
-                                int &area, int &perimeter, Point2f &ctroid){
+                                vector<Point2f> &points1, vector<Point2f> &points2,
+                                int &area, int &perimeter, Point2f &ctroid,
+                                int &frameNum){
     frame = &img;
     //rect = boundingRect(Mat(cir));
+
+//    Mat frameGray;
+//    cv::cvtColor(*frame, frameGray, CV_RGB2GRAY);
+
+//    QString cellFileName0 = "frame" + QString::number(frameNum) + ".png";
+//    imwrite(cellFileName0.toStdString(), frameGray);
+
+
+
+//    Mat adpThreshFrm = Mat::zeros(frame->rows, frame->cols, frameGray.type());
+//    adaptiveThreshold(frameGray, adpThreshFrm, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
+//                      CV_THRESH_BINARY_INV, blockSize, constValue);
+//    QString cellFileName = "adptiveThreshFrame" + QString::number(frameNum) + ".png";
+//    imwrite(cellFileName.toStdString(), adpThreshFrm);
+
+
 
     vector<Point> cir; //***global coordinates of circle***
     for(unsigned int i = 0; i < cir_org.size(); i++){
@@ -137,8 +201,10 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     }
     //cout << "original circle: " << cir_org << "\n" << " scaled circle: " << cir << endl;
 
+
+
     //enlarge the bounding rect by adding a margin (e) to it
-    rect = enlargeRect(boundingRect(Mat(cir)), 2, img.cols, img.rows);
+    rect = enlargeRect(boundingRect(Mat(cir)), 5, img.cols, img.rows);
 
     dispImg1 = (*frame)(rect).clone();
     //dispImg2 = Mat(dispImg1.rows, dispImg1.cols, CV_8UC3);
@@ -147,9 +213,6 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     cv::cvtColor(dispImg1, sub, CV_RGB2GRAY);
     int width = sub.cols;
     int height = sub.rows;
-
-    //Mat canny;
-    //CannyWithBlur(sub, canny);
 
     vector<Point> circle_ROI; //***local coordinates of circle***
     for (unsigned int i = 0; i < cir.size(); i++){
@@ -173,15 +236,72 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //mask for filtering out the cell of interest
     Mat mask_conv = Mat::zeros(height, width, CV_8UC1);
     fillConvexPoly(mask_conv, circle_ROI, Scalar(255));
-    imshow("mask_before", mask_conv);
+    //imshow("mask_before", mask_conv);
 
-    //dilate the mask
+    //dilate the mask -> region grows
+    Mat mask_conv_dil;
     Mat element = getStructuringElement( MORPH_ELLIPSE, Size( 2*3+1, 2*3+1 ), Point(3,3) );
-    dilate(mask_conv, mask_conv, element);
-    imshow("mask_after", mask_conv);
+    dilate(mask_conv, mask_conv_dil, element);
+    //imshow("mask_after", mask_conv_dil);
+
+
+
+
+    //stop growing when meeting with canny edges that outside the circle
+    Mat ring;
+    bitwise_xor(mask_conv, mask_conv_dil, ring);
+    //imshow("ring", ring);
+
+    Mat canny;
+    CannyWithBlur(sub, canny);
+    Mat cannyColor;
+    cvtColor(canny, cannyColor, CV_GRAY2RGB);
+    imwrite("canny.png", canny);
+    vector<Point> outsideCircle;
+    vector<Point> onRing;
+    for(int j = 0; j < height; j++){
+        for(int i = 0; i < width; i++){
+            if(canny.at<uchar>(j,i) != 0 && mask_conv.at<uchar>(j,i) == 0){
+                cannyColor.data[cannyColor.channels()*(cannyColor.cols*j + i)+0] = 81;
+                cannyColor.data[cannyColor.channels()*(cannyColor.cols*j + i)+1] = 172;
+                cannyColor.data[cannyColor.channels()*(cannyColor.cols*j + i)+2] = 251;
+                outsideCircle.push_back(Point(i, j));
+                if(ring.at<uchar>(j,i) != 0){
+                    cannyColor.data[cannyColor.channels()*(cannyColor.cols*j + i)+0] = 255;
+                    cannyColor.data[cannyColor.channels()*(cannyColor.cols*j + i)+1] = 255;
+                    cannyColor.data[cannyColor.channels()*(cannyColor.cols*j + i)+2] = 0;
+                    onRing.push_back(Point(i,j));
+                }
+            }
+        }
+    }
+
+//    QString cannyFileName = "canny" + QString::number(frameNum) + ".png";
+//    imwrite(cannyFileName.toStdString(), cannyColor);
+
+
+//    vector<vector<Point> > blobs;
+//    vector<Vec4i> hierarchy_blobs;
+//    findContours(canny, blobs, hierarchy_blobs, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0)  );
+
+//    for(size_t i=0; i < blobs.size(); i++) {
+//        unsigned char r = 255 * (rand()/(1.0 + RAND_MAX));
+//        unsigned char g = 255 * (rand()/(1.0 + RAND_MAX));
+//        unsigned char b = 255 * (rand()/(1.0 + RAND_MAX));
+
+//        for(size_t j=0; j < blobs[i].size(); j++) {
+//            int x = blobs[i][j].x;
+//            int y = blobs[i][j].y;
+
+//            cannyColor.at<cv::Vec3b>(y,x)[0] = b;
+//            cannyColor.at<cv::Vec3b>(y,x)[1] = g;
+//            cannyColor.at<cv::Vec3b>(y,x)[2] = r;
+//        }
+//    }
+
 
     //bitwise AND on mask and dilerod
-    bitwise_and(mask_conv, dilerod, dispImg2);
+    bitwise_and(mask_conv_dil, dilerod, dispImg2);
 
     // findcontours
     vector<vector<Point> > contours;

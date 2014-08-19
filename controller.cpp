@@ -37,6 +37,7 @@ bool Controller::loadVideo(string filename){
         cout << "frame count: " << frameCnt << "\n";
         cout << "fps:" << fps << endl;
 
+        inputVideo->read(previousFrame);
         return true;
     }
 }
@@ -75,6 +76,64 @@ void Controller::getVideoSize(int &width, int &height)
 {
     width = videoSize.width;
     height = videoSize.height;
+}
+
+bool Controller::optflow(Mat &frame1, Mat &frame2, vector<Point2f> &points1, vector<Point2f> &points2){
+    if(frame1.size() != frame2.size()){
+        cout << "can not apply optflow on images of different sizes." << endl;
+        return false;
+    }
+
+    Size imgSize = frame1.size();
+    Mat frame1gray, frame2gray;
+    cvtColor(frame1, frame1gray, CV_RGB2GRAY);
+    cvtColor(frame2, frame2gray, CV_RGB2GRAY);
+
+    int cornerCnt = 200;
+    TermCriteria criteria = TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 20, 0.03);
+    vector<uchar> status;
+    vector<float> errors;
+    Size winSize = Size(11, 11);
+    double quality = 0.01;
+    double minDist = 2.0;
+
+    points1.reserve(cornerCnt);
+    points2.reserve(cornerCnt);
+
+    goodFeaturesToTrack(frame1gray, points1, cornerCnt, quality, minDist, Mat()/*, 3, true, 0.04*/);
+    goodFeaturesToTrack(frame2gray, points2, cornerCnt, quality, minDist, Mat()/*, 3, true, 0.04*/);
+    cornerSubPix(frame1gray, points1, winSize, Size(-1, -1), criteria);
+    cornerSubPix(frame2gray, points2, winSize, Size(-1, -1), criteria);
+
+    status.reserve(cornerCnt);
+    errors.reserve(cornerCnt);
+    calcOpticalFlowPyrLK(frame1gray, frame2gray, points1, points2, status, errors, winSize, 10, criteria, 0);
+
+//    // draw optflow
+//    Mat flowFrame = frame1gray;
+//    unsigned int size = status.size();
+//    for(unsigned int i = 0; i < size; i++ ){
+//        Point p0( ceil( points1[i].x ), ceil( points1[i].y ) );
+//        Point p1( ceil( points2[i].x ), ceil( points2[i].y ) );
+//        //std::cout << "(" << p0.x << "," << p0.y << ")" << "\n";
+//        //std::cout << "(" << p1.x << "," << p1.y << ")" << std::endl;
+
+//        //draw lines to visualize the flow
+//        double angle = atan2((double) p0.y - p1.y, (double) p0.x - p1.x);
+//        double length = 0.005 * (double) (imgSize.width);
+//        line(flowFrame, p0, p1, Scalar(255), 1 );
+//        Point p;
+//        p.x = (int) (p1.x + length * cos(angle + 3.14/4));
+//        p.y = (int) (p1.y + length * sin(angle + 3.14/4));
+//        line(flowFrame, p, p1, Scalar(255), 1 );
+//        p.x = (int) (p1.x + length * cos(angle - 3.14/4));
+//        p.y = (int) (p1.y + length * sin(angle - 3.14/4));
+//        line(flowFrame, p, p1, Scalar(255), 1 );
+//    }
+//    imshow("window", flowFrame);
+//    cvWaitKey(10);
+
+    return true;
 }
 
 void Controller::setScale(double scl){
@@ -148,6 +207,7 @@ void Controller::run(){
 
             QImage          roiImg1; // QImage for ROI for displaying
             QImage          roiImg2; // QImage for ROI for displaying
+
             if(!encircled){
                 img = cvMatToQImage(*frame);
                 roiImg1 = img;
@@ -165,8 +225,23 @@ void Controller::run(){
                 int area; // area of the cell getting from cellDetection
                 int perimeter; // perimeter of the cell getting from cellDetection
                 Point2f centroid; // centroid of the cell getting from cellDetection
-                contour->cellDetection(*frame, hull, contourImg, edgeImg, area, perimeter, centroid);
+
+                // optflow detection of entire frame
+                vector<Point2f> points1, points2;
+                bool opt = optflow(previousFrame, *frame, points1, points2);
+                if (!opt){
+                    cout << "optical flow detection failed on frame " << frameIdx << endl;
+                    continue;
+                }
+
+
+                contour->cellDetection(*frame, hull, contourImg, edgeImg,
+                                       points1, points2,
+                                       area, perimeter, centroid, frameIdx);
                 cout << "centroid " << centroid << endl;
+
+
+
 
                 emit detectedArea(area, perimeter);
                 //cout << "frame " << frameIdx << " cell area: " << area << endl;
@@ -197,6 +272,8 @@ void Controller::run(){
 
             }
             */
+
+            previousFrame = frame->clone();
 
             //emit the singnals
             emit processedImage(img, roiImg1, roiImg2);
