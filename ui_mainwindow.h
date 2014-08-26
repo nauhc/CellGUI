@@ -69,12 +69,12 @@ public:
         roiVideo1 = new QLabel(centralWidget);
         roiVideo1->setObjectName(QStringLiteral("roiVideo1"));
         roiVideo1->setGeometry(QRect(650, 30, 240, 240));
-        roiVideo1->setStyleSheet(QStringLiteral("Background-color:rgb(0, 0, 0)"));
+        roiVideo1->setStyleSheet(QStringLiteral(""));
         orgVideo = new QLabel(centralWidget);
         orgVideo->setObjectName(QStringLiteral("orgVideo"));
         orgVideo->setGeometry(QRect(40, 30, 500, 500));
         orgVideo->setAutoFillBackground(false);
-        orgVideo->setStyleSheet(QStringLiteral("Background-color: rgb(0, 0, 0)"));
+        orgVideo->setStyleSheet(QStringLiteral(""));
         playVideoButton = new QPushButton(centralWidget);
         playVideoButton->setObjectName(QStringLiteral("playVideoButton"));
         playVideoButton->setGeometry(QRect(1000, 100, 181, 51));
@@ -111,7 +111,7 @@ public:
         roiVideo2 = new QLabel(centralWidget);
         roiVideo2->setObjectName(QStringLiteral("roiVideo2"));
         roiVideo2->setGeometry(QRect(650, 290, 240, 240));
-        roiVideo2->setStyleSheet(QStringLiteral("Background-color:rgb(0, 0, 0)"));
+        roiVideo2->setStyleSheet(QStringLiteral(""));
         videoDisplayerLabel = new QLabel(centralWidget);
         videoDisplayerLabel->setObjectName(QStringLiteral("videoDisplayerLabel"));
         videoDisplayerLabel->setGeometry(QRect(60, 40, 81, 31));
@@ -144,7 +144,7 @@ public:
         blebbingVisLabel->setGeometry(QRect(60, 840, 62, 16));
         typeComboBox = new QComboBox(centralWidget);
         typeComboBox->setObjectName(QStringLiteral("typeComboBox"));
-        typeComboBox->setGeometry(QRect(1010, 310, 161, 26));
+        typeComboBox->setGeometry(QRect(1000, 320, 181, 26));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));

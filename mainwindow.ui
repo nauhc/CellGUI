@@ -37,7 +37,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">Background-color:rgb(0, 0, 0)</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -56,7 +56,7 @@
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">Background-color: rgb(0, 0, 0)</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -198,7 +198,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">Background-color:rgb(0, 0, 0)</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -329,9 +329,9 @@
    <widget class="QComboBox" name="typeComboBox">
     <property name="geometry">
      <rect>
-      <x>1010</x>
-      <y>310</y>
-      <width>161</width>
+      <x>1000</x>
+      <y>320</y>
+      <width>181</width>
       <height>26</height>
      </rect>
     </property>

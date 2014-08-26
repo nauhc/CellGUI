@@ -8,15 +8,22 @@
 
 #define PI 3.14159265
 
-const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
-const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
-const QString button_released_off   = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
-const QString frameLabelStyle       = "color:white; font:12px; background-color:rgba(0,0,0,0%) ";
+//const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
+//const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
+//const QString button_released_off   = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
+
+const QString button_pressed        = "color:rgb(81,85,96); font: bold 16px; border-style:inset; border-width:2px; border-color:rgb(186,192,206); border-radius:4px; background-color:rgb(199,203,215)";
+const QString button_released_on    = "color:rgb(82,89,99); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(229,235,238)";
+const QString button_released_off   = "color:rgb(193,194,199); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(229,235,238)";
+const QString frameLabelStyle       = "color:rgb(78,85,95); font:12px; background-color:rgba(0,0,0,0%) ";
 const QString transBkgrd            = "background-color: rgba(0,0,0,0%);";
 const QString halfTransBkgrd        = "background-color: rgba(128,128,128,80%);";
 const QString forgrdWhite           = "color:white;";
-const QString forgrdGreen           = "color:rgb(153, 204, 49);";
-const QString forgrdOrage           = "color:rgb(251, 172, 81);";
+const QString forgrdGray            = "color:rgb(78,85,95)";
+const QString visStyle              = "color:rgb(239,240,244); border: 2px solid; border-color:rgb(217,217,219)"; //color:rgb(54,58,59),  border-color:rgb(217,217,219)
+const QString videoDisplayStyle     = "background-color:rgb(216,222,224)";
+const QString forgrdGreen           = "color:rgb(153, 204, 49);"; //(79, 193, 131)
+const QString forgrdOrage           = "color:rgb(251, 172, 81);"; //(238, 122, 83)
 const QString font20                = "font: 20px";
 const QString font16                = "font: 16px";
 const QString font16bld             = "font: bold 16px";
@@ -31,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     myController(new Controller())
 {
     ui->setupUi(this);
-    this->setStyleSheet("background-color:rgb(38,42,43)");
+    this->setStyleSheet(/*"background-color:rgb(38,42,43)"*/"background-color:rgb(251,251,251)");
     this->setFixedSize(this->width(), this->height());
     connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
             this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
@@ -42,10 +49,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(myController, SIGNAL(detectedArea(int, int)),
             this, SLOT(updateDataVisUI(int, int)));
 
-    //const QString style = "border-style:outset; border-width:2px; border-color:rgb(128,128,128); border-radius: 4px;"; //border-color:rgb(28,120,159);
-    //ui->orgVideo->setStyleSheet(style);
-    //ui->roiVideo1->setStyleSheet(style);
-    //ui->roiVideo2->setStyleSheet(style);
+    ui->orgVideo->setStyleSheet(videoDisplayStyle);
+    ui->roiVideo1->setStyleSheet(videoDisplayStyle);
+    ui->roiVideo2->setStyleSheet(videoDisplayStyle);
+
     ui->loadVideoButton->setStyleSheet(button_released_on);
     ui->loadVideoButton->setEnabled(true);
     ui->playVideoButton->setStyleSheet(button_released_off);
@@ -55,8 +62,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->drawROIButton->setStyleSheet(button_released_off);
     ui->drawROIButton->setEnabled(false);
 
+
+    ui->typeComboBox->setStyleSheet(button_released_off);
     ui->typeComboBox->addItem("Isolate cell");
     ui->typeComboBox->addItem("Grouped cell");
+    ui->typeComboBox->setEnabled(false);
 
     ui->horizontalSlider->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
@@ -85,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QRect areaVisRect = QRect(40, 620, 1170, 280);
     QColor areaVisColor = QColor(153, 204, 49); // green color
     ui->areaVis->setGeometry(areaVisRect);
-    ui->areaVis->setStyleSheet("background-color: rgb(54,58,59)");
+    ui->areaVis->setStyleSheet(visStyle);
     areaVis = new DataVis(this->centralWidget(), areaVisColor/*, 500, 8000*/);
     areaVis->setGeometry(areaVisRect);
     QRect areaRectLabel = QRect(areaVisRect.x(), areaVisRect.y()-25, areaVisRect.width(), 20);
@@ -100,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QRect prmtVisRect = QRect(areaVisRect.x(), areaVisRect.y()+areaVisRect.height()+35, areaVisRect.width(), areaVisRect.height());
     QColor prmtVisColor = QColor(251, 172, 81); // orange color
     ui->blebbingVis->setGeometry(prmtVisRect);
-    ui->blebbingVis->setStyleSheet("background-color: rgb(54,58,59)");
+    ui->blebbingVis->setStyleSheet(visStyle);
     prmtVis = new DataVis(this->centralWidget(), prmtVisColor/*, 0, 1350*/);
     prmtVis->setGeometry(prmtVisRect);
     QRect prmtRectLabel = QRect(prmtVisRect.x(), prmtVisRect.y()-25, prmtVisRect.width(), 20);
@@ -331,7 +341,8 @@ void MainWindow::on_loadVideoButton_clicked()
 //            ui->roiVideo1->setGeometry(650, 30, width/2-10, height/2-10);
             ui->roiVideo1->setGeometry(x_s, y_s, width_s, height_s);
             ui->roiVideo1->setAlignment(Qt::AlignCenter);
-            ui->roiVideo2->setGeometry(x_s, 250+y_s, width_s, height_s);
+            int video_y_max = ui->orgVideo->y()+ui->orgVideo->height();
+            ui->roiVideo2->setGeometry(x_s, video_y_max-height_s, width_s, height_s);
             ui->roiVideo2->setAlignment(Qt::AlignCenter);
         }
     }
@@ -358,6 +369,9 @@ void MainWindow::on_drawROIButton_released(){
 }
 void MainWindow::on_drawROIButton_clicked(){
     cout << "Encircle Cell Button clicked." << endl;
+
+    ui->typeComboBox->setEnabled(true);
+    ui->typeComboBox->setStyleSheet(button_released_on);
 
     // when it is circling mode
     // user can circle the cell of interest

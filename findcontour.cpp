@@ -276,27 +276,6 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
 
     Rect trans_rect = translateRect(rect, avrg_vec);
     rectangle(frameGray, trans_rect, Scalar(255), 2);
-
-
-//    Mat H;
-//    if (longOptflow_pt1.size() >= 4){
-//        H = findHomography(Mat(longOptflow_pt1), Mat(longOptflow_pt2), CV_RANSAC, 2);
-//        //cout << "H: " << H << endl;
-
-//        vector<Point> rect_corners;
-//        rect_corners.push_back(Point(rect.x, rect.y));
-//        rect_corners.push_back(Point(rect.x+rect.width, rect.y));
-//        rect_corners.push_back(Point(rect.x, rect.y+rect.height));
-//        rect_corners.push_back(Point(rect.x+rect.width, rect.y+rect.height));
-
-//        vector<Point> rect_update_corners = pointTransform(rect_corners, H);
-
-//        /*
-//        line(frameGray, rect_update_corners[0], rect_update_corners[1], Scalar(255), 1);
-//        line(frameGray, rect_update_corners[0], rect_update_corners[2], Scalar(255), 1);
-//        line(frameGray, rect_update_corners[3], rect_update_corners[1], Scalar(255), 1);
-//        line(frameGray, rect_update_corners[3], rect_update_corners[2], Scalar(255), 1);*/
-//    }
     imshow("frameGray", frameGray);
 
     // ***

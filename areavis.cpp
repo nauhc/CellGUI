@@ -4,6 +4,7 @@
 #include <QTimer>
 
 int scaleX = 5;
+int num = 16;
 
 DataVis::DataVis(QWidget *parent, QColor clr) : QWidget(parent){
     on      = false;
@@ -42,7 +43,7 @@ void DataVis::turnTrackOn(int fn, int f){
     scaleX      = int(25/step)+1;
     gridStepX   = int(step*scaleX);
     //std::cout << "step " << step << " scaleX " << scaleX <<  " gridStep " << gridStepX << std::endl;
-    gridStepY   = int(this->height()/16);
+    gridStepY   = int(this->height()/(num+2));
 }
 
 void DataVis::turnTrackOff(){
@@ -58,7 +59,7 @@ void DataVis::updateData(int v, int currFrame){
 
     if(currFrm - startFrm > 2){
         int x = gridStepX*2 + step*(currFrm-startFrm-2);
-        int y = (1.0+double(value_max-value)/double(value_max-value_min)*15.0)*double(gridStepY);
+        int y = (1.0+double(value_max-value)/double(value_max-value_min)*double(num))*double(gridStepY);
         currPoint_value = QPoint(x, y);
         polyline_value << currPoint_value;
     }
@@ -77,7 +78,7 @@ void DataVis::releaseDataVis(){
 void DataVis::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    QPen myPen(QColor(128, 128, 128, 50));
+    QPen myPen(QColor(128, 128, 128, 20));
     myPen.setWidth(2);
     painter.setPen(myPen);
 
@@ -111,15 +112,15 @@ void DataVis::paintEvent(QPaintEvent *event)
                 painter.drawLine(2*gridStepX-5, j, 2*gridStepX+5, j);
 
             //draw x-axis
-            int verticalPos = gridStepY*15;
+            int verticalPos = gridStepY*(num+1);
             painter.drawLine(2*gridStepX-5, verticalPos, this->width(), verticalPos);
             painter.drawLine(currPoint_value.x(), verticalPos-2, currPoint_value.x(), verticalPos+1);
             QRectF rect_f = QRectF(QPointF(currPoint_value.x()-15, verticalPos+5),
                                    QPointF(currPoint_value.x()+15, verticalPos+15));
             QString textFrm = QString::number(currFrm);
-            painter.setFont(QFont("Arial", 14));
+            painter.setFont(QFont("Arial", 14, QFont::Bold));
             painter.drawText(rect_f, Qt::AlignCenter, textFrm);
-            painter.setFont(QFont("Arial", 17));
+            painter.setFont(QFont("Arial", 17, QFont::Bold));
             QRectF rect_frmLbl = QRectF(QPointF(this->width()-55, verticalPos-20),
                                    QPointF(this->width()-5, verticalPos-5));
             QString textFrmLbl = "Frame";
@@ -132,9 +133,9 @@ void DataVis::paintEvent(QPaintEvent *event)
             painter.setPen(myPen);
 
             // text for y-axis graduation
-            for(int n = 0; n < 15; n+=2){
+            for(int n = 0; n < num+1; n+=2){
                 QRectF rect = QRectF(QPointF(0, gridStepY*n+9), QPointF(gridStepX*2-5, gridStepY*(n+2)));
-                QString textGrad = QString::number(value_max-n*(value_max-value_min)/14);
+                QString textGrad = QString::number(value_max-n*(value_max-value_min)/num);
                 if(n%4 == 0)
                     painter.setFont(QFont("Arial", 16));
                 else
