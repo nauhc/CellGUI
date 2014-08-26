@@ -37,7 +37,10 @@ bool Controller::loadVideo(string filename){
         cout << "frame count: " << frameCnt << "\n";
         cout << "fps:" << fps << endl;
 
-        inputVideo->read(previousFrame);
+        if(!inputVideo->read(*frame)){
+            cout << "Unable to retrieve the first frame from video stream." << endl;
+            return false;
+        }
         return true;
     }
 }
@@ -147,6 +150,7 @@ void Controller::setCircle(QVector<QPoint> points)
         Point p =  Point(points[i].x(), points[i].y());
         hull.push_back(p);
     }
+    //cout << "hull coordinates: " << hull << endl;
 }
 
 void Controller::setAdaptThresh(int var){
@@ -194,13 +198,16 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
 
 void Controller::run(){
     int delay = (1500/fps);
-    while(!pause){
-            if(!inputVideo->read(*frame)){
-                //cout << inputVideo->get(CV_CAP_PROP_POS_FRAMES) << endl;
+
+
+    int cnt = 0;
+    while(!pause && cnt < frameCnt){
+            if(!inputVideo->read(nextFrame)){
                 cout << "Unable to retrieve frame from video stream." << endl;
                 pause = true;
                 continue;
             }
+            cnt++;
 
             int frameIdx = inputVideo->get(CV_CAP_PROP_POS_FRAMES);
             //cout << "frame " << frameIdx << endl;
@@ -228,7 +235,7 @@ void Controller::run(){
 
                 // optflow detection of entire frame
                 vector<Point2f> points1, points2;
-                bool opt = optflow(previousFrame, *frame, points1, points2);
+                bool opt = optflow(*frame, nextFrame, points1, points2);
                 if (!opt){
                     cout << "optical flow detection failed on frame " << frameIdx << endl;
                     continue;
@@ -273,7 +280,7 @@ void Controller::run(){
             }
             */
 
-            previousFrame = frame->clone();
+            *frame = nextFrame.clone();
 
             //emit the singnals
             emit processedImage(img, roiImg1, roiImg2);

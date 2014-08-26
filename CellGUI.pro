@@ -22,7 +22,8 @@ LIBS+= -L/usr/local/lib/ \
     -lopencv_highgui.2.4.8 \
     -lopencv_features2d.2.4.8 \
     -lopencv_imgproc.2.4.8 \
-    -lopencv_video.2.4.8
+    -lopencv_video.2.4.8 \
+    -lopencv_calib3d.2.4.8 \
 
 
 SOURCES += main.cpp\

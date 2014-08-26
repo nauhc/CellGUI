@@ -17,7 +17,8 @@ class Controller : public QThread
 private:
     VideoCapture    *inputVideo; //video processing -- openCV
     bool            pause;
-    Mat             previousFrame;
+    //Mat             previousFrame;
+    Mat             nextFrame;
     Mat             *frame; // frame from the video
     Mat             *roiFrame; // roi rectangle from frame
     QImage          img; // QImage for displaying video (with box)

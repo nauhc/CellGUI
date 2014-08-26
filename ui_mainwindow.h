@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
@@ -50,6 +51,7 @@ public:
     QLabel *blebbingVis;
     QLabel *areaVisLabel;
     QLabel *blebbingVisLabel;
+    QComboBox *typeComboBox;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -140,6 +142,9 @@ public:
         blebbingVisLabel = new QLabel(centralWidget);
         blebbingVisLabel->setObjectName(QStringLiteral("blebbingVisLabel"));
         blebbingVisLabel->setGeometry(QRect(60, 840, 62, 16));
+        typeComboBox = new QComboBox(centralWidget);
+        typeComboBox->setObjectName(QStringLiteral("typeComboBox"));
+        typeComboBox->setGeometry(QRect(1010, 310, 161, 26));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));

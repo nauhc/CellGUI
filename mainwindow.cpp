@@ -55,6 +55,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->drawROIButton->setStyleSheet(button_released_off);
     ui->drawROIButton->setEnabled(false);
 
+    ui->typeComboBox->addItem("Isolate cell");
+    ui->typeComboBox->addItem("Grouped cell");
+
     ui->horizontalSlider->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
     ui->blkSizeSlider->setRange(1, 20);
@@ -320,7 +323,7 @@ void MainWindow::on_loadVideoButton_clicked()
             encircle->setGeometry(x, y, width, height);
             cout << "video pos:  x " << x << " y " << y << " width " << width << " height " << height << endl;
             myController->setScale(scale);
-            cout << "scale " << scale;
+            cout << "scale " << scale << endl;
 
             ui->orgVideo->setAlignment(Qt::AlignCenter);
             //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
@@ -408,7 +411,7 @@ void MainWindow::on_drawROIButton_clicked(){
             //cout << p << " " << a << endl;
             int area_min = ((int)a/3/100-1)*100;
             area_min = area_min > 0 ? area_min : 0;
-            int area_max = ((int)a*5/100+1)*100;
+            int area_max = ((int)a*10/100+1)*100;
             int prmt_min = ((int)p/5/100-1)*100;
             prmt_min = prmt_min > 0 ? prmt_min : 0;
             int prmt_max = ((int)p*3/100+1)*100;
