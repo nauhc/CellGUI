@@ -51,9 +51,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Controller  *myController;
-    Encircle    *encircle;
-    DataVis     *areaVis;
-    DataVis     *prmtVis;
+    Encircle    *encircler;
+    DataVis     *prop1Vis;
+    DataVis     *prop2Vis;
     bool        encircled;
 };
 

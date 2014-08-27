@@ -8,19 +8,25 @@
 
 #define PI 3.14159265
 
-//const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
-//const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
-//const QString button_released_off   = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
+//const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; \
+                                         border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
+//const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; \
+                                         border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
+//const QString button_released_off   = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; \
+                                         border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
 
-const QString button_pressed        = "color:rgb(81,85,96); font: bold 16px; border-style:inset; border-width:2px; border-color:rgb(186,192,206); border-radius:4px; background-color:rgb(199,203,215)";
-const QString button_released_on    = "color:rgb(82,89,99); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(229,235,238)";
-const QString button_released_off   = "color:rgb(193,194,199); font: bold 16px; border-style:outset; border-width:2px; border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(229,235,238)";
-const QString frameLabelStyle       = "color:rgb(78,85,95); font:12px; background-color:rgba(0,0,0,0%) ";
+const QString button_pressed        = "color:rgb(81,85,96); font: bold 16px; border-style:inset; border-width:2px; \
+                                       border-color:rgb(186,192,206); border-radius:4px; background-color:rgb(163,203,215)";
+const QString button_released_on    = "color:rgb(82,89,99); font: bold 16px; border-style:outset; border-width:2px; \
+                                       border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(162,191,216)";
+const QString button_released_off   = "color:rgb(193,194,199); font: bold 16px; border-style:outset; border-width:2px; \
+                                       border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(239,245,248)";
+const QString frameLabelStyle       = "color:rgb(82,89,99); font:12px; background-color:rgba(0,0,0,0%) ";
 const QString transBkgrd            = "background-color: rgba(0,0,0,0%);";
 const QString halfTransBkgrd        = "background-color: rgba(128,128,128,80%);";
 const QString forgrdWhite           = "color:white;";
-const QString forgrdGray            = "color:rgb(78,85,95)";
-const QString visStyle              = "color:rgb(239,240,244); border: 2px solid; border-color:rgb(217,217,219)"; //color:rgb(54,58,59),  border-color:rgb(217,217,219)
+const QString forgrdGray            = "color:rgb(82,89,99);";
+const QString visStyle              = "color:rgb(239,240,244); border: 2px solid; border-color:rgb(217,217,219)"; //color:rgb(54,58,59)
 const QString videoDisplayStyle     = "background-color:rgb(216,222,224)";
 const QString forgrdGreen           = "color:rgb(153, 204, 49);"; //(79, 193, 131)
 const QString forgrdOrage           = "color:rgb(251, 172, 81);"; //(238, 122, 83)
@@ -62,10 +68,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->drawROIButton->setStyleSheet(button_released_off);
     ui->drawROIButton->setEnabled(false);
 
+    ui->groupBox->setStyleSheet("QGroupBox { color:rgb(82,89,99); \
+                                border: 2px solid; border-color:rgb(217,217,219);  border-radius: 5px;\
+                                font-size: 16px; font-weight: bold; \
+                                margin-top: 7px; margin-bottom: 7px; padding: 0px} \
+                                QGroupBox::title {top:-7px;left: 10px; subcontrol-origin: border }");
+    const QString checkboxStyle = "color:rgb(82,89,99); font-size: 14px";               
+    ui->checkBox_area->setChecked(true);
+    ui->checkBox_perimeter->setChecked(true);
+    ui->checkBox_area->setStyleSheet(checkboxStyle);
+    ui->checkBox_blebbing->setStyleSheet(checkboxStyle);
+    ui->checkBox_centroid->setStyleSheet(checkboxStyle);
+    ui->checkBox_perimeter->setStyleSheet(checkboxStyle);
+    ui->checkBox_shape->setStyleSheet(checkboxStyle);
+    ui->checkBox_speed->setStyleSheet(checkboxStyle);
 
     ui->typeComboBox->setStyleSheet(button_released_off);
-    ui->typeComboBox->addItem("Isolate cell");
-    ui->typeComboBox->addItem("Grouped cell");
+    ui->typeComboBox->addItem("Fix cell window");
+    ui->typeComboBox->addItem("Flexible cell window");
     ui->typeComboBox->setEnabled(false);
 
     ui->horizontalSlider->setEnabled(false);
@@ -82,9 +102,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16);
     ui->cellDetectionDisplayerLabel->setText("Cell Detection");
 
-    ui->differenceLabel->setStyleSheet(transBkgrd+forgrdWhite+"font:12px");
+    ui->differenceLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
     ui->differenceLabel->setText("Difference from Neighbors"/*+QString::number(ui->adaptThreshSlider->value())*/);
-    ui->blkSizeLabel->setStyleSheet(transBkgrd+forgrdWhite+"font:12px");
+    ui->blkSizeLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
     ui->blkSizeLabel->setText("Referecing-neighbor Size"/*+QString::number(ui->blkSizeSlider->value())*/);
 
     ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
@@ -92,44 +112,44 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->frameLabelRight->setStyleSheet(frameLabelStyle);
 
     // areaVis
-    QRect areaVisRect = QRect(40, 620, 1170, 280);
+    QRect areaVisRect = QRect(40, 620, 1150, 280);
     QColor areaVisColor = QColor(153, 204, 49); // green color
-    ui->areaVis->setGeometry(areaVisRect);
-    ui->areaVis->setStyleSheet(visStyle);
-    areaVis = new DataVis(this->centralWidget(), areaVisColor/*, 500, 8000*/);
-    areaVis->setGeometry(areaVisRect);
+    ui->prop1Vis->setGeometry(areaVisRect);
+    ui->prop1Vis->setStyleSheet(visStyle);
+    prop1Vis = new DataVis(this->centralWidget(), areaVisColor/*, 500, 8000*/);
+    prop1Vis->setGeometry(areaVisRect);
     QRect areaRectLabel = QRect(areaVisRect.x(), areaVisRect.y()-25, areaVisRect.width(), 20);
-    ui->areaVisLabel->setGeometry(areaRectLabel);
-    ui->areaVisLabel->setStyleSheet(transBkgrd+"color:rgb("+
+    ui->prop1VisLabel->setGeometry(areaRectLabel);
+    ui->prop1VisLabel->setStyleSheet(transBkgrd+"color:rgb("+
                                     QString::number(areaVisColor.red())+","+
                                     QString::number(areaVisColor.green())+","+
                                     QString::number(areaVisColor.blue())+");"+font20);
-    ui->areaVisLabel->setText("  Area (pixels)");
+    ui->prop1VisLabel->setText("  Area (pixels)");
 
     // prmtVis
     QRect prmtVisRect = QRect(areaVisRect.x(), areaVisRect.y()+areaVisRect.height()+35, areaVisRect.width(), areaVisRect.height());
     QColor prmtVisColor = QColor(251, 172, 81); // orange color
-    ui->blebbingVis->setGeometry(prmtVisRect);
-    ui->blebbingVis->setStyleSheet(visStyle);
-    prmtVis = new DataVis(this->centralWidget(), prmtVisColor/*, 0, 1350*/);
-    prmtVis->setGeometry(prmtVisRect);
+    ui->prop2Vis->setGeometry(prmtVisRect);
+    ui->prop2Vis->setStyleSheet(visStyle);
+    prop2Vis = new DataVis(this->centralWidget(), prmtVisColor/*, 0, 1350*/);
+    prop2Vis->setGeometry(prmtVisRect);
     QRect prmtRectLabel = QRect(prmtVisRect.x(), prmtVisRect.y()-25, prmtVisRect.width(), 20);
-    ui->blebbingVisLabel->setGeometry(prmtRectLabel);
-    ui->blebbingVisLabel->setStyleSheet(transBkgrd+"color:rgb("+
+    ui->prop2VisLabel->setGeometry(prmtRectLabel);
+    ui->prop2VisLabel->setStyleSheet(transBkgrd+"color:rgb("+
                                         QString::number(prmtVisColor.red())+","+
                                         QString::number(prmtVisColor.green())+","+
                                         QString::number(prmtVisColor.blue())+");"+font20);
-    ui->blebbingVisLabel->setText("  Perimeter (pixels)");
+    ui->prop2VisLabel->setText("  Perimeter (pixels)");
 
-    encircle = new Encircle(this->centralWidget());
+    encircler = new Encircle(this->centralWidget());
     //encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 }
 
 MainWindow::~MainWindow(){
-    delete prmtVis;
-    delete areaVis;
-    delete encircle;
+    delete prop2Vis;
+    delete prop1Vis;
+    delete encircler;
     delete myController;
     delete ui;
 }
@@ -228,8 +248,8 @@ void MainWindow::on_stopVideoButton_clicked(){
 
     encircled = false;
 
-    prmtVis->releaseDataVis();
-    areaVis->releaseDataVis();
+    prop2Vis->releaseDataVis();
+    prop1Vis->releaseDataVis();
 
     QPixmap pixmap(1,1); // Works
     pixmap = pixmap.scaled(ui->orgVideo->width(), ui->orgVideo->height());
@@ -307,7 +327,7 @@ void MainWindow::on_loadVideoButton_clicked()
             int w, h;
             myController->getVideoSize(w, h);
             int x, y, width, height;
-            int x_s = 650, y_s, width_s, height_s;
+            int x_s = 590, y_s, width_s, height_s;
             double scale; // could be larger than 1 or smaller
 
             if(w>=h){
@@ -330,7 +350,7 @@ void MainWindow::on_loadVideoButton_clicked()
                 height_s = height/2-10;
             }
             ui->orgVideo->setGeometry(x, y, width, height);
-            encircle->setGeometry(x, y, width, height);
+            encircler->setGeometry(x, y, width, height);
             cout << "video pos:  x " << x << " y " << y << " width " << width << " height " << height << endl;
             myController->setScale(scale);
             cout << "scale " << scale << endl;
@@ -354,8 +374,8 @@ void MainWindow::on_loadVideoButton_clicked()
 }
 
 void MainWindow::updateDataVisUI(int area, int perimeter){
-    areaVis->updateData(area, myController->getCurrentFrame());
-    prmtVis->updateData(perimeter, myController->getCurrentFrame());
+    prop1Vis->updateData(area, myController->getCurrentFrame());
+    prop2Vis->updateData(perimeter, myController->getCurrentFrame());
 }
 
 void MainWindow::on_drawROIButton_pressed(){
@@ -375,7 +395,7 @@ void MainWindow::on_drawROIButton_clicked(){
 
     // when it is circling mode
     // user can circle the cell of interest
-    if(!encircle->isEncircled()){
+    if(!encircler->isEncircled()){
         this->setCursor(Qt::CrossCursor);
         ui->playVideoButton->setEnabled(false);
         ui->playVideoButton->setStyleSheet(button_released_off);
@@ -385,12 +405,12 @@ void MainWindow::on_drawROIButton_clicked(){
 
         myController->pauseVideo();
 
-        encircle->clearCircle();
-        encircle->turnOnEncircleMode();
+        encircler->clearCircle();
+        encircler->turnOnEncircleMode();
         encircled = true;
 
-        areaVis->turnVisOn();
-        prmtVis->turnVisOn();
+        prop1Vis->turnVisOn();
+        prop2Vis->turnVisOn();
     }
 
     // when circling mode is turned off, track starts
@@ -406,15 +426,15 @@ void MainWindow::on_drawROIButton_clicked(){
         ui->contourDisplayerLabel->setStyleSheet(halfTransBkgrd+forgrdOrage+"border-radius:4px;"+font16bld);
         ui->cellDetectionDisplayerLabel->setStyleSheet(halfTransBkgrd+forgrdGreen+"border-radius:4px;"+font16bld);
         this->setCursor(Qt::ArrowCursor);
-        areaVis->turnTrackOn(myController->getNumberOfFrames(),
+        prop1Vis->turnTrackOn(myController->getNumberOfFrames(),
                              myController->getCurrentFrame());
-        prmtVis->turnTrackOn(myController->getNumberOfFrames(),
+        prop2Vis->turnTrackOn(myController->getNumberOfFrames(),
                              myController->getCurrentFrame());
 
-        encircle->turnOffEncircleMode();
+        encircler->turnOffEncircleMode();
         //delete encircle;
         QVector<QPoint> circle;
-        encircle->getRegion(circle);
+        encircler->getRegion(circle);
         int circleSize = circle.size();
         if(circleSize < 5){
             cout << "circle not found." << endl;
@@ -429,12 +449,10 @@ void MainWindow::on_drawROIButton_clicked(){
             int prmt_min = ((int)p/5/100-1)*100;
             prmt_min = prmt_min > 0 ? prmt_min : 0;
             int prmt_max = ((int)p*3/100+1)*100;
-            areaVis->setMinMax(area_min, area_max);
-            prmtVis->setMinMax(prmt_min, prmt_max);
+            prop1Vis->setMinMax(area_min, area_max); //(a/3, a*5)
+            prop2Vis->setMinMax(prmt_min, prmt_max); //(p/5, p*3)
             cout << "area min " << area_min << " max " << area_max << endl;
             cout << "prmt min " << prmt_min << " max " << prmt_max << endl;
-//            areaVis->setMinMax(a/3, a*5);
-//            prmtVis->setMinMax(p/5, p*3);
             myController->setCircle(circle);
         }
     }
