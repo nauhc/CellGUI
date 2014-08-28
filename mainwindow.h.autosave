@@ -33,7 +33,7 @@ private slots:
     void on_stopVideoButton_clicked();
     void on_drawROIButton_clicked();
 
-    void updateDataVisUI(int prop1, int prop2);
+    void updatePropsVisUI(int prop1, int prop2);
 
     void on_loadVideoButton_pressed();
 

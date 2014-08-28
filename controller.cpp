@@ -268,7 +268,7 @@ void Controller::run(){
                                    area, perimeter, centroid, frameIdx);
             csvFile << frameIdx << "," << area << "," << perimeter << "," << centroid << endl;
 
-            emit detectedArea(area, perimeter);
+            emit detectedProperties(area, perimeter);
             //cout << "frame " << frameIdx << " cell area: " << area << endl;
             roiImg1 = cvMatToQImage(contourImg);
             roiImg2 = cvMatToQImage(edgeImg);

@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setBlkSize(int)));
     connect(myController, SIGNAL(detectedProperties(int, int)),
-            this, SLOT(updateDataVisUI(int, int)));
+            this, SLOT(updatePropsVisUI(int, int)));
     connect(ui->checkBox_area, SIGNAL(stateChanged(int)),
             this, SLOT(on_checkbox_checked(int)));
     connect(ui->checkBox_perimeter, SIGNAL(stateChanged(int)),
@@ -380,7 +380,7 @@ void MainWindow::on_loadVideoButton_clicked()
     }
 }
 
-void MainWindow::updateDataVisUI(int prop1, int prop2){
+void MainWindow::updatePropsVisUI(int prop1, int prop2){
     prop1Vis->updateData(prop1, myController->getCurrentFrame());
     prop2Vis->updateData(prop2, myController->getCurrentFrame());
 }

@@ -263,7 +263,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
         Point p2 = Point(points2[i].x, points2[i].y);
         if(mask_cir_org.at<uchar>(p1.y,p1.x) == 255 ){
             cell_pts_global.push_back(i);
-            if(dist_square(p1, p2) > 4.0){
+            if(dist_square(p1, p2) > 2.0){
                 longOptflow_pt1.push_back(Point2f(p1.x, p1.y));
                 longOptflow_pt2.push_back(Point2f(p2.x, p2.y));
                 avrg_vec.x += (p2.x-p1.x);
@@ -272,11 +272,32 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
         }
     }
 
-    if(longOptflow_pt1.size()!= 0 && (square(avrg_vec.x)+square(avrg_vec.y)>4.0)){
+    if(longOptflow_pt1.size()!= 0){
         avrg_vec.x = avrg_vec.x / longOptflow_pt1.size();
         avrg_vec.y = avrg_vec.y / longOptflow_pt1.size();
     }
     Rect trans_rect = translateRect(rect, avrg_vec);
+
+    /*
+    if (longOptflow_pt1.size() >= 4){
+        H = findHomography(Mat(longOptflow_pt1), Mat(longOptflow_pt2), CV_RANSAC, 2);
+        //cout << "H: " << H << endl;
+
+        vector<Point> rect_corners;
+        rect_corners.push_back(Point(rect.x, rect.y));
+        rect_corners.push_back(Point(rect.x+rect.width, rect.y));
+        rect_corners.push_back(Point(rect.x, rect.y+rect.height));
+        rect_corners.push_back(Point(rect.x+rect.width, rect.y+rect.height));
+
+        vector<Point> rect_update_corners = pointTransform(rect_corners, H);
+
+        line(frameGray, rect_update_corners[0], rect_update_corners[1], Scalar(255), 1);
+        line(frameGray, rect_update_corners[0], rect_update_corners[2], Scalar(255), 1);
+        line(frameGray, rect_update_corners[3], rect_update_corners[1], Scalar(255), 1);
+        line(frameGray, rect_update_corners[3], rect_update_corners[2], Scalar(255), 1)
+    }*/
+
+
     rectangle(frameGray, trans_rect, Scalar(255), 2);
     imshow("frameGray", frameGray);
 

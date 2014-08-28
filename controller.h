@@ -40,7 +40,7 @@ private:
 signals:
     // signal nonnectted with updateVideoplayerUI SLOT
     void    processedImage(QImage image, QImage ROIimg1, QImage ROIimg2);
-    void    detectedArea(int area, int perimeter);
+    void    detectedProperties(int area, int perimeter);
 
 private slots:
     void    setAdaptThresh(int var);
