@@ -257,7 +257,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     // flow points
     vector<unsigned int> cell_pts_global;
     vector<Point2f> longOptflow_pt1, longOptflow_pt2;
-    Point2f avrg_vec;
+    Point2f avrg_vec = Point2f(0,0);
     for(unsigned int i = 0; i < points1.size(); i++){
         Point p1 = Point(points1[i].x, points1[i].y);
         Point p2 = Point(points2[i].x, points2[i].y);
@@ -271,9 +271,11 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
             }
         }
     }
-    avrg_vec.x = avrg_vec.x / longOptflow_pt1.size();
-    avrg_vec.y = avrg_vec.y / longOptflow_pt1.size();
 
+    if(longOptflow_pt1.size()!= 0 && (square(avrg_vec.x)+square(avrg_vec.y)>4.0)){
+        avrg_vec.x = avrg_vec.x / longOptflow_pt1.size();
+        avrg_vec.y = avrg_vec.y / longOptflow_pt1.size();
+    }
     Rect trans_rect = translateRect(rect, avrg_vec);
     rectangle(frameGray, trans_rect, Scalar(255), 2);
     imshow("frameGray", frameGray);

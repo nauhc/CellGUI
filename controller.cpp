@@ -1,5 +1,7 @@
 #include "controller.h"
 #include "qdebug.h"
+#include "iostream"
+#include <QFileInfo>
 
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
@@ -11,9 +13,12 @@ Controller::Controller(QObject *parent) : QThread(parent),
     encircled = false;
 }
 Controller::~Controller(){
-    if(inputVideo->isOpened())
+    if(inputVideo->isOpened()){
         inputVideo->release();
         delete inputVideo;
+    }
+    if(csvFile.is_open())
+        csvFile.close();
     delete roiFrame;
 //    delete frame; // Do not delete frame here. It has been released in FindContour class!
     delete contour;
@@ -28,7 +33,8 @@ bool Controller::loadVideo(string filename){
         return false;
     }
     else{
-        cout << "Input video file:" << filename << " opened." << endl;
+
+        cout << "Input video file: " << filename << " opened." << endl;
         frameCnt    = (int) inputVideo->get(CV_CAP_PROP_FRAME_COUNT);
         fps         = inputVideo->get(CV_CAP_PROP_FPS);
         videoSize   = Size((int) inputVideo->get(CV_CAP_PROP_FRAME_WIDTH),
@@ -36,6 +42,21 @@ bool Controller::loadVideo(string filename){
         cout << "video size: " << videoSize << "\n";
         cout << "frame count: " << frameCnt << "\n";
         cout << "fps:" << fps << endl;
+
+        //prepare writing data to file
+        QFileInfo   fi  = QFileInfo(QString::fromStdString(filename));
+        QString     ff  = fi.path()+fi.baseName();
+        string      fn  = ff.toUtf8().constData();
+        const char* fnn = fn.c_str();
+        //check if file exists, if exists delete the file
+        ifstream ifile(fn);
+        if(ifile){
+            if(remove(fnn)!= 0)
+                cout << "error deleting existing csv file" << endl;
+        }
+
+        //prepare to write data to file
+        csvFile.open(fn+".csv", ios::out);
 
         if(!inputVideo->read(*frame)){
             cout << "Unable to retrieve the first frame from video stream." << endl;
@@ -202,61 +223,58 @@ void Controller::run(){
 
     int cnt = 0;
     while(!pause && cnt < frameCnt){
-            if(!inputVideo->read(nextFrame)){
-                cout << "Unable to retrieve frame from video stream." << endl;
-                pause = true;
+        if(!inputVideo->read(nextFrame)){
+            cout << "Unable to retrieve frame from video stream." << endl;
+            pause = true;
+            continue;
+        }
+        cnt++;
+
+        int frameIdx = inputVideo->get(CV_CAP_PROP_POS_FRAMES);
+        //cout << "frame " << frameIdx << endl;
+
+        QImage          roiImg1; // QImage for ROI for displaying
+        QImage          roiImg2; // QImage for ROI for displaying
+
+        if(!encircled){
+            img = cvMatToQImage(*frame);
+            roiImg1 = img;
+            roiImg2 = img;
+        }
+        else{
+            //draw bounding box on ROI and show in original video player
+
+            Mat boxedImg = Mat(frame->rows, frame->cols, CV_8UC3);
+            contour->boundingBox(boxedImg);
+            img = cvMatToQImage(boxedImg);
+
+            Mat contourImg;
+            Mat edgeImg;
+            int area; // area of the cell getting from cellDetection
+            int perimeter; // perimeter of the cell getting from cellDetection
+            Point2f centroid; // centroid of the cell getting from cellDetection
+
+            // optflow detection of entire frame
+            vector<Point2f> points1, points2;
+            bool opt = optflow(*frame, nextFrame, points1, points2);
+            if (!opt){
+                cout << "optical flow detection failed on frame " << frameIdx << endl;
                 continue;
             }
-            cnt++;
-
-            int frameIdx = inputVideo->get(CV_CAP_PROP_POS_FRAMES);
-            //cout << "frame " << frameIdx << endl;
-
-            QImage          roiImg1; // QImage for ROI for displaying
-            QImage          roiImg2; // QImage for ROI for displaying
-
-            if(!encircled){
-                img = cvMatToQImage(*frame);
-                roiImg1 = img;
-                roiImg2 = img;
-            }
-            else{
-                //draw bounding box on ROI and show in original video player
-
-                Mat boxedImg = Mat(frame->rows, frame->cols, CV_8UC3);
-                contour->boundingBox(boxedImg);
-                img = cvMatToQImage(boxedImg);
-
-                Mat contourImg;
-                Mat edgeImg;
-                int area; // area of the cell getting from cellDetection
-                int perimeter; // perimeter of the cell getting from cellDetection
-                Point2f centroid; // centroid of the cell getting from cellDetection
-
-                // optflow detection of entire frame
-                vector<Point2f> points1, points2;
-                bool opt = optflow(*frame, nextFrame, points1, points2);
-                if (!opt){
-                    cout << "optical flow detection failed on frame " << frameIdx << endl;
-                    continue;
-                }
 
 
-                contour->cellDetection(*frame, hull, contourImg, edgeImg,
-                                       points1, points2,
-                                       area, perimeter, centroid, frameIdx);
-                cout << "centroid " << centroid << endl;
+            contour->cellDetection(*frame, hull, contourImg, edgeImg,
+                                   points1, points2,
+                                   area, perimeter, centroid, frameIdx);
+            csvFile << frameIdx << "," << area << "," << perimeter << "," << centroid << endl;
 
+            emit detectedArea(area, perimeter);
+            //cout << "frame " << frameIdx << " cell area: " << area << endl;
+            roiImg1 = cvMatToQImage(contourImg);
+            roiImg2 = cvMatToQImage(edgeImg);
+        }
 
-
-
-                emit detectedArea(area, perimeter);
-                //cout << "frame " << frameIdx << " cell area: " << area << endl;
-                roiImg1 = cvMatToQImage(contourImg);
-                roiImg2 = cvMatToQImage(edgeImg);
-            }
-
-            /*
+        /*
             //ROI
             int x = videoSize.width/2 - 5;
             int y = videoSize.height/2 + 10;
@@ -280,12 +298,17 @@ void Controller::run(){
             }
             */
 
-            *frame = nextFrame.clone();
+        *frame = nextFrame.clone();
 
-            //emit the singnals
-            emit processedImage(img, roiImg1, roiImg2);
-            this->msleep(delay);
-        }
+        //emit the singnals
+        emit processedImage(img, roiImg1, roiImg2);
+        this->msleep(delay);
+    }
+
+    if(cnt==frameCnt){
+        csvFile.close();
+        cout << "data file (csv) saved." << endl;
+    }
 }
 
 void Controller::pauseVideo(){

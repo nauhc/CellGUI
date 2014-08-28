@@ -297,14 +297,9 @@ void MainWindow::on_loadVideoButton_clicked()
     QFileDialog *dialog = new QFileDialog();
     QString filename = dialog->getOpenFileName(this,
                                                tr("Open Video"),
-                                               "./video",
-//                                               QDir::homePath()+"/Desktop/",
+                                               "./video", /*QDir::homePath()+"/Desktop/",*/
                                                tr("Video Files (*.mov *mp4 *wmv)"));
     delete dialog;
-
-//        QString filepath    = "/Users/chuanwang/Sourcecode/CellGUI/video/";
-//        QString name        = "0523_08_C2.mov";
-//        QString filename    = filepath + name;
 
     if (!filename.isEmpty()){
         if (!myController->loadVideo(filename.toStdString())){

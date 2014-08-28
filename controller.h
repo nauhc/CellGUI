@@ -1,6 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#include "fstream"
 #include <QThread>
 #include <QImage>
 #include <cv.h>
@@ -15,6 +16,7 @@ using namespace cv;
 class Controller : public QThread
 {   Q_OBJECT
 private:
+
     VideoCapture    *inputVideo; //video processing -- openCV
     bool            pause;
     //Mat             previousFrame;
@@ -27,7 +29,8 @@ private:
     int             frameCnt; // total frame number
     double          fps; // fps
 
-
+    ofstream        csvFile;
+    string          csvFileName;
 
     FindContour     *contour; // findcontour class object
     bool            encircled;
