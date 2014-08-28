@@ -118,9 +118,9 @@ void DataVis::paintEvent(QPaintEvent *event)
             QRectF rect_f = QRectF(QPointF(currPoint_value.x()-15, verticalPos+5),
                                    QPointF(currPoint_value.x()+15, verticalPos+15));
             QString textFrm = QString::number(currFrm);
-            painter.setFont(QFont("Arial", 14, QFont::Bold));
+            painter.setFont(QFont("Arial", 14/*, QFont::Bold*/));
             painter.drawText(rect_f, Qt::AlignCenter, textFrm);
-            painter.setFont(QFont("Arial", 17, QFont::Bold));
+            painter.setFont(QFont("Arial", 17/*, QFont::Bold*/));
             QRectF rect_frmLbl = QRectF(QPointF(this->width()-55, verticalPos-20),
                                    QPointF(this->width()-5, verticalPos-5));
             QString textFrmLbl = "Frame";

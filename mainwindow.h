@@ -11,6 +11,8 @@
 #include "encircle.h"
 #include "areavis.h"
 
+typedef vector<float> floatArray;
+
 namespace Ui {
     class MainWindow;
 }
@@ -26,6 +28,7 @@ public:
 
 
 private slots:
+    void initialVideoPlayerUI(QImage img);
     void updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2);
 
     void on_playVideoButton_clicked();
@@ -33,27 +36,21 @@ private slots:
     void on_stopVideoButton_clicked();
     void on_drawROIButton_clicked();
 
-    void updateDataVisUI(int prop1, int prop2);
+    void updatePropsVisUI(floatArray property); ///*int prop1, int prop2*/
 
     void on_loadVideoButton_pressed();
-
     void on_loadVideoButton_released();
 
     void on_playVideoButton_pressed();
-
     void on_playVideoButton_released();
 
     void on_stopVideoButton_pressed();
-
     void on_stopVideoButton_released();
 
     void on_drawROIButton_pressed();
-
     void on_drawROIButton_released();
 
     void on_checkbox_checked(int state);
-
-//    void on_checkBox_area_stateChanged(int state);
 
 private:
     Ui::MainWindow  *ui;
@@ -63,6 +60,8 @@ private:
     DataVis         *prop2Vis;
     bool            encircled;
     QVector<QString> checkedBoxes;
+
+    void setCanvas();
 };
 
 #endif // MAINWINDOW_H

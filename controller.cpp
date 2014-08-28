@@ -3,6 +3,7 @@
 #include "iostream"
 #include <QFileInfo>
 
+
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
    frame(new Mat()), roiFrame(new Mat()),
@@ -25,6 +26,40 @@ Controller::~Controller(){
     cout << "controller deleted" << endl;
 }
 
+inline QImage cvMatToQImage(const cv::Mat &inMat){
+    switch ( inMat.type() )
+    {
+    // 8-bit, 4 channel
+    case CV_8UC4:
+    {
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB32 );
+        return image;
+    }
+    // 8-bit, 3 channel
+    case CV_8UC3:
+    {
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
+        return image.rgbSwapped();
+    }
+    // 32-bit, 3 channel
+    case CV_32FC3:
+    {
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
+        return image.rgbSwapped();
+    }
+    // 8-bit, 1 channel
+    case CV_8UC1:
+    {
+        //cout << "cv_8uc1 to qimage" << endl;
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_Indexed8 );
+        return image;
+    }
+    default:
+        qWarning() << "ASM::cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type();
+        break;
+    }
+    return QImage();
+}
 
 bool Controller::loadVideo(string filename){
     inputVideo->open(filename);
@@ -62,6 +97,7 @@ bool Controller::loadVideo(string filename){
             cout << "Unable to retrieve the first frame from video stream." << endl;
             return false;
         }
+        emit load1stImage(cvMatToQImage(*frame));
         return true;
     }
 }
@@ -182,41 +218,6 @@ void Controller::setBlkSize(int var){
     contour->setBlkSize(2*var+1);
 }
 
-inline QImage cvMatToQImage(const cv::Mat &inMat){
-    switch ( inMat.type() )
-    {
-    // 8-bit, 4 channel
-    case CV_8UC4:
-    {
-        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB32 );
-        return image;
-    }
-    // 8-bit, 3 channel
-    case CV_8UC3:
-    {
-        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
-        return image.rgbSwapped();
-    }
-    // 32-bit, 3 channel
-    case CV_32FC3:
-    {
-        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB888 );
-        return image.rgbSwapped();
-    }
-    // 8-bit, 1 channel
-    case CV_8UC1:
-    {
-        //cout << "cv_8uc1 to qimage" << endl;
-        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_Indexed8 );
-        return image;
-    }
-    default:
-        qWarning() << "ASM::cvMatToQImage() - cv::Mat image type not handled in switch:" << inMat.type();
-        break;
-    }
-    return QImage();
-}
-
 void Controller::run(){
     int delay = (1500/fps);
 
@@ -262,13 +263,19 @@ void Controller::run(){
                 continue;
             }
 
-
             contour->cellDetection(*frame, hull, contourImg, edgeImg,
                                    points1, points2,
                                    area, perimeter, centroid, frameIdx);
+            floatArray property;
+            property.push_back(float(area));
+            property.push_back(float(perimeter));
+            property.push_back(centroid.x);
+            property.push_back(centroid.y);
+            property.push_back(0.0);
+            property.push_back(0.0);
             csvFile << frameIdx << "," << area << "," << perimeter << "," << centroid << endl;
 
-            emit detectedProperties(area, perimeter);
+            emit detectedProperties(property);
             //cout << "frame " << frameIdx << " cell area: " << area << endl;
             roiImg1 = cvMatToQImage(contourImg);
             roiImg2 = cvMatToQImage(edgeImg);

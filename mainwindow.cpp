@@ -8,6 +8,7 @@
 
 #define PI 3.14159265
 
+
 //const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; \
                                          border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
 //const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; \
@@ -34,6 +35,7 @@ const QString font20                = "font: 20px";
 const QString font16                = "font: 16px";
 const QString font16bld             = "font: bold 16px";
 
+
 template <class T>
 inline T square(T value){
     return value*value;
@@ -46,14 +48,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->setupUi(this);
     this->setStyleSheet(/*"background-color:rgb(38,42,43)"*/"background-color:rgb(251,251,251)");
     this->setFixedSize(this->width(), this->height());
+
+    connect(myController, SIGNAL(load1stImage(QImage)),
+            this, SLOT(initialVideoPlayerUI(QImage)));
     connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
             this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setAdaptThresh(int)));
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setBlkSize(int)));
-    connect(myController, SIGNAL(detectedProperties(int, int)),
-            this, SLOT(updateDataVisUI(int, int)));
+    // connect checkbox to box_checked event
+    qRegisterMetaType<floatArray>("floatArray");
+    connect(myController, SIGNAL(detectedProperties(floatArray)),
+            this, SLOT(updatePropsVisUI(floatArray)));
     connect(ui->checkBox_area, SIGNAL(stateChanged(int)),
             this, SLOT(on_checkbox_checked(int)));
     connect(ui->checkBox_perimeter, SIGNAL(stateChanged(int)),
@@ -123,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->frameLabelLeft->setText("Frame No.");
     ui->frameLabelRight->setStyleSheet(frameLabelStyle);
 
-    // areaVis
+    // prop1Vis initialize -- areaVis
     QRect areaVisRect = QRect(40, 620, 1150, 280);
     QColor areaVisColor = QColor(153, 204, 49); // green color
     ui->prop1Vis->setGeometry(areaVisRect);
@@ -136,9 +143,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                     QString::number(areaVisColor.red())+","+
                                     QString::number(areaVisColor.green())+","+
                                     QString::number(areaVisColor.blue())+");"+font20);
-    ui->prop1VisLabel->setText("  Area (pixels)");
+    ui->prop1VisLabel->setText("  AREA (pixels)");
 
-    // prmtVis
+    // prop2Vis initialize -- prmtVis
     QRect prmtVisRect = QRect(areaVisRect.x(), areaVisRect.y()+areaVisRect.height()+35, areaVisRect.width(), areaVisRect.height());
     QColor prmtVisColor = QColor(251, 172, 81); // orange color
     ui->prop2Vis->setGeometry(prmtVisRect);
@@ -151,7 +158,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                         QString::number(prmtVisColor.red())+","+
                                         QString::number(prmtVisColor.green())+","+
                                         QString::number(prmtVisColor.blue())+");"+font20);
-    ui->prop2VisLabel->setText("  Perimeter (pixels)");
+    ui->prop2VisLabel->setText("  PERIMETER (pixels)");
 
     encircler = new Encircle(this->centralWidget());
     //encircle->setGeometry(40, 30, 500, 500);
@@ -165,6 +172,79 @@ MainWindow::~MainWindow(){
     delete myController;
     delete ui;
 }
+
+void MainWindow::setCanvas(){
+    //set video player label size and postion
+    //according to the size of the selected video
+    int w, h;
+    myController->getVideoSize(w, h);
+    int x, y, width, height;
+    int x_s = 590, y_s, width_s, height_s;
+    double scale; // could be larger than 1 or smaller
+
+    if(w>=h){
+        scale = 512.0/double(w);
+        width   = 512;
+        height  = 512*h/w;
+        x = 40;
+        y = 30+(width-height)/2;
+        y_s = 30 + width/4 - height/4;
+        width_s = width/2-10;
+        height_s = height/2-10;
+    }else{
+        scale = 512.0/double(h);
+        height  = 512;
+        width   = 512*w/h;
+        x = 40+(height-width)/2;
+        y = 30;
+        y_s = 30 + height/4 - width/4; // 30 - (height/2-width/2)/2
+        width_s = width/2-10;
+        height_s = height/2-10;
+    }
+    ui->orgVideo->setGeometry(x, y, width, height);
+    encircler->setGeometry(x, y, width, height);
+    cout << "video pos:  x " << x << " y " << y << " width " << width << " height " << height << endl;
+    myController->setScale(scale);
+    cout << "scale " << scale << endl;
+
+    ui->orgVideo->setAlignment(Qt::AlignCenter);
+    //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
+    //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
+    //            ui->roiVideo1->setGeometry(650, 30, width/2-10, height/2-10);
+    ui->roiVideo1->setGeometry(x_s, y_s, width_s, height_s);
+    ui->roiVideo1->setAlignment(Qt::AlignCenter);
+    int video_y_max = ui->orgVideo->y()+ui->orgVideo->height();
+    ui->roiVideo2->setGeometry(x_s, video_y_max-height_s, width_s, height_s);
+    ui->roiVideo2->setAlignment(Qt::AlignCenter);
+}
+
+void MainWindow::initialVideoPlayerUI(QImage img)
+{
+    if(!img.isNull()){
+        //original video display
+        ui->orgVideo->setAlignment(Qt::AlignCenter);
+        ui->orgVideo->setPixmap(
+                    QPixmap::fromImage(img).scaled(
+                        ui->orgVideo->size(),
+                        Qt::KeepAspectRatio,
+                        Qt::FastTransformation));
+        //roi video display 1
+        ui->roiVideo1->setAlignment(Qt::AlignCenter);
+        ui->roiVideo1->setPixmap(
+                    QPixmap::fromImage(img).scaled(
+                        ui->roiVideo1->size(),
+                        Qt::KeepAspectRatio,
+                        Qt::FastTransformation));
+        ui->roiVideo2->setAlignment(Qt::AlignCenter);
+        ui->roiVideo2->setPixmap(
+                    QPixmap::fromImage(img).scaled(
+                        ui->roiVideo2->size(),
+                        Qt::KeepAspectRatio,
+                        Qt::FastTransformation));
+        setCanvas();
+    }
+}
+
 
 void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2){
     if(!img.isNull()){
@@ -329,48 +409,6 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
             ui->frameLabelRight->setText(" 0 / " + QString::number(myController->getNumberOfFrames()));
 
-            //set video player label size and postion
-            //according to the size of the selected video
-            int w, h;
-            myController->getVideoSize(w, h);
-            int x, y, width, height;
-            int x_s = 590, y_s, width_s, height_s;
-            double scale; // could be larger than 1 or smaller
-
-            if(w>=h){
-                scale = 512.0/double(w);
-                width   = 512;
-                height  = 512*h/w;
-                x = 40;
-                y = 30+(width-height)/2;
-                y_s = 30 + width/4 - height/4;
-                width_s = width/2-10;
-                height_s = height/2-10;
-            }else{
-                scale = 512.0/double(h);
-                height  = 512;
-                width   = 512*w/h;
-                x = 40+(height-width)/2;
-                y = 30;
-                y_s = 30 + height/4 - width/4; // 30 - (height/2-width/2)/2
-                width_s = width/2-10;
-                height_s = height/2-10;
-            }
-            ui->orgVideo->setGeometry(x, y, width, height);
-            encircler->setGeometry(x, y, width, height);
-            cout << "video pos:  x " << x << " y " << y << " width " << width << " height " << height << endl;
-            myController->setScale(scale);
-            cout << "scale " << scale << endl;
-
-            ui->orgVideo->setAlignment(Qt::AlignCenter);
-            //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
-            //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
-//            ui->roiVideo1->setGeometry(650, 30, width/2-10, height/2-10);
-            ui->roiVideo1->setGeometry(x_s, y_s, width_s, height_s);
-            ui->roiVideo1->setAlignment(Qt::AlignCenter);
-            int video_y_max = ui->orgVideo->y()+ui->orgVideo->height();
-            ui->roiVideo2->setGeometry(x_s, video_y_max-height_s, width_s, height_s);
-            ui->roiVideo2->setAlignment(Qt::AlignCenter);
         }
     }
     else{
@@ -380,14 +418,10 @@ void MainWindow::on_loadVideoButton_clicked()
     }
 }
 
-void MainWindow::updateDataVisUI(int prop1, int prop2){
-    prop1Vis->updateData(prop1, myController->getCurrentFrame());
-    prop2Vis->updateData(prop2, myController->getCurrentFrame());
-}
-
 void MainWindow::on_drawROIButton_pressed(){
     ui->drawROIButton->setStyleSheet(button_pressed);
 }
+
 void MainWindow::on_drawROIButton_released(){
     if(ui->drawROIButton->isEnabled())
         ui->drawROIButton->setStyleSheet(button_released_on);
@@ -395,7 +429,38 @@ void MainWindow::on_drawROIButton_released(){
         ui->drawROIButton->setStyleSheet(button_released_off);
 }
 
+inline int propIndex(QString str){
+    if(str == "area")
+        return 0;
+    else if (str == "perimeter")
+        return 1;
+    else if (str == "centroid")
+        return 2;
+    else if (str == "shape")
+        return 3;
+    else if (str == "blebbing")
+        return 4;
+    else if (str == "speed")
+        return 5;
+    else
+        return 0;
+}
+
+void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3, prop4, prop5
+
+    if(checkedBoxes.size()==1){
+        prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
+        prop2Vis->turnVisOff();
+    }else{
+        prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
+        prop2Vis->updateData(property[propIndex(checkedBoxes[1])], myController->getCurrentFrame());
+    }
+}
+
+
+
 void MainWindow::on_checkbox_checked(int state) {
+
     QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
     if (!checkBox) return;
 
@@ -403,21 +468,45 @@ void MainWindow::on_checkbox_checked(int state) {
         if (checkedBoxes.size() == 2) {
             checkBox->setCheckState(Qt::Unchecked);
             return;
-        } else if (!checkedBoxes.contains(checkBox->objectName())) {
-            checkedBoxes.push_back(checkBox->objectName());
+        } else if (!checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
+            checkedBoxes.push_back(checkBox->objectName().remove(0, 9));
         }
     } else if (state == Qt::Unchecked) {
         if (checkedBoxes.size() == 0) {
             return; // should not happen
-        } else if (checkedBoxes.contains(checkBox->objectName())) {
-            checkedBoxes.remove(checkedBoxes.indexOf(checkBox->objectName()));
+        } else if (checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
+            checkedBoxes.remove(checkedBoxes.indexOf(checkBox->objectName().remove(0, 9)));
         }
     }
-    for(unsigned int n = 0; n < checkedBoxes.size(); n++)
-        std::cout << checkedBoxes[n].toStdString() << std::endl;
+
+    /*
+    for(int n = 0; n < checkedBoxes.size(); n++)
+        std::cout << checkedBoxes[n].toStdString() << "\n";
+    std::cout << "---" << std::endl;*/
+
+    if(checkedBoxes.size()==0){
+        QMessageBox msgBox;
+        msgBox.setText("Warning: no property is selected!");
+        msgBox.exec();
+    }
+    else if(checkedBoxes.size()==1){
+        ui->prop1VisLabel->setText("  "+checkedBoxes[0].toUpper()+" (pixels)");
+        ui->prop2VisLabel->setText("  ");
+    }else{
+        ui->prop1VisLabel->setText("  "+checkedBoxes[0].toUpper()+" (pixels)");
+        ui->prop2VisLabel->setText("  "+checkedBoxes[1].toUpper()+" (pixels)");
+    }
+
 }
 
 void MainWindow::on_drawROIButton_clicked(){
+    encircler->setGeometry(ui->orgVideo->x(), ui->orgVideo->y(),
+                           ui->orgVideo->width(), ui->orgVideo->height());
+    cout << "video pos:  x " << ui->orgVideo->x()
+         << " y " << ui->orgVideo->y()
+         << " width " << ui->orgVideo->width()
+         << " height " << ui->orgVideo->height() << endl;
+
     cout << "Encircle Cell Button clicked." << endl;
 
     ui->typeComboBox->setEnabled(true);

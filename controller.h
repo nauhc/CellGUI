@@ -13,6 +13,9 @@
 using namespace std;
 using namespace cv;
 
+
+typedef vector<float> floatArray;
+
 class Controller : public QThread
 {   Q_OBJECT
 private:
@@ -38,9 +41,10 @@ private:
     //double          scale; // scale = display / real size
 
 signals:
+    void    load1stImage(QImage image);
     // signal nonnectted with updateVideoplayerUI SLOT
     void    processedImage(QImage image, QImage ROIimg1, QImage ROIimg2);
-    void    detectedProperties(int area, int perimeter);
+    void    detectedProperties(floatArray);
 
 private slots:
     void    setAdaptThresh(int var);
