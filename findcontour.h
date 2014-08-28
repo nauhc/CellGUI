@@ -35,7 +35,10 @@ public:
     void cellDetection(const Mat &img, vector<Point> &circle,
                        Mat &dispImg1, Mat &dispImg2,
                        vector<Point2f> &points1, vector<Point2f> &points2,
-                       int &area, int &perimeter, Point2f &ctroid,
+                       int &area,
+                       int &perimeter,
+                       Point2f &ctroid,
+                       float &shape,
                        int &frameNum);
 
     // draw a bounding box of roi rect

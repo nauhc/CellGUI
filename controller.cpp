@@ -251,9 +251,12 @@ void Controller::run(){
 
             Mat contourImg;
             Mat edgeImg;
-            int area; // area of the cell getting from cellDetection
-            int perimeter; // perimeter of the cell getting from cellDetection
-            Point2f centroid; // centroid of the cell getting from cellDetection
+
+            //properties getting from cellDetection
+            int     area; // area of the cell
+            int     perimeter; // perimeter of the cell
+            Point2f centroid; // centroid of the cell
+            float  shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
 
             // optflow detection of entire frame
             vector<Point2f> points1, points2;
@@ -265,15 +268,15 @@ void Controller::run(){
 
             contour->cellDetection(*frame, hull, contourImg, edgeImg,
                                    points1, points2,
-                                   area, perimeter, centroid, frameIdx);
+                                   area, perimeter, centroid, shape, frameIdx);
             floatArray property;
             property.push_back(float(area));
             property.push_back(float(perimeter));
             property.push_back(centroid.x);
-            property.push_back(centroid.y);
-            property.push_back(0.0);
-            property.push_back(0.0);
-            csvFile << frameIdx << "," << area << "," << perimeter << "," << centroid << endl;
+            property.push_back(shape);
+            property.push_back(centroid.y);//not appliable yet
+            property.push_back(0.0);//not appliable yet
+            csvFile << frameIdx << "," << area << "," << perimeter << "," << centroid << "," << shape << endl;
 
             emit detectedProperties(property);
             //cout << "frame " << frameIdx << " cell area: " << area << endl;

@@ -3,7 +3,7 @@
 #include "qstring.h"
 
 template <class T>
-inline T square(T value){
+inline T sqre(T value){
     return value*value;
 }
 
@@ -131,7 +131,7 @@ void watershedWithErosion(Mat &in, Mat &dispImg1, Mat &out){ //in->adapThreshImg
 }
 
 double dist_square(Point &p1, Point &p2){
-    return (square(p1.x - p2.x)+square(p1.y -p2.y));
+    return (sqre(p1.x - p2.x)+sqre(p1.y -p2.y));
 }
 
 
@@ -217,11 +217,33 @@ void FindBlobs(const Mat &binary, vector<vector<Point2i> > &blobs){
     }
 }
 
+double findShape(Point2f &ctr, vector<Point> contour){
+    unsigned int cnt = contour.size();
+    vector<double> dist;
+    double mean = 0.0;
+    for(unsigned int i = 0; i < cnt; i++){
+        double d = sqrt(sqre(contour[i].x - ctr.x)+sqre(contour[i].y - ctr.y));
+        dist.push_back(d);
+        mean += d;
+    }
+    mean = mean/cnt;
+
+    float standDev= 0.0;
+    for(unsigned int i = 0; i < cnt; i++){
+        standDev += sqre(dist[i]-mean);
+    }
+    standDev = sqrt(standDev/cnt);
+    return standDev;
+}
+
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
                                 Mat &dispImg1, Mat &dispImg2,
                                 vector<Point2f> &points1, vector<Point2f> &points2,
-                                int &area, int &perimeter, Point2f &ctroid,
+                                int &area,
+                                int &perimeter,
+                                Point2f &ctroid,
+                                float &shape,
                                 int &frameNum){
     frame = &img;
     //rect = boundingRect(Mat(cir));
@@ -457,6 +479,9 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     // find the centroid of the contour
     Moments mu = moments(contours[largest_contour_index]);
     ctroid = Point2f(mu.m10/mu.m00 + rect.x, mu.m01/mu.m00 + rect.y);
+
+    // find the shape of the cell by the largest contour and centroid
+    shape = findShape(ctroid, contours[largest_contour_index]);
 
 
     //change dispImg2 from gray to rgb for displaying

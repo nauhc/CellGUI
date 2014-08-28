@@ -37,7 +37,7 @@ const QString font16bld             = "font: bold 16px";
 
 
 template <class T>
-inline T square(T value){
+inline T sqre(T value){
     return value*value;
 }
 
@@ -559,7 +559,7 @@ void MainWindow::on_drawROIButton_clicked(){
             cout << "circle not found." << endl;
         }
         else{
-            double a = square(circleSize/2)/PI;
+            double a = sqre(circleSize/2)/PI;
             double p = /*PI**/circleSize;
             //cout << p << " " << a << endl;
             int area_min = ((int)a/3/100-1)*100;
