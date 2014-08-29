@@ -111,19 +111,22 @@ void Controller::playVideo(){
     }
 }
 
-void Controller::msleep(int ms){
+void Controller::msleep(int ms)
+{
     struct timespec ts = { ms / 1000, (ms % 1000) * 1000 * 1000 };
     nanosleep(&ts, NULL);
 }
 
-bool Controller::videoIsNull(){
+bool Controller::videoIsNull()
+{
     if(inputVideo->isOpened())
         return false;
     else
         return true;
 }
 
-void Controller::releaseVideo(){
+void Controller::releaseVideo()
+{
     // release video
     inputVideo->release();
     //clear contour
@@ -196,7 +199,8 @@ bool Controller::optflow(Mat &frame1, Mat &frame2, vector<Point2f> &points1, vec
     return true;
 }
 
-void Controller::setScale(double scl){
+void Controller::setScale(double scl)
+{
     contour->setScale(scl);
 }
 
@@ -210,12 +214,33 @@ void Controller::setCircle(QVector<QPoint> points)
     //cout << "hull coordinates: " << hull << endl;
 }
 
-void Controller::setAdaptThresh(int var){
+void Controller::setAdaptThresh(int var)
+{
     contour->setAdaptThresh(double(var));
 }
 
-void Controller::setBlkSize(int var){
+void Controller::setBlkSize(int var)
+{
     contour->setBlkSize(2*var+1);
+}
+
+void Controller::setVideoType(int tp)
+{
+    videoType = tp;
+    switch (videoType) {
+    case 0:
+        cout << "video Type: Single cell video. \n" << endl;
+        break;
+    case 1:
+        cout << "video Type: fix window video. \n" << endl;
+        break;
+    case 2:
+        cout << "video Type: flexible video. \n" << endl;
+        break;
+    default:
+        cout << "video Type: fix window video. \n" << endl;
+        break;
+    }
 }
 
 void Controller::run(){
@@ -256,7 +281,7 @@ void Controller::run(){
             int     area; // area of the cell
             int     perimeter; // perimeter of the cell
             Point2f centroid; // centroid of the cell
-            float  shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
+            float   shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
 
             // optflow detection of entire frame
             vector<Point2f> points1, points2;
@@ -266,9 +291,25 @@ void Controller::run(){
                 continue;
             }
 
-            contour->cellDetection(*frame, hull, contourImg, edgeImg,
-                                   points1, points2,
-                                   area, perimeter, centroid, shape, frameIdx);
+            switch (videoType) {
+            case 0:
+                contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
+                                             area, perimeter, centroid, shape, frameIdx);
+                break;
+            case 1:
+                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
+                                       area, perimeter, centroid, shape, frameIdx);
+                break;
+            case 2:
+                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
+                                       area, perimeter, centroid, shape, frameIdx);
+                break;
+            default:
+                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
+                                       area, perimeter, centroid, shape, frameIdx);
+                break;
+            }
+
             floatArray property;
             property.push_back(float(area));
             property.push_back(float(perimeter));

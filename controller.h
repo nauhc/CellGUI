@@ -40,6 +40,8 @@ private:
     vector<Point>   hull; // contour of the cell of interest
     //double          scale; // scale = display / real size
 
+    int             videoType; // 1.single cell 2.fix window 3.flexible
+
 signals:
     void    load1stImage(QImage image);
     // signal nonnectted with updateVideoplayerUI SLOT
@@ -49,6 +51,7 @@ signals:
 private slots:
     void    setAdaptThresh(int var);
     void    setBlkSize(int var);
+    void    setVideoType(int tp);
 
 protected:
     void    run();

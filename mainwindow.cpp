@@ -49,30 +49,38 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->setStyleSheet(/*"background-color:rgb(38,42,43)"*/"background-color:rgb(251,251,251)");
     this->setFixedSize(this->width(), this->height());
 
+    // connect displying images
     connect(myController, SIGNAL(load1stImage(QImage)),
             this, SLOT(initialVideoPlayerUI(QImage)));
     connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
             this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
+
+    //connect slide bar values
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setAdaptThresh(int)));
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setBlkSize(int)));
+
+    // connect combobox to controller
+    connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)),
+            myController, SLOT(setVideoType(int)));
+
     // connect checkbox to box_checked event
     qRegisterMetaType<floatArray>("floatArray");
     connect(myController, SIGNAL(detectedProperties(floatArray)),
             this, SLOT(updatePropsVisUI(floatArray)));
     connect(ui->checkBox_area, SIGNAL(stateChanged(int)),
-            this, SLOT(on_checkbox_checked(int)));
+            this, SLOT(box_checked(int)));
     connect(ui->checkBox_perimeter, SIGNAL(stateChanged(int)),
-            this, SLOT(on_checkbox_checked(int)));
+            this, SLOT(box_checked(int)));
     connect(ui->checkBox_centroid, SIGNAL(stateChanged(int)),
-            this, SLOT(on_checkbox_checked(int)));
+            this, SLOT(box_checked(int)));
     connect(ui->checkBox_blebbing, SIGNAL(stateChanged(int)),
-            this, SLOT(on_checkbox_checked(int)));
+            this, SLOT(box_checked(int)));
     connect(ui->checkBox_shape, SIGNAL(stateChanged(int)),
-            this, SLOT(on_checkbox_checked(int)));
+            this, SLOT(box_checked(int)));
     connect(ui->checkBox_speed, SIGNAL(stateChanged(int)),
-            this, SLOT(on_checkbox_checked(int)));
+            this, SLOT(box_checked(int)));
 
     ui->orgVideo->setStyleSheet(videoDisplayStyle);
     ui->roiVideo1->setStyleSheet(videoDisplayStyle);
@@ -102,10 +110,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->checkBox_shape->setStyleSheet(checkboxStyle);
     ui->checkBox_speed->setStyleSheet(checkboxStyle);
 
-    ui->typeComboBox->setStyleSheet(button_released_off);
+    ui->typeComboBox->setStyleSheet(button_released_on);
+    ui->typeComboBox->addItem("Single cell (no overlapping)");
     ui->typeComboBox->addItem("Fix cell window");
     ui->typeComboBox->addItem("Flexible cell window");
-    ui->typeComboBox->setEnabled(false);
 
     ui->horizontalSlider->setEnabled(false);
     ui->adaptThreshSlider->setRange(1, 51);
@@ -343,6 +351,9 @@ void MainWindow::on_stopVideoButton_clicked(){
     prop2Vis->releaseDataVis();
     prop1Vis->releaseDataVis();
 
+    ui->typeComboBox->setEnabled(true);
+    ui->typeComboBox->setStyleSheet(button_released_on);
+
     QPixmap pixmap(1,1); // Works
     pixmap = pixmap.scaled(ui->orgVideo->width(), ui->orgVideo->height());
     pixmap.fill(QColor(0, 0, 0));
@@ -459,7 +470,7 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
 
 
 
-void MainWindow::on_checkbox_checked(int state) {
+void MainWindow::box_checked(int state) {
 
     QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
     if (!checkBox) return;
@@ -500,6 +511,7 @@ void MainWindow::on_checkbox_checked(int state) {
 }
 
 void MainWindow::on_drawROIButton_clicked(){
+
     encircler->setGeometry(ui->orgVideo->x(), ui->orgVideo->y(),
                            ui->orgVideo->width(), ui->orgVideo->height());
     cout << "video pos:  x " << ui->orgVideo->x()
@@ -509,8 +521,6 @@ void MainWindow::on_drawROIButton_clicked(){
 
     cout << "Encircle Cell Button clicked." << endl;
 
-    ui->typeComboBox->setEnabled(true);
-    ui->typeComboBox->setStyleSheet(button_released_on);
 
     // when it is circling mode
     // user can circle the cell of interest
@@ -549,6 +559,9 @@ void MainWindow::on_drawROIButton_clicked(){
                              myController->getCurrentFrame());
         prop2Vis->turnTrackOn(myController->getNumberOfFrames(),
                              myController->getCurrentFrame());
+
+        ui->typeComboBox->setEnabled(false);
+        ui->typeComboBox->setStyleSheet(button_released_off);
 
         encircler->turnOffEncircleMode();
         //delete encircle;

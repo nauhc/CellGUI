@@ -50,7 +50,7 @@ private slots:
     void on_drawROIButton_pressed();
     void on_drawROIButton_released();
 
-    void on_checkbox_checked(int state);
+    void box_checked(int state);
 
 private:
     Ui::MainWindow  *ui;

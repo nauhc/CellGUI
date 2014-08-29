@@ -294,46 +294,38 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
         }
     }
 
-    if(longOptflow_pt1.size()!= 0){
-        avrg_vec.x = avrg_vec.x / longOptflow_pt1.size();
-        avrg_vec.y = avrg_vec.y / longOptflow_pt1.size();
-    }
+//    if(longOptflow_pt1.size()!= 0){
+//        avrg_vec.x = avrg_vec.x / longOptflow_pt1.size();
+//        avrg_vec.y = avrg_vec.y / longOptflow_pt1.size();
+//    }
     Rect trans_rect = translateRect(rect, avrg_vec);
 
-    /*
-    if (longOptflow_pt1.size() >= 4){
-        H = findHomography(Mat(longOptflow_pt1), Mat(longOptflow_pt2), CV_RANSAC, 2);
-        //cout << "H: " << H << endl;
-
-        vector<Point> rect_corners;
-        rect_corners.push_back(Point(rect.x, rect.y));
-        rect_corners.push_back(Point(rect.x+rect.width, rect.y));
-        rect_corners.push_back(Point(rect.x, rect.y+rect.height));
-        rect_corners.push_back(Point(rect.x+rect.width, rect.y+rect.height));
-
-        vector<Point> rect_update_corners = pointTransform(rect_corners, H);
-
-        line(frameGray, rect_update_corners[0], rect_update_corners[1], Scalar(255), 1);
-        line(frameGray, rect_update_corners[0], rect_update_corners[2], Scalar(255), 1);
-        line(frameGray, rect_update_corners[3], rect_update_corners[1], Scalar(255), 1);
-        line(frameGray, rect_update_corners[3], rect_update_corners[2], Scalar(255), 1)
-    }*/
-
-
-    rectangle(frameGray, trans_rect, Scalar(255), 2);
-    imshow("frameGray", frameGray);
 
     // ***
     // if (the homography is a good one) use the homography to update the rectangle
     // otherwise use the same rectangle
     // ***
+    if (longOptflow_pt1.size() >= 4){
+        Mat H = findHomography(Mat(longOptflow_pt1), Mat(longOptflow_pt2), CV_RANSAC, 2);
+        //cout << "H: " << H << endl;
 
-    // use the homography to update the position of the rectangle
+        if(determinant(H) >= 0){
+            vector<Point> rect_corners;
+            rect_corners.push_back(Point(rect.x, rect.y));
+            rect_corners.push_back(Point(rect.x+rect.width, rect.y));
+            rect_corners.push_back(Point(rect.x, rect.y+rect.height));
+            rect_corners.push_back(Point(rect.x+rect.width, rect.y+rect.height));
 
-    //perspectiveTransform(Mat(rect_corners), Mat(rect_update_corners), H);
+            vector<Point> rect_update_corners = pointTransform(rect_corners, H);
+            trans_rect = boundingRect(rect_update_corners);
+        }
+    }
 
-//    cout << "rect " << rect_corners << "\n";
-//    cout << "rect update " << rect_update_corners << endl;
+
+    rectangle(frameGray, trans_rect, Scalar(255), 2);
+    imshow("frameGray", frameGray);
+
+
 
 
 
@@ -494,6 +486,94 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     for(unsigned int i = 0; i < convHull.size(); i++)
         cir_org.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
 
+}
+
+void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
+                                      Mat &dispImg1, Mat &dispImg2,
+                                      int &area, int &perimeter,
+                                      Point2f &ctroid, float &shape, int &frameNum)
+{
+
+    frame = &img;
+
+    vector<Point> cir; //***global coordinates of circle***
+    for(unsigned int i = 0; i < cir_org.size(); i++){
+        cir.push_back(Point(cir_org[i].x / scale, cir_org[i].y / scale));
+    }
+
+    //enlarge the bounding rect by adding a margin (e) to it
+    rect = enlargeRect(boundingRect(Mat(cir)), 5, img.cols, img.rows);
+
+    dispImg1 = (*frame)(rect).clone();
+
+    Mat sub; //*** the rectangle region of ROI (Gray) ***
+    cv::cvtColor(dispImg1, sub, CV_RGB2GRAY);
+    int width = sub.cols;
+    int height = sub.rows;
+
+    vector<Point> circle_ROI; //***local coordinates of circle***
+    for (unsigned int i = 0; i < cir.size(); i++){
+        Point p = Point(cir[i].x - rect.x, cir[i].y - rect.y);
+        circle_ROI.push_back(p);
+    }
+
+    Mat adapThreshImg1 = Mat::zeros(height, width, sub.type());
+    //image edge detection for the sub region (roi rect)
+    adaptiveThreshold(sub, adapThreshImg1, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
+                          CV_THRESH_BINARY_INV, blockSize, constValue);
+    //imshow("adapThreshImg1", adapThreshImg1);
+
+    // dilation and erosion
+    Mat dilerod;
+    dilErod(adapThreshImg1, dilerod);
+
+    //display image 2 -- dilerod of adaptive threshold image
+    GaussianBlur(dilerod, dilerod, Size(3, 3), 2, 2 );
+
+    //mask for filtering out the cell of interest
+    Mat mask_conv = Mat::zeros(height, width, CV_8UC1);
+    fillConvexPoly(mask_conv, circle_ROI, Scalar(255));
+    //imshow("mask_before", mask_conv);
+
+    //dilate the mask -> region grows
+    Mat mask_conv_dil;
+    Mat element = getStructuringElement( MORPH_ELLIPSE, Size( 2*1+1, 2*1+1 ), Point(1,1) );
+    dilate(mask_conv, mask_conv_dil, element);
+    //imshow("mask_dil", mask_conv_dil);
+
+    //bitwise AND on mask and dilerod
+    bitwise_and(mask_conv_dil, dilerod, dispImg2);
+
+
+    // findcontours
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    unsigned int largest_contour_index;
+    dilErodContours(dispImg2, contours, hierarchy, largest_contour_index, perimeter, dispImg1);
+
+    // find the area of the cell by counting the white area inside the largest contour
+    Mat cell = Mat::zeros(height, width, CV_8UC1);
+    drawContours(cell, contours, largest_contour_index, Scalar(255), -1, 8, hierarchy, 0, Point() );
+    //imshow("cell", cell);
+    area = countNonZero(cell);
+
+    // find the centroid of the contour
+    Moments mu = moments(contours[largest_contour_index]);
+    ctroid = Point2f(mu.m10/mu.m00 + rect.x, mu.m01/mu.m00 + rect.y);
+
+    // find the shape of the cell by the largest contour and centroid
+    shape = findShape(ctroid, contours[largest_contour_index]);
+
+
+    //change dispImg2 from gray to rgb for displaying
+    cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
+
+    //renew circle points as the convex hull
+    vector<Point> convHull;
+    convexHull(contours[largest_contour_index], convHull);
+    cir_org.clear();
+    for(unsigned int i = 0; i < convHull.size(); i++)
+        cir_org.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
 }
 
 

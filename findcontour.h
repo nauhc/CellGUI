@@ -32,7 +32,7 @@ public:
     void setScale(double scl);
 
     // getROI+edgeDetection
-    void cellDetection(const Mat &img, vector<Point> &circle,
+    void cellDetection(const Mat &img, vector<Point> &cir_org,
                        Mat &dispImg1, Mat &dispImg2,
                        vector<Point2f> &points1, vector<Point2f> &points2,
                        int &area,
@@ -40,6 +40,14 @@ public:
                        Point2f &ctroid,
                        float &shape,
                        int &frameNum);
+
+    void singleCellDetection(const Mat &img, vector<Point> &cir_org,
+                             Mat &dispImg1, Mat &dispImg2,
+                             int &area,
+                             int &perimeter,
+                             Point2f &ctroid,
+                             float &shape,
+                             int &frameNum);
 
     // draw a bounding box of roi rect
     void boundingBox(Mat &img/*, vector<Point> &circle*/);
