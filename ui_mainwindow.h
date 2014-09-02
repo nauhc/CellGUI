@@ -130,15 +130,15 @@ public:
         contourDisplayerLabel->setAlignment(Qt::AlignCenter);
         cellDetectionDisplayerLabel = new QLabel(centralWidget);
         cellDetectionDisplayerLabel->setObjectName(QStringLiteral("cellDetectionDisplayerLabel"));
-        cellDetectionDisplayerLabel->setGeometry(QRect(610, 300, 121, 21));
+        cellDetectionDisplayerLabel->setGeometry(QRect(610, 295, 121, 21));
         cellDetectionDisplayerLabel->setAlignment(Qt::AlignCenter);
         frameLabelLeft = new QLabel(centralWidget);
         frameLabelLeft->setObjectName(QStringLiteral("frameLabelLeft"));
-        frameLabelLeft->setGeometry(QRect(40, 550, 81, 21));
+        frameLabelLeft->setGeometry(QRect(30, 550, 81, 21));
         frameLabelLeft->setAlignment(Qt::AlignCenter);
         frameLabelRight = new QLabel(centralWidget);
         frameLabelRight->setObjectName(QStringLiteral("frameLabelRight"));
-        frameLabelRight->setGeometry(QRect(470, 550, 61, 21));
+        frameLabelRight->setGeometry(QRect(470, 550, 81, 21));
         frameLabelRight->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         prop2Vis = new QLabel(centralWidget);
         prop2Vis->setObjectName(QStringLiteral("prop2Vis"));

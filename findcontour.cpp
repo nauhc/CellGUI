@@ -236,6 +236,18 @@ double findShape(Point2f &ctr, vector<Point> contour){
     return standDev;
 }
 
+void FindContour::binaryImage(const Mat &img, Mat &binaryImg){
+    Mat frameGray;
+    cv::cvtColor(img, frameGray, CV_RGB2GRAY);
+
+    Mat tmp = Mat::zeros(frameGray.rows, frameGray.cols, frameGray.type());
+    adaptiveThreshold(frameGray, tmp, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
+                      CV_THRESH_BINARY_INV, blockSize, constValue);
+    dilErod(tmp, binaryImg);
+
+    cvtColor(binaryImg, binaryImg, CV_GRAY2RGB);
+}
+
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
                                 Mat &dispImg1, Mat &dispImg2,
@@ -253,15 +265,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     cv::cvtColor(*frame, frameGray, CV_RGB2GRAY);
 /*
     QString cellFileName0 = "frame" + QString::number(frameNum) + ".png";
-    imwrite(cellFileName0.toStdString(), frameGray);
-
-
-
-    Mat adpThreshFrm = Mat::zeros(frame->rows, frame->cols, frameGray.type());
-    adaptiveThreshold(frameGray, adpThreshFrm, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
-                      CV_THRESH_BINARY_INV, blockSize, constValue);
-    QString cellFileName = "adptiveThreshFrame" + QString::number(frameNum) + ".png";
-    imwrite(cellFileName.toStdString(), adpThreshFrm); */
+    imwrite(cellFileName0.toStdString(), frameGray);*/
 
     vector<Point> cir; //***global coordinates of circle***
     for(unsigned int i = 0; i < cir_org.size(); i++){

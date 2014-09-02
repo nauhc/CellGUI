@@ -31,6 +31,8 @@ public:
 
     void setScale(double scl);
 
+    void binaryImage(const Mat &img, Mat &binaryImg);
+
     // getROI+edgeDetection
     void cellDetection(const Mat &img, vector<Point> &cir_org,
                        Mat &dispImg1, Mat &dispImg2,

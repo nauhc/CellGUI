@@ -243,6 +243,7 @@ void Controller::setVideoType(int tp)
     }
 }
 
+
 void Controller::run(){
     int delay = (1500/fps);
 
@@ -265,7 +266,10 @@ void Controller::run(){
         if(!encircled){
             img = cvMatToQImage(*frame);
             roiImg1 = img;
-            roiImg2 = img;
+            //roiImg2 = img;
+            Mat binaryImg;
+            contour->binaryImage(*frame, binaryImg);
+            roiImg2 = cvMatToQImage(binaryImg);
         }
         else{
             //draw bounding box on ROI and show in original video player

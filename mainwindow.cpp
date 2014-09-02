@@ -26,6 +26,8 @@ const QString frameLabelStyle       = "color:rgb(82,89,99); font:12px; backgroun
 const QString transBkgrd            = "background-color: rgba(0,0,0,0%);";
 const QString halfTransBkgrd        = "background-color: rgba(128,128,128,80%);";
 const QString forgrdWhite           = "color:white;";
+const QString forgrdBlue            = "color:rgb(28, 120, 159);";
+
 const QString forgrdGray            = "color:rgb(82,89,99);";
 const QString visStyle              = "color:rgb(239,240,244); border: 2px solid; border-color:rgb(217,217,219)"; //color:rgb(54,58,59)
 const QString videoDisplayStyle     = "background-color:rgb(216,222,224)";
@@ -121,12 +123,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->adaptThreshSlider->setValue(4); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
 
-    ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font20);
+    ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font20);
     ui->videoDisplayerLabel->setText("Video");
 
-    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16);
+    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font16);
     ui->contourDisplayerLabel->setText("Cell Contour");
-    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16);
+    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font16);
     ui->cellDetectionDisplayerLabel->setText("Cell Detection");
 
     ui->differenceLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
@@ -181,48 +183,69 @@ MainWindow::~MainWindow(){
     delete ui;
 }
 
+void calculateSizes(int &videoWidth, int &videoHeight,
+                    int &x, int &y, int &width, int &height,
+                    int &x1,int &y1,int &width1,int &height1,
+                    int &x2,int &y2,int &width2,int &height2,
+                    int &scale){
+    const int x0 = 40, y0 = 30;   // offset of orgVideo display window (x0,y0)
+    const int w0 = 512, h0 = 512; // width and height of orgVideo display window
+    x1 = 590, x2 = 590;           // offset of roiVideo1 & roiVideo2 display window (x1)
+
+    if(videoWidth >= videoHeight){
+        scale = double(w0)/double(videoWidth);
+        width   = w0;
+        height  = w0*videoHeight/videoWidth; //(width > height)
+        x = x0;
+        y = y0 + (width-height)/2;
+
+        y1 = y0 + width/4 - height/4;
+        width1 = width/2-10;
+        height1 = height/2-10;
+
+        y2 = y0+ h0/2 + width/4 - height/4;
+        width2 = width1;
+        height2 = height1;
+    }
+    else{
+        scale = double(h0)/double(videoHeight);
+        height  = h0;
+        width   = h0*videoWidth/videoHeight; //(width < height)
+        x = x0 + (height-width)/2;
+        y = y0;
+
+        y1 = y0 + height/4 - width/4; // 30 - (height/2-width/2)/2
+        width1 = width/2-10;
+        height1 = height/2-10;
+
+        y2 = y0 + h0/2 + height/4 - width/4;
+        width2 = width1;
+        height2 = height1;
+    }
+}
+
 void MainWindow::setCanvas(){
     //set video player label size and postion
     //according to the size of the selected video
-    int w, h;
-    myController->getVideoSize(w, h);
-    int x, y, width, height;
-    int x_s = 590, y_s, width_s, height_s;
-    double scale; // could be larger than 1 or smaller
 
-    if(w>=h){
-        scale = 512.0/double(w);
-        width   = 512;
-        height  = 512*h/w;
-        x = 40;
-        y = 30+(width-height)/2;
-        y_s = 30 + width/4 - height/4;
-        width_s = width/2-10;
-        height_s = height/2-10;
-    }else{
-        scale = 512.0/double(h);
-        height  = 512;
-        width   = 512*w/h;
-        x = 40+(height-width)/2;
-        y = 30;
-        y_s = 30 + height/4 - width/4; // 30 - (height/2-width/2)/2
-        width_s = width/2-10;
-        height_s = height/2-10;
-    }
-    ui->orgVideo->setGeometry(x, y, width, height);
-    encircler->setGeometry(x, y, width, height);
-    cout << "video pos:  x " << x << " y " << y << " width " << width << " height " << height << endl;
+    int width, height; // size of original video
+    myController->getVideoSize(width, height);
+
+    int x, y, w, h, x1, y1, w1, h1, x2, y2, w2, h2, scale;
+    calculateSizes(width, height, x, y, w, h,
+                   x1, y1, w1, h1, x2, y2, w2, h2, scale);
+
+    ui->orgVideo->setGeometry(x, y, w, h);
+    encircler->setGeometry(x, y, w, h);
+    cout << "video pos:  x " << x << " y " << y << " width " << w << " height " << h << endl;
     myController->setScale(scale);
     cout << "scale " << scale << endl;
 
-    ui->orgVideo->setAlignment(Qt::AlignCenter);
-    //ui->orgVideo->setPixmap(QPixmap::fromImage(myController->getFrame(1)).scaled(
-    //                        ui->orgVideo->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
-    //            ui->roiVideo1->setGeometry(650, 30, width/2-10, height/2-10);
-    ui->roiVideo1->setGeometry(x_s, y_s, width_s, height_s);
+    ui->roiVideo1->setGeometry(x1, y1, w1, h1);
     ui->roiVideo1->setAlignment(Qt::AlignCenter);
-    int video_y_max = ui->orgVideo->y()+ui->orgVideo->height();
-    ui->roiVideo2->setGeometry(x_s, video_y_max-height_s, width_s, height_s);
+
+    //int video_y_max = ui->orgVideo->y()+ui->orgVideo->height();
+    ui->roiVideo2->setGeometry(x2, y2, w2, h2);
     ui->roiVideo2->setAlignment(Qt::AlignCenter);
 }
 
@@ -230,6 +253,7 @@ void MainWindow::initialVideoPlayerUI(QImage img)
 {
     if(!img.isNull()){
         //original video display
+        setCanvas();
         ui->orgVideo->setAlignment(Qt::AlignCenter);
         ui->orgVideo->setPixmap(
                     QPixmap::fromImage(img).scaled(
@@ -249,7 +273,6 @@ void MainWindow::initialVideoPlayerUI(QImage img)
                         ui->roiVideo2->size(),
                         Qt::KeepAspectRatio,
                         Qt::FastTransformation));
-        setCanvas();
     }
 }
 
@@ -356,15 +379,15 @@ void MainWindow::on_stopVideoButton_clicked(){
 
     QPixmap pixmap(1,1); // Works
     pixmap = pixmap.scaled(ui->orgVideo->width(), ui->orgVideo->height());
-    pixmap.fill(QColor(0, 0, 0));
+    pixmap.fill(QColor(216,222,224));
     ui->orgVideo->setPixmap(pixmap);
     QPixmap pixmap1(1,1); // Works
     pixmap1 = pixmap1.scaled(ui->roiVideo1->width(), ui->roiVideo1->height());
-    pixmap1.fill(QColor(0, 0, 0));
+    pixmap1.fill(QColor(216,222,224));
     ui->roiVideo1->setPixmap(pixmap1);
     QPixmap pixmap2(1,1); // Works
     pixmap2 = pixmap2.scaled(ui->roiVideo2->width(), ui->roiVideo2->height());
-    pixmap2.fill(QColor(0, 0, 0));
+    pixmap2.fill(QColor(216,222,224));
     ui->roiVideo2->setPixmap(pixmap2);
 
     ui->loadVideoButton->setEnabled(true);
@@ -401,7 +424,7 @@ void MainWindow::on_loadVideoButton_clicked()
     QString filename = dialog->getOpenFileName(this,
                                                tr("Open Video"),
                                                "./video", /*QDir::homePath()+"/Desktop/",*/
-                                               tr("Video Files (*.mov *mp4 *wmv)"));
+                                               tr("Video Files (*.mov *mp4 *wmv *mpeg)"));
     delete dialog;
 
     if (!filename.isEmpty()){
