@@ -488,7 +488,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     convexHull(contours[largest_contour_index], convHull);
     cir_org.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)
-        cir_org.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
+        cir_org.push_back(Point((convHull[i].x + rect.x)*scale, (convHull[i].y + rect.y)*scale));
 
 }
 
@@ -577,7 +577,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     convexHull(contours[largest_contour_index], convHull);
     cir_org.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)
-        cir_org.push_back(Point(convHull[i].x + rect.x, convHull[i].y + rect.y));
+        cir_org.push_back(Point((convHull[i].x + rect.x)*scale, (convHull[i].y + rect.y)*scale));
 }
 
 

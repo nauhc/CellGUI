@@ -187,7 +187,7 @@ void calculateSizes(int &videoWidth, int &videoHeight,
                     int &x, int &y, int &width, int &height,
                     int &x1,int &y1,int &width1,int &height1,
                     int &x2,int &y2,int &width2,int &height2,
-                    int &scale){
+                    double &scale){
     const int x0 = 40, y0 = 30;   // offset of orgVideo display window (x0,y0)
     const int w0 = 512, h0 = 512; // width and height of orgVideo display window
     x1 = 590, x2 = 590;           // offset of roiVideo1 & roiVideo2 display window (x1)
@@ -231,15 +231,16 @@ void MainWindow::setCanvas(){
     int width, height; // size of original video
     myController->getVideoSize(width, height);
 
-    int x, y, w, h, x1, y1, w1, h1, x2, y2, w2, h2, scale;
+    int x, y, w, h, x1, y1, w1, h1, x2, y2, w2, h2;
+    double scale;
     calculateSizes(width, height, x, y, w, h,
                    x1, y1, w1, h1, x2, y2, w2, h2, scale);
+    cout << "video pos:  x " << x << " y " << y << " width " << w << " height " << h << endl;
+    cout << "scale " << scale << endl;
 
     ui->orgVideo->setGeometry(x, y, w, h);
     encircler->setGeometry(x, y, w, h);
-    cout << "video pos:  x " << x << " y " << y << " width " << w << " height " << h << endl;
     myController->setScale(scale);
-    cout << "scale " << scale << endl;
 
     ui->roiVideo1->setGeometry(x1, y1, w1, h1);
     ui->roiVideo1->setAlignment(Qt::AlignCenter);
