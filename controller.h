@@ -66,7 +66,7 @@ public:
     void    playVideo();
     void    pauseVideo();
     bool    videoIsPaused();
-    bool    loadVideo(string filename);
+    bool    loadVideo(string file, string fn);
     double  getNumberOfFrames();
     double  getCurrentFrame();
     void    releaseVideo();

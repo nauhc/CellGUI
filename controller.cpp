@@ -61,15 +61,15 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
     return QImage();
 }
 
-bool Controller::loadVideo(string filename){
-    inputVideo->open(filename);
+bool Controller::loadVideo(string file, string fn){
+    inputVideo->open(file);
     if(!inputVideo->isOpened()){
-        cout << "Could not open the input video:" << filename << endl;
+        cout << "Could not open the input video:" << file << endl;
         return false;
     }
     else{
 
-        cout << "Input video file: " << filename << " opened." << endl;
+        cout << "Input video file: " << file << " opened." << endl;
         frameCnt    = (int) inputVideo->get(CV_CAP_PROP_FRAME_COUNT);
         fps         = inputVideo->get(CV_CAP_PROP_FPS);
         videoSize   = Size((int) inputVideo->get(CV_CAP_PROP_FRAME_WIDTH),
@@ -78,10 +78,6 @@ bool Controller::loadVideo(string filename){
         cout << "frame count: " << frameCnt << "\n";
         cout << "fps:" << fps << endl;
 
-        //prepare writing data to file
-        QFileInfo   fi  = QFileInfo(QString::fromStdString(filename));
-        QString     ff  = fi.path()+"/"+fi.baseName();
-        string      fn  = ff.toUtf8().constData();
         const char* fnn = fn.c_str();
         //check if file exists, if exists delete the file
         ifstream ifile(fn);

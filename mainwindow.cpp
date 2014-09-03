@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->setupUi(this);
     this->setStyleSheet(/*"background-color:rgb(38,42,43)"*/"background-color:rgb(251,251,251)");
     this->setFixedSize(this->width(), this->height());
+    this->setWindowTitle(" Dancing Cell Visualization ");
 
     // connect displying images
     connect(myController, SIGNAL(load1stImage(QImage)),
@@ -444,10 +445,18 @@ void MainWindow::on_loadVideoButton_clicked()
                                                tr("Open Video"),
                                                "./video", /*QDir::homePath()+"/Desktop/",*/
                                                tr("Video Files (*.mov *mp4 *wmv *mpeg)"));
+
+    //prepare writing data to file
+    QFileInfo   fi  = QFileInfo(filename);
+    QString     ff  = fi.path()+"/"+fi.baseName();
+    //string      fn  = ff.toUtf8().constData();
+
+
+    this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
     delete dialog;
 
     if (!filename.isEmpty()){
-        if (!myController->loadVideo(filename.toStdString())){
+        if (!myController->loadVideo(filename.toStdString(), ff.toStdString())){
             QMessageBox msgBox;
             msgBox.setText("The selected video could not be opened!");
             msgBox.exec();
