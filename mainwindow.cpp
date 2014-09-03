@@ -134,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->blkSizeSlider->setRange(1, 20);
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
     ui->dilSizeSlider->setRange(1, 8);
-    ui->dilSizeSlider->setValue(2); // initial value of dilation size for fiding contours
+    ui->dilSizeSlider->setValue(3); // initial value of dilation size for fiding contours
 
     ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font20);
     ui->videoDisplayerLabel->setText("Video");

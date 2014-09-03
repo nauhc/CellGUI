@@ -70,9 +70,9 @@ void CannyWithBlur(Mat &in, Mat &out){
     //imshow("canny", out);
 }
 
-void dilErod(Mat &in, Mat&dilerod){
+void dilErod(Mat &in, Mat&dilerod, int dilation_size){
     // mophological dialate and erode
-    int dilation_size = 3;
+    // dilation_size = 3;
     Mat element = getStructuringElement( MORPH_ELLIPSE,
                                          Size( 2*dilation_size+1, 2*dilation_size+1 ),
                                          Point( dilation_size, dilation_size ) );
@@ -248,7 +248,7 @@ void FindContour::binaryImage(const Mat &img, Mat &binaryImg){
     Mat tmp = Mat::zeros(frameGray.rows, frameGray.cols, frameGray.type());
     adaptiveThreshold(frameGray, tmp, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                       CV_THRESH_BINARY_INV, blockSize, constValue);
-    dilErod(tmp, binaryImg);
+    dilErod(tmp, binaryImg, dilSize);
 
     cvtColor(binaryImg, binaryImg, CV_GRAY2RGB);
 }
@@ -364,7 +364,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
 
     // dilation and erosion
     Mat dilerod;
-    dilErod(adapThreshImg1, dilerod);
+    dilErod(adapThreshImg1, dilerod, dilSize);
 
     //display image 2 -- dilerod of adaptive threshold image
     GaussianBlur(dilerod, dilerod, Size(3, 3), 2, 2 );
@@ -535,7 +535,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
 
     // dilation and erosion
     Mat dilerod;
-    dilErod(adapThreshImg1, dilerod);
+    dilErod(adapThreshImg1, dilerod, dilSize);
 
     //display image 2 -- dilerod of adaptive threshold image
     GaussianBlur(dilerod, dilerod, Size(3, 3), 2, 2 );
