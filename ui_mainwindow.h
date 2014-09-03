@@ -61,6 +61,11 @@ public:
     QCheckBox *checkBox_shape;
     QCheckBox *checkBox_blebbing;
     QCheckBox *checkBox_speed;
+    QLabel *diffrerenceNum;
+    QLabel *blkSizeNum;
+    QSlider *dilSizeSlider;
+    QLabel *dilSizeLabel;
+    QLabel *dilSizeNum;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -92,19 +97,19 @@ public:
         stopVideoButton->setGeometry(QRect(1040, 100, 151, 51));
         adaptThreshSlider = new QSlider(centralWidget);
         adaptThreshSlider->setObjectName(QStringLiteral("adaptThreshSlider"));
-        adaptThreshSlider->setGeometry(QRect(890, 450, 291, 22));
+        adaptThreshSlider->setGeometry(QRect(890, 430, 291, 22));
         adaptThreshSlider->setSingleStep(2);
         adaptThreshSlider->setOrientation(Qt::Horizontal);
         blkSizeSlider = new QSlider(centralWidget);
         blkSizeSlider->setObjectName(QStringLiteral("blkSizeSlider"));
-        blkSizeSlider->setGeometry(QRect(890, 510, 291, 22));
+        blkSizeSlider->setGeometry(QRect(890, 480, 291, 22));
         blkSizeSlider->setOrientation(Qt::Horizontal);
         differenceLabel = new QLabel(centralWidget);
         differenceLabel->setObjectName(QStringLiteral("differenceLabel"));
-        differenceLabel->setGeometry(QRect(890, 430, 181, 16));
+        differenceLabel->setGeometry(QRect(890, 410, 180, 20));
         blkSizeLabel = new QLabel(centralWidget);
         blkSizeLabel->setObjectName(QStringLiteral("blkSizeLabel"));
-        blkSizeLabel->setGeometry(QRect(890, 490, 181, 16));
+        blkSizeLabel->setGeometry(QRect(890, 460, 180, 20));
         prop1Vis = new QLabel(centralWidget);
         prop1Vis->setObjectName(QStringLiteral("prop1Vis"));
         prop1Vis->setGeometry(QRect(40, 610, 1170, 270));
@@ -156,7 +161,7 @@ public:
         typeComboBox->setGeometry(QRect(890, 180, 291, 26));
         groupBox = new QGroupBox(centralWidget);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(880, 240, 311, 151));
+        groupBox->setGeometry(QRect(880, 230, 311, 151));
         checkBox_area = new QCheckBox(groupBox);
         checkBox_area->setObjectName(QStringLiteral("checkBox_area"));
         checkBox_area->setGeometry(QRect(20, 30, 87, 20));
@@ -175,6 +180,22 @@ public:
         checkBox_speed = new QCheckBox(groupBox);
         checkBox_speed->setObjectName(QStringLiteral("checkBox_speed"));
         checkBox_speed->setGeometry(QRect(140, 110, 141, 20));
+        diffrerenceNum = new QLabel(centralWidget);
+        diffrerenceNum->setObjectName(QStringLiteral("diffrerenceNum"));
+        diffrerenceNum->setGeometry(QRect(1070, 410, 60, 20));
+        blkSizeNum = new QLabel(centralWidget);
+        blkSizeNum->setObjectName(QStringLiteral("blkSizeNum"));
+        blkSizeNum->setGeometry(QRect(1070, 460, 60, 20));
+        dilSizeSlider = new QSlider(centralWidget);
+        dilSizeSlider->setObjectName(QStringLiteral("dilSizeSlider"));
+        dilSizeSlider->setGeometry(QRect(890, 530, 291, 22));
+        dilSizeSlider->setOrientation(Qt::Horizontal);
+        dilSizeLabel = new QLabel(centralWidget);
+        dilSizeLabel->setObjectName(QStringLiteral("dilSizeLabel"));
+        dilSizeLabel->setGeometry(QRect(890, 510, 180, 20));
+        dilSizeNum = new QLabel(centralWidget);
+        dilSizeNum->setObjectName(QStringLiteral("dilSizeNum"));
+        dilSizeNum->setGeometry(QRect(1070, 510, 60, 20));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -201,7 +222,7 @@ public:
         playVideoButton->setText(QApplication::translate("MainWindow", "Play", 0));
         stopVideoButton->setText(QApplication::translate("MainWindow", "Stop", 0));
         differenceLabel->setText(QApplication::translate("MainWindow", "Difference:", 0));
-        blkSizeLabel->setText(QApplication::translate("MainWindow", "Block Sizes:", 0));
+        blkSizeLabel->setText(QApplication::translate("MainWindow", "Block Size:", 0));
         prop1Vis->setText(QString());
         drawROIButton->setText(QApplication::translate("MainWindow", "Encircle Cell", 0));
         roiVideo2->setText(QString());
@@ -220,6 +241,10 @@ public:
         checkBox_shape->setText(QApplication::translate("MainWindow", "Shape", 0));
         checkBox_blebbing->setText(QApplication::translate("MainWindow", "Blebbing", 0));
         checkBox_speed->setText(QApplication::translate("MainWindow", "Deforming Speed", 0));
+        diffrerenceNum->setText(QString());
+        blkSizeNum->setText(QString());
+        dilSizeLabel->setText(QApplication::translate("MainWindow", "Dilation Size:", 0));
+        dilSizeNum->setText(QString());
     } // retranslateUi
 
 };

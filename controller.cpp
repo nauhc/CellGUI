@@ -80,7 +80,7 @@ bool Controller::loadVideo(string filename){
 
         //prepare writing data to file
         QFileInfo   fi  = QFileInfo(QString::fromStdString(filename));
-        QString     ff  = fi.path()+fi.baseName();
+        QString     ff  = fi.path()+"/"+fi.baseName();
         string      fn  = ff.toUtf8().constData();
         const char* fnn = fn.c_str();
         //check if file exists, if exists delete the file
@@ -222,6 +222,10 @@ void Controller::setAdaptThresh(int var)
 void Controller::setBlkSize(int var)
 {
     contour->setBlkSize(2*var+1);
+}
+
+void Controller::setDilSize(int var){
+    contour->setDilSize(var);
 }
 
 void Controller::setVideoType(int tp)

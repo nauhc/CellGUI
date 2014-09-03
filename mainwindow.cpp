@@ -60,8 +60,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //connect slide bar values
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setAdaptThresh(int)));
+    connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
+            ui->diffrerenceNum, SLOT(setNum(int)));
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setBlkSize(int)));
+    connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
+            ui->blkSizeNum, SLOT(setNum(int)));
+    connect(ui->dilSizeSlider, SIGNAL(valueChanged(int)),
+            myController, SLOT(setDilSize(int)));
+    connect(ui->dilSizeSlider, SIGNAL(valueChanged(int)),
+            ui->dilSizeNum, SLOT(setNum(int)));
+
 
     // connect combobox to controller
     connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)),
@@ -118,10 +127,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->typeComboBox->addItem("Flexible cell window");
 
     ui->horizontalSlider->setEnabled(false);
+
     ui->adaptThreshSlider->setRange(1, 51);
-    ui->blkSizeSlider->setRange(1, 20);
     ui->adaptThreshSlider->setValue(4); // initial value of constValue for adaptiveThreshold
+    ui->blkSizeSlider->setRange(1, 20);
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
+    ui->dilSizeSlider->setRange(1, 8);
+    ui->dilSizeSlider->setValue(2); // initial value of dilation size for fiding contours
 
     ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font20);
     ui->videoDisplayerLabel->setText("Video");
@@ -132,9 +144,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->cellDetectionDisplayerLabel->setText("Cell Detection");
 
     ui->differenceLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
-    ui->differenceLabel->setText("Difference from Neighbors"/*+QString::number(ui->adaptThreshSlider->value())*/);
+    ui->differenceLabel->setText("Difference from Neighbors ");
+    ui->diffrerenceNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
     ui->blkSizeLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
-    ui->blkSizeLabel->setText("Referecing-neighbor Size"/*+QString::number(ui->blkSizeSlider->value())*/);
+    ui->blkSizeLabel->setText("Referecing-neighbor Size ");
+    ui->blkSizeNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+
+    ui->dilSizeLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->dilSizeLabel->setText("Dilation Size ");
+    ui->dilSizeNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
 
     ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
     ui->frameLabelLeft->setText("Frame No.");

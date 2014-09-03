@@ -40,8 +40,13 @@ void FindContour::setBlkSize(int para2){
     blockSize = para2;
 }
 
+void FindContour::setDilSize(int var)
+{
+    dilSize = var;
+}
+
 void FindContour::setScale(double scl){
-        scale = scl;
+    scale = scl;
 }
 
 Rect enlargeRect(Rect rect_roi, int e, int cols, int rows){
@@ -497,7 +502,6 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       int &area, int &perimeter,
                                       Point2f &ctroid, float &shape, int &frameNum)
 {
-
     frame = &img;
 
     vector<Point> cir; //***global coordinates of circle***
@@ -507,6 +511,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
 
     //enlarge the bounding rect by adding a margin (e) to it
     rect = enlargeRect(boundingRect(Mat(cir)), 5, img.cols, img.rows);
+    cout << "rect_roi " << boundingRect(Mat(cir)) << "\n";
+    cout << "enlarged rect " << rect << endl;
 
     dispImg1 = (*frame)(rect).clone();
 
@@ -525,7 +531,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //image edge detection for the sub region (roi rect)
     adaptiveThreshold(sub, adapThreshImg1, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
-    //imshow("adapThreshImg1", adapThreshImg1);
+    imshow("adapThreshImg1", adapThreshImg1);
 
     // dilation and erosion
     Mat dilerod;
@@ -537,13 +543,13 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //mask for filtering out the cell of interest
     Mat mask_conv = Mat::zeros(height, width, CV_8UC1);
     fillConvexPoly(mask_conv, circle_ROI, Scalar(255));
-    //imshow("mask_before", mask_conv);
+    imshow("mask_before", mask_conv);
 
     //dilate the mask -> region grows
     Mat mask_conv_dil;
-    Mat element = getStructuringElement( MORPH_ELLIPSE, Size( 2*1+1, 2*1+1 ), Point(1,1) );
+    Mat element = getStructuringElement( MORPH_ELLIPSE, Size( 2*dilSize+1, 2*dilSize+1 ), Point(dilSize,dilSize) );
     dilate(mask_conv, mask_conv_dil, element);
-    //imshow("mask_dil", mask_conv_dil);
+    imshow("mask_dil", mask_conv_dil);
 
     //bitwise AND on mask and dilerod
     bitwise_and(mask_conv_dil, dilerod, dispImg2);
@@ -558,7 +564,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     // find the area of the cell by counting the white area inside the largest contour
     Mat cell = Mat::zeros(height, width, CV_8UC1);
     drawContours(cell, contours, largest_contour_index, Scalar(255), -1, 8, hierarchy, 0, Point() );
-    //imshow("cell", cell);
+    imshow("cell", cell);
     area = countNonZero(cell);
 
     // find the centroid of the contour

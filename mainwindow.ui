@@ -92,7 +92,7 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>450</y>
+      <y>430</y>
       <width>291</width>
       <height>22</height>
      </rect>
@@ -108,7 +108,7 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>510</y>
+      <y>480</y>
       <width>291</width>
       <height>22</height>
      </rect>
@@ -121,9 +121,9 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>430</y>
-      <width>181</width>
-      <height>16</height>
+      <y>410</y>
+      <width>180</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -134,13 +134,13 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>490</y>
-      <width>181</width>
-      <height>16</height>
+      <y>460</y>
+      <width>180</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Block Sizes:</string>
+     <string>Block Size:</string>
     </property>
    </widget>
    <widget class="QLabel" name="prop1Vis">
@@ -340,7 +340,7 @@
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>240</y>
+      <y>230</y>
       <width>311</width>
       <height>151</height>
      </rect>
@@ -426,6 +426,71 @@
       <string>Deforming Speed</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QLabel" name="diffrerenceNum">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>410</y>
+      <width>60</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="blkSizeNum">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>460</y>
+      <width>60</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QSlider" name="dilSizeSlider">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>530</y>
+      <width>291</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dilSizeLabel">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>510</y>
+      <width>180</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dilation Size:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="dilSizeNum">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>510</y>
+      <width>60</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
