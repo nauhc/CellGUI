@@ -286,6 +286,7 @@ void Controller::run(){
             int     perimeter; // perimeter of the cell
             Point2f centroid; // centroid of the cell
             float   shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
+            vector<int> blebs; // areas of the deteced blebs
 
             // optflow detection of entire frame
             vector<Point2f> points1, points2;
@@ -298,21 +299,27 @@ void Controller::run(){
             switch (videoType) {
             case 0:
                 contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
-                                             area, perimeter, centroid, shape, frameIdx);
+                                             area, perimeter, centroid, shape, blebs, frameIdx);
                 break;
             case 1:
                 contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, frameIdx);
+                                       area, perimeter, centroid, shape, blebs, frameIdx);
                 break;
             case 2:
                 contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, frameIdx);
+                                       area, perimeter, centroid, shape, blebs, frameIdx);
                 break;
             default:
                 contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, frameIdx);
+                                       area, perimeter, centroid, shape, blebs, frameIdx);
                 break;
             }
+
+            cout << "blebs number " << blebs.size() << "\n";
+            for(unsigned int n = 0; n < blebs.size(); n++)
+                cout << blebs[n] << "  ";
+            cout << endl;
+
 
             floatArray property;
             property.push_back(float(area));

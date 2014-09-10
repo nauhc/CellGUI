@@ -90,7 +90,7 @@ void dilErodContours(Mat &dilerod,
     // Find contours
     findContours( dilerod.clone(), contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
     largest_contour_index = 0;
-    int s_tmp = contours[0].size();
+    unsigned int s_tmp = contours[0].size();
     for(unsigned int i = 0; i < contours.size(); i++){
         drawContours( drawTarget, contours, i, Scalar(51,100,175), 1, 8, hierarchy, 0, Point() );
         if( contours[i].size() > s_tmp){
@@ -378,6 +378,13 @@ void recursive_connected_components(Mat &src, vector<int> &size){
 }
 // --- connected component end ---
 
+bool is_noise(int i, int SIZE){
+    if(i <= SIZE)
+        return true;
+    else
+        return false;
+}
+
 
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
@@ -387,6 +394,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
                                 int &perimeter,
                                 Point2f &ctroid,
                                 float &shape,
+                                vector<int> &blebs,
                                 int &frameNum){
     frame = &img;
     //rect = boundingRect(Mat(cir));
@@ -598,17 +606,13 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     dilErodContours(dispImg2, contours, hierarchy, largest_contour_index, perimeter, dispImg1);
 
     // find the area of the cell by counting the white area inside the largest contour
-    Mat cell = Mat::zeros(height, width, CV_8UC1);
-    drawContours(cell, contours, largest_contour_index, Scalar(255), -1, 8, hierarchy, 0, Point() );
+    Mat cellArea = Mat::zeros(height, width, CV_8UC1);
+    drawContours(cellArea, contours, largest_contour_index, Scalar(255), -1, 8, hierarchy, 0, Point() );
     //imshow("cell", cell);
-    area = countNonZero(cell);
+    area = countNonZero(cellArea);
 
-    // find the centroid of the contour
-    Moments mu = moments(contours[largest_contour_index]);
-    ctroid = Point2f(mu.m10/mu.m00 + rect.x, mu.m01/mu.m00 + rect.y);
-
-    // find the shape of the cell by the largest contour and centroid
-    shape = findShape(ctroid, contours[largest_contour_index]);
+    cout << "frame " << frameNum << "\n";
+    //cout << contours[largest_contour_index] << endl;
 
 
     //change dispImg2 from gray to rgb for displaying
@@ -617,6 +621,36 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //renew circle points as the convex hull
     vector<Point> convHull;
     convexHull(contours[largest_contour_index], convHull);
+
+
+    // find the centroid of the contour
+    Moments mu = moments(contours[largest_contour_index]);
+    ctroid = Point2f(mu.m10/mu.m00 + rect.x, mu.m01/mu.m00 + rect.y);
+
+    // find the shape of the cell by the largest contour and centroid
+    shape = findShape(ctroid, contours[largest_contour_index]);
+
+    ////---- draw largest contour start ----
+    //draw the largest contour
+    Mat borderImg = Mat::zeros(height, width, CV_8UC1);
+    drawContours(borderImg, contours, largest_contour_index, Scalar(255), 1, 8, hierarchy, 0, Point());
+    //QString cellFileName0 = "border" + QString::number(frameNum) + ".png";
+    //imwrite(cellFileName0.toStdString(), borderImg);
+    ////---- draw largest contour end ----
+
+    // find the number and the sizes of blebs of the cell
+    Mat smooth;
+    smooth = curveSmooth(borderImg, contours[largest_contour_index], convHull);
+    bitwise_not(smooth, smooth);
+    Mat blebsImg;
+    bitwise_and(smooth, cellArea, blebsImg);
+    //imshow("blebs", blebs);
+    //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
+    //imwrite(cellFileName2.toStdString(), blebs);
+
+    recursive_connected_components(blebsImg, blebs);
+
+
     cir_org.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)
         cir_org.push_back(Point((convHull[i].x + rect.x)*scale, (convHull[i].y + rect.y)*scale));
@@ -626,7 +660,9 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
 void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       Mat &dispImg1, Mat &dispImg2,
                                       int &area, int &perimeter,
-                                      Point2f &ctroid, float &shape, int &frameNum)
+                                      Point2f &ctroid, float &shape,
+                                      vector<int> &blebs,
+                                      int &frameNum)
 {
     frame = &img;
 
@@ -696,19 +732,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     area = countNonZero(cellArea);
 
     cout << "frame " << frameNum << "\n";
-    cout << contours[largest_contour_index] << endl;
+    //cout << contours[largest_contour_index] << endl;
 
-    ////---- draw start ----
-    //draw the largest contour
-    Mat borderImg = Mat::zeros(height, width, CV_8UC1);
-    drawContours(borderImg, contours, largest_contour_index, Scalar(255), 1, 8, hierarchy, 0, Point());
-    QString cellFileName0 = "border" + QString::number(frameNum) + ".png";
-    imwrite(cellFileName0.toStdString(), borderImg);
-//    Mat cell;
-//    bitwise_and(cellArea, sub, cell);
-//    QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
-//    imwrite(cellFileName1.toStdString(), cell);
-    ////---- draw end ----
 
     //change dispImg2 from gray to rgb for displaying
     cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
@@ -724,23 +749,37 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     // find the shape of the cell by the largest contour and centroid
     shape = findShape(ctroid, contours[largest_contour_index]);
 
+    ////---- draw largest contour start ----
+    //draw the largest contour
+    Mat borderImg = Mat::zeros(height, width, CV_8UC1);
+    drawContours(borderImg, contours, largest_contour_index, Scalar(255), 1, 8, hierarchy, 0, Point());
+    //QString cellFileName0 = "border" + QString::number(frameNum) + ".png";
+    //imwrite(cellFileName0.toStdString(), borderImg);
+//    Mat cell;
+//    bitwise_and(cellArea, sub, cell);
+//    QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
+//    imwrite(cellFileName1.toStdString(), cell);
+    ////---- draw largest contour end ----
 
     // find the number and the sizes of blebs of the cell
     Mat smooth;
     smooth = curveSmooth(borderImg, contours[largest_contour_index], convHull);
     bitwise_not(smooth, smooth);
-    Mat blebs;
-    bitwise_and(smooth, cellArea, blebs);
-    //imshow("blebs", blebs);
+    Mat blebsImg;
+    bitwise_and(smooth, cellArea, blebsImg);
+    //imshow("blebs", blebsImg);
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), blebs);
+    recursive_connected_components(blebsImg, blebs);
 
-    vector<int> bleb_sizes;
-    recursive_connected_components(blebs, bleb_sizes);
-    cout << "bleb number: " << bleb_sizes.size() << "\n";
-    for(unsigned int n = 0; n < bleb_sizes.size(); n++)
-        cout << bleb_sizes[n] << " ";
-    cout << endl;
+    // remove outliners of the blebs (noises)
+    for (std::vector<int>::iterator itr = blebs.begin(); itr != blebs.end(); )
+    {
+        if ((*itr) < (0.002*area))
+            blebs.erase(itr);
+        else
+            itr++;
+    }
 
 
     cir_org.clear();
