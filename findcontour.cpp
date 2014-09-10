@@ -253,6 +253,132 @@ void FindContour::binaryImage(const Mat &img, Mat &binaryImg){
     cvtColor(binaryImg, binaryImg, CV_GRAY2RGB);
 }
 
+// --- curve smooth begin ---
+struct polarPoint{
+    double r;
+    double theta;
+};
+
+double dist(Point p1, Point p2){
+    return ((p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y));
+}
+
+polarPoint cartesianToPolar(Point &ctr, Point &pt){
+    polarPoint p;
+    p.r        = sqrt(dist(ctr, pt));
+    double x   = pt.x - ctr.x;
+    double y   = pt.y - ctr.y;
+    p.theta    = atan2(y, x);
+    return p;
+}
+
+Point polarToCartesian(Point &ctr, polarPoint p){
+    return Point(p.r*cos(p.theta)+ctr.x, p.r*sin(p.theta)+ctr.y);
+}
+
+bool sortByTheta(const polarPoint &l, const polarPoint &r){
+    return l.theta < r.theta;
+}
+Mat curveSmooth(Mat &contourImg,
+                vector<Point> &border,
+                vector<Point> &convHull)
+{
+//    if(contourImg.type() != CV_8UC1){
+//        cvtColor( contourImg, contourImg, CV_BGR2GRAY );
+//    }
+    double width = contourImg.cols;
+    double height = contourImg.rows;
+
+    Moments mu = moments(convHull);
+    Point ctroid = Point2f(mu.m10/mu.m00, mu.m01/mu.m00);
+
+    double d_min = max(width, height)*max(width, height);
+    vector<polarPoint> border_polar;
+    for (unsigned int n = 0; n < border.size(); n++)
+    {
+        //find the polar coordinates of the border;
+        border_polar.push_back(cartesianToPolar(ctroid, border[n]));
+
+        //find the nearest point to the center on the border
+        double d = dist(ctroid, border[n]);
+        if(d < d_min){
+            d_min = d;
+        }
+    }
+    d_min = sqrt(d_min);
+
+    // sort border_polar by theta
+    sort(border_polar.begin(), border_polar.end(), sortByTheta);
+
+    // Laplacian smoothing
+    int WIN = 30; // half window size
+    unsigned int border_size = border_polar.size();
+    vector<Point> smooth;
+    for(unsigned int n = 0; n < border_size; n++){
+        //cout << border_polar[n].r << " " << border_polar[n].theta << "  ";
+
+        double avg = 0;
+        for(int w = -WIN; w < WIN; w++){
+            unsigned int pos = std::fabs((w+n+border_size)%border_size);
+            //cout << " pos " << pos << "  ";
+            avg += border_polar[pos].r;
+        }
+        avg = avg/WIN/2;
+        polarPoint polar;
+        polar.r = avg;
+        polar.theta = border_polar[n].theta;
+        //cout << polar.r << " " << polar.theta << " ";
+        Point p = polarToCartesian(ctroid, polar);
+        //circle(color, p, 1, Scalar(255, 255, 0));
+        smooth.push_back(p);
+        //cout << p.x << " " << p.y << "\n";
+    }
+
+    Mat smoothCircle = Mat::zeros(height, width, CV_8UC1);
+    fillConvexPoly(smoothCircle, smooth, Scalar(255));
+    //imshow("smoothCircle", smoothCircle);
+
+    return smoothCircle;
+}
+// --- curve smooth end ---
+
+// --- connected component begin ---
+void search(Mat &img, int &label, int j, int i, int &cnt){
+    img.at<uchar>(j,i) = label;
+    cnt++;
+    for(int jj = -1; jj <= 1; jj++){
+        if(j+jj < 0 || j+jj > img.rows)
+            continue;
+        for(int ii = -1; ii <= 1; ii++){
+            if(i+ii < 0 || i+ii > img.cols)
+                continue;
+            if(ii==0 && jj==0)
+                continue;
+            if(img.at<uchar>(j+jj, i+ii) == 255)
+                search(img, label, j+jj, i+ii, cnt);
+        }
+    }
+}
+void find_component(Mat &img, int &label, vector<int> &size){
+    for(int j = 0; j < img.rows; j++){
+        for(int i = 0; i < img.cols; i++){
+            if(img.at<uchar>(j, i) == 255){
+                int cnt = 0;
+                label += 1;
+                search(img, label, j, i, cnt);
+                size.push_back(cnt);
+            }
+        }
+    }
+}
+void recursive_connected_components(Mat &src, vector<int> &size){
+    Mat img_label = src.clone();
+    int label = 0; // start from 1
+    find_component(img_label, label, size);
+}
+// --- connected component end ---
+
+
 // get ROI + edgeDectection
 void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
                                 Mat &dispImg1, Mat &dispImg2,
@@ -511,8 +637,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
 
     //enlarge the bounding rect by adding a margin (e) to it
     rect = enlargeRect(boundingRect(Mat(cir)), 5, img.cols, img.rows);
-    cout << "rect_roi " << boundingRect(Mat(cir)) << "\n";
-    cout << "enlarged rect " << rect << endl;
+    //cout << "rect_roi " << boundingRect(Mat(cir)) << "\n";
+    //cout << "enlarged rect " << rect << endl;
 
     dispImg1 = (*frame)(rect).clone();
 
@@ -531,7 +657,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //image edge detection for the sub region (roi rect)
     adaptiveThreshold(sub, adapThreshImg1, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C,
                           CV_THRESH_BINARY_INV, blockSize, constValue);
-    imshow("adapThreshImg1", adapThreshImg1);
+    //imshow("adapThreshImg1", adapThreshImg1);
 
     // dilation and erosion
     Mat dilerod;
@@ -543,13 +669,15 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //mask for filtering out the cell of interest
     Mat mask_conv = Mat::zeros(height, width, CV_8UC1);
     fillConvexPoly(mask_conv, circle_ROI, Scalar(255));
-    imshow("mask_before", mask_conv);
+    //imshow("mask_before", mask_conv);
 
     //dilate the mask -> region grows
     Mat mask_conv_dil;
-    Mat element = getStructuringElement( MORPH_ELLIPSE, Size( 2*dilSize+1, 2*dilSize+1 ), Point(dilSize,dilSize) );
+    Mat element = getStructuringElement( MORPH_ELLIPSE,
+                                         Size( 2*dilSize+1, 2*dilSize+1 ),
+                                         Point(dilSize,dilSize) );
     dilate(mask_conv, mask_conv_dil, element);
-    imshow("mask_dil", mask_conv_dil);
+    //imshow("mask_dil", mask_conv_dil);
 
     //bitwise AND on mask and dilerod
     bitwise_and(mask_conv_dil, dilerod, dispImg2);
@@ -562,10 +690,32 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     dilErodContours(dispImg2, contours, hierarchy, largest_contour_index, perimeter, dispImg1);
 
     // find the area of the cell by counting the white area inside the largest contour
-    Mat cell = Mat::zeros(height, width, CV_8UC1);
-    drawContours(cell, contours, largest_contour_index, Scalar(255), -1, 8, hierarchy, 0, Point() );
-    imshow("cell", cell);
-    area = countNonZero(cell);
+    Mat cellArea = Mat::zeros(height, width, CV_8UC1);
+    drawContours(cellArea, contours, largest_contour_index, Scalar(255), -1, 8, hierarchy, 0, Point() );
+    //imshow("cellArea", cellArea);
+    area = countNonZero(cellArea);
+
+    cout << "frame " << frameNum << "\n";
+    cout << contours[largest_contour_index] << endl;
+
+    ////---- draw start ----
+    //draw the largest contour
+    Mat borderImg = Mat::zeros(height, width, CV_8UC1);
+    drawContours(borderImg, contours, largest_contour_index, Scalar(255), 1, 8, hierarchy, 0, Point());
+    QString cellFileName0 = "border" + QString::number(frameNum) + ".png";
+    imwrite(cellFileName0.toStdString(), borderImg);
+//    Mat cell;
+//    bitwise_and(cellArea, sub, cell);
+//    QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
+//    imwrite(cellFileName1.toStdString(), cell);
+    ////---- draw end ----
+
+    //change dispImg2 from gray to rgb for displaying
+    cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
+
+    //renew circle points as the convex hull
+    vector<Point> convHull;
+    convexHull(contours[largest_contour_index], convHull);
 
     // find the centroid of the contour
     Moments mu = moments(contours[largest_contour_index]);
@@ -575,12 +725,24 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     shape = findShape(ctroid, contours[largest_contour_index]);
 
 
-    //change dispImg2 from gray to rgb for displaying
-    cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
+    // find the number and the sizes of blebs of the cell
+    Mat smooth;
+    smooth = curveSmooth(borderImg, contours[largest_contour_index], convHull);
+    bitwise_not(smooth, smooth);
+    Mat blebs;
+    bitwise_and(smooth, cellArea, blebs);
+    //imshow("blebs", blebs);
+    //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
+    //imwrite(cellFileName2.toStdString(), blebs);
 
-    //renew circle points as the convex hull
-    vector<Point> convHull;
-    convexHull(contours[largest_contour_index], convHull);
+    vector<int> bleb_sizes;
+    recursive_connected_components(blebs, bleb_sizes);
+    cout << "bleb number: " << bleb_sizes.size() << "\n";
+    for(unsigned int n = 0; n < bleb_sizes.size(); n++)
+        cout << bleb_sizes[n] << " ";
+    cout << endl;
+
+
     cir_org.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)
         cir_org.push_back(Point((convHull[i].x + rect.x)*scale, (convHull[i].y + rect.y)*scale));
