@@ -328,8 +328,15 @@ void Controller::run(){
             property.push_back(shape);
             property.push_back(centroid.y);//not appliable yet
             property.push_back(0.0);//not appliable yet
-            csvFile << frameIdx << "," << area << "," << perimeter << ","
-                    << centroid.x << "," << centroid.y << "," << shape << endl;
+            csvFile << frameIdx << ","
+                    << area << ","
+                    << perimeter << ","
+                    << centroid.x << "," << centroid.y << ","
+                    << shape << ","
+                    << blebs.size() << ", ";
+            for(unsigned int n = 0; n < blebs.size(); n++)
+                csvFile << blebs[n] << ", ";
+            csvFile << endl;
 
             emit detectedProperties(property);
             //cout << "frame " << frameIdx << " cell area: " << area << endl;
