@@ -19,175 +19,213 @@
 <h1>Cell Video Processing Project Log</h1>
 
 Chuan Wang @ ViDi
-<h2> ----- Aug 29<sup>th</sup> 2014 ----- </h2>
-<h3> Data </h3>
-<ul>
-    <li> Got movies of 3 experiments (temperature 37) from Arpad, and one of them have two movie clips from different cameras.  </li>
-    <li> Got movies of 4 experiments (room temperature) from Ying. </li>
-    <li> Preprocessed above videos (format converting). </li>
-</ul>
-
-
-
-<h3> User Interface </h3>
-<ul>
-    <li> Checkboxes are added to let the user choose what properties to show in the software. (80% done) </li>
-    <li> A combobox is added to let the user choose the cell type (corresponding to three different detection alforithms). 
+<h2> ----- Sep 10<sup>th</sup> 2014 ----- </h2>
+    <h3> Detection </h3>
+        The blebs number and relative sizes are detected by the following steps.
         <ul>
-            <li> single cell (not overlapping with others). -- 100% done </li>
-            <li> fix detecting window for cell does not travel a lot. -- 70% done </li>
-            <li> no limit (reguire most complex calculation). -- about 50% done </li>
+            <li> Convert the cell contour coordinate to polar coordinate.</li>
+            <li> Apply curve smooth to the converted contour.</li>
+            <li> Subtract the smoothed area from the cell, the left part shows the positions of the blebs. (As showed in the figure -- "blebs" temporary window) </li>
+            <li> Find and label the connected components (blebs).</li>
+            <li> Count the number of blebs and the size of them. </li>
         </ul>
-    </li>
-</ul>
+            <div class="row">
+                <div class="col-md-12 thumbnail" >
+                    <img src = "blebs.png" alt = "blebs">
+                </div>
+            </div>
+        <br>
 
-<h3> Visualization </h3>
-    Detected properties are output as csv file for later visualization. Prepare to use web-based visualization (D3 + canvas / react). 
+    <h3> Visualization </h3>
+        Data are extracted from the detection step. The following table shows the detected data.<br>
+        The meaning of each column:
+        <ul>
+            <li> A: frame index </li>
+            <li> B: cell area(pixel) </li>
+            <li> C: cell perimeter </li>
+            <li> D: x-coordinate of cell center </li>
+            <li> E: y-coordinate of cell center </li>
+            <li> F: cell shape (standard deviation - need to modify later) </li>
+            <li> G: number of blebs </li>
+            <li> H~: relative sizes of the blebs</li>
+        </ul>
+        <br>
+            <div class="row">
+                <div class="col-md-12 thumbnail" >
+                    <img src = "data.png" alt = "extracted data">
+                </div>
+            </div>
+        <br>
+
+
+<h2> ----- Aug 29<sup>th</sup> 2014 ----- </h2>
+    <h3> Data </h3>
+        <ul>
+            <li> Got movies of 3 experiments (temperature 37) from Arpad, and one of them have two movie clips from different cameras.  </li>
+            <li> Got movies of 4 experiments (room temperature) from Ying. </li>
+            <li> Preprocessed above videos (format converting). </li>
+        </ul>
+
+
+
+    <h3> User Interface </h3>
+        <ul>
+            <li> Checkboxes are added to let the user choose what properties to show in the software. (80% done) </li>
+            <li> A combobox is added to let the user choose the cell type (corresponding to three different detection alforithms). 
+                <ul>
+                    <li> single cell (not overlapping with others). -- 100% done </li>
+                    <li> fix detecting window for cell does not travel a lot. -- 70% done </li>
+                    <li> no limit (reguire most complex calculation). -- about 50% done </li>
+                </ul>
+            </li>
+        </ul>
+
+    <h3> Visualization </h3>
+        Detected properties are output as csv file for later visualization. Prepare to use web-based visualization (D3 + Canvas / React). 
 
 
 
 <h2> ----- Aug 1<sup>th</sup> 2014 ----- </h2>
-<h3> Data </h3>
-More data (about 20-25 video clips) with various of resolutions, quality and formats were given.
+    <h3> Data </h3>
+        More data (about 20-25 video clips) with various of resolutions, quality and formats were given.
 
-<h3> Detection </h3>
-In order to remove the influence of the nearby cell, watershed method is applied to the data to separate the cells. However it does not work well due to the inconsistent of gradient of the pixels inside the cell causing by the blebbing.
+    <h3> Detection </h3>
+        In order to remove the influence of the nearby cell, watershed method is applied to the data to separate the cells. However it does not work well due to the inconsistent of gradient of the pixels inside the cell causing by the blebbing.
 
-<h3> Implementation </h3>
-The tool is being made more robust to different input data. <br>
-Short-term To Do List:
-<ul>
-    <li> Output data to csv (Required by Arpad.) </li>
-    <li> Make tracking robust to quick cell deformation.</li>
-    <li> Quantify more features such as the cell shapes, and the velocity of it. </li>
-    <li> Visualization of the cell it self as well as it's features.</li>
-</ul>
+    <h3> Implementation </h3>
+        The tool is being made more robust to different input data. <br>
+        Short-term To Do List:
+        <ul>
+            <li> Output data to csv (Required by Arpad.) </li>
+            <li> Make tracking robust to quick cell deformation.</li>
+            <li> Quantify more features such as the cell shapes, and the velocity of it. </li>
+            <li> Visualization of the cell it self as well as it's features.</li>
+        </ul>
 
 
 <h2> ----- Jul 28<sup>th</sup> 2014 ----- </h2>
-<h3> Detection </h3>
-Tried HCT but result not good. Circle-like items are detected but the cell contour and blebs' contours are not well detected. 
-Right now, contour detection is simply applied to find all the contours of different hierarchy in each frame. So far, the perimeter (contour) and the area (convex) are detected. 
+    <h3> Detection </h3>
+        Tried HCT but result not good. Circle-like items are detected but the cell contour and blebs' contours are not well detected. 
+        Right now, contour detection is simply applied to find all the contours of different hierarchy in each frame. So far, the perimeter (contour) and the area (convex) are detected. 
 
 
-<h3> Implementation </h3>
-UI is updated. And the twinkling of the "Cell Detection" window is fixed. 
-<div class='row'>
-    <div class='col-md-12'>
-        <video width="100%" height="100%" >
-            <source src="cellDetection_v007.mp4" type="video/mp4" />
-        </video>
-    </div>
-</div>
-
+    <h3> Implementation </h3>
+        UI is updated. And the twinkling of the "Cell Detection" window is fixed. 
+        <div class='row'>
+            <div class='col-md-12'>
+                <video width="100%" height="100%" >
+                    <source src="cellDetection_v007.mp4" type="video/mp4" />
+                </video>
+            </div>
+        </div>
 
 
 <h2> ----- Jul 18<sup>th</sup> 2014 ----- </h2>
-<h3> Implementation </h3>
-The previous implementation was rather ad-hoc, did refactor them.
+    <h3> Implementation </h3>
+        The previous implementation was rather ad-hoc, did refactor them.
 
-<h3> Detection </h3>
-In order to recognize the cell and find the cell contour accurately, a new method using hough circle transform is discussed. It will detect the circle-like shapes in the image. <br>
-If this is well done, there are two benefits. First, the recognition of the contour will be more accurate. Second, it is easier to get ride of nearby cells by its morphological specificity.
-Dilation and erosion are applied to the edge images with circular templates. Hough transform will be applied to see the detection effect.
-<br><br>
-    <div class="row">
-        <div class="col-md-7 thumbnail" >
-            <img src = "v005.png" alt = "dilation and erosion">
-        </div>
-    </div>
-<br><br>
-If the HCT method does not effect well enough, machine learning approaches might be applied for cell recognition.
-<br><br>
+    <h3> Detection </h3>
+        In order to recognize the cell and find the cell contour accurately, a new method using hough circle transform is discussed. It will detect the circle-like shapes in the image. <br>
+        If this is well done, there are two benefits. First, the recognition of the contour will be more accurate. Second, it is easier to get ride of nearby cells by its morphological specificity.
+        Dilation and erosion are applied to the edge images with circular templates. Hough transform will be applied to see the detection effect.
+        <br><br>
+            <div class="row">
+                <div class="col-md-7 thumbnail" >
+                    <img src = "v005.png" alt = "dilation and erosion">
+                </div>
+            </div>
+        <br><br>
+        If the HCT method does not effect well enough, machine learning approaches might be applied for cell recognition.
+        <br><br>
 
 <h2> ----- Jul 11<sup>th</sup> 2014 ----- </h2>
 
-<h3> Detection </h3>
-The software is able to track isolated cells that selected by the user, and detect the area of the cell in each frame.
-The detection is not accurate enough as the area is calculated by the convex hull of the cell. Need to find the concave hull instead.
-Also, if the cell is not isolated, the nearby cell will influence the detection badly due to the limitation of current algorithm.
+    <h3> Detection </h3>
+        The software is able to track isolated cells that selected by the user, and detect the area of the cell in each frame.
+        The detection is not accurate enough as the area is calculated by the convex hull of the cell. Need to find the concave hull instead.
+        Also, if the cell is not isolated, the nearby cell will influence the detection badly due to the limitation of current algorithm.
 
-<h3> Visualization </h3>
-A line chart is added to the software to show the area changing of the cell. The horizontal axis represents time/frame, while the vertical represents area.
-More feature (other than area) such as the perimeter, the blebbing extent, the changing of shape along time will be measured and visualized.<br>
-<!--<embed src="cellDetection_v004.mp4" width="750" height="600" scale="aspect" controller="false">-->
+    <h3> Visualization </h3>
+        A line chart is added to the software to show the area changing of the cell. The horizontal axis represents time/frame, while the vertical represents area.
+        More feature (other than area) such as the perimeter, the blebbing extent, the changing of shape along time will be measured and visualized.<br>
+        <!--<embed src="cellDetection_v004.mp4" width="750" height="600" scale="aspect" controller="false">-->
 
-<div class='row'>
-    <div class='col-md-12'>
-        <video width="100%" height="100%" >
-            <source src="cellDetection_v004.mp4" type="video/mp4" />
-        </video>
-    </div>
-</div>
+        <div class='row'>
+            <div class='col-md-12'>
+                <video width="100%" height="100%" >
+                    <source src="cellDetection_v004.mp4" type="video/mp4" />
+                </video>
+            </div>
+        </div>
 
-<br><br>
+        <br><br>
 
 <h2> ----- Jul 7<sup>th</sup> 2014 ----- </h2>
-<h3> Data </h3>
-Preprocessed the images into videos. Tried to convert all of the images to a OpenCV-readable format. But the images from one of the two microscope channels was not usable due to the none-standard format.
-Analysis is based on the images from the other channel so far.
+    <h3> Data </h3>
+        Preprocessed the images into videos. Tried to convert all of the images to a OpenCV-readable format. But the images from one of the two microscope channels was not usable due to the none-standard format.
+        Analysis is based on the images from the other channel so far.
 
-<h3> Detection </h3>
-In order to let the user choose (from the amount of cells) which cell is the one of interest, a transparent panel was added on the top of video player.
-As it shows in the graph, user is able to circling a cell by drawing a rough hull outside of the cell of interest. And the ROI window updates the detection region according to the circling result.
-This is also for tracking the cell in the following frames. (Please ignore the white region on the bottom right. It is for future visualization use.)
-<br>
-<div class='row'>
-    <div class='col-md-8'>
-        <video width="100%" height="100%" poster="v001.png">
-            <source src="cellDetection_v001.mp4" type="video/mp4" />
-        </div>
-    </div>
-</video>
+    <h3> Detection </h3>
+        In order to let the user choose (from the amount of cells) which cell is the one of interest, a transparent panel was added on the top of video player.
+        As it shows in the graph, user is able to circling a cell by drawing a rough hull outside of the cell of interest. And the ROI window updates the detection region according to the circling result.
+        This is also for tracking the cell in the following frames. (Please ignore the white region on the bottom right. It is for future visualization use.)
+        <br>
+        <div class='row'>
+            <div class='col-md-8'>
+                <video width="100%" height="100%" poster="v001.png">
+                    <source src="cellDetection_v001.mp4" type="video/mp4" />
+                </div>
+            </div>
+        </video>
 
 
 <h2> ----- Jun 20<sup>th</sup> 2014 ----- </h2>
 
-<h3> Data </h3>
-Visited the chemistry lab and got the original data (images) from the microscope,
-which has a better quality than the compressed images in the previous video. <br>
-However, the data is not in a standard format. Need to convert those images to a OpenCV-readable format.<br>
-    <div class="row">
-        <div class="col-md-6 thumbnail" >
-            <img src = "C002_181.png" alt = "standard format - converted image" >
-        </div>
-    </div>
+    <h3> Data </h3>
+        Visited the chemistry lab and got the original data (images) from the microscope,
+        which has a better quality than the compressed images in the previous video. <br>
+        However, the data is not in a standard format. Need to convert those images to a OpenCV-readable format.<br>
+            <div class="row">
+                <div class="col-md-6 thumbnail" >
+                    <img src = "C002_181.png" alt = "standard format - converted image" >
+                </div>
+            </div>
 
-<h3> Detection </h3>
-<ul>
-    <li> Plan to build an interactive system letting the user choose which cell is the "cell of interest".
-        The program is expected to track the cell automatically and be able to let the user modify the region when necessary. </li>
-</ul>
+    <h3> Detection </h3>
+        <ul>
+            <li> Plan to build an interactive system letting the user choose which cell is the "cell of interest".
+                The program is expected to track the cell automatically and be able to let the user modify the region when necessary. </li>
+        </ul>
 
-<h3> Visualization </h3>
-Two aspects for visualization
-<ul>
-    <li> Plan to draw snapshots of the cell's outline at regular intervals (key frames in the future) on a timeline,
-        which should give a good sense of how the cell's shape and size changed over time. </li>
-    <li> Plan to show an animation of a cell moving on a area-shape plan showing the current precise area and shape.
-        And use the changing of color to show the number of blebs of the cell.
-        The area and the number of blebs are supposed to be detected the program. The shape can be quantified by the distance between the outline pixels and the centroid.
-    </li>
-</ul>
+    <h3> Visualization </h3>
+        Two aspects for visualization
+        <ul>
+            <li> Plan to draw snapshots of the cell's outline at regular intervals (key frames in the future) on a timeline,
+                which should give a good sense of how the cell's shape and size changed over time. </li>
+            <li> Plan to show an animation of a cell moving on a area-shape plan showing the current precise area and shape.
+                And use the changing of color to show the number of blebs of the cell.
+                The area and the number of blebs are supposed to be detected the program. The shape can be quantified by the distance between the outline pixels and the centroid.
+            </li>
+        </ul>
 
 
 <h2> ----- Jun 16<sup>th</sup> 2014 ----- </h2>
 
-<h3> Project Description </h3>
-<pre><a href="https://docs.google.com/document/d/1VQU2IYTTcP19bVfPGE4a5Yt-bTelsC2CYhAt7RWs8aU/edit?usp=sharing">[Google Docs Documentation]</a>
-</pre>
+    <h3> Project Description </h3>
+        <pre><a href="https://docs.google.com/document/d/1VQU2IYTTcP19bVfPGE4a5Yt-bTelsC2CYhAt7RWs8aU/edit?usp=sharing">[Google Docs Documentation]</a>
+        </pre>
 
-<h3> Preliminary Software </h3>
-    <div class="row">
-        <div class="col-md-12 thumbnail" >
-            <img src = "preliminary3.png" alt = "preliminary program - no interaction available" >
+    <h3> Preliminary Software </h3>
+        <div class="row">
+            <div class="col-md-12 thumbnail" >
+                <img src = "preliminary3.png" alt = "preliminary program - no interaction available" >
+            </div>
         </div>
+
+
+    <h3> </h3>
+
     </div>
-
-
-<h3> </h3>
-
-</div>
 
 <script src="mediaElement/mediaelement-and-player.min.js"></script>
 <script type="text/javascript">
