@@ -52,6 +52,7 @@ private slots:
     void    setAdaptThresh(int var);
     void    setBlkSize(int var);
     void    setDilSize(int var);
+    void    setblebSizeRatio(int var);
     void    setVideoType(int tp);
 
 protected:

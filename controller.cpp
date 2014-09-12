@@ -224,6 +224,11 @@ void Controller::setDilSize(int var){
     contour->setDilSize(var);
 }
 
+void Controller::setblebSizeRatio(int var)
+{
+    contour->setblebSizeRatio(var);
+}
+
 void Controller::setVideoType(int tp)
 {
     videoType = tp;

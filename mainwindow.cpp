@@ -43,6 +43,12 @@ inline T sqre(T value){
     return value*value;
 }
 
+void MainWindow::updateBlebSizeSliderText(int value)
+{
+    ui->blebSizeRatioNum->setText("1/"+QString::number((11-value)*50));
+}
+
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow),
     myController(new Controller())
@@ -71,6 +77,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
             myController, SLOT(setDilSize(int)));
     connect(ui->dilSizeSlider, SIGNAL(valueChanged(int)),
             ui->dilSizeNum, SLOT(setNum(int)));
+    connect(ui->blebSizeRatioSlider, SIGNAL(valueChanged(int)),
+            myController, SLOT(setblebSizeRatio(int)));
+    connect(ui->blebSizeRatioSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(updateBlebSizeSliderText(int)));
 
 
     // connect combobox to controller
@@ -135,6 +145,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
     ui->dilSizeSlider->setRange(1, 8);
     ui->dilSizeSlider->setValue(3); // initial value of dilation size for fiding contours
+    ui->blebSizeRatioSlider->setRange(1, 10);
+    ui->blebSizeRatioSlider->setValue(7);
 
     ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font20);
     ui->videoDisplayerLabel->setText("Video");
@@ -145,15 +157,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->cellDetectionDisplayerLabel->setText("Cell Detection");
 
     ui->differenceLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
-    ui->differenceLabel->setText("Difference from Neighbors ");
+    ui->differenceLabel->setText("Neighb Diff ");
     ui->diffrerenceNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+
     ui->blkSizeLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
-    ui->blkSizeLabel->setText("Referecing-neighbor Size ");
+    ui->blkSizeLabel->setText("Neighb Size ");
     ui->blkSizeNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
 
     ui->dilSizeLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
     ui->dilSizeLabel->setText("Dilation Size ");
     ui->dilSizeNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+
+    ui->blebSizeRatioLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->blebSizeRatioLabel->setText("Bleb Size Ratio ");
+    ui->blebSizeRatioNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
 
     ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
     ui->frameLabelLeft->setText("Frame No.");
@@ -201,6 +218,7 @@ MainWindow::~MainWindow(){
     delete myController;
     delete ui;
 }
+
 
 void calculateSizes(int &videoWidth, int &videoHeight,
                     int &x, int &y, int &width, int &height,

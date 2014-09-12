@@ -28,6 +28,8 @@ public:
 
 
 private slots:
+    void updateBlebSizeSliderText(int value);
+
     void initialVideoPlayerUI(QImage img);
     void updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2);
 

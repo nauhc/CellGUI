@@ -16,6 +16,7 @@ private:
     int blockSize;
     double constValue;
     int dilSize;
+    double blebSizeRatio;
 
 //    int x_start; // offset of roi rect - x
 //    int y_start; // offset of roi rect - y
@@ -30,6 +31,7 @@ public:
     void setAdaptThresh(double para1);
     void setBlkSize(int para2);
     void setDilSize(int var);
+    void setblebSizeRatio(int var);
 
     void setScale(double scl);
 

@@ -45,6 +45,12 @@ void FindContour::setDilSize(int var)
     dilSize = var;
 }
 
+void FindContour::setblebSizeRatio(int var)
+{
+    blebSizeRatio = 1.0/double((11-var)*50);
+    //cout << "blebSizeRatio changed to: 1/" << (11-var)*50 << endl;
+}
+
 void FindContour::setScale(double scl){
     scale = scl;
 }
@@ -775,7 +781,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     // remove outliners of the blebs (noises)
     for (std::vector<int>::iterator itr = blebs.begin(); itr != blebs.end(); )
     {
-        if ((*itr) < (0.002*area))
+        if ((*itr) < (blebSizeRatio*area))
             blebs.erase(itr);
         else
             itr++;
