@@ -12,6 +12,9 @@ Controller::Controller(QObject *parent) : QThread(parent),
     cout << "controller initialzed." << endl;
     pause = true;
     encircled = false;
+    pixel = 300.0;
+    micMeter = 20.0;
+    micMtr_Pixel = micMeter/pixel;
 }
 Controller::~Controller(){
     if(inputVideo->isOpened()){
@@ -249,6 +252,21 @@ void Controller::setVideoType(int tp)
     }
 }
 
+void Controller::setPixel(QString text)
+{
+    pixel = text.toDouble();
+    micMtr_Pixel = micMeter/pixel;
+    cout << "micrometerPerPixel: " << micMtr_Pixel << endl;
+}
+
+void Controller::setMicMeter(QString text)
+{
+    micMeter = text.toDouble();
+    micMtr_Pixel = micMeter/pixel;
+    cout << "micrometerPerPixel: " << micMtr_Pixel << endl;
+}
+
+
 
 void Controller::run(){
     int delay = (1500/fps);
@@ -321,11 +339,10 @@ void Controller::run(){
                 break;
             }
 
-            cout << "blebs number " << blebs.size() << "\n";
-            for(unsigned int n = 0; n < blebs.size(); n++)
-                cout << blebs[n] << "  ";
-            cout << endl;
-
+//            cout << "blebs number " << blebs.size() << "\n";
+//            for(unsigned int n = 0; n < blebs.size(); n++)
+//                cout << blebs[n] << "  ";
+//            cout << endl;
 
             floatArray property;
             property.push_back(float(area));
@@ -334,14 +351,18 @@ void Controller::run(){
             property.push_back(shape);
             property.push_back(centroid.y);//not appliable yet
             property.push_back(0.0);//not appliable yet
+
+            //double subImgSize = contourImg.cols*contourImg.rows;
+            double area_ratio = micMtr_Pixel*micMtr_Pixel;
+            cout << "area_ratio " << area_ratio << endl;
             csvFile << frameIdx << ","
-                    << area << ","
-                    << perimeter << ","
+                    << area * area_ratio << ","
+                    << perimeter*micMtr_Pixel << ","
                     << centroid.x << "," << centroid.y << ","
                     << shape << ","
                     << blebs.size() << ", ";
             for(unsigned int n = 0; n < blebs.size(); n++)
-                csvFile << blebs[n] << ", ";
+                csvFile << blebs[n] * area_ratio << ", ";
             csvFile << endl;
 
             emit detectedProperties(property);

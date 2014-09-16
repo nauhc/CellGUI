@@ -39,6 +39,10 @@ private:
     bool            encircled;
     vector<Point>   hull; // contour of the cell of interest
     //double          scale; // scale = display / real size
+    double          pixel;
+    double          micMeter;
+    double          micMtr_Pixel;
+
 
     int             videoType; // 1.single cell 2.fix window 3.flexible
 
@@ -54,6 +58,8 @@ private slots:
     void    setDilSize(int var);
     void    setblebSizeRatio(int var);
     void    setVideoType(int tp);
+    void    setPixel(QString text);
+    void    setMicMeter(QString text);
 
 protected:
     void    run();

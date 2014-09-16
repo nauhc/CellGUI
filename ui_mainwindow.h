@@ -18,6 +18,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
@@ -69,6 +70,11 @@ public:
     QSlider *blebSizeRatioSlider;
     QLabel *blebSizeRatioLabel;
     QLabel *blebSizeRatioNum;
+    QLineEdit *pixelLineEdit;
+    QLabel *pixelLabel;
+    QLineEdit *mmeterLineEdit;
+    QLabel *mmeterLabel;
+    QLabel *convertLabel;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -77,7 +83,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1232, 1250);
+        MainWindow->resize(1301, 1250);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         loadVideoButton = new QPushButton(centralWidget);
@@ -94,25 +100,25 @@ public:
         orgVideo->setStyleSheet(QStringLiteral(""));
         playVideoButton = new QPushButton(centralWidget);
         playVideoButton->setObjectName(QStringLiteral("playVideoButton"));
-        playVideoButton->setGeometry(QRect(1040, 30, 151, 51));
+        playVideoButton->setGeometry(QRect(880, 110, 151, 51));
         stopVideoButton = new QPushButton(centralWidget);
         stopVideoButton->setObjectName(QStringLiteral("stopVideoButton"));
-        stopVideoButton->setGeometry(QRect(1040, 100, 151, 51));
+        stopVideoButton->setGeometry(QRect(880, 190, 151, 51));
         adaptThreshSlider = new QSlider(centralWidget);
         adaptThreshSlider->setObjectName(QStringLiteral("adaptThreshSlider"));
-        adaptThreshSlider->setGeometry(QRect(891, 450, 131, 22));
+        adaptThreshSlider->setGeometry(QRect(891, 470, 161, 22));
         adaptThreshSlider->setSingleStep(2);
         adaptThreshSlider->setOrientation(Qt::Horizontal);
         blkSizeSlider = new QSlider(centralWidget);
         blkSizeSlider->setObjectName(QStringLiteral("blkSizeSlider"));
-        blkSizeSlider->setGeometry(QRect(1031, 450, 151, 22));
+        blkSizeSlider->setGeometry(QRect(1101, 470, 161, 22));
         blkSizeSlider->setOrientation(Qt::Horizontal);
         differenceLabel = new QLabel(centralWidget);
         differenceLabel->setObjectName(QStringLiteral("differenceLabel"));
-        differenceLabel->setGeometry(QRect(891, 430, 91, 20));
+        differenceLabel->setGeometry(QRect(891, 450, 91, 20));
         blkSizeLabel = new QLabel(centralWidget);
         blkSizeLabel->setObjectName(QStringLiteral("blkSizeLabel"));
-        blkSizeLabel->setGeometry(QRect(1031, 430, 101, 20));
+        blkSizeLabel->setGeometry(QRect(1101, 450, 101, 20));
         prop1Vis = new QLabel(centralWidget);
         prop1Vis->setObjectName(QStringLiteral("prop1Vis"));
         prop1Vis->setGeometry(QRect(40, 610, 1170, 270));
@@ -124,7 +130,7 @@ public:
         horizontalSlider->setOrientation(Qt::Horizontal);
         drawROIButton = new QPushButton(centralWidget);
         drawROIButton->setObjectName(QStringLiteral("drawROIButton"));
-        drawROIButton->setGeometry(QRect(880, 100, 151, 51));
+        drawROIButton->setGeometry(QRect(880, 270, 151, 51));
         roiVideo2 = new QLabel(centralWidget);
         roiVideo2->setObjectName(QStringLiteral("roiVideo2"));
         roiVideo2->setGeometry(QRect(590, 290, 240, 240));
@@ -161,10 +167,10 @@ public:
         prop2VisLabel->setGeometry(QRect(60, 840, 62, 16));
         typeComboBox = new QComboBox(centralWidget);
         typeComboBox->setObjectName(QStringLiteral("typeComboBox"));
-        typeComboBox->setGeometry(QRect(890, 180, 291, 26));
+        typeComboBox->setGeometry(QRect(890, 350, 371, 26));
         groupBox = new QGroupBox(centralWidget);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(880, 250, 311, 151));
+        groupBox->setGeometry(QRect(1090, 30, 171, 301));
         checkBox_area = new QCheckBox(groupBox);
         checkBox_area->setObjectName(QStringLiteral("checkBox_area"));
         checkBox_area->setGeometry(QRect(20, 30, 87, 20));
@@ -176,43 +182,59 @@ public:
         checkBox_centroid->setGeometry(QRect(20, 110, 87, 20));
         checkBox_shape = new QCheckBox(groupBox);
         checkBox_shape->setObjectName(QStringLiteral("checkBox_shape"));
-        checkBox_shape->setGeometry(QRect(140, 30, 87, 20));
+        checkBox_shape->setGeometry(QRect(20, 150, 87, 20));
         checkBox_blebbing = new QCheckBox(groupBox);
         checkBox_blebbing->setObjectName(QStringLiteral("checkBox_blebbing"));
-        checkBox_blebbing->setGeometry(QRect(140, 70, 87, 20));
+        checkBox_blebbing->setGeometry(QRect(20, 190, 87, 20));
         checkBox_speed = new QCheckBox(groupBox);
         checkBox_speed->setObjectName(QStringLiteral("checkBox_speed"));
-        checkBox_speed->setGeometry(QRect(140, 110, 141, 20));
+        checkBox_speed->setGeometry(QRect(20, 230, 141, 20));
         diffrerenceNum = new QLabel(centralWidget);
         diffrerenceNum->setObjectName(QStringLiteral("diffrerenceNum"));
-        diffrerenceNum->setGeometry(QRect(980, 430, 41, 20));
+        diffrerenceNum->setGeometry(QRect(980, 450, 41, 20));
         blkSizeNum = new QLabel(centralWidget);
         blkSizeNum->setObjectName(QStringLiteral("blkSizeNum"));
-        blkSizeNum->setGeometry(QRect(1140, 430, 41, 20));
+        blkSizeNum->setGeometry(QRect(1210, 450, 41, 20));
         dilSizeSlider = new QSlider(centralWidget);
         dilSizeSlider->setObjectName(QStringLiteral("dilSizeSlider"));
-        dilSizeSlider->setGeometry(QRect(891, 500, 131, 22));
+        dilSizeSlider->setGeometry(QRect(890, 520, 161, 22));
         dilSizeSlider->setOrientation(Qt::Horizontal);
         dilSizeLabel = new QLabel(centralWidget);
         dilSizeLabel->setObjectName(QStringLiteral("dilSizeLabel"));
-        dilSizeLabel->setGeometry(QRect(891, 480, 91, 20));
+        dilSizeLabel->setGeometry(QRect(890, 500, 91, 20));
         dilSizeNum = new QLabel(centralWidget);
         dilSizeNum->setObjectName(QStringLiteral("dilSizeNum"));
-        dilSizeNum->setGeometry(QRect(981, 480, 41, 20));
+        dilSizeNum->setGeometry(QRect(980, 500, 41, 20));
         blebSizeRatioSlider = new QSlider(centralWidget);
         blebSizeRatioSlider->setObjectName(QStringLiteral("blebSizeRatioSlider"));
-        blebSizeRatioSlider->setGeometry(QRect(1031, 500, 151, 22));
+        blebSizeRatioSlider->setGeometry(QRect(1101, 520, 161, 22));
         blebSizeRatioSlider->setOrientation(Qt::Horizontal);
         blebSizeRatioLabel = new QLabel(centralWidget);
         blebSizeRatioLabel->setObjectName(QStringLiteral("blebSizeRatioLabel"));
-        blebSizeRatioLabel->setGeometry(QRect(1031, 480, 101, 20));
+        blebSizeRatioLabel->setGeometry(QRect(1101, 500, 101, 20));
         blebSizeRatioNum = new QLabel(centralWidget);
         blebSizeRatioNum->setObjectName(QStringLiteral("blebSizeRatioNum"));
-        blebSizeRatioNum->setGeometry(QRect(1140, 480, 41, 20));
+        blebSizeRatioNum->setGeometry(QRect(1210, 500, 41, 20));
+        pixelLineEdit = new QLineEdit(centralWidget);
+        pixelLineEdit->setObjectName(QStringLiteral("pixelLineEdit"));
+        pixelLineEdit->setGeometry(QRect(900, 400, 81, 21));
+        pixelLabel = new QLabel(centralWidget);
+        pixelLabel->setObjectName(QStringLiteral("pixelLabel"));
+        pixelLabel->setGeometry(QRect(1000, 400, 41, 21));
+        mmeterLineEdit = new QLineEdit(centralWidget);
+        mmeterLineEdit->setObjectName(QStringLiteral("mmeterLineEdit"));
+        mmeterLineEdit->setGeometry(QRect(1102, 400, 71, 21));
+        mmeterLabel = new QLabel(centralWidget);
+        mmeterLabel->setObjectName(QStringLiteral("mmeterLabel"));
+        mmeterLabel->setGeometry(QRect(1180, 400, 81, 21));
+        convertLabel = new QLabel(centralWidget);
+        convertLabel->setObjectName(QStringLiteral("convertLabel"));
+        convertLabel->setGeometry(QRect(1050, 400, 51, 21));
+        convertLabel->setAlignment(Qt::AlignCenter);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1232, 22));
+        menuBar->setGeometry(QRect(0, 0, 1301, 22));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -260,6 +282,9 @@ public:
         dilSizeNum->setText(QString());
         blebSizeRatioLabel->setText(QApplication::translate("MainWindow", "Bleb Size Ratio:", 0));
         blebSizeRatioNum->setText(QString());
+        pixelLabel->setText(QApplication::translate("MainWindow", "pixel", 0));
+        mmeterLabel->setText(QApplication::translate("MainWindow", "micrometer", 0));
+        convertLabel->setText(QApplication::translate("MainWindow", "<->", 0));
     } // retranslateUi
 
 };

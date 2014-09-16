@@ -104,6 +104,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->checkBox_speed, SIGNAL(stateChanged(int)),
             this, SLOT(box_checked(int)));
 
+    // connect lineEditors to setPixel2micMeter event
+    ui->pixelLineEdit->setText("300");
+    ui->mmeterLineEdit->setText("20");
+    connect(ui->pixelLineEdit, SIGNAL(textChanged(QString)),
+            myController, SLOT(setPixel(QString)));
+    connect(ui->mmeterLineEdit, SIGNAL(textChanged(QString)),
+            myController, SLOT(setMicMeter(QString)));
+
+
     ui->orgVideo->setStyleSheet(videoDisplayStyle);
     ui->roiVideo1->setStyleSheet(videoDisplayStyle);
     ui->roiVideo2->setStyleSheet(videoDisplayStyle);
@@ -177,7 +186,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->frameLabelRight->setStyleSheet(frameLabelStyle);
 
     // prop1Vis initialize -- areaVis
-    QRect areaVisRect = QRect(40, 620, 1150, 280);
+    QRect areaVisRect = QRect(40, 620, this->width()-80, 280);
     QColor areaVisColor = QColor(153, 204, 49); // green color
     ui->prop1Vis->setGeometry(areaVisRect);
     ui->prop1Vis->setStyleSheet(visStyle);
