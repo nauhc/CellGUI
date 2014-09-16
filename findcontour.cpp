@@ -349,8 +349,9 @@ Mat curveSmooth(Mat &contourImg,
 // --- curve smooth end ---
 
 // --- connected component begin ---
-void search(Mat &img, int &label, int j, int i, int &cnt){
+void search(Mat &img, int &label, int j, int i, int &cnt, vector<Point> &bunch){
     img.at<uchar>(j,i) = label;
+    bunch.push_back(Point(i, j));
     cnt++;
     for(int jj = -1; jj <= 1; jj++){
         if(j+jj < 0 || j+jj > img.rows)
@@ -361,26 +362,34 @@ void search(Mat &img, int &label, int j, int i, int &cnt){
             if(ii==0 && jj==0)
                 continue;
             if(img.at<uchar>(j+jj, i+ii) == 255)
-                search(img, label, j+jj, i+ii, cnt);
+                search(img, label, j+jj, i+ii, cnt, bunch);
         }
     }
 }
-void find_component(Mat &img, int &label, vector<int> &size){
+void find_component(Mat &img, int &label, vector<int> &size, vector<Point> &blebCtrs){
     for(int j = 0; j < img.rows; j++){
         for(int i = 0; i < img.cols; i++){
             if(img.at<uchar>(j, i) == 255){
                 int cnt = 0;
                 label += 1;
-                search(img, label, j, i, cnt);
+                vector<Point> bunch;
+                search(img, label, j, i, cnt, bunch);
+                //bleb size
                 size.push_back(cnt);
+                //bleb center
+                vector<Point> hull;
+                convexHull(bunch, hull);
+                Moments mu = moments(hull);
+                Point2f blebCtr = Point2f(mu.m10/mu.m00, mu.m01/mu.m00);
+                blebCtrs.push_back(blebCtr);
             }
         }
     }
 }
-void recursive_connected_components(Mat &src, vector<int> &size){
+void recursive_connected_components(Mat &src, vector<int> &size, vector<Point> &blebCtrs){
     Mat img_label = src.clone();
     int label = 0; // start from 1
-    find_component(img_label, label, size);
+    find_component(img_label, label, size, blebCtrs);
 }
 // --- connected component end ---
 
@@ -654,7 +663,11 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), blebs);
 
-    recursive_connected_components(blebsImg, blebs);
+    vector<Point> blebCtrs;
+    recursive_connected_components(blebsImg, blebs, blebCtrs);
+    for(unsigned int i = 0; i < blebCtrs.size(); i++){
+        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
+    }
 
 
     cir_org.clear();
@@ -776,16 +789,22 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //imshow("blebs", blebsImg);
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), blebs);
-    recursive_connected_components(blebsImg, blebs);
+    vector<Point> blebCtrs;
+    recursive_connected_components(blebsImg, blebs, blebCtrs);
 
     // remove outliners of the blebs (noises)
     for (std::vector<int>::iterator itr = blebs.begin(); itr != blebs.end(); )
     {
-        if ((*itr) < (blebSizeRatio*area))
+        if ((*itr) < (blebSizeRatio*area)){
             blebs.erase(itr);
+            //blebCtrs.erase(itr-blebCtrs.begin());
+        }
         else
             itr++;
     }
+//    for(unsigned int i = 0; i < blebCtrs.size(); i++){
+//        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
+//    }
 
 
     cir_org.clear();

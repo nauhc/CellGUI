@@ -87,6 +87,7 @@ bool Controller::loadVideo(string file, string fn){
         }
 
         //prepare to write data to file
+        cout << "writing data to file " << fn+".csv" << endl;
         csvFile.open(fn+".csv", ios::out);
 
         if(!inputVideo->read(*frame)){
