@@ -90,9 +90,10 @@ bool Controller::loadVideo(string file, string fn){
         }
 
         //prepare to write data to file
+
+        std::transform(fn.begin(), fn.end(), fn.begin(), ::tolower);
         cout << "writing data to file " << fn+".csv" << endl;
         csvFile.open(fn+".csv", ios::out);
-
         if(!inputVideo->read(*frame)){
             cout << "Unable to retrieve the first frame from video stream." << endl;
             return false;
@@ -354,7 +355,7 @@ void Controller::run(){
 
             //double subImgSize = contourImg.cols*contourImg.rows;
             double area_ratio = micMtr_Pixel*micMtr_Pixel;
-            cout << "area_ratio " << area_ratio << endl;
+            //cout << "area_ratio " << area_ratio << endl;
             csvFile << frameIdx << ","
                     << area * area_ratio << ","
                     << perimeter*micMtr_Pixel << ","

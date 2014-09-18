@@ -626,7 +626,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //imshow("cell", cell);
     area = countNonZero(cellArea);
 
-    cout << "frame " << frameNum << "\n";
+    //cout << "frame " << frameNum << "\n";
     //cout << contours[largest_contour_index] << endl;
 
 
@@ -750,7 +750,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //imshow("cellArea", cellArea);
     area = countNonZero(cellArea);
 
-    cout << "frame " << frameNum << "\n";
+    //cout << "frame " << frameNum << "\n";
     //cout << contours[largest_contour_index] << endl;
 
 
