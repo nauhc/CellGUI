@@ -22,11 +22,15 @@ private:
 
     VideoCapture    *inputVideo; //video processing -- openCV
     bool            pause;
+    QMutex          pauseMutex;
     //Mat             previousFrame;
     Mat             nextFrame;
     Mat             *frame; // frame from the video
     Mat             *roiFrame; // roi rectangle from frame
     QImage          img; // QImage for displaying video (with box)
+
+    QList<Mat>      blebsImgWIN; // ROI images in a time window
+    QList<Point>    offsetWIN; // the offsets(x,y) of ROI images int a time window
 
     Size            videoSize; // video frame size
     int             frameCnt; // total frame number
@@ -38,7 +42,7 @@ private:
     FindContour     *contour; // findcontour class object
     bool            encircled;
     vector<Point>   hull; // contour of the cell of interest
-    //double          scale; // scale = display / real size
+    double          scale; // scale = display / real size
     double          pixel;
     double          micMeter;
     double          micMtr_Pixel;

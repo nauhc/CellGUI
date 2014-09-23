@@ -54,6 +54,8 @@ public:
                              int &perimeter,
                              Point2f &ctroid,
                              float &shape,
+                             Mat &blebsImg,
+                             Point &offset,
                              vector<int> &blebs,
                              int &frameNum);
 

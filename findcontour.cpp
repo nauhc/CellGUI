@@ -69,10 +69,10 @@ Rect translateRect(Rect rect, Point2f vect){
 }
 
 void CannyWithBlur(Mat &in, Mat &out){
-    GaussianBlur(in, out, Size(3, 3), 2, 2 );
+    //GaussianBlur(in, out, Size(3, 3), 2, 2 );
     //imshow("blur", out);
-    int lowThreshold = 30;
-    Canny(out, out, lowThreshold, lowThreshold*4.0, 3 );
+    int lowThreshold = 8;
+    Canny(in, out, lowThreshold, lowThreshold*6.0, 3, true);
     //imshow("canny", out);
 }
 
@@ -287,6 +287,7 @@ bool sortByTheta(const polarPoint &l, const polarPoint &r){
 }
 Mat curveSmooth(Mat &contourImg,
                 vector<Point> &border,
+                vector<Point> &smooth,
                 vector<Point> &convHull)
 {
 //    if(contourImg.type() != CV_8UC1){
@@ -317,9 +318,8 @@ Mat curveSmooth(Mat &contourImg,
     sort(border_polar.begin(), border_polar.end(), sortByTheta);
 
     // Laplacian smoothing
-    int WIN = 30; // half window size
+    int WIN = 50; // half window size
     unsigned int border_size = border_polar.size();
-    vector<Point> smooth;
     for(unsigned int n = 0; n < border_size; n++){
         //cout << border_polar[n].r << " " << border_polar[n].theta << "  ";
 
@@ -578,7 +578,6 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
         //line(dispImg1, p, p1, CV_RGB(255,255,255), 1 );
     }*/
 
-
 /*
     //stop growing when meeting with canny edges that outside the circle
 
@@ -655,7 +654,12 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
 
     // find the number and the sizes of blebs of the cell
     Mat smooth;
-    smooth = curveSmooth(borderImg, contours[largest_contour_index], convHull);
+    vector<Point> smoothCurve;
+    vector< vector<Point> > tmp;
+    smooth = curveSmooth(borderImg, contours[largest_contour_index], smoothCurve, convHull);
+    tmp.push_back(smoothCurve);
+    drawContours(dispImg1, tmp, 0, Scalar(255, 0, 0));
+
     bitwise_not(smooth, smooth);
     Mat blebsImg;
     bitwise_and(smooth, cellArea, blebsImg);
@@ -680,6 +684,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       Mat &dispImg1, Mat &dispImg2,
                                       int &area, int &perimeter,
                                       Point2f &ctroid, float &shape,
+                                      Mat &blebsImg,
+                                      Point &offset,
                                       vector<int> &blebs,
                                       int &frameNum)
 {
@@ -701,6 +707,13 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     cv::cvtColor(dispImg1, sub, CV_RGB2GRAY);
     int width = sub.cols;
     int height = sub.rows;
+
+    Mat canny;
+    CannyWithBlur(sub, canny);
+    imshow("canny", canny);
+
+    offset.x = rect.x;
+    offset.y = rect.y;
 
     vector<Point> circle_ROI; //***local coordinates of circle***
     for (unsigned int i = 0; i < cir.size(); i++){
@@ -782,9 +795,13 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
 
     // find the number and the sizes of blebs of the cell
     Mat smooth;
-    smooth = curveSmooth(borderImg, contours[largest_contour_index], convHull);
+    vector<Point> smoothCurve;
+    smooth = curveSmooth(borderImg, contours[largest_contour_index], smoothCurve, convHull);
+    for(unsigned int i=0; i < smoothCurve.size(); i++){
+        circle(dispImg1, smoothCurve[i], 1, Scalar(255, 0, 0), -1);
+    }
     bitwise_not(smooth, smooth);
-    Mat blebsImg;
+    //Mat blebsImg;
     bitwise_and(smooth, cellArea, blebsImg);
     //imshow("blebs", blebsImg);
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
@@ -802,10 +819,12 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
         else
             itr++;
     }
-//    for(unsigned int i = 0; i < blebCtrs.size(); i++){
-//        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
-//    }
 
+    for(unsigned int i = 0; i < blebCtrs.size(); i++){
+        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
+    }
+    QString cellFileName2 = "dispImg1" + QString::number(frameNum) + ".png";
+    imwrite(cellFileName2.toStdString(), dispImg1);
 
     cir_org.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)

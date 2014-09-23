@@ -12,6 +12,7 @@ Controller::Controller(QObject *parent) : QThread(parent),
     cout << "controller initialzed." << endl;
     pause = true;
     encircled = false;
+    scale = 1.0;
     pixel = 300.0;
     micMeter = 20.0;
     micMtr_Pixel = micMeter/pixel;
@@ -106,9 +107,11 @@ bool Controller::loadVideo(string file, string fn){
 void Controller::playVideo(){
     if((!isRunning())){
         if(videoIsPaused()){
+            pauseMutex.lock();
             pause = false;
+            pauseMutex.unlock();
         }
-        start(LowPriority);
+        start(LowPriority); // start controller thread
     }
 }
 
@@ -133,6 +136,7 @@ void Controller::releaseVideo()
     //clear contour
     encircled = false;
     hull.clear();
+    csvFile.close();
 }
 
 
@@ -202,7 +206,8 @@ bool Controller::optflow(Mat &frame1, Mat &frame2, vector<Point2f> &points1, vec
 
 void Controller::setScale(double scl)
 {
-    contour->setScale(scl);
+    scale = scl;
+    contour->setScale(scale);
 }
 
 void Controller::setCircle(QVector<QPoint> points)
@@ -271,13 +276,18 @@ void Controller::setMicMeter(QString text)
 
 void Controller::run(){
     int delay = (1500/fps);
-
-
     int cnt = 0;
-    while(!pause && cnt < frameCnt){
+
+    pauseMutex.lock();
+    bool paused = pause;
+    pauseMutex.unlock();
+
+    while(!paused && cnt < frameCnt){
         if(!inputVideo->read(nextFrame)){
             cout << "Unable to retrieve frame from video stream." << endl;
+            pauseMutex.lock();
             pause = true;
+            pauseMutex.unlock();
             continue;
         }
         cnt++;
@@ -312,6 +322,8 @@ void Controller::run(){
             Point2f centroid; // centroid of the cell
             float   shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
             vector<int> blebs; // areas of the deteced blebs
+            Mat     blebsImg;
+            Point   offset;
 
             // optflow detection of entire frame
             vector<Point2f> points1, points2;
@@ -324,7 +336,8 @@ void Controller::run(){
             switch (videoType) {
             case 0:
                 contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
-                                             area, perimeter, centroid, shape, blebs, frameIdx);
+                                             area, perimeter, centroid, shape,
+                                             blebsImg, offset, blebs, frameIdx);
                 break;
             case 1:
                 contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
@@ -340,11 +353,6 @@ void Controller::run(){
                 break;
             }
 
-//            cout << "blebs number " << blebs.size() << "\n";
-//            for(unsigned int n = 0; n < blebs.size(); n++)
-//                cout << blebs[n] << "  ";
-//            cout << endl;
-
             floatArray property;
             property.push_back(float(area));
             property.push_back(float(perimeter));
@@ -353,17 +361,33 @@ void Controller::run(){
             property.push_back(centroid.y);//not appliable yet
             property.push_back(0.0);//not appliable yet
 
+            // keep a time(frame) window and filter the detected
+            int WINSIZE = 5;
+            if(blebsImgWIN.size() < WINSIZE){
+                blebsImgWIN.push_back(blebsImg);
+                offsetWIN.push_back(offset);
+            }
+            else if(blebsImgWIN.size() == WINSIZE){
+                blebsImgWIN.pop_front();
+                offsetWIN.pop_front();
+                blebsImgWIN.push_back(blebsImg);
+                offsetWIN.push_back(offset);
+
+            }
+
+
             //double subImgSize = contourImg.cols*contourImg.rows;
-            double area_ratio = micMtr_Pixel*micMtr_Pixel;
+            double area_ratio = micMtr_Pixel*micMtr_Pixel/scale/scale;
+            double len_ratio  = micMtr_Pixel/scale/scale;
             //cout << "area_ratio " << area_ratio << endl;
             csvFile << frameIdx << ","
                     << area * area_ratio << ","
-                    << perimeter*micMtr_Pixel << ","
+                    << perimeter*len_ratio << ","
                     << centroid.x << "," << centroid.y << ","
                     << shape << ","
                     << blebs.size() << ", ";
             for(unsigned int n = 0; n < blebs.size(); n++)
-                csvFile << blebs[n] * area_ratio << ", ";
+                csvFile << blebs[n] * area_ratio << ",";
             csvFile << endl;
 
             emit detectedProperties(property);
@@ -401,6 +425,10 @@ void Controller::run(){
         //emit the singnals
         emit processedImage(img, roiImg1, roiImg2);
         this->msleep(delay);
+
+        pauseMutex.lock();
+        paused = pause;
+        pauseMutex.unlock();
     }
 
     if(cnt==frameCnt){
@@ -410,7 +438,10 @@ void Controller::run(){
 }
 
 void Controller::pauseVideo(){
+    //QMutexLocker    locker(pauseMutex);
+    pauseMutex.lock();
     pause = true;
+    pauseMutex.unlock();
 }
 
 bool Controller::videoIsPaused(){
