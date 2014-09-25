@@ -31,13 +31,15 @@ SOURCES += main.cpp\
     controller.cpp \
     findcontour.cpp \
     encircle.cpp \
-    areavis.cpp
+    areavis.cpp \
+    bleb.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
     findcontour.h \
     encircle.h \
-    areavis.h
+    areavis.h \
+    bleb.h
 
 FORMS    += mainwindow.ui
 

@@ -318,7 +318,7 @@ Mat curveSmooth(Mat &contourImg,
     sort(border_polar.begin(), border_polar.end(), sortByTheta);
 
     // Laplacian smoothing
-    int WIN = 50; // half window size
+    int WIN = 25; // half window size
     unsigned int border_size = border_polar.size();
     for(unsigned int n = 0; n < border_size; n++){
         //cout << border_polar[n].r << " " << border_polar[n].theta << "  ";
@@ -348,51 +348,6 @@ Mat curveSmooth(Mat &contourImg,
 }
 // --- curve smooth end ---
 
-// --- connected component begin ---
-void search(Mat &img, int &label, int j, int i, int &cnt, vector<Point> &bunch){
-    img.at<uchar>(j,i) = label;
-    bunch.push_back(Point(i, j));
-    cnt++;
-    for(int jj = -1; jj <= 1; jj++){
-        if(j+jj < 0 || j+jj > img.rows)
-            continue;
-        for(int ii = -1; ii <= 1; ii++){
-            if(i+ii < 0 || i+ii > img.cols)
-                continue;
-            if(ii==0 && jj==0)
-                continue;
-            if(img.at<uchar>(j+jj, i+ii) == 255)
-                search(img, label, j+jj, i+ii, cnt, bunch);
-        }
-    }
-}
-void find_component(Mat &img, int &label, vector<int> &size, vector<Point> &blebCtrs){
-    for(int j = 0; j < img.rows; j++){
-        for(int i = 0; i < img.cols; i++){
-            if(img.at<uchar>(j, i) == 255){
-                int cnt = 0;
-                label += 1;
-                vector<Point> bunch;
-                search(img, label, j, i, cnt, bunch);
-                //bleb size
-                size.push_back(cnt);
-                //bleb center
-                vector<Point> hull;
-                convexHull(bunch, hull);
-                Moments mu = moments(hull);
-                Point2f blebCtr = Point2f(mu.m10/mu.m00, mu.m01/mu.m00);
-                blebCtrs.push_back(blebCtr);
-            }
-        }
-    }
-}
-void recursive_connected_components(Mat &src, vector<int> &size, vector<Point> &blebCtrs){
-    Mat img_label = src.clone();
-    int label = 0; // start from 1
-    find_component(img_label, label, size, blebCtrs);
-}
-// --- connected component end ---
-
 bool is_noise(int i, int SIZE){
     if(i <= SIZE)
         return true;
@@ -409,7 +364,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
                                 int &perimeter,
                                 Point2f &ctroid,
                                 float &shape,
-                                vector<int> &blebs,
+//                                vector<int> &blebs,
                                 int &frameNum){
     frame = &img;
     //rect = boundingRect(Mat(cir));
@@ -667,11 +622,11 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), blebs);
 
-    vector<Point> blebCtrs;
-    recursive_connected_components(blebsImg, blebs, blebCtrs);
-    for(unsigned int i = 0; i < blebCtrs.size(); i++){
-        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
-    }
+//    vector<Point> blebCtrs;
+//    recursive_connected_components(blebsImg, blebs, blebCtrs);
+//    for(unsigned int i = 0; i < blebCtrs.size(); i++){
+//        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
+//    }
 
 
     cir_org.clear();
@@ -685,8 +640,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       int &area, int &perimeter,
                                       Point2f &ctroid, float &shape,
                                       Mat &blebsImg,
-                                      Point &offset,
-                                      vector<int> &blebs,
+                                      Rect &rectangle,
+//                                      vector<int> &blebs,
                                       int &frameNum)
 {
     frame = &img;
@@ -708,12 +663,11 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     int width = sub.cols;
     int height = sub.rows;
 
-    Mat canny;
-    CannyWithBlur(sub, canny);
-    imshow("canny", canny);
+    rectangle = rect;
 
-    offset.x = rect.x;
-    offset.y = rect.y;
+//    Mat canny;
+//    CannyWithBlur(sub, canny);
+//    imshow("canny", canny);
 
     vector<Point> circle_ROI; //***local coordinates of circle***
     for (unsigned int i = 0; i < cir.size(); i++){
@@ -806,23 +760,23 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //imshow("blebs", blebsImg);
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), blebs);
-    vector<Point> blebCtrs;
-    recursive_connected_components(blebsImg, blebs, blebCtrs);
+//    vector<Point> blebCtrs;
+//    recursive_connected_components(blebsImg, blebs, blebCtrs);
 
-    // remove outliners of the blebs (noises)
-    for (std::vector<int>::iterator itr = blebs.begin(); itr != blebs.end(); )
-    {
-        if ((*itr) < (blebSizeRatio*area)){
-            blebs.erase(itr);
-            //blebCtrs.erase(itr-blebCtrs.begin());
-        }
-        else
-            itr++;
-    }
+//    // remove outliners of the blebs (noises)
+//    for (std::vector<int>::iterator itr = blebs.begin(); itr != blebs.end(); )
+//    {
+//        if ((*itr) < (blebSizeRatio*area)){
+//            blebs.erase(itr);
+//            //blebCtrs.erase(itr-blebCtrs.begin());
+//        }
+//        else
+//            itr++;
+//    }
 
-    for(unsigned int i = 0; i < blebCtrs.size(); i++){
-        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
-    }
+//    for(unsigned int i = 0; i < blebCtrs.size(); i++){
+//        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
+//    }
     QString cellFileName2 = "dispImg1" + QString::number(frameNum) + ".png";
     imwrite(cellFileName2.toStdString(), dispImg1);
 
@@ -836,7 +790,7 @@ void FindContour::boundingBox(Mat &img)
 {
     img = frame->clone();
     //Rect rect = boundingRect(Mat(circle));
-    Scalar color(49, 204, 152); // draw a green rectangle on the image
-    rectangle(img, rect, color, 2);
+    //Scalar color(49, 204, 152); // draw a green rectangle on the image
+    rectangle(img, rect, Scalar(49, 204, 152), 2);
 }
 

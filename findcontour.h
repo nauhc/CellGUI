@@ -45,7 +45,7 @@ public:
                        int &perimeter,
                        Point2f &ctroid,
                        float &shape,
-                       vector<int> &blebs,
+//                       vector<int> &blebs,
                        int &frameNum);
 
     void singleCellDetection(const Mat &img, vector<Point> &cir_org,
@@ -55,8 +55,8 @@ public:
                              Point2f &ctroid,
                              float &shape,
                              Mat &blebsImg,
-                             Point &offset,
-                             vector<int> &blebs,
+                             Rect &rectangle,
+//                             vector<int> &blebs,
                              int &frameNum);
 
     // draw a bounding box of roi rect

@@ -16,6 +16,7 @@ Controller::Controller(QObject *parent) : QThread(parent),
     pixel = 300.0;
     micMeter = 20.0;
     micMtr_Pixel = micMeter/pixel;
+    WINSIZE = 5;
 }
 Controller::~Controller(){
     if(inputVideo->isOpened()){
@@ -152,7 +153,7 @@ bool Controller::optflow(Mat &frame1, Mat &frame2, vector<Point2f> &points1, vec
         return false;
     }
 
-    Size imgSize = frame1.size();
+    //Size imgSize = frame1.size();
     Mat frame1gray, frame2gray;
     cvtColor(frame1, frame1gray, CV_RGB2GRAY);
     cvtColor(frame2, frame2gray, CV_RGB2GRAY);
@@ -272,6 +273,64 @@ void Controller::setMicMeter(QString text)
     cout << "micrometerPerPixel: " << micMtr_Pixel << endl;
 }
 
+// --- connected component begin ---
+void search(Mat &img, int &label, int j, int i, int &cnt, vector<Point> &bunch){
+    img.at<uchar>(j,i) = label;
+    bunch.push_back(Point(i, j));
+    cnt++;
+    for(int jj = -1; jj <= 1; jj++){
+        if(j+jj < 0 || j+jj > img.rows)
+            continue;
+        for(int ii = -1; ii <= 1; ii++){
+            if(i+ii < 0 || i+ii > img.cols)
+                continue;
+            if(ii==0 && jj==0)
+                continue;
+            if(img.at<uchar>(j+jj, i+ii) == 255)
+                search(img, label, j+jj, i+ii, cnt, bunch);
+        }
+    }
+}
+void find_component(Mat &img, int &label, vector<Bleb> &blebs/*vector<int> &size, vector<Point> &blebCtrs*/){
+    for(int j = 0; j < img.rows; j++){
+        for(int i = 0; i < img.cols; i++){
+            if(img.at<uchar>(j, i) == 255){
+                int cnt = 0;
+                label += 1;
+                vector<Point> bunch;
+                search(img, label, j, i, cnt, bunch);
+                if(bunch.size()>= 10){
+                    Bleb bleb(bunch);
+                    blebs.push_back(bleb);
+                }
+            }
+        }
+    }
+}
+void recursive_connected_components(Mat &src, vector<Bleb> &blebs){
+    Mat img_label = src.clone();
+    int label = 0; // start from 1
+    find_component(img_label, label, blebs);
+}
+// --- connected component end ---
+
+void Controller::findBlebs(vector<Bleb> &blebs){
+    Mat overlapBlebs = Mat::zeros(frame->rows, frame->cols, CV_8UC1);
+    for(int n = 0; n < WINSIZE; n++){
+        //imshow("blebsImg"+to_string(n), blebsImgWIN[n]);
+        Rect rect_tmp = rectWIN[n];
+        for(int j = rect_tmp.y; j < rect_tmp.y+rect_tmp.height; j++){
+            for(int i = rect_tmp.x; i < rect_tmp.x+rect_tmp.width; i++){
+                if(blebsImgWIN[n].at<uchar>(j-rect_tmp.y, i-rect_tmp.x) != 0){
+                    overlapBlebs.at<uchar>(j,i) += 200/WINSIZE;
+                }
+            }
+        }
+    }
+    //imshow("overlapBlebs", overlapBlebs);
+    threshold(overlapBlebs, overlapBlebs, 200*2/3, 255, THRESH_BINARY);
+    recursive_connected_components(overlapBlebs, blebs);
+}
 
 
 void Controller::run(){
@@ -311,7 +370,6 @@ void Controller::run(){
 
             Mat boxedImg = Mat(frame->rows, frame->cols, CV_8UC3);
             contour->boundingBox(boxedImg);
-            img = cvMatToQImage(boxedImg);
 
             Mat contourImg;
             Mat edgeImg;
@@ -321,9 +379,9 @@ void Controller::run(){
             int     perimeter; // perimeter of the cell
             Point2f centroid; // centroid of the cell
             float   shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
-            vector<int> blebs; // areas of the deteced blebs
             Mat     blebsImg;
-            Point   offset;
+            Rect   rect;
+            vector<Bleb> blebs; // the deteced blebs
 
             // optflow detection of entire frame
             vector<Point2f> points1, points2;
@@ -337,19 +395,19 @@ void Controller::run(){
             case 0:
                 contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
                                              area, perimeter, centroid, shape,
-                                             blebsImg, offset, blebs, frameIdx);
+                                             blebsImg, rect, /*blebs,*/ frameIdx);
                 break;
             case 1:
                 contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, blebs, frameIdx);
+                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
                 break;
             case 2:
                 contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, blebs, frameIdx);
+                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
                 break;
             default:
                 contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, blebs, frameIdx);
+                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
                 break;
             }
 
@@ -361,18 +419,20 @@ void Controller::run(){
             property.push_back(centroid.y);//not appliable yet
             property.push_back(0.0);//not appliable yet
 
-            // keep a time(frame) window and filter the detected
-            int WINSIZE = 5;
+            // keep a time(frame) window and filter the detected features
             if(blebsImgWIN.size() < WINSIZE){
                 blebsImgWIN.push_back(blebsImg);
-                offsetWIN.push_back(offset);
+                rectWIN.push_back(rect);
             }
             else if(blebsImgWIN.size() == WINSIZE){
                 blebsImgWIN.pop_front();
-                offsetWIN.pop_front();
+                rectWIN.pop_front();
                 blebsImgWIN.push_back(blebsImg);
-                offsetWIN.push_back(offset);
-
+                rectWIN.push_back(rect);
+                findBlebs(blebs);
+            }
+            else{
+                cout << "error: time window size too large. " << endl;
             }
 
 
@@ -382,43 +442,23 @@ void Controller::run(){
             //cout << "area_ratio " << area_ratio << endl;
             csvFile << frameIdx << ","
                     << area * area_ratio << ","
-                    << perimeter*len_ratio << ","
+                    << perimeter * len_ratio << ","
                     << centroid.x << "," << centroid.y << ","
                     << shape << ","
                     << blebs.size() << ", ";
-            for(unsigned int n = 0; n < blebs.size(); n++)
-                csvFile << blebs[n] * area_ratio << ",";
+            for(unsigned int n = 0; n < blebs.size(); n++){
+                //ellipse(boxedImg, blebs[n].roughArea, Scalar(49, 204, 152));
+                circle(boxedImg, blebs[n].center, 5, Scalar(144, 57, 123), -1);
+                csvFile << (blebs[n].size * area_ratio) << ",";
+            }
             csvFile << endl;
 
             emit detectedProperties(property);
             //cout << "frame " << frameIdx << " cell area: " << area << endl;
+            img = cvMatToQImage(boxedImg);
             roiImg1 = cvMatToQImage(contourImg);
             roiImg2 = cvMatToQImage(edgeImg);
         }
-
-        /*
-            //ROI
-            int x = videoSize.width/2 - 5;
-            int y = videoSize.height/2 + 10;
-            int width = 150;
-            int height = 100;
-
-            contour->getROI(*frame, x, y, width, height);
-            //adaptive threshold for getting edges from current image
-            Mat edgeImg;
-            contour->edgeDetection(edgeImg);
-            roiImg = cvMatToQImage(edgeImg); //Mat to QImage for display
-
-            if (frameIdx <= 80)
-                roiImg = img;
-            else{
-                //bounding box
-                Mat boxImg;
-                contour->boundingBox(boxImg);
-                img = cvMatToQImage(boxImg);
-
-            }
-            */
 
         *frame = nextFrame.clone();
 

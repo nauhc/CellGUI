@@ -149,11 +149,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->horizontalSlider->setEnabled(false);
 
     ui->adaptThreshSlider->setRange(1, 51);
-    ui->adaptThreshSlider->setValue(4); // initial value of constValue for adaptiveThreshold
+    ui->adaptThreshSlider->setValue(3); // initial value of constValue for adaptiveThreshold
     ui->blkSizeSlider->setRange(1, 20);
-    ui->blkSizeSlider->setValue(8); // initial value of block size for adaptiveThreshold
+    ui->blkSizeSlider->setValue(11); // initial value of block size for adaptiveThreshold
     ui->dilSizeSlider->setRange(1, 8);
-    ui->dilSizeSlider->setValue(3); // initial value of dilation size for fiding contours
+    ui->dilSizeSlider->setValue(5); // initial value of dilation size for fiding contours
     ui->blebSizeRatioSlider->setRange(1, 10);
     ui->blebSizeRatioSlider->setValue(7);
 

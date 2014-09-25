@@ -9,6 +9,7 @@
 #include <highgui.h>
 #include <findcontour.h>
 #include <video/tracking.hpp>
+#include <bleb.h>
 
 using namespace std;
 using namespace cv;
@@ -29,8 +30,9 @@ private:
     Mat             *roiFrame; // roi rectangle from frame
     QImage          img; // QImage for displaying video (with box)
 
+    int             WINSIZE;
     QList<Mat>      blebsImgWIN; // ROI images in a time window
-    QList<Point>    offsetWIN; // the offsets(x,y) of ROI images int a time window
+    QList<Rect>     rectWIN; // the rects of ROI images a time window
 
     Size            videoSize; // video frame size
     int             frameCnt; // total frame number
@@ -47,8 +49,9 @@ private:
     double          micMeter;
     double          micMtr_Pixel;
 
-
     int             videoType; // 1.single cell 2.fix window 3.flexible
+
+    void            findBlebs(vector<Bleb> &blebs);
 
 signals:
     void    load1stImage(QImage image);
