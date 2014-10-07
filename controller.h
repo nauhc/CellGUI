@@ -30,15 +30,11 @@ private:
     Mat             *roiFrame; // roi rectangle from frame
     QImage          img; // QImage for displaying video (with box)
 
-    int             WINSIZE;
-    QList<Mat>      blebsImgWIN; // ROI images in a time window
-    QList<Rect>     rectWIN; // the rects of ROI images a time window
-
     Size            videoSize; // video frame size
     int             frameCnt; // total frame number
     double          fps; // fps
 
-    ofstream        csvFile;
+    ofstream        csvFile;// output to file
     string          csvFileName;
 
     FindContour     *contour; // findcontour class object
@@ -51,7 +47,12 @@ private:
 
     int             videoType; // 1.single cell 2.fix window 3.flexible
 
-    void            findBlebs(vector<Bleb> &blebs);
+    int             WINSIZE = 10;
+    int             BIN = 24;
+    double          blebSizeRatio;
+    QList<Mat>      blebsImgWIN; // ROI images in a time window
+    QList<Rect>     rectWIN; // the rects of ROI images a time window
+    void            findBlebs(int &area, Point2f &centroid, int &BIN, vector<Bleb> &blebs);
 
 signals:
     void    load1stImage(QImage image);

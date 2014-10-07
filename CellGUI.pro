@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,16 +32,20 @@ SOURCES += main.cpp\
     findcontour.cpp \
     encircle.cpp \
     areavis.cpp \
-    bleb.cpp
+    bleb.cpp \
+    narrative.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
     findcontour.h \
     encircle.h \
     areavis.h \
-    bleb.h
+    bleb.h \
+    narrative.h
 
 FORMS    += mainwindow.ui
 
 OTHER_FILES += \
-    cell.icns
+    cell.icns \
+    fragmentShader.frag \
+    vertexShader.vert

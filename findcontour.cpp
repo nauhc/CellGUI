@@ -635,6 +635,12 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
 
 }
 
+void drawPointVectors(Mat &img, vector<Point> &vec, int r, const Scalar& color){
+    for(unsigned int i = 0; i < vec.size(); i++){
+        circle(img, vec[i], r, color, -1);
+    }
+}
+
 void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       Mat &dispImg1, Mat &dispImg2,
                                       int &area, int &perimeter,
@@ -751,32 +757,15 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     Mat smooth;
     vector<Point> smoothCurve;
     smooth = curveSmooth(borderImg, contours[largest_contour_index], smoothCurve, convHull);
-    for(unsigned int i=0; i < smoothCurve.size(); i++){
-        circle(dispImg1, smoothCurve[i], 1, Scalar(255, 0, 0), -1);
-    }
+    //drawPointVectors(dispImg1, smoothCurve, 1, Scalar(159, 120, 28));
+
     bitwise_not(smooth, smooth);
     //Mat blebsImg;
     bitwise_and(smooth, cellArea, blebsImg);
     //imshow("blebs", blebsImg);
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), blebs);
-//    vector<Point> blebCtrs;
-//    recursive_connected_components(blebsImg, blebs, blebCtrs);
 
-//    // remove outliners of the blebs (noises)
-//    for (std::vector<int>::iterator itr = blebs.begin(); itr != blebs.end(); )
-//    {
-//        if ((*itr) < (blebSizeRatio*area)){
-//            blebs.erase(itr);
-//            //blebCtrs.erase(itr-blebCtrs.begin());
-//        }
-//        else
-//            itr++;
-//    }
-
-//    for(unsigned int i = 0; i < blebCtrs.size(); i++){
-//        circle(dispImg1, blebCtrs[i], 2, Scalar(255, 255, 0));
-//    }
     QString cellFileName2 = "dispImg1" + QString::number(frameNum) + ".png";
     imwrite(cellFileName2.toStdString(), dispImg1);
 

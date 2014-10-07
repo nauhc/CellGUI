@@ -16,10 +16,11 @@ class Bleb
 public:
     int size;
     Point center;
-    vector<polarPoint> area;
+    vector<polarPoint> bunch_polar;
     RotatedRect roughArea;
+    int bin;
 
-    Bleb(vector<Point> &bunch);
+    Bleb(vector<Point> &bunch, Point2f &centroid, int &BIN);
     ~Bleb();
 };
 
