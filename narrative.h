@@ -3,7 +3,7 @@
 
 #include <QGLWidget>
 #include <QGLShaderProgram>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 
 
@@ -23,10 +23,16 @@ protected:
 private:
     QMatrix4x4                  pMatrix;
     QGLShaderProgram            shaderProgram;
-    QVector<float>              vertices;
-    QGLBuffer                   vbo;
+    QVector<float>              ringArcObj;
+    QVector<float>              ringArcObj1;
+    QOpenGLBuffer               vbo;
+    QOpenGLBuffer               vbo1;
     QOpenGLVertexArrayObject    vao;
 
+    QVector<QOpenGLBuffer>      vbo_v;
+    QVector<QVector<float>>     obj_v;
+
+    void shaderDrawArcObj(QOpenGLBuffer &vbo, QVector<float> &obj,  QVector4D &color);
 };
 
 #endif // NARRATIVE_H

@@ -10,20 +10,51 @@
 // 193.0/255.0, 194.0/255.0, 196.0/255.0    -> light gray fg
 
 QVector4D GREEN = QVector4D(97.0/255.0, 149.0/255.0, 5.0/255.0, 1.0);
+QVector4D LIGHTGRAY = QVector4D(193.0/255.0, 194.0/255.0, 196.0/255.0, 1.0);
 
 Narrative::Narrative(const QGLFormat &format, QWidget *parent):
-    QGLWidget(format, parent), vbo(QGLBuffer::VertexBuffer)
+    QGLWidget(format, parent), vbo(QOpenGLBuffer::VertexBuffer), vbo1(QOpenGLBuffer::VertexBuffer)
 {
+    vbo_v.clear();
+    obj_v.clear();
 }
 
 Narrative::~Narrative()
 {
-
 }
 
 QSize Narrative::sizeHint() const
 {
     return QSize(1024, 1024);
+}
+
+QVector<float> ringArc(float inner, float outer, float ratio, unsigned int sample = 100){
+
+    QVector<float> ver;
+    for( unsigned int i = 0; i <= sample; ++i )
+    {
+        float angle  = (   i   / (float)sample * ratio ) * 3.14159f * 2.0f;
+        ver << inner * cos( angle )  << inner * sin( angle  ) << -2;
+        ver << outer * cos( angle )  << outer * sin( angle  ) << -2;
+
+    /*
+        float angle1 = ( (i+1) / (float)sample * ratio ) * 3.14159f * 2.0f;
+        ver << inner * cos( angle1 ) << inner * sin( angle1 ) << -2;
+        ver << inner * cos( angle )  << inner * sin( angle  ) << -2;
+        ver << outer * cos( angle )  << outer * sin( angle  ) << -2;
+
+        ver << inner * cos( angle1 ) << inner * sin( angle1 ) << -2;
+        ver << outer * cos( angle  ) << outer * sin( angle  ) << -2;
+        ver << outer * cos( angle1 ) << outer * sin( angle1 ) << -2; */
+    }
+    return ver;
+}
+
+void setupVBO(QOpenGLBuffer &vbo, QVector<float> &obj){
+    vbo.create();
+    vbo.bind();
+    vbo.allocate(obj.data(), obj.size()* sizeof(float));
+    vbo.release();
 }
 
 void Narrative::initializeGL()
@@ -35,43 +66,24 @@ void Narrative::initializeGL()
 
     shaderProgram.addShaderFromSourceFile(QGLShader::Vertex, "vertexShader.vert");
     shaderProgram.addShaderFromSourceFile(QGLShader::Fragment, "fragmentShader.frag");
+    shaderProgram.link();
+    shaderProgram.bind();
 
-//    vertices << 1  << 0 << -2
-//             << 0  << 1 << -2
-//             << -1 << 0 << -2;
+    float ratio = 5./7.;
+    float inner = 0.3, outer = 0.35;
+    ringArcObj = ringArc(inner, outer, ratio);
 
-    float inner = 0.5, outer = 1.0;
-    unsigned int pts = 100;
-    for( unsigned int i = 0; i <= pts; ++i )
-    {
-        float angle  = (    i  / (float)pts * 5 / 7 ) * 3.14159f * 2.0f;
-        float angle1 = ( (i+1) / (float)pts * 5 / 7 ) * 3.14159f * 2.0f;
-        vertices << inner * cos( angle1 )  << inner * sin( angle1 ) << -2;
-        vertices << inner * cos( angle )  << inner * sin( angle ) << -2;
-        vertices << outer * cos( angle )  << outer * sin( angle ) << -2;
-
-        vertices << inner * cos( angle1 )  << inner * sin( angle1 ) << -2;
-        vertices << outer * cos( angle )  << outer * sin( angle ) << -2;
-        vertices << outer * cos( angle1 )  << outer * sin( angle1 ) << -2;
-
-    }
+    inner = 0.5; outer = 0.85;
+    ringArcObj1 = ringArc(inner, outer, ratio);
 
     vao.create();
     vao.bind();
 
-    vbo.create();
-    vbo.bind();
-    vbo.allocate(vertices.data(), vertices.size()*sizeof(float));
+    setupVBO(vbo, ringArcObj);
+    setupVBO(vbo1, ringArcObj1);
 
-    shaderProgram.bind();
-    shaderProgram.setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    shaderProgram.enableAttributeArray("vertex");
-
-
-    shaderProgram.release();
-    vbo.release();
     vao.release();
-
+    shaderProgram.release();
 }
 
 void Narrative::resizeGL(int w, int h)
@@ -86,6 +98,15 @@ void Narrative::resizeGL(int w, int h)
     glViewport(0, 0, w, h);
 }
 
+void Narrative::shaderDrawArcObj(QOpenGLBuffer &vbo, QVector<float> &obj, QVector4D &color){
+    vbo.bind();
+    shaderProgram.setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+    shaderProgram.enableAttributeArray("vertex");
+    shaderProgram.setUniformValue("arcColor", color);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, (obj.size())/3);
+    vbo.release();
+}
+
 void Narrative::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -96,13 +117,10 @@ void Narrative::paintGL()
 
     shaderProgram.bind();
     shaderProgram.setUniformValue("mvpMatrix", pMatrix*mMatrix*vMatrix);
-    shaderProgram.setUniformValue("color", GREEN);
-
 
     vao.bind();
-
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size()/3);
-
+    shaderDrawArcObj(vbo, ringArcObj, GREEN);
+    shaderDrawArcObj(vbo1, ringArcObj1, LIGHTGRAY);
     vao.release();
 
     shaderProgram.release();

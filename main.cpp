@@ -11,14 +11,14 @@ int main(int argc, char *argv[])
     w.setWindowIcon(QIcon("./cell.icns"));
     w.show();
 
-    QGLFormat qglFormat;
-    qglFormat.setDepthBufferSize(24);
-    qglFormat.setVersion(3, 3);
-    qglFormat.setSamples(16);
-    qglFormat.setProfile(QGLFormat::CoreProfile); // CompatibilityProfile does NOT work
+//    QGLFormat qglFormat;
+//    qglFormat.setDepthBufferSize(24);
+//    qglFormat.setVersion(3, 3);
+//    qglFormat.setSamples(16);
+//    qglFormat.setProfile(QGLFormat::CoreProfile); // CompatibilityProfile does NOT work
 
-    Narrative narrative(qglFormat);
-    narrative.show();
+//    Narrative narrative(qglFormat);
+//    narrative.show();
 
     return a.exec();
 }

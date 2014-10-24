@@ -1,9 +1,12 @@
 #version 330
 
-uniform vec4 color;
-out vec4 fragColor;
+uniform vec4 arcColor;
+//uniform vec4 bgArcColor;
+out vec4 arcFragColor;
+//out vec4 bgArcFragColor;
 
 void main(void)
 {
-    fragColor = color;
+    arcFragColor = arcColor;
+    //bgArcFragColor = bgArcColor;
 }
