@@ -14,9 +14,10 @@ ICON        = cell.icns
 
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
 #opencv
-INCLUDEPATH += /usr/local/include/opencv
-INCLUDEPATH += /usr/local/include/opencv2
-INCLUDEPATH += /usr/local/include/
+INCLUDEPATH += /usr/local/Cellar/opencv/2.4.8.2/include/opencv2/
+INCLUDEPATH += /usr/local/Cellar/opencv/2.4.8.2/include/opencv/
+INCLUDEPATH += /usr/local/Cellar/opencv/2.4.8.2/include/
+
 LIBS+= -L/usr/local/lib/ \
     -lopencv_core.2.4.8 \
     -lopencv_highgui.2.4.8 \
@@ -33,7 +34,8 @@ SOURCES += main.cpp\
     encircle.cpp \
     areavis.cpp \
     bleb.cpp \
-    narrative.cpp
+    narr.cpp \
+    OpenGLWindow.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -41,7 +43,8 @@ HEADERS  += mainwindow.h \
     encircle.h \
     areavis.h \
     bleb.h \
-    narrative.h
+    narr.h \
+    OpenGLWindow.h
 
 FORMS    += mainwindow.ui
 
