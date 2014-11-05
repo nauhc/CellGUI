@@ -3,6 +3,7 @@
 
 #include "OpenGLWindow.h"
 
+
 class Narr : public OpenGLWindow
 {
     Q_OBJECT
@@ -25,6 +26,7 @@ private:
     std::vector<float>      blebNum; // the values of a particular feature
     QVector<QPoint>         centroid; // the values of a particular feature
     unsigned int            max; // total number of frame
+    QVector<QImage>         cells; // keyframe of cells
 
 };
 

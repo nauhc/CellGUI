@@ -109,6 +109,30 @@ void dilErodContours(Mat &dilerod,
     drawContours( drawTarget, contours, largest_contour_index, Scalar(81,172,251), 1, 8, hierarchy, 0, Point() );
 }
 
+Mat createAlphaMat(Mat &mat)
+{
+    Mat mat_alpha(mat.rows, mat.cols, CV_8UC4);
+    for (int i = 0; i < mat.rows; ++i) {
+        for (int j = 0; j < mat.cols; ++j) {
+            int v = mat.at<uchar>(i,j);
+            if(v == 0){
+                Vec4b& rgba = mat_alpha.at<Vec4b>(i, j);
+                rgba[0] = saturate_cast<uchar>(1.0 * UCHAR_MAX);
+                rgba[1] = saturate_cast<uchar>(1.0 * UCHAR_MAX);
+                rgba[2] = saturate_cast<uchar>(1.0 * UCHAR_MAX);
+                rgba[3] = saturate_cast<uchar>(0.0 * UCHAR_MAX);
+            }else{
+                Vec4b& rgba = mat_alpha.at<Vec4b>(i, j);
+                rgba[0] = saturate_cast<uchar>(v/255.0 * UCHAR_MAX);
+                rgba[1] = saturate_cast<uchar>(v/255.0 * UCHAR_MAX);
+                rgba[2] = saturate_cast<uchar>(v/255.0 * UCHAR_MAX);
+                rgba[3] = saturate_cast<uchar>(1.0 * UCHAR_MAX);
+            }
+        }
+    }
+    return mat_alpha;
+}
+
 
 void watershedWithErosion(Mat &in, Mat &dispImg1, Mat &out){ //in->adapThreshImg1
     Mat element1 = getStructuringElement( MORPH_ELLIPSE, Size( 2*1+1, 2*1+1 ), Point(1, 1));
@@ -747,10 +771,15 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     drawContours(borderImg, contours, largest_contour_index, Scalar(255), 1, 8, hierarchy, 0, Point());
     //QString cellFileName0 = "border" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName0.toStdString(), borderImg);
-//    Mat cell;
-//    bitwise_and(cellArea, sub, cell);
-//    QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
-//    imwrite(cellFileName1.toStdString(), cell);
+    Mat cell;
+    bitwise_and(cellArea, sub, cell);
+    Mat cell_alpha;
+    cell_alpha = createAlphaMat(cell);
+    vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(9);
+    QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
+    imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
     ////---- draw largest contour end ----
 
     // find the number and the sizes of blebs of the cell
