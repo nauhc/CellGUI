@@ -19,6 +19,43 @@
 <h1>Compressed Cell Video Visualization Project Log</h1>
 
 Chuan Wang @ ViDi
+
+<h2> ----- Nov 7<sup>th</sup> 2014 ----- </h2>
+    <h3> Visualization </h3>
+    The preliminary narrative (OpenGL) of a life circle of cell is showed below. <br><br>
+        <div class="row">
+                <div class="col-md-12 thumbnail" >
+                    <img src = "narr0.png" alt = "narrative">
+                </div>
+        </div>
+        <ul>
+            <li> <span style="color: green"><b>Green ring arcs</b></span>: indicates the stages of the cell. Color will have the meaning of a particular feature level. </li>
+            <li> <span style="color: gray"><b>Gray cell images</b></span>: indicates the representative shape of the cell in each stage. </li>
+            <li> <span style="color: orange"><b>Orange circular bars</b></span>: indicates a particular feature (area in this graph) level in each frame. </li>
+        </ul>
+
+        The following are the points that need refinement:
+        <ul>
+            <li> <span style="color: green"><b>Green ring arcs</b></span>: add frame(time) to the end of each stage.</li>
+            <li> <span style="color: gray"><b>Gray cell images</b></span>: 
+                <ul>
+                    <li> problem 1: very noisy along the edges -> solution: add margin (2-3 pixels) to the cell images. </li>
+                    <li> problem 2: hard to see details -> enlarge the contrast. </li>
+                </ul>
+            <li> <span style="color: orange"><b>Orange circular bars</b></span>: 
+                <ul>
+                    <li> problem 1: anti-aliasing is turned on but still looks bad because there are too many bars -> solution: try circular line chart and fill the area inside with orange color; alternate solution: draw a bar for every 5 frames so that the bar numbers become 1/5 of the current.</li>
+                    <li> problem 2: huge step at the end of the life circle due to the shrink of the size. -> looking for a way making it better.</li>
+                    <li> Will use color indicating stages.</li>
+                </ul>
+            </li>
+        </ul>
+        Further plan: 
+        <ul>
+            <li> Connect data in other part of the program to draw real-time narrative and give the stages after reaching the end of the life circle. </li>
+            <li> Add UI function letting user choose the feature they want to know, and look into the details in one stage. </li>
+        </ul>
+
 <h2> ----- Sep 10<sup>th</sup> 2014 ----- </h2>
     <h3> Detection </h3>
         The blebs number and relative sizes are detected by the following steps.
