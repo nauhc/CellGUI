@@ -156,7 +156,7 @@ void drawRingArc(QPainter   *painter,
 
 }
 
-void drawBar(QPainter *painter, std::vector<float> feature,
+void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
              qreal innerRadius, qreal thickness,
              qreal strtRto, QColor color) //clockwise
 {
@@ -173,7 +173,7 @@ void drawBar(QPainter *painter, std::vector<float> feature,
     for(int n = 0; n < number; n++){
         //qDebug() << feature[n];
         //rotate and translate from the center to location on the ring
-        float degree = 360./number*2 * n/* - 90*/;
+        float degree = 360./number * n/* - 90*/;
         painter->rotate(degree);
         painter->translate(0, innerRadius);
         //draw a bar
@@ -183,6 +183,39 @@ void drawBar(QPainter *painter, std::vector<float> feature,
         painter->translate(0, -innerRadius);
         painter->rotate(-degree);
     }
+
+}
+
+void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
+                           qreal innerRadius, qreal thickness,
+                           qreal strtRto, QColor color) //clockwise
+{
+    QPen myPen(color);
+    myPen.setCapStyle(Qt::FlatCap);
+    painter->setPen(myPen);
+    painter->setBrush(QBrush(color));
+    std::vector<float>::const_iterator max, min;
+    max = std::max_element(std::begin(feature), std::end(feature));
+    min = std::min_element(std::begin(feature), std::end(feature));
+
+    int number  = feature.size();
+    QPolygon    polyline;
+    QPoint      begin;
+    for(int n = 0; n < number; n++)
+    {
+        //rotate and translate from the center to location on the ring
+        float degree = (360./number * n + 90) * M_PI/180;
+        float barheight = float(feature[n] - (*min)) / (*max - *min) * thickness*(1-strtRto) + thickness *strtRto;
+        float radius    = barheight + innerRadius;
+        QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
+        if(n == 0)
+            begin = point;
+        polyline << point;
+    }
+    //connect to the beginning
+    polyline << begin;
+    //draw polyline
+    painter->drawPolyline(polyline);
 
 }
 
@@ -255,7 +288,8 @@ void Narr::render(QPainter *painter)
     //draw circular bar
     qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + 150.0;
     qreal areaBarThinkness      = 150.0;
-    drawBar(painter, area, areaBarInnerRadius, areaBarThinkness, 0.01, gradualColor(ORANGE, 0.4));
+    drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
+    drawCircularLineChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
 //    qreal periBarInnerRadius    = areaBarInnerRadius + areaBarThinkness + 30.0;
 //    qreal periBarThinkness      = 50.0;
@@ -267,7 +301,8 @@ void Narr::render(QPainter *painter)
 //    painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
     // draw cells
     qreal cellRadius = ringArcInnerRadius + ringArcThickness + 70;
-    for(int n = 0; n < cells.size(); n++){
+    for(int n = 0; n < cells.size(); n++)
+    {
         float degree = n * 360./cells.size();
         int x_center = cellRadius * cos(degree*M_PI/180);
         int y_center = cellRadius * sin(degree*M_PI/180);
