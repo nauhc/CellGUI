@@ -21,7 +21,7 @@ QColor WHITE    = QColor(255, 255, 255);
 QColor YELLOW    = QColor(247, 154, 1);
 
 
-Narr::Narr()
+Narr::Narr(QWidget *parent)
 {
     area.clear();
     stage.clear();
@@ -75,6 +75,11 @@ Narr::Narr()
     cells.push_back(cell3.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell3.width(),cellScale*cell3.height(),Qt::KeepAspectRatio));
     cells.push_back(cell4.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell4.width(),cellScale*cell4.height(),Qt::KeepAspectRatio));
     //should be getting from controller -- end --
+}
+
+Narr::~Narr()
+{
+
 }
 
 void Narr::buildFeature(float f)
@@ -248,8 +253,8 @@ void drawXY(){
 void Narr::render(QPainter *painter)
 {
     // set (0,0) to the center of the canvas
-    QPointF center(this->size().width()/2,
-                   this->size().height()/2);
+    QPointF center(/*this->size().width()/2*/this->width()/2,
+                   /*this->size().height()/2*/this->height()/2);
     painter->translate(center.x(), center.y());
     // set the start angle to 0 o'clock;
     painter->rotate(-90); //***x->up, y->right***

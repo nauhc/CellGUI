@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     areavis.cpp \
     bleb.cpp \
     narr.cpp \
-    OpenGLWindow.cpp
+    OpenGLWindow.cpp \
+    coord.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -44,7 +45,8 @@ HEADERS  += mainwindow.h \
     areavis.h \
     bleb.h \
     narr.h \
-    OpenGLWindow.h
+    OpenGLWindow.h \
+    coord.h
 
 FORMS    += mainwindow.ui
 

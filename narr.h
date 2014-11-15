@@ -8,7 +8,8 @@ class Narr : public OpenGLWindow
 {
     Q_OBJECT
 public:
-    Narr();
+    Narr(QWidget *parent = 0);
+    ~Narr();
     void buildFeature(float f);
     void buildStage(unsigned int index);
     void getMax(unsigned int m);

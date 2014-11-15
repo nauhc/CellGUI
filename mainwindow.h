@@ -10,6 +10,8 @@
 #include "controller.h"
 #include "encircle.h"
 #include "areavis.h"
+#include "narr.h"
+#include "coord.h"
 
 typedef vector<float> floatArray;
 
@@ -58,10 +60,14 @@ private:
     Ui::MainWindow  *ui;
     Controller      *myController;
     Encircle        *encircler;
+    bool            encircled;
+
     DataVis         *prop1Vis;
     DataVis         *prop2Vis;
-    bool            encircled;
     QVector<QString> checkedBoxes;
+
+    Narr            *narr1Vis;
+    Narr            *narr2Vis;
 
     void setCanvas();
 };

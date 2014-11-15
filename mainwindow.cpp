@@ -227,6 +227,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                          QString::number(prmtVisColor.blue())+");"+font20);
         ui->prop2VisLabel->setText("  PERIMETER (pixels)");
     }
+    else
+    {
+        narr1Vis = new Narr();
+        narr1Vis->resize(512, 512);
+        narr1Vis->show();
+        QWidget *container = QWidget::createWindowContainer(narr1Vis, this->centralWidget());
+        QRect narr1VisRect = QRect(40, 600, /*(this->width()-160)/2*/600, 600);
+        container->setGeometry(narr1VisRect);
+
+        //narr2Vis = new Coord();
+
+    }
+
     encircler = new Encircle(this->centralWidget());
     //encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
