@@ -236,7 +236,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         QRect narr1VisRect = QRect(40, 600, /*(this->width()-160)/2*/600, 600);
         container->setGeometry(narr1VisRect);
 
-        //narr2Vis = new Coord();
+        narr2Vis = new Coord();
+        narr2Vis->resize(512, 512);
+        narr2Vis->show();
+        QWidget *container2 = QWidget::createWindowContainer(narr2Vis, this->centralWidget());
+        QRect narr2VisRect = QRect(40+620, 600, /*(this->width()-160)/2*/600, 600);
+        container2->setGeometry(narr2VisRect);
 
     }
 

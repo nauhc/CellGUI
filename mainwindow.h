@@ -67,7 +67,7 @@ private:
     QVector<QString> checkedBoxes;
 
     Narr            *narr1Vis;
-    Narr            *narr2Vis;
+    Coord           *narr2Vis;
 
     void setCanvas();
 };
