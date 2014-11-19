@@ -229,6 +229,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     }
     else
     {
+        // connect properties and dataVis
+        qRegisterMetaType<floatArray>("floatArray");
+        connect(myController, SIGNAL(detectedProperties(floatArray)),
+                this, SLOT(updatePropsVisUI(floatArray)));
+
+
         narr1Vis = new Narr();
         narr1Vis->resize(512, 512);
         narr1Vis->show();
@@ -527,7 +533,7 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->drawROIButton->setStyleSheet(button_released_off);
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
             ui->frameLabelRight->setText(" 0 / " + QString::number(myController->getNumberOfFrames()));
-
+            narr1Vis->getMax(myController->getNumberOfFrames());
         }
     }
     else{
@@ -567,14 +573,17 @@ inline int propIndex(QString str){
 
 void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3, prop4, prop5
     if(!NARR_MODE){
-
-    if(checkedBoxes.size()==1){
-        prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
-        prop2Vis->turnVisOff();
-    }else{
-        prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
-        prop2Vis->updateData(property[propIndex(checkedBoxes[1])], myController->getCurrentFrame());
+        if(checkedBoxes.size()==1){
+            prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
+            prop2Vis->turnVisOff();
+        }else{
+            prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
+            prop2Vis->updateData(property[propIndex(checkedBoxes[1])], myController->getCurrentFrame());
+        }
     }
+    else {
+        narr1Vis->updateProperty(property);
+        //narr1Vis->getMax();
     }
 }
 

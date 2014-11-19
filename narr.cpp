@@ -3,6 +3,8 @@
 #include <math.h>
 #include <QDebug>
 #include <vector>
+#include <iostream>
+#include <QTimer>
 #include "narr.h"
 
 // 123.0/255.0, 57.0/255.0, 144.0/255.0     -> purple
@@ -18,14 +20,19 @@ QColor ORANGE   = QColor(247, 154, 1);
 QColor BLUE     = QColor(28, 120, 159);
 QColor PURPLE   = QColor(123, 57, 144);
 QColor WHITE    = QColor(255, 255, 255);
-QColor YELLOW    = QColor(247, 154, 1);
+QColor YELLOW   = QColor(247, 154, 1);
 
 
 Narr::Narr(QWidget *parent)
 {
     area.clear();
     stage.clear();
+    cells.clear();
     stage.push_back(0);
+
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1);
 
     //should be getting from controller -- star --
     max = 3500;
@@ -41,7 +48,6 @@ Narr::Narr(QWidget *parent)
        qDebug() << "Reading csv file not found.";
     }else{
         QTextStream in(&f);
-        int cnt = 0;
         while(!in.atEnd()) { // each row
             QString line = in.readLine();
             if(line.isEmpty()){
@@ -56,7 +62,7 @@ Narr::Narr(QWidget *parent)
                 row.append(cell.trimmed().toFloat());
             }
             //qDebug() << row;
-            area.push_back(row[1]);
+            //area.push_back(row[2]);
             blebNum.push_back(row[6]);
 
         }
@@ -82,12 +88,32 @@ Narr::~Narr()
 
 }
 
-void Narr::buildFeature(float f)
-{
-    area.push_back(f);
+void Narr::printAreaData(){
+    for(unsigned int n = 0; n < area.size(); n++){
+        std::cout << area[n] << " ";
+    }
+    std::cout << std::endl;
 }
 
-void Narr::buildStage(unsigned int index)
+void Narr::updateProperty(floatArray prop)
+{
+    propSeq.push_back(prop);
+    /*
+    for(unsigned int i = 0; i < propSeq.size(); i++){
+        floatArray p = propSeq[i];
+        for(unsigned int j = 0; j < p.size(); j++){
+            std::cout << p[j] << " ";
+        }
+        std:: cout << std::endl;
+    }
+    std:: cout << std::endl; */
+
+    area.push_back(prop[0]);
+    //printAreaData();
+}
+
+
+void Narr::updateStage(unsigned int index)
 {
     stage.push_back(index);
 }
@@ -95,6 +121,7 @@ void Narr::buildStage(unsigned int index)
 void Narr::getMax(unsigned int m)
 {
     max = m;
+    //qDebug() << "NARRATIVE VIS MAX frame number " << max;
 }
 
 void Narr::initializeGL()
@@ -165,63 +192,66 @@ void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
              qreal innerRadius, qreal thickness,
              qreal strtRto, QColor color) //clockwise
 {
-    QPen myPen(color);
-    myPen.setCapStyle(Qt::FlatCap);
-    painter->setPen(myPen);
-    painter->setBrush(QBrush(color));
-    std::vector<float>::const_iterator max, min;
-    max = std::max_element(std::begin(feature), std::end(feature));
-    min = std::min_element(std::begin(feature), std::end(feature));
+    if (feature.size() != 0){
+        QPen myPen(color);
+        myPen.setCapStyle(Qt::FlatCap);
+        painter->setPen(myPen);
+        painter->setBrush(QBrush(color));
+        std::vector<float>::const_iterator max, min;
+        max = std::max_element(std::begin(feature), std::end(feature));
+        min = std::min_element(std::begin(feature), std::end(feature));
+        qDebug() << "MAX" << *max << "MIN" << *min;
 
-    int number = feature.size();
-    //qDebug() << number;
-    for(int n = 0; n < number; n++){
-        //qDebug() << feature[n];
-        //rotate and translate from the center to location on the ring
-        float degree = 360./number * n/* - 90*/;
-        painter->rotate(degree);
-        painter->translate(0, innerRadius);
-        //draw a bar
-        float barheight = float(feature[n] - (*min)) / (*max - *min) * thickness*(1-strtRto) + thickness *strtRto;
-        painter->drawRoundedRect(0, 0, 2.*M_PI/number - 2, barheight, 5.0, 3.0);
-        // translate and rotate back to the center
-        painter->translate(0, -innerRadius);
-        painter->rotate(-degree);
+        int number = feature.size();
+        //qDebug() << number;
+        for(int n = 0; n < number; n++){
+            //qDebug() << feature[n];
+            //rotate and translate from the center to location on the ring
+            float degree = 360./number * n/* - 90*/;
+            painter->rotate(degree);
+            painter->translate(0, innerRadius);
+            //draw a bar
+            float barheight = float(feature[n] - (*min)) / (*max - *min) * thickness*(1-strtRto) + thickness *strtRto;
+            painter->drawRoundedRect(0, 0, 2.*M_PI/number - 2, barheight, 5.0, 3.0);
+            // translate and rotate back to the center
+            painter->translate(0, -innerRadius);
+            painter->rotate(-degree);
+        }
     }
-
 }
 
 void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
                            qreal innerRadius, qreal thickness,
                            qreal strtRto, QColor color) //clockwise
 {
-    QPen myPen(color);
-    myPen.setCapStyle(Qt::FlatCap);
-    painter->setPen(myPen);
-    painter->setBrush(QBrush(color));
-    std::vector<float>::const_iterator max, min;
-    max = std::max_element(std::begin(feature), std::end(feature));
-    min = std::min_element(std::begin(feature), std::end(feature));
+    if (feature.size() != 0){
+        QPen myPen(color);
+        myPen.setCapStyle(Qt::FlatCap);
+        painter->setPen(myPen);
+        painter->setBrush(QBrush(color));
+        std::vector<float>::const_iterator max, min;
+        max = std::max_element(std::begin(feature), std::end(feature));
+        min = std::min_element(std::begin(feature), std::end(feature));
 
-    int number  = feature.size();
-    QPolygon    polyline;
-    QPoint      begin;
-    for(int n = 0; n < number; n++)
-    {
-        //rotate and translate from the center to location on the ring
-        float degree = (360./number * n + 90) * M_PI/180;
-        float barheight = float(feature[n] - (*min)) / (*max - *min) * thickness*(1-strtRto) + thickness *strtRto;
-        float radius    = barheight + innerRadius;
-        QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
-        if(n == 0)
-            begin = point;
-        polyline << point;
+        int number  = feature.size();
+        QPolygon    polyline;
+        QPoint      begin;
+        for(int n = 0; n < number; n++)
+        {
+            //rotate and translate from the center to location on the ring
+            float degree = (360./number * n + 90) * M_PI/180;
+            float barheight = float(feature[n] - (*min)) / (*max - *min) * thickness*(1-strtRto) + thickness *strtRto;
+            float radius    = barheight + innerRadius;
+            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
+            if(n == 0)
+                begin = point;
+            polyline << point;
+        }
+        //connect to the beginning
+        polyline << begin;
+        //draw polyline
+        painter->drawPolyline(polyline);
     }
-    //connect to the beginning
-    polyline << begin;
-    //draw polyline
-    painter->drawPolyline(polyline);
-
 }
 
 void drawTriangle(QPainter *painter,
@@ -253,8 +283,10 @@ void drawXY(){
 void Narr::render(QPainter *painter)
 {
     // set (0,0) to the center of the canvas
-    QPointF center(/*this->size().width()/2*/this->width()/2,
-                   /*this->size().height()/2*/this->height()/2);
+    qreal   halfW = this->width()/2; // half width
+    qreal   halfH = this->height()/2; // half height
+    qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
+    QPointF center(halfW, halfH + 50);
     painter->translate(center.x(), center.y());
     // set the start angle to 0 o'clock;
     painter->rotate(-90); //***x->up, y->right***
@@ -262,8 +294,8 @@ void Narr::render(QPainter *painter)
     painter->setRenderHint(QPainter::Antialiasing);
 
     // draw ring arcs
-    qreal ringArcInnerRadius    = 70.0;
-    qreal ringArcThickness      = 20.0;
+    qreal ringArcInnerRadius    = .20 * halfS;
+    qreal ringArcThickness      = .05 * halfS;
     for(int n = 0; n < stage.size() - 1; n++)
     {
         //float p = rand() % 100 / 100.;
@@ -291,8 +323,9 @@ void Narr::render(QPainter *painter)
     painter->rotate(180); //***x->left, y->up***
 
     //draw circular bar
-    qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + 150.0;
-    qreal areaBarThinkness      = 150.0;
+    qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .45 * halfS;
+    qreal areaBarThinkness      = .45 * halfS;
+    //printAreaData();
     drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
     drawCircularLineChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
@@ -319,10 +352,10 @@ void Narr::render(QPainter *painter)
     }
 }
 
-void Narr::resizeGL(int w, int h)
-{
+//void Narr::resizeGL(int w, int h)
+//{
 
-}
+//}
 
 
 
