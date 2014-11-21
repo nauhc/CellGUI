@@ -11,7 +11,7 @@ class Narr : public OpenGLWindow
 public:
     Narr(QWidget *parent = 0);
     ~Narr();
-    void updateProperty(floatArray prop);
+    void updateProperty(floatArray prop, int currFrame);
     void updateStage(unsigned int index);
     void getMax(unsigned int m);
 
@@ -31,10 +31,17 @@ private:
     std::vector<float>      blebNum; // the values of a particular feature
     QVector<QPoint>         centroid; // the values of a particular feature
 
+    unsigned int            curr; // current frame index
     unsigned int            max; // total number of frame
     QVector<QImage>         cells; // keyframe of cells
 
     void printAreaData();
+    void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
+                              qreal innerRadius, qreal thickness,
+                              qreal strtRto, QColor color);
+    void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
+                               qreal innerRadius, qreal thickness,
+                               qreal strtRto, QColor color);
 };
 
 #endif // NARR_H

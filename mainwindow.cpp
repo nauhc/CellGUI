@@ -582,7 +582,7 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
         }
     }
     else {
-        narr1Vis->updateProperty(property);
+        narr1Vis->updateProperty(property, myController->getCurrentFrame());
         //narr1Vis->getMax();
     }
 }

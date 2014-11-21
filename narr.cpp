@@ -22,6 +22,9 @@ QColor PURPLE   = QColor(123, 57, 144);
 QColor WHITE    = QColor(255, 255, 255);
 QColor YELLOW   = QColor(247, 154, 1);
 
+inline int larger(int a, int b){
+    return (a > b ? a : b);
+}
 
 Narr::Narr(QWidget *parent)
 {
@@ -35,13 +38,15 @@ Narr::Narr(QWidget *parent)
     timer->start(1);
 
     //should be getting from controller -- star --
-    max = 3500;
-    stage.push_back(218);
-    stage.push_back(1001);
-    stage.push_back(1377);
-    stage.push_back(2200);
-    stage.push_back(2883);
-    stage.push_back(max);
+    curr = 0;
+    max  = 1;
+//    max = 3500;
+//    stage.push_back(218);
+//    stage.push_back(1001);
+//    stage.push_back(1377);
+//    stage.push_back(2200);
+//    stage.push_back(2883);
+//    stage.push_back(max);
 
     QFile f("/Users/chuanwang/Sourcecode/CellGUI/video/movie_10172013_bv2_control01_original_sampled copy.csv");
     if(!f.open(QIODevice::ReadOnly)){
@@ -69,17 +74,17 @@ Narr::Narr(QWidget *parent)
     }
     f.close();
 
-    QImage cell0("/Users/chuanwang/Sourcecode/CellGUI/video/cell91.png");
-    QImage cell1("/Users/chuanwang/Sourcecode/CellGUI/video/cell212.png");
-    QImage cell2("/Users/chuanwang/Sourcecode/CellGUI/video/cell318.png");
-    QImage cell3("/Users/chuanwang/Sourcecode/CellGUI/video/cell630.png");
-    QImage cell4("/Users/chuanwang/Sourcecode/CellGUI/video/cell1523.png");
-    qreal cellScale = 0.6;
-    cells.push_back(cell0.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell0.width(),cellScale*cell0.height(),Qt::KeepAspectRatio));
-    cells.push_back(cell1.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell1.width(),cellScale*cell1.height(),Qt::KeepAspectRatio));
-    cells.push_back(cell2.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell2.width(),cellScale*cell2.height(),Qt::KeepAspectRatio));
-    cells.push_back(cell3.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell3.width(),cellScale*cell3.height(),Qt::KeepAspectRatio));
-    cells.push_back(cell4.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell4.width(),cellScale*cell4.height(),Qt::KeepAspectRatio));
+//    QImage cell0("/Users/chuanwang/Sourcecode/CellGUI/video/cell91.png");
+//    QImage cell1("/Users/chuanwang/Sourcecode/CellGUI/video/cell212.png");
+//    QImage cell2("/Users/chuanwang/Sourcecode/CellGUI/video/cell318.png");
+//    QImage cell3("/Users/chuanwang/Sourcecode/CellGUI/video/cell630.png");
+//    QImage cell4("/Users/chuanwang/Sourcecode/CellGUI/video/cell1523.png");
+//    qreal cellScale = 0.6;
+//    cells.push_back(cell0.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell0.width(),cellScale*cell0.height(),Qt::KeepAspectRatio));
+//    cells.push_back(cell1.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell1.width(),cellScale*cell1.height(),Qt::KeepAspectRatio));
+//    cells.push_back(cell2.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell2.width(),cellScale*cell2.height(),Qt::KeepAspectRatio));
+//    cells.push_back(cell3.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell3.width(),cellScale*cell3.height(),Qt::KeepAspectRatio));
+//    cells.push_back(cell4.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell4.width(),cellScale*cell4.height(),Qt::KeepAspectRatio));
     //should be getting from controller -- end --
 }
 
@@ -95,7 +100,7 @@ void Narr::printAreaData(){
     std::cout << std::endl;
 }
 
-void Narr::updateProperty(floatArray prop)
+void Narr::updateProperty(floatArray prop, int currFrame)
 {
     propSeq.push_back(prop);
     /*
@@ -107,6 +112,7 @@ void Narr::updateProperty(floatArray prop)
         std:: cout << std::endl;
     }
     std:: cout << std::endl; */
+    curr = currFrame;
 
     area.push_back(prop[0]);
     //printAreaData();
@@ -188,7 +194,7 @@ void drawRingArc(QPainter   *painter,
 
 }
 
-void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
+void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
              qreal innerRadius, qreal thickness,
              qreal strtRto, QColor color) //clockwise
 {
@@ -197,22 +203,23 @@ void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
         myPen.setCapStyle(Qt::FlatCap);
         painter->setPen(myPen);
         painter->setBrush(QBrush(color));
-        std::vector<float>::const_iterator max, min;
-        max = std::max_element(std::begin(feature), std::end(feature));
-        min = std::min_element(std::begin(feature), std::end(feature));
-        qDebug() << "MAX" << *max << "MIN" << *min;
+        std::vector<float>::const_iterator max_it, min_it;
+        max_it = std::max_element(std::begin(feature), std::end(feature));
+        min_it = std::min_element(std::begin(feature), std::end(feature));
+        //qDebug() << "MAX" << *max << "MIN" << *min;
 
         int number = feature.size();
         //qDebug() << number;
         for(int n = 0; n < number; n++){
             //qDebug() << feature[n];
             //rotate and translate from the center to location on the ring
-            float degree = 360./number * n/* - 90*/;
+            float degree = 360./max * n/* - 90*/;
             painter->rotate(degree);
             painter->translate(0, innerRadius);
             //draw a bar
-            float barheight = float(feature[n] - (*min)) / (*max - *min) * thickness*(1-strtRto) + thickness *strtRto;
-            painter->drawRoundedRect(0, 0, 2.*M_PI/number - 2, barheight, 5.0, 3.0);
+            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
+            float w = 2.*M_PI/max*number;
+            painter->drawRoundedRect(0, 0, w, barheight, 2.0, 2.0);
             // translate and rotate back to the center
             painter->translate(0, -innerRadius);
             painter->rotate(-degree);
@@ -220,7 +227,7 @@ void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
     }
 }
 
-void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
+void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
                            qreal innerRadius, qreal thickness,
                            qreal strtRto, QColor color) //clockwise
 {
@@ -229,9 +236,9 @@ void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
         myPen.setCapStyle(Qt::FlatCap);
         painter->setPen(myPen);
         painter->setBrush(QBrush(color));
-        std::vector<float>::const_iterator max, min;
-        max = std::max_element(std::begin(feature), std::end(feature));
-        min = std::min_element(std::begin(feature), std::end(feature));
+        std::vector<float>::const_iterator max_it, min_it;
+        max_it = std::max_element(std::begin(feature), std::end(feature));
+        min_it = std::min_element(std::begin(feature), std::end(feature));
 
         int number  = feature.size();
         QPolygon    polyline;
@@ -239,8 +246,8 @@ void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
         for(int n = 0; n < number; n++)
         {
             //rotate and translate from the center to location on the ring
-            float degree = (360./number * n + 90) * M_PI/180;
-            float barheight = float(feature[n] - (*min)) / (*max - *min) * thickness*(1-strtRto) + thickness *strtRto;
+            float degree = (360./max*number * n + 90) * M_PI/180;
+            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
             float radius    = barheight + innerRadius;
             QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
             if(n == 0)
@@ -293,38 +300,57 @@ void Narr::render(QPainter *painter)
 
     painter->setRenderHint(QPainter::Antialiasing);
 
-    // draw ring arcs
+    // draw ring arcs background
     qreal ringArcInnerRadius    = .20 * halfS;
     qreal ringArcThickness      = .05 * halfS;
-    for(int n = 0; n < stage.size() - 1; n++)
-    {
-        //float p = rand() % 100 / 100.;
-        float p = /*1.0 - */float(n+1) / float(stage.size());
-        drawRingArc(painter, QPointF(0,0),
-                    float(stage[n]) / float(max) * 360.0 + 1.0, // start angle
-                    float(stage[n+1] - stage[n]) / float(max) * 360.0 - 1.0, // end angle
-                    ringArcInnerRadius, ringArcThickness, gradualColor(GREEN, p));
-        //draw triangle on the end of the last ring arc
-        if ( n+1 == stage.size()-1 ){
-            painter->rotate(90); //***x->right, y->down***
+    drawRingArc(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
+    // draw real-time changing ring arcs
+    float p = float(curr)/max;
+    qreal currAngle = p * 360 - 1.0;
+    QColor c = gradualColor(GREEN, p);
+    drawRingArc(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, c);
+    /*
+    qreal p0y = qreal(ringArcInnerRadius+.5*ringArcThickness) * tan(currAngle*M_PI/180.0);
+    qreal p0x = qreal(ringArcInnerRadius+.5*ringArcThickness) / cos(currAngle*M_PI/180.0);
+    //painter->drawEllipse(QPoint(p0x, p0y), 1, 1);
+    qreal p1y = qreal(ringArcInnerRadius+ringArcThickness+5) * tan(larger(currAngle-10, 0)*M_PI/180.0);
+    qreal p1x = qreal(ringArcInnerRadius+ringArcThickness+5) / cos(larger(currAngle-10, 0)*M_PI/180.0);
+    qreal p2y = qreal(ringArcInnerRadius+ringArcThickness-5) * tan(larger(currAngle-15, 0)*M_PI/180.0);
+    qreal p2x = qreal(ringArcInnerRadius+ringArcThickness-5) / cos(larger(currAngle-15, 0)*M_PI/180.0);
+    drawTriangle(painter, p0x, p0y, p1x, p1y, p2x, p2y, gradualColor(GREEN, p)); */
 
-            qreal th1 = 20., th2 = 5.;
-            qreal p0x = 0, p0y = - (ringArcThickness + ringArcInnerRadius);
-            qreal p1x = 0 - th1, p1y = -(1.5* ringArcThickness + ringArcInnerRadius + th2);
-            qreal p2x = 0 - th1*.7, p2y = -(.3* ringArcThickness + ringArcInnerRadius - th2);
-            drawTriangle(painter, p0x, p0y, p1x, p1y, p2x, p2y, gradualColor(GREEN, p)); //gradualColor(GREEN, p)
-            qreal p3x = p0x, p3y = p1y;
-            drawTriangle(painter, p0x, p0y, p1x, p1y, p3x, p3y, WHITE);
-            qreal p4x = p0x, p4y = p2y;
-            drawTriangle(painter, p0x, p0y, p2x, p2y, p4x, p4y, WHITE);
-        }
-    }
 
-    painter->rotate(180); //***x->left, y->up***
+
+
+//    for(int n = 0; n < stage.size() - 1; n++)
+//    {
+//        //float p = rand() % 100 / 100.;
+//        float p = /*1.0 - */float(n+1) / float(stage.size());
+//        drawRingArc(painter, QPointF(0,0),
+//                    float(stage[n]) / float(max) * 360.0 + 1.0, // start angle
+//                    float(stage[n+1] - stage[n]) / float(max) * 360.0 - 1.0, // end angle
+//                    ringArcInnerRadius, ringArcThickness, gradualColor(GREEN, p));
+//        //draw triangle on the end of the last ring arc
+//        if ( n+1 == stage.size()-1 ){
+//            painter->rotate(90); //***x->right, y->down***
+
+//            qreal th1 = 20., th2 = 5.;
+//            qreal p0x = 0, p0y = - (ringArcThickness + ringArcInnerRadius);
+//            qreal p1x = 0 - th1, p1y = -(1.5* ringArcThickness + ringArcInnerRadius + th2);
+//            qreal p2x = 0 - th1*.7, p2y = -(.3* ringArcThickness + ringArcInnerRadius - th2);
+//            drawTriangle(painter, p0x, p0y, p1x, p1y, p2x, p2y, gradualColor(GREEN, p)); //gradualColor(GREEN, p)
+//            qreal p3x = p0x, p3y = p1y;
+//            drawTriangle(painter, p0x, p0y, p1x, p1y, p3x, p3y, WHITE);
+//            qreal p4x = p0x, p4y = p2y;
+//            drawTriangle(painter, p0x, p0y, p2x, p2y, p4x, p4y, WHITE);
+//        }
+//    }
+
+    painter->rotate(-90); //***x->left, y->up***
 
     //draw circular bar
     qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .45 * halfS;
-    qreal areaBarThinkness      = .45 * halfS;
+    qreal areaBarThinkness      = .30* halfS;
     //printAreaData();
     drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
     drawCircularLineChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
@@ -339,17 +365,17 @@ void Narr::render(QPainter *painter)
 //    painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
     // draw cells
     qreal cellRadius = ringArcInnerRadius + ringArcThickness + 70;
-    for(int n = 0; n < cells.size(); n++)
-    {
-        float degree = n * 360./cells.size();
-        int x_center = cellRadius * cos(degree*M_PI/180);
-        int y_center = cellRadius * sin(degree*M_PI/180);
-        painter->translate(x_center, y_center);
-        painter->rotate(90);
-        painter->drawImage(-cells[n].width()/2, -cells[n].height()/2, cells[n]);
-        painter->rotate(-90);
-        painter->translate(-x_center, -y_center);
-    }
+//    for(int n = 0; n < cells.size(); n++)
+//    {
+//        float degree = n * 360./cells.size();
+//        int x_center = cellRadius * cos(degree*M_PI/180);
+//        int y_center = cellRadius * sin(degree*M_PI/180);
+//        painter->translate(x_center, y_center);
+//        painter->rotate(90);
+//        painter->drawImage(-cells[n].width()/2, -cells[n].height()/2, cells[n]);
+//        painter->rotate(-90);
+//        painter->translate(-x_center, -y_center);
+//    }
 }
 
 //void Narr::resizeGL(int w, int h)
