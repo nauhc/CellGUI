@@ -2,6 +2,7 @@
 #define COORD_H
 
 #include "OpenGLWindow.h"
+typedef std::vector<float> floatArray;
 
 class Coord : public OpenGLWindow
 {
@@ -11,6 +12,10 @@ public:
     Coord(QWidget *parent = 0);
     ~Coord();
 
+    void updateCoord(QPointF point, int currFrame);
+    void getMaxFrm(unsigned int m);
+    void getMaxSize(QSize s);
+
 protected:
     void initializeGL();
     void render(QPainter *painter);
@@ -19,12 +24,17 @@ protected:
     QColor gradColor(QColor color, qreal percent);
 
 private:
+    unsigned int        maxFrm;
+    unsigned int        currFrm;
+
     QVector<QPointF>    centroid; // the values of a particular feature
     QPointF             max;
     QPointF             min;
-    QPointF             avg;
-    int                 cnt;
+    QPointF             currCent;
+    int                 cnt = 0;
 
 };
+
+
 
 #endif // COORD_H

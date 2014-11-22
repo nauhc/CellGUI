@@ -4,61 +4,90 @@
 #include <QDebug>
 #include <vector>
 #include <limits>
+#include <QTimer>
 #include "coord.h"
 
 QColor _BLUE_   = QColor(28, 120, 159);
 
 Coord::Coord(QWidget *parent)
 {
-    QFile f("/Users/chuanwang/Sourcecode/CellGUI/video/movie_10172013_bv2_control01_original_sampled copy.csv");
-    if(!f.open(QIODevice::ReadOnly)){
-       qDebug() << "Reading csv file not found.";
-    }else{
-        QTextStream in(&f);
-        while(!in.atEnd()) { // each row
-            QString line = in.readLine();
-            if(line.isEmpty()){
-                continue;
-            }
-            if(line.isNull()){
-                break;
-            }
-            QVector<float> row;
-            foreach (const QString &cell, line.split(",")) {
-                //row.append(cell.trimmed());
-                row.append(cell.trimmed().toFloat());
-            }
-            QPointF p(row[3], row[4]);
-            //qDebug() << p;
-            centroid.push_back(p);
-        }
-    }
-    f.close();
+//    QFile f("/Users/chuanwang/Sourcecode/CellGUI/video/movie_10172013_bv2_control01_original_sampled copy.csv");
+//    if(!f.open(QIODevice::ReadOnly)){
+//       qDebug() << "Reading csv file not found.";
+//    }else{
+//        QTextStream in(&f);
+//        while(!in.atEnd()) { // each row
+//            QString line = in.readLine();
+//            if(line.isEmpty()){
+//                continue;
+//            }
+//            if(line.isNull()){
+//                break;
+//            }
+//            QVector<float> row;
+//            foreach (const QString &cell, line.split(",")) {
+//                //row.append(cell.trimmed());
+//                row.append(cell.trimmed().toFloat());
+//            }
+//            QPointF p(row[3], row[4]);
+//            //qDebug() << p;
+//            centroid.push_back(p);
+//        }
+//    }
+//    f.close();
+    centroid.clear();
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1);
 
-    qreal x_min = std::numeric_limits<float>::max();
-    qreal y_min = std::numeric_limits<float>::max();
-    qreal x_max = 0;
-    qreal y_max = 0;
-    cnt = centroid.size();
-    for(int n = 30; n < cnt; n++){
-        if(centroid[n].x() < x_min)
-            x_min = centroid[n].x();
-        if(centroid[n].y() < y_min)
-            y_min = centroid[n].y();
-        if(centroid[n].x() > x_max)
-            x_max = centroid[n].x();
-        if(centroid[n].y() > y_max)
-            y_max = centroid[n].y();
-    }
-    min = QPointF(x_min, y_min);
-    max = QPointF(x_max, y_max);
-    avg = QPointF((x_max - x_min)/2., (y_max - y_min)/2.);
+    currFrm = 0;
+    maxFrm  = 1;
+//    min = QPoint(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+//    max = QPoint(0, 0);
+    min = QPoint(0, 0);
+    max = QPoint(50, 50);
 
 }
 
 Coord::~Coord()
 {
 
+}
+
+void Coord::updateCoord(QPointF point, int currFrame)
+{
+    currCent = QPoint(point.x(), point.y());
+    currFrm = currFrame;
+    centroid.append(point);
+    //qDebug() << "Coord Class" << currFrm << centroid;
+
+//    qreal x_min, y_min, x_max, y_max;
+//    if(point.x() < min.x())
+//        x_min = point.x();
+//    if(point.y() < min.y())
+//        y_min = point.y();
+//    if(point.x() > max.x())
+//        x_max = point.x();
+//    if(point.y() > max.y())
+//        y_max = point.y();
+//    min = QPointF(x_min, y_min);
+//    max = QPointF(x_max, y_max);
+//    avg = QPointF((x_max - x_min)/2., (y_max - y_min)/2.);
+    if(centroid.size() == 1){
+        min = QPoint(centroid[0].x() - 30, centroid[0].y() - 30);
+        max = QPoint(centroid[0].x() + 30, centroid[0].y() + 30);
+    }
+}
+
+void Coord::getMaxFrm(unsigned int m)
+{
+    maxFrm = m;
+}
+
+void Coord::getMaxSize(QSize s)
+{
+    max = QPoint(s.width(), s.height());
+    min = QPoint(0, 0);
 }
 
 void Coord::initializeGL()
@@ -113,18 +142,46 @@ void Coord::render(QPainter *painter)
     painter->drawLine(QPointF(-(halfW*rto), 0), QPointF(halfW*rto, 0));
     drawTextCoord(painter, QPointF(halfW*rto + 20, 0), "X");
     // max and min on X axis
-    drawTextCoord(painter, QPointF(  halfW*rto1 ,  10), QString::number(int(max.x())));
-    drawTextCoord(painter, QPointF(-(halfW*rto1), -10), QString::number(int(min.x())));
-    // Y axis
+    drawTextCoord(painter, QPointF(  halfW*rto1 ,  20), QString::number(int(/*max.x()*/25)));
+    drawTextCoord(painter, QPointF(-(halfW*rto1), -20), QString::number(int(/*min.x()*/-25)));
+    painter->drawLine(QPointF(  halfW*rto1 , -5), QPointF(  halfW*rto1 , 5));
+    painter->drawLine(QPointF(-(halfW*rto1), -5), QPointF(-(halfW*rto1), 5));
+    // max and min on Y axis
     painter->drawLine(QPointF(0, -(halfW*rto)), QPointF(0, halfW*rto));
     drawTextCoord(painter, QPointF(0, halfW*rto + 20), "Y");
     // max and min on Y axis
-    drawTextCoord(painter, QPointF( 10,   halfH*rto1 ), QString::number(int(max.y())));
-    drawTextCoord(painter, QPointF(-10, -(halfH*rto1)), QString::number(int(min.y())));
+    drawTextCoord(painter, QPointF( 20,   halfH*rto1 ), QString::number(int(/*max.y()*/25)));
+    drawTextCoord(painter, QPointF(-20, -(halfH*rto1)), QString::number(int(/*min.y()*/-25)));
+    painter->drawLine(QPointF( -5,   halfH*rto1 ), QPointF( 5,   halfH*rto1));
+    painter->drawLine(QPointF( -5, -(halfH*rto1)), QPointF( 5, -(halfH*rto1)));
+    // center text
+    if(centroid.size()>0){
+        painter->rotate(90);//***x->ringt, y->down***
+        // text for the center coordinate
+        QString centerText = "Center ( " + QString::number(int(centroid[0].x()))+", "
+                             +QString::number(int(centroid[0].y()))+" )";
+        painter->drawText(-halfW+20, -halfH+20, 150, 40, Qt::AlignCenter, centerText);
+        // text for current centroid
+        QString currText = "Centroid ( " + QString::number(int(currCent.x()))+", "
+                +QString::number(int(currCent.y()))+" )";
+        painter->drawText(halfW-170, -halfH+20, 150, 40, Qt::AlignCenter, currText);
+
+        painter->rotate(-90);
+    }
 
     //draw positions of the centroids
-    for(int n = 30; n < cnt; n++){
-        QColor c = gradColor(_BLUE_, 1. - qreal(n)/cnt);
+//    for(int n = 30; n < cnt; n++){
+//        QColor c = gradColor(_BLUE_, 1. - qreal(n)/cnt);
+//        QPen myPen(c);
+//        painter->setPen(myPen);
+//        painter->setBrush(c);
+//        painter->drawEllipse( translateCoord(centroid[n]), 2., 2.);
+//    }
+
+    int size = centroid.size();
+    for(int n = 0; n < size; n++)
+    {
+        QColor c = gradColor(_BLUE_, 1. - qreal(n)/size);
         QPen myPen(c);
         painter->setPen(myPen);
         painter->setBrush(c);

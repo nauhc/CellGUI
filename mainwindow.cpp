@@ -310,8 +310,8 @@ void MainWindow::setCanvas(){
     //set video player label size and postion
     //according to the size of the selected video
 
-    int width, height; // size of original video
-    myController->getVideoSize(width, height);
+    QSize si = myController->getVideoSize(/*width, height*/);
+    int width = si.width(), height = si.height(); // size of original video
 
     int x, y, w, h, x1, y1, w1, h1, x2, y2, w2, h2;
     double scale;
@@ -533,7 +533,8 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->drawROIButton->setStyleSheet(button_released_off);
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
             ui->frameLabelRight->setText(" 0 / " + QString::number(myController->getNumberOfFrames()));
-            narr1Vis->getMax(myController->getNumberOfFrames());
+            narr1Vis->getMaxFrm(myController->getNumberOfFrames());
+            narr2Vis->getMaxSize(myController->getVideoSize());
         }
     }
     else{
@@ -572,6 +573,9 @@ inline int propIndex(QString str){
 }
 
 void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3, prop4, prop5
+
+    //property[]: float(area), float(perimeter), centroid.x, centroid.y, shape, 0.0
+
     if(!NARR_MODE){
         if(checkedBoxes.size()==1){
             prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
@@ -583,7 +587,7 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
     }
     else {
         narr1Vis->updateProperty(property, myController->getCurrentFrame());
-        //narr1Vis->getMax();
+        narr2Vis->updateCoord(QPointF(property[2], property[3]), myController->getCurrentFrame());
     }
 }
 
@@ -705,6 +709,7 @@ void MainWindow::on_drawROIButton_clicked(){
             cout << "area min " << area_min << " max " << area_max << endl;
             cout << "prmt min " << prmt_min << " max " << prmt_max << endl;
             myController->setCircle(circle);
+
         }
     }
 }

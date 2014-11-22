@@ -85,7 +85,7 @@ public:
     double  getNumberOfFrames();
     double  getCurrentFrame();
     void    releaseVideo();
-    void    getVideoSize(int &width, int &height);
+    QSize   getVideoSize(/*int &width, int &height*/);
 
     bool    optflow(Mat &frame1, Mat &frame2, vector<Point2f> &points1, vector<Point2f> &points2);
 

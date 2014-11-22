@@ -140,10 +140,11 @@ void Controller::releaseVideo()
 }
 
 
-void Controller::getVideoSize(int &width, int &height)
+QSize Controller::getVideoSize(/*int &width, int &height*/)
 {
-    width = videoSize.width;
-    height = videoSize.height;
+    return(QSize(videoSize.width, videoSize.height));
+//    width = videoSize.width;
+//    height = videoSize.height;
 }
 
 bool Controller::optflow(Mat &frame1, Mat &frame2, vector<Point2f> &points1, vector<Point2f> &points2){
@@ -390,6 +391,7 @@ void Controller::run(){
             Rect            rect;
             vector<Bleb>    blebs; // the deteced blebs
             vector<int>     blebs_bin(BIN, 0); // for each bin, if there is a bleb -> size, if not -> 0
+            vector<Point2f> contur; // contour of the cell
 
             // optflow detection of entire frame
             vector<Point2f> points1, points2;

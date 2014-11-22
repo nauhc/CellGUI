@@ -13,7 +13,7 @@ public:
     ~Narr();
     void updateProperty(floatArray prop, int currFrame);
     void updateStage(unsigned int index);
-    void getMax(unsigned int m);
+    void getMaxFrm(unsigned int m);
 
 protected:
     void initializeGL();

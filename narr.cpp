@@ -123,7 +123,7 @@ void Narr::updateStage(unsigned int index)
     stage.push_back(index);
 }
 
-void Narr::getMax(unsigned int m)
+void Narr::getMaxFrm(unsigned int m)
 {
     max = m;
     //qDebug() << "NARRATIVE VIS MAX frame number " << max;
@@ -295,30 +295,6 @@ void Narr::render(QPainter *painter)
     drawTriangle(painter, p0x, p0y, p1x, p1y, p2x, p2y, gradualColor(GREEN, p)); */
 
 
-
-//    for(int n = 0; n < stage.size() - 1; n++)
-//    {
-//        //float p = rand() % 100 / 100.;
-//        float p = /*1.0 - */float(n+1) / float(stage.size());
-//        drawRingArc(painter, QPointF(0,0),
-//                     float(stage[n]) / float(max) * 360.0 + 1.0, // start angle
-//                    float(stage[n+1] - stage[n]) / float(max) * 360.0 - 1.0, // end angle
-//                    ringArcInnerRadius, ringArcThickness, gradualColor(GREEN, p));
-//        //draw triangle on the end of the last ring arc
-//        if ( n+1 == stage.size()-1 ){
-//            painter->rotate(90); //***x->right, y->down***
-
-//            qreal th1 = 20., th2 = 5.;
-//            qreal p0x = 0, p0y = - (ringArcThickness + ringArcInnerRadius);
-//            qreal p1x = 0 - th1, p1y = -(1.5* ringArcThickness + ringArcInnerRadius + th2);
-//            qreal p2x = 0 - th1*.7, p2y = -(.3* ringArcThickness + ringArcInnerRadius - th2);
-//            drawTriangle(painter, p0x, p0y, p1x, p1y, p2x, p2y, gradualColor(GREEN, p)); //gradualColor(GREEN, p)
-//            qreal p3x = p0x, p3y = p1y;
-//            drawTriangle(painter, p0x, p0y, p1x, p1y, p3x, p3y, WHITE);
-//            qreal p4x = p0x, p4y = p2y;
-//            drawTriangle(painter, p0x, p0y, p2x, p2y, p4x, p4y, WHITE);
-//        }
-//    }
 
     painter->rotate(-90); //***x->left, y->up***
 
