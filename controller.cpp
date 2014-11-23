@@ -36,7 +36,7 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
     // 8-bit, 4 channel
     case CV_8UC4:
     {
-        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_RGB32 );
+        QImage image( inMat.data, inMat.cols, inMat.rows, inMat.step, QImage::Format_ARGB32 );
         return image;
     }
     // 8-bit, 3 channel
@@ -387,6 +387,7 @@ void Controller::run(){
             int             perimeter; // perimeter of the cell
             Point2f         centroid; // centroid of the cell
             float           shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
+            Mat             cell_alpha; // cell image without background
             Mat             blebsImg;
             Rect            rect;
             vector<Bleb>    blebs; // the deteced blebs
@@ -404,7 +405,7 @@ void Controller::run(){
             switch (videoType) {
             case 0:
                 contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
-                                             area, perimeter, centroid, shape,
+                                             area, perimeter, centroid, shape, cell_alpha,
                                              blebsImg, rect, /*blebs,*/ frameIdx);
                 break;
             case 1:
@@ -420,6 +421,13 @@ void Controller::run(){
                                        area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
                 break;
             }
+
+//            vector<int> compression_params;
+//            compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+//            compression_params.push_back(9);
+//            QString cellFileName1 = "cell" + QString::number(frameIdx) + ".png";
+//            imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
+
 
             floatArray property;
             property.push_back(float(area));
@@ -472,6 +480,7 @@ void Controller::run(){
             csvFile << endl;
 
             emit detectedProperties(property);
+            emit detectedCellImg(cvMatToQImage(cell_alpha));
 
             img = cvMatToQImage(boxedImg);
             roiImg1 = cvMatToQImage(contourImg);

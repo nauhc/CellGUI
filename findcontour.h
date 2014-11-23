@@ -54,6 +54,7 @@ public:
                              int &perimeter,
                              Point2f &ctroid,
                              float &shape,
+                             Mat &cell_alpha,
                              Mat &blebsImg,
                              Rect &rectangle,
 //                             vector<int> &blebs,

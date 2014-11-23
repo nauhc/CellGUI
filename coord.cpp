@@ -61,18 +61,6 @@ void Coord::updateCoord(QPointF point, int currFrame)
     centroid.append(point);
     //qDebug() << "Coord Class" << currFrm << centroid;
 
-//    qreal x_min, y_min, x_max, y_max;
-//    if(point.x() < min.x())
-//        x_min = point.x();
-//    if(point.y() < min.y())
-//        y_min = point.y();
-//    if(point.x() > max.x())
-//        x_max = point.x();
-//    if(point.y() > max.y())
-//        y_max = point.y();
-//    min = QPointF(x_min, y_min);
-//    max = QPointF(x_max, y_max);
-//    avg = QPointF((x_max - x_min)/2., (y_max - y_min)/2.);
     if(centroid.size() == 1){
         min = QPoint(centroid[0].x() - 30, centroid[0].y() - 30);
         max = QPoint(centroid[0].x() + 30, centroid[0].y() + 30);
@@ -154,7 +142,7 @@ void Coord::render(QPainter *painter)
     drawTextCoord(painter, QPointF(-20, -(halfH*rto1)), QString::number(int(/*min.y()*/-25)));
     painter->drawLine(QPointF( -5,   halfH*rto1 ), QPointF( 5,   halfH*rto1));
     painter->drawLine(QPointF( -5, -(halfH*rto1)), QPointF( 5, -(halfH*rto1)));
-    // center text
+    // Centroid text
     if(centroid.size()>0){
         painter->rotate(90);//***x->ringt, y->down***
         // text for the center coordinate

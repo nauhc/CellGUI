@@ -58,7 +58,8 @@ signals:
     void    load1stImage(QImage image);
     // signal nonnectted with updateVideoplayerUI SLOT
     void    processedImage(QImage image, QImage ROIimg1, QImage ROIimg2);
-    void    detectedProperties(floatArray);
+    void    detectedProperties(floatArray prop);
+    void    detectedCellImg(QImage cell);
 
 private slots:
     void    setAdaptThresh(int var);

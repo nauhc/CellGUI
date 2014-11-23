@@ -12,6 +12,7 @@ public:
     Narr(QWidget *parent = 0);
     ~Narr();
     void updateProperty(floatArray prop, int currFrame);
+    void updateCellImg(QImage &cell);
     void updateStage(unsigned int index);
     void getMaxFrm(unsigned int m);
 
@@ -30,6 +31,7 @@ private:
     std::vector<float>      perimeter; // the values of a particular feature
     std::vector<float>      blebNum; // the values of a particular feature
     QVector<QPoint>         centroid; // the values of a particular feature
+    QVector<QImage>         cellImg; // all the cell imgs
 
     unsigned int            curr; // current frame index
     unsigned int            max; // total number of frame

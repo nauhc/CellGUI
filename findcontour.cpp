@@ -669,6 +669,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       Mat &dispImg1, Mat &dispImg2,
                                       int &area, int &perimeter,
                                       Point2f &ctroid, float &shape,
+                                      Mat &cell_alpha, // only the area inside cell (without background)
                                       Mat &blebsImg,
                                       Rect &rectangle,
 //                                      vector<int> &blebs,
@@ -773,13 +774,13 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //imwrite(cellFileName0.toStdString(), borderImg);
     Mat cell;
     bitwise_and(cellArea, sub, cell);
-    Mat cell_alpha;
+    //Mat cell_alpha;
     cell_alpha = createAlphaMat(cell);
-    vector<int> compression_params;
-    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
-    compression_params.push_back(9);
-    QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
-    imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
+    //vector<int> compression_params;
+    //compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+    //compression_params.push_back(9);
+    //QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
+    //imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
     ////---- draw largest contour end ----
 
     // find the number and the sizes of blebs of the cell
@@ -795,8 +796,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), blebs);
 
-    QString cellFileName2 = "dispImg1" + QString::number(frameNum) + ".png";
-    imwrite(cellFileName2.toStdString(), dispImg1);
+    //QString cellFileName2 = "dispImg1" + QString::number(frameNum) + ".png";
+    //imwrite(cellFileName2.toStdString(), dispImg1);
 
     cir_org.clear();
     for(unsigned int i = 0; i < convHull.size(); i++)

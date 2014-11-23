@@ -233,6 +233,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         qRegisterMetaType<floatArray>("floatArray");
         connect(myController, SIGNAL(detectedProperties(floatArray)),
                 this, SLOT(updatePropsVisUI(floatArray)));
+        connect(myController, SIGNAL(detectedCellImg(QImage)),
+                this, SLOT(updateCellImg(QImage)));
 
 
         narr1Vis = new Narr();
@@ -588,6 +590,14 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
     else {
         narr1Vis->updateProperty(property, myController->getCurrentFrame());
         narr2Vis->updateCoord(QPointF(property[2], property[3]), myController->getCurrentFrame());
+    }
+}
+
+void MainWindow::updateCellImg(QImage cell)
+{
+    //cell.save("cellImg"+QString::number(int(myController->getCurrentFrame()))+".png", "PNG");
+    if(NARR_MODE){
+        narr1Vis->updateCellImg(cell);
     }
 }
 

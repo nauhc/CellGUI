@@ -118,6 +118,13 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     //printAreaData();
 }
 
+void Narr::updateCellImg(QImage &cell){
+    //cell.save("cellImg"+QString::number(int(curr))+".png", "PNG");
+    qreal cellScale = 0.6;
+    cellImg.push_back(cell.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell.width(),cellScale*cell.height(),Qt::KeepAspectRatio));
+    //qDebug() << cellImg.size();
+}
+
 void Narr::updateStage(unsigned int index)
 {
     stage.push_back(index);
@@ -282,56 +289,38 @@ void Narr::render(QPainter *painter)
     // draw real-time changing ring arcs
     float p = float(curr)/max;
     qreal currAngle = p * 360 - 1.0;
-    QColor c = gradualColor(GREEN, p);
+    QColor c = gradualColor(GREEN, /*p*/0.2);
     drawRingArc(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, c);
-    /*
-    qreal p0y = qreal(ringArcInnerRadius+.5*ringArcThickness) * tan(currAngle*M_PI/180.0);
-    qreal p0x = qreal(ringArcInnerRadius+.5*ringArcThickness) / cos(currAngle*M_PI/180.0);
-    //painter->drawEllipse(QPoint(p0x, p0y), 1, 1);
-    qreal p1y = qreal(ringArcInnerRadius+ringArcThickness+5) * tan(larger(currAngle-10, 0)*M_PI/180.0);
-    qreal p1x = qreal(ringArcInnerRadius+ringArcThickness+5) / cos(larger(currAngle-10, 0)*M_PI/180.0);
-    qreal p2y = qreal(ringArcInnerRadius+ringArcThickness-5) * tan(larger(currAngle-15, 0)*M_PI/180.0);
-    qreal p2x = qreal(ringArcInnerRadius+ringArcThickness-5) / cos(larger(currAngle-15, 0)*M_PI/180.0);
-    drawTriangle(painter, p0x, p0y, p1x, p1y, p2x, p2y, gradualColor(GREEN, p)); */
-
-
 
     painter->rotate(-90); //***x->left, y->up***
-
     //draw circular bar
     qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .40 * halfS;
     qreal areaBarThinkness      = .30* halfS;
     //printAreaData();
-//    painter->setPen(QColor(250, 250, 250));
-//    painter->drawArc(0, 0, -areaBarInnerRadius, areaBarInnerRadius, 0, 360);
-//    painter->drawArc(0, 0, -areaBarThinkness, areaBarThinkness, 0, 360);
 
-//    painter->translate(0, areaBarInnerRadius);
-
-//    painter->translate(0, -areaBarInnerRadius);
     drawRingArc(painter, QPointF(0,0), 0, 360, areaBarInnerRadius, areaBarThinkness, gradualColor(ORANGE, 0.95));
 
     drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
     drawCircularLineChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
 
-//    painter->rotate(90); //***x->up, y->right***
-//    painter->drawLine(QPoint(0, 0), QPoint(50, 0)); // x
-//    painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
+    painter->rotate(90); //***x->up, y->right***
+    //painter->drawLine(QPoint(0, 0), QPoint(50, 0)); // x
+    //painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
 
-//    // draw cells
-//    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 70;
-//    for(int n = 0; n < cells.size(); n++)
-//    {
-//        float degree = n * 360./cells.size();
-//        int x_center = cellRadius * cos(degree*M_PI/180);
-//        int y_center = cellRadius * sin(degree*M_PI/180);
-//        painter->translate(x_center, y_center);
-//        painter->rotate(90);
-//        painter->drawImage(-cells[n].width()/2, -cells[n].height()/2, cells[n]);
-//        painter->rotate(-90);
-//        painter->translate(-x_center, -y_center);
-//    }
+    // draw cells
+    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 70;
+    for(int n = 0; n < cellImg.size(); n++)
+    {
+        float degree = n * 360./max;
+        int x_center = cellRadius * cos(degree*M_PI/180);
+        int y_center = cellRadius * sin(degree*M_PI/180);
+        painter->translate(x_center, y_center);
+        painter->rotate(90);
+        painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);
+        painter->rotate(-90);
+        painter->translate(-x_center, -y_center);
+    }
 
 }
 
