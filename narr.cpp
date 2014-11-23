@@ -309,15 +309,23 @@ void Narr::render(QPainter *painter)
     //painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
 
     // draw cells
-    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 70;
-    for(int n = 0; n < cellImg.size(); n++)
+    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 60;
+    int stp = max/36;
+    for(int n = 0; n < cellImg.size(); n+=stp)
     {
         float degree = n * 360./max;
         int x_center = cellRadius * cos(degree*M_PI/180);
         int y_center = cellRadius * sin(degree*M_PI/180);
+
         painter->translate(x_center, y_center);
         painter->rotate(90);
+
+        float opa;
+        opa = (n/stp+1) * 0.9/(cellImg.size()/stp+1); // set opacity
+        painter->setOpacity(opa);
+
         painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);
+
         painter->rotate(-90);
         painter->translate(-x_center, -y_center);
     }
