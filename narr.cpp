@@ -40,6 +40,7 @@ Narr::Narr(QWidget *parent)
     //should be getting from controller -- star --
     curr = 0;
     max  = 1;
+
 //    max = 3500;
 //    stage.push_back(218);
 //    stage.push_back(1001);
@@ -48,43 +49,32 @@ Narr::Narr(QWidget *parent)
 //    stage.push_back(2883);
 //    stage.push_back(max);
 
-    QFile f("/Users/chuanwang/Sourcecode/CellGUI/video/movie_10172013_bv2_control01_original_sampled copy.csv");
-    if(!f.open(QIODevice::ReadOnly)){
-       qDebug() << "Reading csv file not found.";
-    }else{
-        QTextStream in(&f);
-        while(!in.atEnd()) { // each row
-            QString line = in.readLine();
-            if(line.isEmpty()){
-                continue;
-            }
-            if(line.isNull()){
-                break;
-            }
-            QVector<float> row;
-            foreach (const QString &cell, line.split(",")) {
-                //row.append(cell.trimmed());
-                row.append(cell.trimmed().toFloat());
-            }
-            //qDebug() << row;
-            //area.push_back(row[2]);
-            blebNum.push_back(row[6]);
+//    QFile f("/Users/chuanwang/Sourcecode/CellGUI/video/movie_10172013_bv2_control01_original_sampled copy.csv");
+//    if(!f.open(QIODevice::ReadOnly)){
+//       qDebug() << "Reading csv file not found.";
+//    }else{
+//        QTextStream in(&f);
+//        while(!in.atEnd()) { // each row
+//            QString line = in.readLine();
+//            if(line.isEmpty()){
+//                continue;
+//            }
+//            if(line.isNull()){
+//                break;
+//            }
+//            QVector<float> row;
+//            foreach (const QString &cell, line.split(",")) {
+//                //row.append(cell.trimmed());
+//                row.append(cell.trimmed().toFloat());
+//            }
+//            //qDebug() << row;
+//            //area.push_back(row[2]);
+//            blebNum.push_back(row[6]);
 
-        }
-    }
-    f.close();
+//        }
+//    }
+//    f.close();
 
-//    QImage cell0("/Users/chuanwang/Sourcecode/CellGUI/video/cell91.png");
-//    QImage cell1("/Users/chuanwang/Sourcecode/CellGUI/video/cell212.png");
-//    QImage cell2("/Users/chuanwang/Sourcecode/CellGUI/video/cell318.png");
-//    QImage cell3("/Users/chuanwang/Sourcecode/CellGUI/video/cell630.png");
-//    QImage cell4("/Users/chuanwang/Sourcecode/CellGUI/video/cell1523.png");
-//    qreal cellScale = 0.6;
-//    cells.push_back(cell0.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell0.width(),cellScale*cell0.height(),Qt::KeepAspectRatio));
-//    cells.push_back(cell1.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell1.width(),cellScale*cell1.height(),Qt::KeepAspectRatio));
-//    cells.push_back(cell2.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell2.width(),cellScale*cell2.height(),Qt::KeepAspectRatio));
-//    cells.push_back(cell3.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell3.width(),cellScale*cell3.height(),Qt::KeepAspectRatio));
-//    cells.push_back(cell4.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell4.width(),cellScale*cell4.height(),Qt::KeepAspectRatio));
     //should be getting from controller -- end --
 }
 
@@ -286,11 +276,27 @@ void Narr::render(QPainter *painter)
     qreal ringArcInnerRadius    = .20 * halfS;
     qreal ringArcThickness      = .05 * halfS;
     drawRingArc(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
+    // draw total frame number inside the ring
+
+    if(propSeq.size() > 0){
+        painter->rotate(90);
+        painter->setPen(QColor(128, 128, 128));
+        painter->drawText(-60, -20, 120, 20, Qt::AlignCenter, QString::number(int(curr)));
+        painter->drawText(-60, -10, 120, 20, Qt::AlignCenter, "-----");
+        painter->drawText(-60,   2, 120, 20, Qt::AlignCenter, QString::number(int(max)));
+        painter->rotate(-90);
+    }
     // draw real-time changing ring arcs
     float p = float(curr)/max;
     qreal currAngle = p * 360 - 1.0;
     QColor c = gradualColor(GREEN, /*p*/0.2);
     drawRingArc(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, c);
+//    painter->setPen(QColor(200, 200, 200));
+//    float xx = (ringArcInnerRadius - 60)*sin(currAngle*M_PI/180);
+//    float yy = (ringArcInnerRadius - 60)*cos(currAngle*M_PI/180);
+//    painter->rotate(90);
+//    painter->drawText( xx-30*1.7, yy- 30, 60*1.7, 60 , Qt::AlignCenter, QString::number(int(curr)));
+//    painter->rotate(-90);
 
     painter->rotate(-90); //***x->left, y->up***
     //draw circular bar
@@ -298,7 +304,7 @@ void Narr::render(QPainter *painter)
     qreal areaBarThinkness      = .30* halfS;
     //printAreaData();
 
-    drawRingArc(painter, QPointF(0,0), 0, 360, areaBarInnerRadius, areaBarThinkness, gradualColor(ORANGE, 0.95));
+    drawRingArc(painter, QPointF(0,0), 0, 360, areaBarInnerRadius, areaBarThinkness+4, gradualColor(ORANGE, 0.95));
 
     drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
     drawCircularLineChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
@@ -310,7 +316,7 @@ void Narr::render(QPainter *painter)
 
     // draw cells
     qreal cellRadius = ringArcInnerRadius + ringArcThickness + 60;
-    int stp = max/36;
+    int stp = max/18;
     for(int n = 0; n < cellImg.size(); n+=stp)
     {
         float degree = n * 360./max;
@@ -321,7 +327,7 @@ void Narr::render(QPainter *painter)
         painter->rotate(90);
 
         float opa;
-        opa = (n/stp+1) * 0.9/(cellImg.size()/stp+1); // set opacity
+        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
         painter->setOpacity(opa);
 
         painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);

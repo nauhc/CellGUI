@@ -23,9 +23,7 @@ protected:
 
 private:
     QVector<unsigned int>   stage; // frame index that separates stages
-
     std::vector<floatArray> propSeq;
-
     std::vector<float>      frameIdx;
     std::vector<float>      area; // the values of a particular feature
     std::vector<float>      perimeter; // the values of a particular feature

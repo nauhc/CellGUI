@@ -169,7 +169,7 @@ void Coord::render(QPainter *painter)
     int size = centroid.size();
     for(int n = 0; n < size; n++)
     {
-        QColor c = gradColor(_BLUE_, 1. - qreal(n)/size);
+        QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);
         QPen myPen(c);
         painter->setPen(myPen);
         painter->setBrush(c);
