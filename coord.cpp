@@ -98,14 +98,28 @@ QPointF Coord::translateCoord(QPointF p){
     qreal X_MAX =   halfW * 0.75;
     qreal Y_MIN = -(halfH * 0.75);
     qreal Y_MAX =   halfH * 0.75;
-    return (QPointF( (p.x() - min.x())*(X_MAX - X_MIN)/(max.x() - min.x()) + X_MIN ,
-                     (p.y() - min.y())*(Y_MAX - Y_MIN)/(max.y() - min.y()) + Y_MIN ) );
+    QPointF org = QPointF( (p.x() - min.x())*(X_MAX - X_MIN)/(max.x() - min.x()) + X_MIN ,
+                           (p.y() - min.y())*(Y_MAX - Y_MIN)/(max.y() - min.y()) + Y_MIN );
+
+    // ***x-> right, y-> down***
+    return ( /*QPointF(-org.y(), org.x())*/ org);
 }
 
 QColor Coord::gradColor(QColor color, qreal percent){
     return QColor( color.red() + (255-color.red()) * percent * percent,
                    color.green() + (255-color.green()) * percent * percent,
                    color.blue() + (255-color.blue()) * percent * percent );
+}
+
+QColor mapNumToHue(int start, int range, int min, int max, int v){
+    // start:   starting hue (0-360)
+    // end:     ending hue (0-360)
+    // min:     min value
+    // max:     max value
+    // v:       value
+    QColor color;
+    color.setHsv(start+range*v/(max-min), 255, 200);
+    return color;
 }
 
 void Coord::render(QPainter *painter)
@@ -126,25 +140,25 @@ void Coord::render(QPainter *painter)
     painter->setPen(myPen);
     qreal rto = 0.8;
     qreal rto1 = 0.75;
-    // X axis
+    // Y axis
     painter->drawLine(QPointF(-(halfW*rto), 0), QPointF(halfW*rto, 0));
-    drawTextCoord(painter, QPointF(halfW*rto + 20, 0), "X");
+    drawTextCoord(painter, QPointF(-(halfW*rto + 20), 0), "Y");
     // max and min on X axis
-    drawTextCoord(painter, QPointF(  halfW*rto1 ,  20), QString::number(int(/*max.x()*/25)));
-    drawTextCoord(painter, QPointF(-(halfW*rto1), -20), QString::number(int(/*min.x()*/-25)));
+    drawTextCoord(painter, QPointF(  halfW*rto1 ,  20), QString::number(int(/*max.x()*/-25)));
+    drawTextCoord(painter, QPointF(-(halfW*rto1), -20), QString::number(int(/*min.x()*/25)));
     painter->drawLine(QPointF(  halfW*rto1 , -5), QPointF(  halfW*rto1 , 5));
     painter->drawLine(QPointF(-(halfW*rto1), -5), QPointF(-(halfW*rto1), 5));
-    // max and min on Y axis
+    // X axis
     painter->drawLine(QPointF(0, -(halfW*rto)), QPointF(0, halfW*rto));
-    drawTextCoord(painter, QPointF(0, halfW*rto + 20), "Y");
+    drawTextCoord(painter, QPointF(0, halfW*rto + 20), "X");
     // max and min on Y axis
     drawTextCoord(painter, QPointF( 20,   halfH*rto1 ), QString::number(int(/*max.y()*/25)));
     drawTextCoord(painter, QPointF(-20, -(halfH*rto1)), QString::number(int(/*min.y()*/-25)));
     painter->drawLine(QPointF( -5,   halfH*rto1 ), QPointF( 5,   halfH*rto1));
     painter->drawLine(QPointF( -5, -(halfH*rto1)), QPointF( 5, -(halfH*rto1)));
     // Centroid text
+    painter->rotate(90);//***x->right, y->down***
     if(centroid.size()>0){
-        painter->rotate(90);//***x->ringt, y->down***
         // text for the center coordinate
         QString centerText = "Center ( " + QString::number(int(centroid[0].x()))+", "
                              +QString::number(int(centroid[0].y()))+" )";
@@ -153,18 +167,7 @@ void Coord::render(QPainter *painter)
         QString currText = "Centroid ( " + QString::number(int(currCent.x()))+", "
                 +QString::number(int(currCent.y()))+" )";
         painter->drawText(halfW-170, -halfH+20, 150, 40, Qt::AlignCenter, currText);
-
-        painter->rotate(-90);
     }
-
-    //draw positions of the centroids
-//    for(int n = 30; n < cnt; n++){
-//        QColor c = gradColor(_BLUE_, 1. - qreal(n)/cnt);
-//        QPen myPen(c);
-//        painter->setPen(myPen);
-//        painter->setBrush(c);
-//        painter->drawEllipse( translateCoord(centroid[n]), 2., 2.);
-//    }
 
     int size = centroid.size();
     for(int n = 0; n < size; n++/*n+=10*/)
@@ -178,10 +181,32 @@ void Coord::render(QPainter *painter)
         painter->setBrush(c);
         painter->drawEllipse( translateCoord(centroid[n]), 2.0, 2.0);
     }
-    myPen.setWidth(3);
-    myPen.setColor(QColor(247, 154, 1));
-    painter->setPen(myPen);
-    painter->drawEllipse( translateCoord(centroid[size-1]), 2.5, 2.5);
+    if(centroid.size() > 0){
+        myPen.setWidth(3);
+        myPen.setColor(QColor(247, 154, 1));
+        painter->setPen(myPen);
+        painter->drawEllipse( translateCoord(centroid[size-1]), 2.5, 2.5);
+    }
+
+    // draw color map bar indicating time old / new
+    // ***x->right, y->down***
+    painter->drawText(-halfW, halfH-40, 150, 40, Qt::AlignCenter, "Old");
+    painter->drawText(halfW-150, halfH-40, 160, 40, Qt::AlignCenter, "New");
+
+    painter->rotate(-90); //***x->up, y->right***
+    int xx = 5;
+    int yy = halfH*2/180;
+    for(int n = 0; n < 180; n++){
+        QColor c = mapNumToHue(60, 180, 0, 180, n);
+        //c.setHsv(60+n, 255, 200);
+        myPen.setWidth(0);
+        painter->setPen(c);
+        painter->setBrush(QBrush(c));
+        QRect rect(QPoint(-(halfW*rto1 + 60), (-halfH+30+yy*n)*rto1), QSize(xx, yy));
+        painter->drawRect(rect);
+    }
+
+
 }
 
 void Coord::resizeGL(int w, int h)
