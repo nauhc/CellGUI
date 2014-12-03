@@ -388,6 +388,7 @@ void Controller::run(){
             Point2f         centroid; // centroid of the cell
             float           shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
             Mat             cell_alpha; // cell image without background
+            vector<Point>   smooth_contour_curve; // smoothed contour
             Mat             blebsImg;
             Rect            rect;
             vector<Bleb>    blebs; // the deteced blebs
@@ -405,7 +406,7 @@ void Controller::run(){
             switch (videoType) {
             case 0:
                 contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
-                                             area, perimeter, centroid, shape, cell_alpha,
+                                             area, perimeter, centroid, shape, cell_alpha, smooth_contour_curve,
                                              blebsImg, rect, /*blebs,*/ frameIdx);
                 break;
             case 1:
@@ -480,7 +481,10 @@ void Controller::run(){
             csvFile << endl;
 
             emit detectedProperties(property);
-            emit detectedCellImg(cvMatToQImage(cell_alpha));
+            QVector<QPoint> smoothContour;
+            for(unsigned int n = 0; n < smooth_contour_curve.size(); n++)
+                smoothContour.push_back(QPoint(smooth_contour_curve[n].x, smooth_contour_curve[n].y));
+            emit detectedCellImg(cvMatToQImage(cell_alpha), smoothContour);
 
             img = cvMatToQImage(boxedImg);
             roiImg1 = cvMatToQImage(contourImg);

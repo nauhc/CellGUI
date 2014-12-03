@@ -98,7 +98,7 @@ void dilErodContours(Mat &dilerod,
     largest_contour_index = 0;
     unsigned int s_tmp = contours[0].size();
     for(unsigned int i = 0; i < contours.size(); i++){
-        drawContours( drawTarget, contours, i, Scalar(51,100,175), 1, 8, hierarchy, 0, Point() );
+        //drawContours( drawTarget, contours, i, Scalar(51,100,175), 1, 8, hierarchy, 0, Point() );
         if( contours[i].size() > s_tmp){
             s_tmp = contours[i].size();
             largest_contour_index = i;
@@ -310,6 +310,7 @@ bool sortByTheta(const polarPoint &l, const polarPoint &r){
     return l.theta < r.theta;
 }
 Mat curveSmooth(Mat &contourImg,
+                int WIN, // half window size for laplacian smoothing
                 vector<Point> &border,
                 vector<Point> &smooth,
                 vector<Point> &convHull)
@@ -342,7 +343,6 @@ Mat curveSmooth(Mat &contourImg,
     sort(border_polar.begin(), border_polar.end(), sortByTheta);
 
     // Laplacian smoothing
-    int WIN = 25; // half window size
     unsigned int border_size = border_polar.size();
     for(unsigned int n = 0; n < border_size; n++){
         //cout << border_polar[n].r << " " << border_polar[n].theta << "  ";
@@ -366,6 +366,7 @@ Mat curveSmooth(Mat &contourImg,
 
     Mat smoothCircle = Mat::zeros(height, width, CV_8UC1);
     fillConvexPoly(smoothCircle, smooth, Scalar(255));
+//    fillPoly(smoothCircle, smooth, Scalar(255));
     //imshow("smoothCircle", smoothCircle);
 
     return smoothCircle;
@@ -634,8 +635,9 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     // find the number and the sizes of blebs of the cell
     Mat smooth;
     vector<Point> smoothCurve;
+    int WIN = 25;
     vector< vector<Point> > tmp;
-    smooth = curveSmooth(borderImg, contours[largest_contour_index], smoothCurve, convHull);
+    smooth = curveSmooth(borderImg, WIN, contours[largest_contour_index], smoothCurve, convHull);
     tmp.push_back(smoothCurve);
     drawContours(dispImg1, tmp, 0, Scalar(255, 0, 0));
 
@@ -670,6 +672,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       int &area, int &perimeter,
                                       Point2f &ctroid, float &shape,
                                       Mat &cell_alpha, // only the area inside cell (without background)
+                                      vector<Point> &smooth_contour_curve,
                                       Mat &blebsImg,
                                       Rect &rectangle,
 //                                      vector<int> &blebs,
@@ -735,7 +738,6 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //bitwise AND on mask and dilerod
     bitwise_and(mask_conv_dil, dilerod, dispImg2);
 
-
     // findcontours
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
@@ -750,10 +752,6 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
 
     //cout << "frame " << frameNum << "\n";
     //cout << contours[largest_contour_index] << endl;
-
-
-    //change dispImg2 from gray to rgb for displaying
-    cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
 
     //renew circle points as the convex hull
     vector<Point> convHull;
@@ -772,10 +770,11 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     drawContours(borderImg, contours, largest_contour_index, Scalar(255), 1, 8, hierarchy, 0, Point());
     //QString cellFileName0 = "border" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName0.toStdString(), borderImg);
+
+
     Mat cell;
     bitwise_and(cellArea, sub, cell);
-    //Mat cell_alpha;
-    cell_alpha = createAlphaMat(cell);
+    //cell_alpha = createAlphaMat(cell);  // cell image with exactly the contour detected
     //vector<int> compression_params;
     //compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
     //compression_params.push_back(9);
@@ -786,8 +785,25 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     // find the number and the sizes of blebs of the cell
     Mat smooth;
     vector<Point> smoothCurve;
-    smooth = curveSmooth(borderImg, contours[largest_contour_index], smoothCurve, convHull);
+    int WIN = 25;
+    smooth = curveSmooth(borderImg, WIN, contours[largest_contour_index], smoothCurve, convHull);
     //drawPointVectors(dispImg1, smoothCurve, 1, Scalar(159, 120, 28));
+
+
+    Mat smooth_contour;
+    int w = 10;
+    smooth_contour = curveSmooth(borderImg, w, contours[largest_contour_index], smooth_contour_curve, convHull);
+    //imshow("smooth_contour", smooth_contour);
+
+    //cout << mask_conv_dil.type() << " " << sub.type() << endl;
+    Mat cell_convex;
+    bitwise_and(smooth_contour, sub, cell_convex);
+    cell_alpha = createAlphaMat(cell_convex);
+//    imshow("cell_convex_contour", cell_alpha);
+    dispImg2 = cell_convex.clone();
+
+    //change dispImg2 from gray to rgb for displaying
+    cvtColor(dispImg2, dispImg2, CV_GRAY2RGB);
 
     bitwise_not(smooth, smooth);
     //Mat blebsImg;

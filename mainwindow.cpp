@@ -231,10 +231,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     {
         // connect properties and dataVis
         qRegisterMetaType<floatArray>("floatArray");
+        qRegisterMetaType<QVector<QPoint> >("QVector<QPoint>");
         connect(myController, SIGNAL(detectedProperties(floatArray)),
                 this, SLOT(updatePropsVisUI(floatArray)));
-        connect(myController, SIGNAL(detectedCellImg(QImage)),
-                this, SLOT(updateCellImg(QImage)));
+        connect(myController, SIGNAL(detectedCellImg(QImage, QVector<QPoint>)),
+                this, SLOT(updateCellImg(QImage, QVector<QPoint>)));
 
 
         narr1Vis = new Narr();
@@ -593,11 +594,11 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
     }
 }
 
-void MainWindow::updateCellImg(QImage cell)
+void MainWindow::updateCellImg(QImage cell, QVector<QPoint> smoothContour)
 {
     //cell.save("cellImg"+QString::number(int(myController->getCurrentFrame()))+".png", "PNG");
     if(NARR_MODE){
-        narr1Vis->updateCellImg(cell);
+        narr1Vis->updateCellImg(cell, smoothContour);
     }
 }
 

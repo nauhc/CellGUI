@@ -108,11 +108,17 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     //printAreaData();
 }
 
-void Narr::updateCellImg(QImage &cell){
+void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
     //cell.save("cellImg"+QString::number(int(curr))+".png", "PNG");
     qreal cellScale = 0.6;
-    cellImg.push_back(cell.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell.width(),cellScale*cell.height(),Qt::KeepAspectRatio));
+    QImage cell_conv = cell.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell.width(),cellScale*cell.height(),Qt::KeepAspectRatio);
+    cellImg.push_back(cell_conv);
     //qDebug() << cellImg.size();
+    QPolygon contour;
+    for(int n = 0; n < smoothContour.size(); n++)
+        contour << QPoint(smoothContour[n].x()/2-cell_conv.width()/2, smoothContour[n].y()/2-cell_conv.height()/2);
+
+    contours.push_back(contour);
 }
 
 void Narr::updateStage(unsigned int index)
@@ -259,6 +265,8 @@ void drawXY(){
     painter_xy.drawLine(QPoint(0, 0), QPoint(0, 50)); // y
 }
 
+
+
 void Narr::render(QPainter *painter)
 {
     // set (0,0) to the center of the canvas
@@ -316,7 +324,7 @@ void Narr::render(QPainter *painter)
 
     // draw cells
     qreal cellRadius = ringArcInnerRadius + ringArcThickness + 60;
-    int stp = max/18;
+    int stp = max/9;
     for(int n = 0; n < cellImg.size(); n+=stp)
     {
         float degree = n * 360./max;
@@ -326,10 +334,13 @@ void Narr::render(QPainter *painter)
         painter->translate(x_center, y_center);
         painter->rotate(90);
 
-        float opa;
-        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
-        painter->setOpacity(opa);
-
+//        float opa;
+//        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
+//        painter->setOpacity(opa);
+//        QPen penContour(QColor(153, 204, 49));
+//        penContour.setWidth(2);
+//        painter->setPen(penContour);
+//        painter->drawPoints(contours[n]);
         painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);
 
         painter->rotate(-90);

@@ -59,7 +59,7 @@ signals:
     // signal nonnectted with updateVideoplayerUI SLOT
     void    processedImage(QImage image, QImage ROIimg1, QImage ROIimg2);
     void    detectedProperties(floatArray prop);
-    void    detectedCellImg(QImage cell);
+    void    detectedCellImg(QImage cell, QVector<QPoint> smoothContour);
 
 private slots:
     void    setAdaptThresh(int var);

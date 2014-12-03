@@ -41,7 +41,7 @@ private slots:
     void on_drawROIButton_clicked();
 
     void updatePropsVisUI(floatArray property); ///*int prop1, int prop2*/
-    void updateCellImg(QImage cell);
+    void updateCellImg(QImage cell, QVector<QPoint> smoothContour);
 
     void on_loadVideoButton_pressed();
     void on_loadVideoButton_released();

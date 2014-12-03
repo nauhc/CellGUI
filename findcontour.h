@@ -55,6 +55,7 @@ public:
                              Point2f &ctroid,
                              float &shape,
                              Mat &cell_alpha,
+                             vector<Point> &smooth_contour_curve,
                              Mat &blebsImg,
                              Rect &rectangle,
 //                             vector<int> &blebs,

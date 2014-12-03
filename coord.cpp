@@ -167,14 +167,21 @@ void Coord::render(QPainter *painter)
 //    }
 
     int size = centroid.size();
-    for(int n = 0; n < size; n++)
+    for(int n = 0; n < size; n++/*n+=10*/)
     {
-        QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);
-        QPen myPen(c);
-        painter->setPen(myPen);
+        //QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);
+
+        QColor c;
+        c.setHsv(60+qreal(n)/size*180, 255, 200);
+        QPen penDot(c);
+        painter->setPen(penDot);
         painter->setBrush(c);
-        painter->drawEllipse( translateCoord(centroid[n]), 2., 2.);
+        painter->drawEllipse( translateCoord(centroid[n]), 2.0, 2.0);
     }
+    myPen.setWidth(3);
+    myPen.setColor(QColor(247, 154, 1));
+    painter->setPen(myPen);
+    painter->drawEllipse( translateCoord(centroid[size-1]), 2.5, 2.5);
 }
 
 void Coord::resizeGL(int w, int h)
