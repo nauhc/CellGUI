@@ -75,6 +75,8 @@ protected:
     void    msleep(int ms);
 
 public:
+    bool            compressedCell; // true:compressed cell, false:control cell
+
     Controller(QObject *parent=0);
     ~Controller();
 

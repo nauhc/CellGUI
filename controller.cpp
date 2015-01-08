@@ -10,6 +10,7 @@ Controller::Controller(QObject *parent) : QThread(parent),
    contour(new FindContour())
 {
     cout << "controller initialzed." << endl;
+    compressedCell = true;
     pause = true;
     encircled = false;
     scale = 1.0;
@@ -93,6 +94,10 @@ bool Controller::loadVideo(string file, string fn){
         //prepare to write data to file
 
         std::transform(fn.begin(), fn.end(), fn.begin(), ::tolower);
+        if(compressedCell)
+            fn = fn + "_compressed";
+        else
+            fn = fn + "_control";
         cout << "writing data to file " << fn+".csv" << endl;
         csvFile.open(fn+".csv", ios::out);
         if(!inputVideo->read(*frame)){

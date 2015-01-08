@@ -14,19 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="loadVideoButton">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>30</y>
-      <width>151</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>File</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="roiVideo1">
     <property name="geometry">
      <rect>
@@ -62,37 +49,11 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="playVideoButton">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>110</y>
-      <width>151</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Play</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="stopVideoButton">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>190</y>
-      <width>151</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Stop</string>
-    </property>
-   </widget>
    <widget class="QSlider" name="adaptThreshSlider">
     <property name="geometry">
      <rect>
       <x>891</x>
-      <y>470</y>
+      <y>450</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -108,7 +69,7 @@
     <property name="geometry">
      <rect>
       <x>1101</x>
-      <y>470</y>
+      <y>450</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -121,10 +82,15 @@
     <property name="geometry">
      <rect>
       <x>891</x>
-      <y>450</y>
+      <y>430</y>
       <width>91</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Difference:</string>
@@ -134,10 +100,15 @@
     <property name="geometry">
      <rect>
       <x>1101</x>
-      <y>450</y>
+      <y>430</y>
       <width>101</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Block Size:</string>
@@ -179,10 +150,15 @@
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>270</y>
-      <width>151</width>
+      <y>280</y>
+      <width>371</width>
       <height>51</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Encircle Cell</string>
@@ -329,20 +305,30 @@
    <widget class="QComboBox" name="typeComboBox">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>350</y>
+      <x>880</x>
+      <y>110</y>
       <width>371</width>
-      <height>26</height>
+      <height>35</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1301</width>
+     <height>22</height>
+    </rect>
+   </property>
    </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>1090</x>
-      <y>30</y>
-      <width>171</width>
-      <height>301</height>
+      <x>890</x>
+      <y>550</y>
+      <width>381</width>
+      <height>141</height>
      </rect>
     </property>
     <property name="title">
@@ -390,8 +376,8 @@
     <widget class="QCheckBox" name="checkBox_shape">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>150</y>
+       <x>230</x>
+       <y>30</y>
        <width>87</width>
        <height>20</height>
       </rect>
@@ -403,8 +389,8 @@
     <widget class="QCheckBox" name="checkBox_blebbing">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>190</y>
+       <x>230</x>
+       <y>70</y>
        <width>87</width>
        <height>20</height>
       </rect>
@@ -416,8 +402,8 @@
     <widget class="QCheckBox" name="checkBox_speed">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>230</y>
+       <x>230</x>
+       <y>110</y>
        <width>141</width>
        <height>20</height>
       </rect>
@@ -431,7 +417,7 @@
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>450</y>
+      <y>430</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -444,7 +430,7 @@
     <property name="geometry">
      <rect>
       <x>1210</x>
-      <y>450</y>
+      <y>440</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -457,7 +443,7 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>520</y>
+      <y>510</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -470,10 +456,15 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>500</y>
-      <width>91</width>
+      <y>490</y>
+      <width>101</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Dilation Size:</string>
@@ -483,7 +474,7 @@
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>500</y>
+      <y>490</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -496,7 +487,7 @@
     <property name="geometry">
      <rect>
       <x>1101</x>
-      <y>520</y>
+      <y>510</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -509,10 +500,15 @@
     <property name="geometry">
      <rect>
       <x>1101</x>
-      <y>500</y>
-      <width>101</width>
+      <y>490</y>
+      <width>121</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Bleb Size Ratio:</string>
@@ -522,7 +518,7 @@
     <property name="geometry">
      <rect>
       <x>1210</x>
-      <y>500</y>
+      <y>490</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -534,21 +530,31 @@
    <widget class="QLineEdit" name="pixelLineEdit">
     <property name="geometry">
      <rect>
-      <x>900</x>
-      <y>400</y>
+      <x>890</x>
+      <y>380</y>
       <width>81</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
    </widget>
    <widget class="QLabel" name="pixelLabel">
     <property name="geometry">
      <rect>
-      <x>1000</x>
-      <y>400</y>
+      <x>980</x>
+      <y>380</y>
       <width>41</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>pixel</string>
@@ -557,21 +563,31 @@
    <widget class="QLineEdit" name="mmeterLineEdit">
     <property name="geometry">
      <rect>
-      <x>1102</x>
-      <y>400</y>
+      <x>1080</x>
+      <y>380</y>
       <width>71</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
    </widget>
    <widget class="QLabel" name="mmeterLabel">
     <property name="geometry">
      <rect>
-      <x>1180</x>
-      <y>400</y>
-      <width>81</width>
+      <x>1160</x>
+      <y>380</y>
+      <width>91</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>micrometer</string>
@@ -580,29 +596,150 @@
    <widget class="QLabel" name="convertLabel">
     <property name="geometry">
      <rect>
-      <x>1050</x>
-      <y>400</y>
-      <width>51</width>
+      <x>1020</x>
+      <y>380</y>
+      <width>41</width>
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>&lt;-&gt;</string>
+     <string>as</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1301</width>
-     <height>22</height>
-    </rect>
-   </property>
+   <widget class="QGroupBox" name="groupBox_cellRole">
+    <property name="geometry">
+     <rect>
+      <x>880</x>
+      <y>170</y>
+      <width>371</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="title">
+     <string>Cell Role</string>
+    </property>
+    <widget class="QCheckBox" name="checkBox_compressed">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>171</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: transparent</string>
+     </property>
+     <property name="text">
+      <string>Compressed Cell</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_control">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>40</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: transparent</string>
+     </property>
+     <property name="text">
+      <string>Control Cell</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="stopVideoButton">
+    <property name="geometry">
+     <rect>
+      <x>1126</x>
+      <y>40</y>
+      <width>110</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Stop</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="playVideoButton">
+    <property name="geometry">
+     <rect>
+      <x>1000</x>
+      <y>40</y>
+      <width>110</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Play</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="loadVideoButton">
+    <property name="geometry">
+     <rect>
+      <x>880</x>
+      <y>40</y>
+      <width>110</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>File</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -613,6 +750,20 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionLoad_existing_cell_data">
+   <property name="text">
+    <string>Load existing cell data</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Lucida Grande</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

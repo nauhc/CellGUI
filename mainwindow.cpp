@@ -36,6 +36,7 @@ const QString forgrdOrage           = "color:rgb(251, 172, 81);"; //(238, 122, 8
 const QString font20                = "font: 20px";
 const QString font16                = "font: 16px";
 const QString font16bld             = "font: bold 16px";
+const QString checkboxStyle         = "color:rgb(82,89,99); font-size: 14px; background-color:rgba(0,0,0,0%)";
 
 const bool    NARR_MODE             = true; // TRUE -> Narrative mode; FALSE -> Line Chart mode
 
@@ -184,7 +185,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         font-size: 16px; font-weight: bold; \
         margin-top: 7px; margin-bottom: 7px; padding: 0px} \
             QGroupBox::title {top:-7px;left: 10px; subcontrol-origin: border }");
-          const QString checkboxStyle = "color:rgb(82,89,99); font-size: 14px";
+
         ui->checkBox_area->setChecked(true);
         ui->checkBox_perimeter->setChecked(true);
         ui->checkBox_area->setStyleSheet(checkboxStyle);
@@ -237,6 +238,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         connect(myController, SIGNAL(detectedCellImg(QImage, QVector<QPoint>)),
                 this, SLOT(updateCellImg(QImage, QVector<QPoint>)));
 
+        // groupbox and checkbox -> selecting cell type
+        connect(ui->checkBox_compressed, SIGNAL(stateChanged(int)),
+                this, SLOT(compressed_box_checked(int)));
+        connect(ui->checkBox_control, SIGNAL(stateChanged(int)),
+                this, SLOT(control_box_checked(int)));
+        ui->checkBox_compressed->setChecked(true);
+        ui->checkBox_compressed->setStyleSheet(checkboxStyle);
+        ui->checkBox_control->setStyleSheet(checkboxStyle);
+        ui->groupBox_cellRole->show();
 
         narr1Vis = new Narr();
         narr1Vis->resize(512, 512);
@@ -257,6 +267,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     encircler = new Encircle(this->centralWidget());
     //encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
+
+    loadCellDataAct = new QAction(tr("&loadData"), this);
+    connect(loadCellDataAct, SIGNAL(triggered()), this, SLOT(loadCellData()));
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(loadCellDataAct);
 }
 
 MainWindow::~MainWindow(){
@@ -642,6 +657,35 @@ void MainWindow::box_checked(int state) {
         ui->prop2VisLabel->setText("  "+checkedBoxes[1].toUpper()+" (pixels)");
     }
 
+}
+
+void MainWindow::control_box_checked(int state)
+{
+    if (state == Qt::Checked) {
+        ui->checkBox_compressed->setCheckState(Qt::Unchecked);
+        myController->compressedCell = false;
+    }else{
+        ui->checkBox_compressed->setCheckState(Qt::Checked);
+        myController->compressedCell = true;
+    }
+}
+
+void MainWindow::compressed_box_checked(int state)
+{
+    if (state == Qt::Checked) {
+        ui->checkBox_control->setCheckState(Qt::Unchecked);
+        myController->compressedCell = true;
+    }else{
+        ui->checkBox_control->setCheckState(Qt::Checked);
+        myController->compressedCell = false;
+    }
+}
+
+void MainWindow::loadCellData()
+{
+    QMessageBox msgBox;
+    msgBox.setText("Haha!");
+    msgBox.exec();
 }
 
 void MainWindow::on_drawROIButton_clicked(){

@@ -56,6 +56,11 @@ private slots:
     void on_drawROIButton_released();
 
     void box_checked(int state);
+    void control_box_checked(int state);
+    void compressed_box_checked(int state);
+
+
+    void loadCellData();
 
 private:
     Ui::MainWindow  *ui;
@@ -70,7 +75,11 @@ private:
     Narr            *narr1Vis;
     Coord           *narr2Vis;
 
+    QMenu           *fileMenu;
+    QAction         *loadCellDataAct;
+
     void setCanvas();
+
 };
 
 #endif // MAINWINDOW_H
