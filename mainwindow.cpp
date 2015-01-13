@@ -53,8 +53,11 @@ void MainWindow::updateBlebSizeSliderText(int value)
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow),
-    myController(new Controller())
+    myController(new Controller()),
+    dataFilename(new QString(""))
 {
+    fileMode = false;
+
     ui->setupUi(this);
     this->setStyleSheet(/*"background-color:rgb(38,42,43)"*/"background-color:rgb(251,251,251)");
     this->setFixedSize(this->width(), this->height());
@@ -162,8 +165,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     if(!NARR_MODE){
         // connect properties and dataVis
         qRegisterMetaType<floatArray>("floatArray");
+
         connect(myController, SIGNAL(detectedProperties(floatArray)),
-                this, SLOT(updatePropsVisUI(floatArray)));
+                this, SLOT((floatArray)));
 
         // connect checkbox to box_checked event
         connect(ui->checkBox_area, SIGNAL(stateChanged(int)),
@@ -228,26 +232,34 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                          QString::number(prmtVisColor.blue())+");"+font20);
         ui->prop2VisLabel->setText("  PERIMETER (pixels)");
     }
-    else
+    else //Narrative Mode: On
     {
         // connect properties and dataVis
         qRegisterMetaType<floatArray>("floatArray");
         qRegisterMetaType<QVector<QPoint> >("QVector<QPoint>");
-        connect(myController, SIGNAL(detectedProperties(floatArray)),
-                this, SLOT(updatePropsVisUI(floatArray)));
-        connect(myController, SIGNAL(detectedCellImg(QImage, QVector<QPoint>)),
-                this, SLOT(updateCellImg(QImage, QVector<QPoint>)));
 
-        // groupbox and checkbox -> selecting cell type
-        connect(ui->checkBox_compressed, SIGNAL(stateChanged(int)),
-                this, SLOT(compressed_box_checked(int)));
-        connect(ui->checkBox_control, SIGNAL(stateChanged(int)),
-                this, SLOT(control_box_checked(int)));
-        ui->checkBox_compressed->setChecked(true);
-        ui->checkBox_compressed->setStyleSheet(checkboxStyle);
-        ui->checkBox_control->setStyleSheet(checkboxStyle);
-        ui->groupBox_cellRole->show();
+//        if(!fileMode){
+//            connect(myController, SIGNAL(detectedProperties(floatArray)),
+//                    this, SLOT(_realtime(floatArray)));
+//            connect(myController, SIGNAL(detectedCellImg(QImage, QVector<QPoint>)),
+//                    this, SLOT(updateCellImg(QImage, QVector<QPoint>)));
 
+//            // groupbox and checkbox -> selecting cell type
+//            connect(ui->checkBox_compressed, SIGNAL(stateChanged(int)),
+//                    this, SLOT(compressed_box_checked(int)));
+//            connect(ui->checkBox_control, SIGNAL(stateChanged(int)),
+//                    this, SLOT(control_box_checked(int)));
+//            ui->checkBox_compressed->setChecked(true);
+//            ui->checkBox_compressed->setStyleSheet(checkboxStyle);
+//            ui->checkBox_control->setStyleSheet(checkboxStyle);
+//            ui->groupBox_cellRole->show();
+//        }
+//        else{
+//            connect(this, SIGNAL(readProperties(floatArray)),
+//                    this, SLOT(_loadfile(floatArray)));
+//        }
+
+        // Vis
         narr1Vis = new Narr();
         narr1Vis->resize(512, 512);
         narr1Vis->show();
@@ -268,7 +280,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //encircle->setGeometry(40, 30, 500, 500);
     encircled = false;
 
-    loadCellDataAct = new QAction(tr("&loadData"), this);
+    loadCellDataAct = new QAction(tr("&Load Processed Temporal Data"), this);
     connect(loadCellDataAct, SIGNAL(triggered()), this, SLOT(loadCellData()));
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(loadCellDataAct);
@@ -507,7 +519,9 @@ void MainWindow::on_stopVideoButton_clicked(){
 }
 
 void MainWindow::on_loadVideoButton_pressed(){
+    fileMode = false;
     ui->loadVideoButton->setStyleSheet(button_pressed);
+
 }
 void MainWindow::on_loadVideoButton_released(){
     if(ui->loadVideoButton->isEnabled())
@@ -518,7 +532,25 @@ void MainWindow::on_loadVideoButton_released(){
 
 void MainWindow::on_loadVideoButton_clicked()
 {
+    fileMode = false;
     cout << "'Load Video' Button clicked." << endl;
+
+    //*** realtime recognition mode (fileMode = false) //
+    connect(myController, SIGNAL(detectedProperties(floatArray)),
+            this, SLOT(updatePropsVisUI(floatArray)));
+    connect(myController, SIGNAL(detectedCellImg(QImage, QVector<QPoint>)),
+            this, SLOT(updateCellImg(QImage, QVector<QPoint>)));
+
+    // groupbox and checkbox -> selecting cell type
+    connect(ui->checkBox_compressed, SIGNAL(stateChanged(int)),
+            this, SLOT(compressed_box_checked(int)));
+    connect(ui->checkBox_control, SIGNAL(stateChanged(int)),
+            this, SLOT(control_box_checked(int)));
+    ui->checkBox_compressed->setChecked(true);
+    ui->checkBox_compressed->setStyleSheet(checkboxStyle);
+    ui->checkBox_control->setStyleSheet(checkboxStyle);
+    ui->groupBox_cellRole->show();
+    // realtime recognition mode (fileMode = false) *** //
 
 
     QFileDialog *dialog = new QFileDialog();
@@ -604,8 +636,18 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
         }
     }
     else {
-        narr1Vis->updateProperty(property, myController->getCurrentFrame());
-        narr2Vis->updateCoord(QPointF(property[2], property[3]), myController->getCurrentFrame());
+        if(!fileMode){
+//            for(unsigned int n = 0; n < property.size(); n++)
+//                std::cout << property[n] << " ";
+//            std::cout << std::endl;
+            narr1Vis->updateProperty(property, /*myController->getCurrentFrame()*/property[0]);
+            narr2Vis->updateCoord(QPointF(property[3], property[4]), /*myController->getCurrentFrame()*/property[0]);
+        }else{
+//            for(unsigned int n = 0; n < property.size(); n++)
+//                std::cout << property[n] << " ";
+//            std::cout << std::endl;
+            narr1Vis->updateProperty(property, property[0]);
+        }
     }
 }
 
@@ -683,9 +725,78 @@ void MainWindow::compressed_box_checked(int state)
 
 void MainWindow::loadCellData()
 {
-    QMessageBox msgBox;
-    msgBox.setText("Haha!");
-    msgBox.exec();
+    fileMode = true;
+    cout << "'Load Cell Data' menu selected." << endl;
+
+    //*** read-property-from-file mode (fileMode = true) //
+    connect(this, SIGNAL(readProperties(floatArray)),
+            this, SLOT(updatePropsVisUI(floatArray)));
+    // read-property-from-file mode (fileMode = true) *** //
+
+    QFileDialog *dialog = new QFileDialog();
+    *dataFilename = dialog->getOpenFileName(this,
+                                            tr("Open Video"),
+                                            "../../../video", /*QDir::homePath()+"/Desktop/",*/
+                                            tr("Data Files (*.csv)"));
+
+    //prepare writing data to file
+    QFileInfo   fi  = QFileInfo(*dataFilename);
+    QString     ff  = fi.path()+"/"+fi.baseName();
+    //string      fn  = ff.toUtf8().constData();
+
+    this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
+    delete dialog;
+
+    readDataFile();
+    unsigned int cellDataSize = cellData.size();
+    narr1Vis->getMaxFrm(cellData[cellDataSize-1][0]);
+    for(unsigned int n = 0; n < cellDataSize; n++){
+        emit readProperties(cellData[n]);
+    }
+
+}
+
+void MainWindow::readDataFile()
+{
+    QFile f(*dataFilename);
+    if(!f.open(QIODevice::ReadOnly)){
+        qDebug() << "Reading csv file not found.";
+    }else{
+        QTextStream in(&f);
+        while(!in.atEnd()) { // each row
+            QString line = in.readLine();
+            if(line.isEmpty()){
+                continue;
+            }
+            if(line.isNull()){
+                break;
+            }
+            QVector<float> row;
+            foreach (const QString &cell, line.split(",")) {
+                //row.append(cell.trimmed());
+                row.append(cell.trimmed().toFloat());
+            }
+            //qDebug() << row;
+            //area.push_back(row[2]);
+            //blebNum.push_back(row[6]);
+            floatArray prop;
+            prop.push_back(float(row[0]));
+            prop.push_back(float(row[1]));
+            prop.push_back(float(row[2]));
+            prop.push_back(float(row[3]));
+            prop.push_back(float(row[4]));
+            prop.push_back(float(row[5]));
+//            prop.push_back(float(row[6]));
+//            for(unsigned int n = 0; n < prop.size(); n++)
+//                std::cout << prop[n];
+//            std::cout << std::endl;
+            cellData.push_back(prop);
+            //emit readProperties(prop);
+        }
+
+    }
+    f.close();
+
 }
 
 void MainWindow::on_drawROIButton_clicked(){

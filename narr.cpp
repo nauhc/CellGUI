@@ -104,7 +104,8 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     std:: cout << std::endl; */
     curr = currFrame;
 
-    area.push_back(prop[0]);
+//    area.push_back(prop[0]);
+    area.push_back(prop[1]);
     //printAreaData();
 }
 

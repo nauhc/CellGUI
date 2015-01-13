@@ -29,7 +29,7 @@ private:
     std::vector<float>          perimeter; // the values of a particular feature
     std::vector<float>          blebNum; // the values of a particular feature
     QVector<QPoint>             centroid; // the values of a particular feature
-    QVector<QPolygon>   contours; // smoothed contours
+    QVector<QPolygon>           contours; // smoothed contours
     QVector<QImage>             cellImg; // all the cell imgs
 
     unsigned int                curr; // current frame index

@@ -436,12 +436,13 @@ void Controller::run(){
 
 
             floatArray property;
+            property.push_back(float(frameIdx));
             property.push_back(float(area));
             property.push_back(float(perimeter));
             property.push_back(centroid.x);
+            property.push_back(centroid.y);
             property.push_back(shape);
-            property.push_back(centroid.y);//not appliable yet
-            property.push_back(0.0);//not appliable yet
+            //property.push_back(0.0);//not appliable yet
 
             // keep a time(frame) window and filter the detected features
             if(blebsImgWIN.size() < WINSIZE){

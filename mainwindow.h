@@ -59,7 +59,7 @@ private slots:
     void control_box_checked(int state);
     void compressed_box_checked(int state);
 
-
+    //read temporal data from file
     void loadCellData();
 
 private:
@@ -79,6 +79,15 @@ private:
     QAction         *loadCellDataAct;
 
     void setCanvas();
+
+    //read temporal data from file
+    bool                fileMode;
+    vector<floatArray>  cellData;
+    QString             *dataFilename;
+    void readDataFile();
+
+signals:
+    void readProperties(floatArray prop);
 
 };
 
