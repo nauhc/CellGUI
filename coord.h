@@ -15,6 +15,7 @@ public:
     void updateCoord(QPointF point, int currFrame);
     void getMaxFrm(unsigned int m);
     void getMaxSize(QSize s);
+    void clear();
 
 protected:
     void initializeGL();

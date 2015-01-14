@@ -15,6 +15,7 @@ public:
     void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour);
     void updateStage(unsigned int index);
     void getMaxFrm(unsigned int m);
+    void clear();
 
 protected:
     void initializeGL();

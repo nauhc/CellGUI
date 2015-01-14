@@ -28,54 +28,26 @@ inline int larger(int a, int b){
 
 Narr::Narr(QWidget *parent)
 {
-    area.clear();
-    stage.clear();
-    cells.clear();
-    stage.push_back(0);
+    clear();
 
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1);
 
     //should be getting from controller -- star --
+}
+
+void Narr::clear()
+{
+    area.clear();
+    stage.clear();
+    cells.clear();
+    stage.push_back(0);
+    cellImg.clear();
+
     curr = 0;
     max  = 1;
 
-//    max = 3500;
-//    stage.push_back(218);
-//    stage.push_back(1001);
-//    stage.push_back(1377);
-//    stage.push_back(2200);
-//    stage.push_back(2883);
-//    stage.push_back(max);
-
-//    QFile f("/Users/chuanwang/Sourcecode/CellGUI/video/movie_10172013_bv2_control01_original_sampled copy.csv");
-//    if(!f.open(QIODevice::ReadOnly)){
-//       qDebug() << "Reading csv file not found.";
-//    }else{
-//        QTextStream in(&f);
-//        while(!in.atEnd()) { // each row
-//            QString line = in.readLine();
-//            if(line.isEmpty()){
-//                continue;
-//            }
-//            if(line.isNull()){
-//                break;
-//            }
-//            QVector<float> row;
-//            foreach (const QString &cell, line.split(",")) {
-//                //row.append(cell.trimmed());
-//                row.append(cell.trimmed().toFloat());
-//            }
-//            //qDebug() << row;
-//            //area.push_back(row[2]);
-//            blebNum.push_back(row[6]);
-
-//        }
-//    }
-//    f.close();
-
-    //should be getting from controller -- end --
 }
 
 Narr::~Narr()
@@ -132,6 +104,8 @@ void Narr::getMaxFrm(unsigned int m)
     max = m;
     //qDebug() << "NARRATIVE VIS MAX frame number " << max;
 }
+
+
 
 void Narr::initializeGL()
 {

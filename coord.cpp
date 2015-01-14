@@ -11,41 +11,11 @@ QColor _BLUE_   = QColor(28, 120, 159);
 
 Coord::Coord(QWidget *parent)
 {
-//    QFile f("/Users/chuanwang/Sourcecode/CellGUI/video/movie_10172013_bv2_control01_original_sampled copy.csv");
-//    if(!f.open(QIODevice::ReadOnly)){
-//       qDebug() << "Reading csv file not found.";
-//    }else{
-//        QTextStream in(&f);
-//        while(!in.atEnd()) { // each row
-//            QString line = in.readLine();
-//            if(line.isEmpty()){
-//                continue;
-//            }
-//            if(line.isNull()){
-//                break;
-//            }
-//            QVector<float> row;
-//            foreach (const QString &cell, line.split(",")) {
-//                //row.append(cell.trimmed());
-//                row.append(cell.trimmed().toFloat());
-//            }
-//            QPointF p(row[3], row[4]);
-//            //qDebug() << p;
-//            centroid.push_back(p);
-//        }
-//    }
-//    f.close();
-    centroid.clear();
+    clear();
+
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1);
-
-    currFrm = 0;
-    maxFrm  = 1;
-//    min = QPoint(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-//    max = QPoint(0, 0);
-    min = QPoint(0, 0);
-    max = QPoint(50, 50);
 
 }
 
@@ -76,6 +46,18 @@ void Coord::getMaxSize(QSize s)
 {
     max = QPoint(s.width(), s.height());
     min = QPoint(0, 0);
+}
+
+void Coord::clear()
+{
+    centroid.clear();
+    currFrm = 0;
+    maxFrm  = 1;
+//    min = QPoint(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+//    max = QPoint(0, 0);
+    min = QPoint(0, 0);
+    max = QPoint(50, 50);
+
 }
 
 void Coord::initializeGL()

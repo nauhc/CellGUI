@@ -484,6 +484,8 @@ void MainWindow::on_stopVideoButton_clicked(){
 
     encircled = false;
 
+    narr1Vis->clear();
+    narr2Vis->clear();
 //    prop2Vis->releaseDataVis();
 //    prop1Vis->releaseDataVis();
 
@@ -519,7 +521,6 @@ void MainWindow::on_stopVideoButton_clicked(){
 }
 
 void MainWindow::on_loadVideoButton_pressed(){
-    fileMode = false;
     ui->loadVideoButton->setStyleSheet(button_pressed);
 
 }
@@ -534,6 +535,9 @@ void MainWindow::on_loadVideoButton_clicked()
 {
     fileMode = false;
     cout << "'Load Video' Button clicked." << endl;
+
+    narr1Vis->clear();
+    narr2Vis->clear();
 
     //*** realtime recognition mode (fileMode = false) //
     connect(myController, SIGNAL(detectedProperties(floatArray)),
