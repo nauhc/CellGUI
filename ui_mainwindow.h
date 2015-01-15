@@ -80,6 +80,7 @@ public:
     QPushButton *stopVideoButton;
     QPushButton *playVideoButton;
     QPushButton *loadVideoButton;
+    QLabel *label_temp;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -277,6 +278,9 @@ public:
         loadVideoButton->setObjectName(QStringLiteral("loadVideoButton"));
         loadVideoButton->setGeometry(QRect(880, 40, 110, 50));
         loadVideoButton->setFont(font1);
+        label_temp = new QLabel(centralWidget);
+        label_temp->setObjectName(QStringLiteral("label_temp"));
+        label_temp->setGeometry(QRect(550, 580, 62, 16));
         MainWindow->setCentralWidget(centralWidget);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -332,6 +336,7 @@ public:
         stopVideoButton->setText(QApplication::translate("MainWindow", "Stop", 0));
         playVideoButton->setText(QApplication::translate("MainWindow", "Play", 0));
         loadVideoButton->setText(QApplication::translate("MainWindow", "File", 0));
+        label_temp->setText(QApplication::translate("MainWindow", "TextLabel", 0));
     } // retranslateUi
 
 };

@@ -44,6 +44,8 @@ private:
     void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
                                qreal innerRadius, qreal thickness,
                                qreal strtRto, QColor color);
+
+    void mouseMoveEvent(QMouseEvent *ev);
 };
 
 #endif // NARR_H

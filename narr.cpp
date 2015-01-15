@@ -214,6 +214,40 @@ void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
     }
 }
 
+void Narr::mouseMoveEvent(QMouseEvent *ev)
+{
+    qreal   halfW = this->width()/2; // half width
+    qreal   halfH = this->height()/2; // half height
+//    qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
+//    QPointF center(halfW, halfH /*+ 50*/);
+
+
+
+//    painter->translate(x_center, y_center);
+//    painter->rotate(90);
+
+//    QPainter *painter;
+//    QPen     myPen(QColor(120, 120, 118));
+//    myPen.setWidth(2);
+//    painter->setPen(myPen);
+//    painter->drawText(ev->x(), ev->y(), 100, 30, Qt::AlignCenter, QString::number(degree));
+
+//    delete painter;
+
+
+    float angle = 0;
+    if(ev->y() <= halfH){
+        float degree = atan((ev->x()-halfW)/(-ev->y()+halfH));
+        if(degree < 0)
+            degree = degree + 2*M_PI;
+        angle = degree*180/M_PI;
+    }else{
+        float degree = atan((ev->x()-halfW)/(ev->y()-halfH));
+        angle = 180-degree*180/M_PI;
+    }
+    qDebug() << angle;
+}
+
 void drawTriangle(QPainter *painter,
                  qreal p0x, qreal p0y,
                  qreal p1x, qreal p1y,
