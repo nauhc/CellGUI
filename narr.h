@@ -11,10 +11,11 @@ class Narr : public OpenGLWindow
 public:
     Narr(QWidget *parent = 0);
     ~Narr();
+    void setBeginFrame(int beginFrame);
     void updateProperty(floatArray prop, int currFrame);
     void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour);
     void updateStage(unsigned int index);
-    void getMaxFrm(unsigned int m);
+    void setMaxFrm(unsigned int m);
     void clear();
 
 protected:
@@ -23,6 +24,8 @@ protected:
     //void resizeGL(int w, int h);
 
 private:
+    qreal                       halfW, halfH; // halfWidth, halfHeight of the OpenGLWindow
+
     QVector<unsigned int>       stage; // frame index that separates stages
     std::vector<floatArray>     propSeq;
     std::vector<float>          frameIdx;
@@ -33,9 +36,13 @@ private:
     QVector<QPolygon>           contours; // smoothed contours
     QVector<QImage>             cellImg; // all the cell imgs
 
+    unsigned int                begin; // beggining frame index
     unsigned int                curr; // current frame index
     unsigned int                max; // total number of frame
     QVector<QImage>             cells; // keyframe of cells
+
+    float                       angle; // mouse position angle
+    unsigned int                mouseIndex;
 
     void printAreaData();
     void drawCircularBarChart(QPainter *painter, std::vector<float> feature,

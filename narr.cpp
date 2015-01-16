@@ -33,8 +33,6 @@ Narr::Narr(QWidget *parent)
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1);
-
-    //should be getting from controller -- star --
 }
 
 void Narr::clear()
@@ -45,14 +43,28 @@ void Narr::clear()
     stage.push_back(0);
     cellImg.clear();
 
-    curr = 0;
-    max  = 1;
-
+    begin       = 0;
+    curr        = 0;
+    max         = 1;
+    angle       = 0;
+    mouseIndex  = 0;
 }
 
 Narr::~Narr()
 {
 
+}
+
+void Narr::setBeginFrame(int beginFrame)
+{
+    begin = beginFrame;
+    std::cout << "NARRATIVE VIS BEGIN frame number " << begin << std::endl;
+}
+
+void Narr::setMaxFrm(unsigned int m)
+{
+    max = m;
+    std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
 }
 
 void Narr::printAreaData(){
@@ -76,7 +88,7 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     std:: cout << std::endl; */
     curr = currFrame;
 
-//    area.push_back(prop[0]);
+    //    area.push_back(prop[0]);
     area.push_back(prop[1]);
     //printAreaData();
 }
@@ -99,13 +111,6 @@ void Narr::updateStage(unsigned int index)
     stage.push_back(index);
 }
 
-void Narr::getMaxFrm(unsigned int m)
-{
-    max = m;
-    //qDebug() << "NARRATIVE VIS MAX frame number " << max;
-}
-
-
 
 void Narr::initializeGL()
 {
@@ -127,29 +132,29 @@ void drawRingArc(QPainter   *painter,
                  QColor     color){ // clockwise
 
     qreal outerRadius = innerRadius + thickness;
-//        //debug
-//        painter->setPen(QColor(255, 255, 0));
-//        painter->drawRect(center.x() - outerRadius,
-//                          center.y() - outerRadius,
-//                          2 * outerRadius, 2 * outerRadius);
+    //        //debug
+    //        painter->setPen(QColor(255, 255, 0));
+    //        painter->drawRect(center.x() - outerRadius,
+    //                          center.y() - outerRadius,
+    //                          2 * outerRadius, 2 * outerRadius);
 
-        QPen myPen(color);
-        myPen.setCapStyle(Qt::FlatCap);
-        myPen.setWidth(thickness);
-        painter->setPen(myPen);
+    QPen myPen(color);
+    myPen.setCapStyle(Qt::FlatCap);
+    myPen.setWidth(thickness);
+    painter->setPen(myPen);
 
-        painter->drawArc(center.x() - outerRadius + .5 * thickness,
-                         center.y() - outerRadius + .5 * thickness,
-                         2 * outerRadius - thickness, 2 * outerRadius - thickness,
-                         -startAngle*16, -endAngle*16); //clockwise
-        //QRectF rect = QRectF();
-        //painter->drawText();
+    painter->drawArc(center.x() - outerRadius + .5 * thickness,
+                     center.y() - outerRadius + .5 * thickness,
+                     2 * outerRadius - thickness, 2 * outerRadius - thickness,
+                     -startAngle*16, -endAngle*16); //clockwise
+    //QRectF rect = QRectF();
+    //painter->drawText();
 
 }
 
 void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
-             qreal innerRadius, qreal thickness,
-             qreal strtRto, QColor color) //clockwise
+                                qreal innerRadius, qreal thickness,
+                                qreal strtRto, QColor color) //clockwise
 {
     if (feature.size() != 0){
         QPen myPen(color);
@@ -166,12 +171,12 @@ void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
         for(int n = 0; n < number; n++){
             //qDebug() << feature[n];
             //rotate and translate from the center to location on the ring
-            float degree = 360./max * n;
+            float degree = 360./(max-begin) * n;
             painter->rotate(degree);
             painter->translate(0, innerRadius);
             //draw a bar
             float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
-            float w = 2.*M_PI/max*number;
+            float w = 2.*M_PI/(max-begin)*number;
             painter->drawRoundedRect(0, 0, w, barheight, 2.0, 2.0);
             // translate and rotate back to the center
             painter->translate(0, -innerRadius);
@@ -181,8 +186,8 @@ void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
 }
 
 void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
-                           qreal innerRadius, qreal thickness,
-                           qreal strtRto, QColor color) //clockwise
+                                 qreal innerRadius, qreal thickness,
+                                 qreal strtRto, QColor color) //clockwise
 {
     if (feature.size() != 0){
         QPen myPen(color);
@@ -195,16 +200,16 @@ void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
 
         int number  = feature.size();
         QPolygon    polyline;
-        QPoint      begin;
+        QPoint      start;
         for(int n = 0; n < number; n++)
         {
             //rotate and translate from the center to location on the ring
-            float degree = (360./max* n + 90) * M_PI/180;
+            float degree = (360./(max-begin) * n + 90) * M_PI/180;
             float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
             float radius    = barheight + innerRadius;
             QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
             if(n == 0)
-                begin = point;
+                start = point;
             polyline << point;
         }
         //connect to the beginning
@@ -216,26 +221,6 @@ void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
 
 void Narr::mouseMoveEvent(QMouseEvent *ev)
 {
-    qreal   halfW = this->width()/2; // half width
-    qreal   halfH = this->height()/2; // half height
-//    qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
-//    QPointF center(halfW, halfH /*+ 50*/);
-
-
-
-//    painter->translate(x_center, y_center);
-//    painter->rotate(90);
-
-//    QPainter *painter;
-//    QPen     myPen(QColor(120, 120, 118));
-//    myPen.setWidth(2);
-//    painter->setPen(myPen);
-//    painter->drawText(ev->x(), ev->y(), 100, 30, Qt::AlignCenter, QString::number(degree));
-
-//    delete painter;
-
-
-    float angle = 0;
     if(ev->y() <= halfH){
         float degree = atan((ev->x()-halfW)/(-ev->y()+halfH));
         if(degree < 0)
@@ -245,14 +230,18 @@ void Narr::mouseMoveEvent(QMouseEvent *ev)
         float degree = atan((ev->x()-halfW)/(ev->y()-halfH));
         angle = 180-degree*180/M_PI;
     }
-    qDebug() << angle;
+//    qDebug() << angle;
+//    update();
+    mouseIndex = int(angle/360.*(max-begin)+begin);
+
 }
 
+
 void drawTriangle(QPainter *painter,
-                 qreal p0x, qreal p0y,
-                 qreal p1x, qreal p1y,
-                 qreal p2x, qreal p2y,
-                 QColor color){
+                  qreal p0x, qreal p0y,
+                  qreal p1x, qreal p1y,
+                  qreal p2x, qreal p2y,
+                  QColor color){
     QPainterPath path;
     path.moveTo(p0x, p0y);
     path.lineTo(p1x, p1y);
@@ -263,12 +252,12 @@ void drawTriangle(QPainter *painter,
 
 void drawXY(){
     QPainter painter_xy;
-//    QPen myPen(PURPLE);
-//    painter_xy.setPen(myPen);
-//    painter_xy.drawLine(QPoint(0, 0), QPoint(0, 50));
-//    myPen.setColor(YELLOW);
-//    painter_xy.setPen(myPen);
-//    painter_xy.drawLine(QPoint(0, 0), QPoint(50, 0));
+    //    QPen myPen(PURPLE);
+    //    painter_xy.setPen(myPen);
+    //    painter_xy.drawLine(QPoint(0, 0), QPoint(0, 50));
+    //    myPen.setColor(YELLOW);
+    //    painter_xy.setPen(myPen);
+    //    painter_xy.drawLine(QPoint(0, 0), QPoint(50, 0));
 
     painter_xy.drawLine(QPoint(0, 0), QPoint(50, 0)); // x
     painter_xy.drawLine(QPoint(0, 0), QPoint(0, 50)); // y
@@ -278,42 +267,50 @@ void drawXY(){
 
 void Narr::render(QPainter *painter)
 {
+    halfW = this->width()/2; // half width
+    halfH = this->height()/2; // half height
+
+    // draw current frame
+    painter->setRenderHint(QPainter::Antialiasing);
+    QPen penContour(QColor(153, 204, 49));
+    painter->setPen(penContour);
+    painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(mouseIndex)));
+//    painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(angle/360.*(max-begin)+begin)));
+
     // set (0,0) to the center of the canvas
-    qreal   halfW = this->width()/2; // half width
-    qreal   halfH = this->height()/2; // half height
     qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
     QPointF center(halfW, halfH /*+ 50*/);
     painter->translate(center.x(), center.y());
+
     // set the start angle to 0 o'clock;
     painter->rotate(-90); //***x->up, y->right***
-
-    painter->setRenderHint(QPainter::Antialiasing);
 
     // draw ring arcs background
     qreal ringArcInnerRadius    = .20 * halfS;
     qreal ringArcThickness      = .05 * halfS;
     drawRingArc(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
-    // draw total frame number inside the ring
 
-    if(propSeq.size() > 0){
-        painter->rotate(90);
-        painter->setPen(QColor(128, 128, 128));
-        painter->drawText(-60, -20, 120, 20, Qt::AlignCenter, QString::number(int(curr)));
-        painter->drawText(-60, -10, 120, 20, Qt::AlignCenter, "-----");
-        painter->drawText(-60,   2, 120, 20, Qt::AlignCenter, QString::number(int(max)));
-        painter->rotate(-90);
-    }
+//    // draw total frame number inside the ring
+//    if(propSeq.size() > 0){
+//        painter->rotate(90);
+//        painter->setPen(QColor(128, 128, 128));
+//        painter->drawText(-60, -20, 120, 20, Qt::AlignCenter, QString::number(int(curr)));
+//        painter->drawText(-60, -10, 120, 20, Qt::AlignCenter, "-----");
+//        painter->drawText(-60,   2, 120, 20, Qt::AlignCenter, QString::number(int(max)));
+//        painter->rotate(-90);
+//    }
+
     // draw real-time changing ring arcs
-    float p = float(curr)/max;
+    float p = float(curr-begin)/(max-begin);
     qreal currAngle = p * 360 - 1.0;
     QColor c = gradualColor(GREEN, /*p*/0.2);
     drawRingArc(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, c);
-//    painter->setPen(QColor(200, 200, 200));
-//    float xx = (ringArcInnerRadius - 60)*sin(currAngle*M_PI/180);
-//    float yy = (ringArcInnerRadius - 60)*cos(currAngle*M_PI/180);
-//    painter->rotate(90);
-//    painter->drawText( xx-30*1.7, yy- 30, 60*1.7, 60 , Qt::AlignCenter, QString::number(int(curr)));
-//    painter->rotate(-90);
+    //    painter->setPen(QColor(200, 200, 200));
+    //    float xx = (ringArcInnerRadius - 60)*sin(currAngle*M_PI/180);
+    //    float yy = (ringArcInnerRadius - 60)*cos(currAngle*M_PI/180);
+    //    painter->rotate(90);
+    //    painter->drawText( xx-30*1.7, yy- 30, 60*1.7, 60 , Qt::AlignCenter, QString::number(int(curr)));
+    //    painter->rotate(-90);
 
     painter->rotate(-90); //***x->left, y->up***
     //draw circular bar
@@ -333,35 +330,36 @@ void Narr::render(QPainter *painter)
 
     // draw cells
     qreal cellRadius = ringArcInnerRadius + ringArcThickness + 60;
-    int stp = max/9;
+    int stp = (max-begin)/9;
     for(int n = 0; n < cellImg.size(); n+=stp)
     {
-        float degree = n * 360./max;
+        float degree = n * 360./(max-begin);
         int x_center = cellRadius * cos(degree*M_PI/180);
         int y_center = cellRadius * sin(degree*M_PI/180);
 
         painter->translate(x_center, y_center);
         painter->rotate(90);
 
-//        float opa;
-//        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
-//        painter->setOpacity(opa);
-//        QPen penContour(QColor(153, 204, 49));
-//        penContour.setWidth(2);
-//        painter->setPen(penContour);
-//        painter->drawPoints(contours[n]);
+        //        float opa;
+        //        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
+        //        painter->setOpacity(opa);
+        //        QPen penContour(QColor(153, 204, 49));
+        //        penContour.setWidth(2);
+        //        painter->setPen(penContour);
+        //        painter->drawPoints(contours[n]);
         painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);
 
         painter->rotate(-90);
         painter->translate(-x_center, -y_center);
     }
 
+    //QPen penContour(QColor(153, 204, 49));
+    painter->setPen(QPen(QColor(200,200,200)));
+    penContour.setWidth(1);
+    painter->rotate(angle);
+    painter->drawLine(QPoint(0,0), QPoint(halfH, 0));
+
 }
-
-//void Narr::resizeGL(int w, int h)
-//{
-
-//}
 
 
 

@@ -587,7 +587,7 @@ void MainWindow::on_loadVideoButton_clicked()
             ui->drawROIButton->setStyleSheet(button_released_off);
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
             ui->frameLabelRight->setText(" 0 / " + QString::number(myController->getNumberOfFrames()));
-            narr1Vis->getMaxFrm(myController->getNumberOfFrames());
+            narr1Vis->setMaxFrm(myController->getNumberOfFrames());
             narr2Vis->getMaxSize(myController->getVideoSize());
         }
     }
@@ -753,7 +753,8 @@ void MainWindow::loadCellData()
 
     readDataFile();
     unsigned int cellDataSize = cellData.size();
-    narr1Vis->getMaxFrm(cellData[cellDataSize-1][0]);
+    narr1Vis->setBeginFrame(cellData[0][0]);
+    narr1Vis->setMaxFrm(cellData[cellDataSize-1][0]);
     for(unsigned int n = 0; n < cellDataSize; n++){
         emit readProperties(cellData[n]);
     }
@@ -826,6 +827,8 @@ void MainWindow::on_drawROIButton_clicked(){
         ui->drawROIButton->setText("Track Cell");
 
         myController->pauseVideo();
+
+        narr1Vis->setBeginFrame(myController->getCurrentFrame());
 
         encircler->clearCircle();
         encircler->turnOnEncircleMode();
