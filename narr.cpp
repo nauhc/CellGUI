@@ -355,10 +355,13 @@ void Narr::render(QPainter *painter)
 //    }
 
     //QPen penContour(QColor(153, 204, 49));
-    painter->setPen(QPen(QColor(230,230,230)));
+    painter->setPen(QPen(QColor(128,128,128)));
     penContour.setWidth(1);
     painter->rotate(angle);
-    painter->drawLine(QPoint(0,0), QPoint(halfH, 0));
+    painter->drawLine(QPoint(0,0), QPoint(areaBarInnerRadius + areaBarThinkness+2, 0));
+    painter->setPen(QPen(QColor(255,255,255)));
+    painter->drawLine(QPoint(0,0), QPoint(ringArcInnerRadius, 0));
+    painter->drawLine(QPoint(ringArcInnerRadius + ringArcThickness,0), QPoint(areaBarInnerRadius, 0));
 
 
     // draw cell according to mouse Index
