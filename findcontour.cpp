@@ -778,8 +778,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     //vector<int> compression_params;
     //compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
     //compression_params.push_back(9);
-    //QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
-    //imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
+//    QString cellFileName1 = "cell" + QString::number(frameNum) + ".png";
+//    imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
     ////---- draw largest contour end ----
 
     // find the number and the sizes of blebs of the cell

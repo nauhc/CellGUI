@@ -91,6 +91,7 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     //    area.push_back(prop[0]);
     area.push_back(prop[1]);
     //printAreaData();
+    //update();
 }
 
 void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
@@ -286,7 +287,7 @@ void Narr::render(QPainter *painter)
     painter->rotate(-90); //***x->up, y->right***
 
     // draw ring arcs background
-    qreal ringArcInnerRadius    = .20 * halfS;
+    qreal ringArcInnerRadius    = .30 * halfS;
     qreal ringArcThickness      = .05 * halfS;
     drawRingArc(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
 
@@ -314,13 +315,13 @@ void Narr::render(QPainter *painter)
 
     painter->rotate(-90); //***x->left, y->up***
     //draw circular bar
-    qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .40 * halfS;
+    qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
     qreal areaBarThinkness      = .30* halfS;
     //printAreaData();
 
     drawRingArc(painter, QPointF(0,0), 0, 360, areaBarInnerRadius, areaBarThinkness+4, gradualColor(ORANGE, 0.95));
 
-    drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
+    //drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
     drawCircularLineChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
 
@@ -328,36 +329,56 @@ void Narr::render(QPainter *painter)
     //painter->drawLine(QPoint(0, 0), QPoint(50, 0)); // x
     //painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
 
-    // draw cells
-    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 60;
-    int stp = (max-begin)/9;
-    for(int n = 0; n < cellImg.size(); n+=stp)
-    {
-        float degree = n * 360./(max-begin);
-        int x_center = cellRadius * cos(degree*M_PI/180);
-        int y_center = cellRadius * sin(degree*M_PI/180);
+    // draw cells (key stages)
+//    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 40;
+//    int stp = (max-begin)/9;
+//    for(int n = 0; n < cellImg.size(); n+=stp)
+//    {
+//        float degree = n * 360./(max-begin);
+//        int x_center = cellRadius * cos(degree*M_PI/180);
+//        int y_center = cellRadius * sin(degree*M_PI/180);
 
-        painter->translate(x_center, y_center);
-        painter->rotate(90);
+//        painter->translate(x_center, y_center);
+//        painter->rotate(90);
 
-        //        float opa;
-        //        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
-        //        painter->setOpacity(opa);
-        //        QPen penContour(QColor(153, 204, 49));
-        //        penContour.setWidth(2);
-        //        painter->setPen(penContour);
-        //        painter->drawPoints(contours[n]);
-        painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);
+//        //        float opa;
+//        //        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
+//        //        painter->setOpacity(opa);
+//        //        QPen penContour(QColor(153, 204, 49));
+//        //        penContour.setWidth(2);
+//        //        painter->setPen(penContour);
+//        //        painter->drawPoints(contours[n]);
+//        painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);
 
-        painter->rotate(-90);
-        painter->translate(-x_center, -y_center);
-    }
+//        painter->rotate(-90);
+//        painter->translate(-x_center, -y_center);
+//    }
 
     //QPen penContour(QColor(153, 204, 49));
-    painter->setPen(QPen(QColor(200,200,200)));
+    painter->setPen(QPen(QColor(230,230,230)));
     penContour.setWidth(1);
     painter->rotate(angle);
     painter->drawLine(QPoint(0,0), QPoint(halfH, 0));
+
+
+    // draw cell according to mouse Index
+    //qDebug() << mouseIndex << curr << begin;
+    if(begin > 0 && mouseIndex > 0 && curr > 0){
+            int idx = curr > mouseIndex ? (mouseIndex - begin) : (curr - begin);
+            if(idx > 0 && idx < cellImg.size()){
+                //qDebug() << "Idx " << idx;
+                painter->translate(0,0);
+                painter->rotate(90); //***x->up, y->right***
+                //int side = 2*ringArcInnerRadius/1.3;
+                float scale = 1.2;
+                QImage cell = cellImg[idx];
+                QRect centerRect = QRect(-cell.width()/2*scale, -cell.height()/2*scale, cell.width()*scale, cell.height()*scale);
+                painter->drawImage(centerRect, cell);
+                //painter->drawImage(-cellImg[idx-1].width()/2, -cellImg[idx-1].height()/2, cellImg[idx-1]);
+                painter->rotate(-90);
+            }
+    }
+
 
 }
 

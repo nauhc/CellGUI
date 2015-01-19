@@ -565,15 +565,29 @@ void MainWindow::on_loadVideoButton_clicked()
 
     //prepare writing data to file
     QFileInfo   fi  = QFileInfo(filename);
-    QString     ff  = fi.path()+"/"+fi.baseName();
-    //string      fn  = ff.toUtf8().constData();
+    QString     fb  = fi.baseName();
+    QString     fp  = fi.path();
+    QString     ff  = fp+"/"+fb;
 
+    if(ui->checkBox_compressed->isChecked())
+        ff = ff + "_compressed";
+    else
+        ff = ff + "_control";
+
+    QDir dir(ff);
+    if(!dir.exists()){
+        qDebug() << "Creating " << ff << "directory";
+        dir.mkpath(ff);
+    }
+    else{
+        qDebug() << ff << " already exists";
+    }
 
     this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
     delete dialog;
 
     if (!filename.isEmpty()){
-        if (!myController->loadVideo(filename.toStdString(), ff.toStdString())){
+        if (!myController->loadVideo(filename.toStdString(), ff.toStdString(), fb.toStdString())){
             QMessageBox msgBox;
             msgBox.setText("The selected video could not be opened!");
             msgBox.exec();
@@ -644,7 +658,8 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
 //            for(unsigned int n = 0; n < property.size(); n++)
 //                std::cout << property[n] << " ";
 //            std::cout << std::endl;
-            narr1Vis->updateProperty(property, /*myController->getCurrentFrame()*/property[0]);
+            qDebug() << myController->getCurrentFrame();
+            narr1Vis->updateProperty(property, myController->getCurrentFrame()/*property[0]*/);
             narr2Vis->updateCoord(QPointF(property[3], property[4]), /*myController->getCurrentFrame()*/property[0]);
         }else{
 //            for(unsigned int n = 0; n < property.size(); n++)

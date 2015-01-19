@@ -66,7 +66,7 @@ inline QImage cvMatToQImage(const cv::Mat &inMat){
     return QImage();
 }
 
-bool Controller::loadVideo(string file, string fn){
+bool Controller::loadVideo(string file, string ff, string fb){
     inputVideo->open(file);
     if(!inputVideo->isOpened()){
         cout << "Could not open the input video:" << file << endl;
@@ -83,23 +83,31 @@ bool Controller::loadVideo(string file, string fn){
         cout << "frame count: " << frameCnt << "\n";
         cout << "fps:" << fps << endl;
 
+        filepath = ff; // file path
+        string fn = ff+"/"+fb; //fn: file path and file name (file extension exclusive)
+
+        //prepare to write data to file
+        std::transform(fn.begin(), fn.end(), fn.begin(), ::tolower);
+
+        if(compressedCell)  // compressed cell
+            fn = fn + "_compressed.csv";
+        else // control cell
+            fn = fn + "_control.csv";
+
         const char* fnn = fn.c_str();
         //check if file exists, if exists delete the file
         ifstream ifile(fn);
         if(ifile){
+            //remove the csv file
+            cout << "removing existing csv file" << endl;
             if(remove(fnn)!= 0)
                 cout << "error deleting existing csv file" << endl;
+
         }
 
-        //prepare to write data to file
 
-        std::transform(fn.begin(), fn.end(), fn.begin(), ::tolower);
-        if(compressedCell)
-            fn = fn + "_compressed";
-        else
-            fn = fn + "_control";
-        cout << "writing data to file " << fn+".csv" << endl;
-        csvFile.open(fn+".csv", ios::out);
+        cout << "writing data to file " << fn << endl;
+        csvFile.open(fn, ios::out);
         if(!inputVideo->read(*frame)){
             cout << "Unable to retrieve the first frame from video stream." << endl;
             return false;
@@ -428,11 +436,11 @@ void Controller::run(){
                 break;
             }
 
-//            vector<int> compression_params;
-//            compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
-//            compression_params.push_back(9);
-//            QString cellFileName1 = "cell" + QString::number(frameIdx) + ".png";
-//            imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
+            vector<int> compression_params;
+            compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+            compression_params.push_back(9);
+            QString cellFileName1 = QString::fromStdString(filepath) + "/cell" + QString::number(frameIdx) + ".png";
+            imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
 
 
             floatArray property;
@@ -459,8 +467,6 @@ void Controller::run(){
             else{
                 cout << "error: time window size too large. " << endl;
             }
-
-
 
             //double subImgSize = contourImg.cols*contourImg.rows;
             double area_ratio = micMtr_Pixel*micMtr_Pixel/scale/scale;
@@ -491,6 +497,7 @@ void Controller::run(){
             for(unsigned int n = 0; n < smooth_contour_curve.size(); n++)
                 smoothContour.push_back(QPoint(smooth_contour_curve[n].x, smooth_contour_curve[n].y));
             emit detectedCellImg(cvMatToQImage(cell_alpha), smoothContour);
+
 
             img = cvMatToQImage(boxedImg);
             roiImg1 = cvMatToQImage(contourImg);

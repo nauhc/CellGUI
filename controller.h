@@ -10,6 +10,7 @@
 #include <findcontour.h>
 #include <video/tracking.hpp>
 #include <bleb.h>
+#include <QDir>
 
 using namespace std;
 using namespace cv;
@@ -36,6 +37,7 @@ private:
 
     ofstream        csvFile;// output to file
     string          csvFileName;
+    string          filepath; // filepath for a particular movie
 
     FindContour     *contour; // findcontour class object
     bool            encircled;
@@ -84,7 +86,7 @@ public:
     void    playVideo();
     void    pauseVideo();
     bool    videoIsPaused();
-    bool    loadVideo(string file, string fn);
+    bool    loadVideo(string file, string ff, string fb);
     double  getNumberOfFrames();
     double  getCurrentFrame();
     void    releaseVideo();
