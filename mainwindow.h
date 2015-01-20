@@ -62,6 +62,7 @@ private slots:
     //read temporal data from file
     void loadCellData();
 
+
 private:
     Ui::MainWindow  *ui;
     Controller      *myController;

@@ -48,6 +48,8 @@ void Narr::clear()
     max         = 1;
     angle       = 0;
     mouseIndex  = 0;
+
+    propType    = 0;
 }
 
 Narr::~Narr()
@@ -88,10 +90,18 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     std:: cout << std::endl; */
     curr = currFrame;
 
-    //    area.push_back(prop[0]);
+//    property.push_back(float(frameIdx)); // 0
+//    property.push_back(float(area)); // 1
+//    property.push_back(float(perimeter)); //2
+//    property.push_back(centroid.x); // 3
+//    property.push_back(centroid.y); // 4
+//    property.push_back(shape); // 5
+//    property.push_back(blebs.size()); // 6
+//    property.push_back(avg_blebsize); // 7
+
     area.push_back(prop[1]);
-    //printAreaData();
-    //update();
+    perimeter.push_back(prop[2]);
+    blebNum.push_back(prop[6]);
 }
 
 void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
@@ -220,6 +230,38 @@ void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
     }
 }
 
+void Narr::drawCircularLineChart_fixMax(QPainter *painter,
+                                 std::vector<float> feature, qreal maxV,
+                                 qreal innerRadius, qreal thickness,
+                                 QColor color) //clockwise
+{
+    if (feature.size() != 0){
+        QPen myPen(color);
+        myPen.setCapStyle(Qt::FlatCap);
+        painter->setPen(myPen);
+        painter->setBrush(QBrush(color));
+
+        int number  = feature.size();
+        QPolygon    polyline;
+        QPoint      start;
+        for(int n = 0; n < number; n++)
+        {
+            //rotate and translate from the center to location on the ring
+            float degree = (360./(max-begin) * n + 90) * M_PI/180;
+            float barheight = float(feature[n]) * thickness/ maxV;
+            float radius    = barheight + innerRadius;
+            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
+            if(n == 0)
+                start = point;
+            polyline << point;
+        }
+        //connect to the beginning
+        //polyline << begin;
+        //draw polyline
+        painter->drawPolyline(polyline);
+    }
+}
+
 void Narr::mouseMoveEvent(QMouseEvent *ev)
 {
     if(ev->y() <= halfH){
@@ -235,6 +277,25 @@ void Narr::mouseMoveEvent(QMouseEvent *ev)
 //    update();
     mouseIndex = int(angle/360.*(max-begin)+begin);
 
+}
+
+void Narr::setPropType(int propTp)
+{
+    propType = propTp;
+    switch(propType){
+    case 0:
+        std::cout << "Property Type 'Area' selected. \n" << std::endl;
+        break;
+    case 1:
+        std::cout << "Property Type: 'Perimeter' selected. \n" << std::endl;
+        break;
+    case 2:
+        std::cout << "Property Type: 'Bleb' selected. \n" << std::endl;
+        break;
+    default:
+        std::cout << "Property Type: 'Area' selected. \n" << std::endl;
+        break;
+    }
 }
 
 
@@ -315,20 +376,38 @@ void Narr::render(QPainter *painter)
 
     painter->rotate(-90); //***x->left, y->up***
     //draw circular bar
-    qreal areaBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
-    qreal areaBarThinkness      = .30* halfS;
+    qreal propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
+    qreal propBarThinkness      = .30* halfS;
     //printAreaData();
 
-    drawRingArc(painter, QPointF(0,0), 0, 360, areaBarInnerRadius, areaBarThinkness+4, gradualColor(ORANGE, 0.95));
+//    drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThinkness+4, gradualColor(ORANGE, 0.95));
 
     //drawCircularBarChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.7));
-    drawCircularLineChart(painter, area, areaBarInnerRadius, areaBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
+//    drawCircularLineChart(painter, area, propBarInnerRadius, propBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
+
+    if(propType == 0){ // area
+        drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThinkness+4, gradualColor(ORANGE, 0.95));
+        qreal maxArea = 20000;
+        drawCircularLineChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThinkness, gradualColor(ORANGE, 0.3));
+    }
+    else if(propType == 1){ // perimeter
+        drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThinkness+4, gradualColor(PURPLE, 0.95));
+        qreal maxPerimeter = 500;
+        drawCircularLineChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThinkness, gradualColor(PURPLE, 0.3));
+    }
+    else if(propType == 2){ // bleb
+        drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThinkness+4, gradualColor(BLUE, 0.95));
+        qreal maxBlebNum = 6;
+        drawCircularLineChart_fixMax(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThinkness, gradualColor(BLUE, 0.3));
+
+    }
 
 
     painter->rotate(90); //***x->up, y->right***
     //painter->drawLine(QPoint(0, 0), QPoint(50, 0)); // x
     //painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
 
+    /*
     // draw cells (key stages)
 //    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 40;
 //    int stp = (max-begin)/9;
@@ -353,15 +432,16 @@ void Narr::render(QPainter *painter)
 //        painter->rotate(-90);
 //        painter->translate(-x_center, -y_center);
 //    }
+*/
 
     //QPen penContour(QColor(153, 204, 49));
     painter->setPen(QPen(QColor(128,128,128)));
     penContour.setWidth(1);
     painter->rotate(angle);
-    painter->drawLine(QPoint(0,0), QPoint(areaBarInnerRadius + areaBarThinkness+2, 0));
+    painter->drawLine(QPoint(0,0), QPoint(propBarInnerRadius + propBarThinkness+2, 0));
     painter->setPen(QPen(QColor(255,255,255)));
     painter->drawLine(QPoint(0,0), QPoint(ringArcInnerRadius, 0));
-    painter->drawLine(QPoint(ringArcInnerRadius + ringArcThickness,0), QPoint(areaBarInnerRadius, 0));
+    painter->drawLine(QPoint(ringArcInnerRadius + ringArcThickness,0), QPoint(propBarInnerRadius, 0));
 
 
     // draw cell according to mouse Index

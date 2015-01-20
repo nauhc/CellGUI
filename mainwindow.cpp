@@ -92,6 +92,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)),
             myController, SLOT(setVideoType(int)));
 
+    ui->typeComboBox->setStyleSheet(button_released_on);
+    ui->typeComboBox->addItem("Single cell (no overlapping)");
+    ui->typeComboBox->addItem("Fix cell window");
+    ui->typeComboBox->addItem("Flexible cell window");
+
 
     // connect lineEditors to setPixel2micMeter event
     ui->pixelLineEdit->setText("300");
@@ -116,10 +121,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->drawROIButton->setEnabled(false);
 
 
-    ui->typeComboBox->setStyleSheet(button_released_on);
-    ui->typeComboBox->addItem("Single cell (no overlapping)");
-    ui->typeComboBox->addItem("Fix cell window");
-    ui->typeComboBox->addItem("Flexible cell window");
+    ui->propComboBox->setStyleSheet(button_released_on);
+    ui->propComboBox->addItem("Area");
+    ui->propComboBox->addItem("Perimeter");
+    ui->propComboBox->addItem("Bleb size & number");
 
     ui->horizontalSlider->setEnabled(false);
 
@@ -166,8 +171,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         // connect properties and dataVis
         qRegisterMetaType<floatArray>("floatArray");
 
-        connect(myController, SIGNAL(detectedProperties(floatArray)),
-                this, SLOT((floatArray)));
+        connect(myController, SIGNAL(detectedProperties(floatArray)), this, SLOT(floatArray));
 
         // connect checkbox to box_checked event
         connect(ui->checkBox_area, SIGNAL(stateChanged(int)),
@@ -266,6 +270,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         QWidget *container = QWidget::createWindowContainer(narr1Vis, this->centralWidget());
         QRect narr1VisRect = QRect(40, 600, /*(this->width()-160)/2*/600, 600);
         container->setGeometry(narr1VisRect);
+
+        // connect property type combobox to function
+        connect(ui->propComboBox, SIGNAL(currentIndexChanged(int)),
+                narr1Vis, SLOT(setPropType(int)));
+
 
         narr2Vis = new Coord();
         narr2Vis->resize(512, 512);
@@ -658,7 +667,7 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
 //            for(unsigned int n = 0; n < property.size(); n++)
 //                std::cout << property[n] << " ";
 //            std::cout << std::endl;
-            qDebug() << myController->getCurrentFrame();
+            //qDebug() << myController->getCurrentFrame();
             narr1Vis->updateProperty(property, myController->getCurrentFrame()/*property[0]*/);
             narr2Vis->updateCoord(QPointF(property[3], property[4]), /*myController->getCurrentFrame()*/property[0]);
         }else{
@@ -741,6 +750,8 @@ void MainWindow::compressed_box_checked(int state)
         myController->compressedCell = false;
     }
 }
+
+
 
 void MainWindow::loadCellData()
 {

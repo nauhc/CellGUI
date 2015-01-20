@@ -260,16 +260,16 @@ void Controller::setVideoType(int tp)
     videoType = tp;
     switch (videoType) {
     case 0:
-        cout << "video Type: Single cell video. \n" << endl;
+        cout << "Video Type: Single cell video. \n" << endl;
         break;
     case 1:
-        cout << "video Type: fix window video. \n" << endl;
+        cout << "Video Type: fix window video. \n" << endl;
         break;
     case 2:
-        cout << "video Type: flexible video. \n" << endl;
+        cout << "Video Type: flexible video. \n" << endl;
         break;
     default:
-        cout << "video Type: fix window video. \n" << endl;
+        cout << "Video Type: fix window video. \n" << endl;
         break;
     }
 }
@@ -472,10 +472,18 @@ void Controller::run(){
             double area_ratio = micMtr_Pixel*micMtr_Pixel/scale/scale;
             double len_ratio  = micMtr_Pixel/scale/scale;
             //cout << "area_ratio " << area_ratio << endl;
+            float  avg_blebsize = 0;
             for(unsigned int n = 0; n < blebs.size(); n++){
                 circle(boxedImg, blebs[n].center, 3, Scalar(144, 57, 123, 64), -1);
                 blebs_bin[blebs[n].bin] = blebs[n].size /** area_ratio*/;
+                avg_blebsize += blebs[n].size;
             }
+            avg_blebsize = avg_blebsize/blebs.size();
+
+            property.push_back(blebs.size());
+            property.push_back(avg_blebsize);
+
+            emit detectedProperties(property);
 
             csvFile << frameIdx << ","
                     << area * area_ratio << ","
@@ -492,7 +500,7 @@ void Controller::run(){
                 csvFile << blebs_bin[b] << ",";
             csvFile << endl;
 
-            emit detectedProperties(property);
+
             QVector<QPoint> smoothContour;
             for(unsigned int n = 0; n < smooth_contour_curve.size(); n++)
                 smoothContour.push_back(QPoint(smooth_contour_curve[n].x, smooth_contour_curve[n].y));

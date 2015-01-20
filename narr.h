@@ -25,6 +25,7 @@ protected:
 
 private:
     qreal                       halfW, halfH; // halfWidth, halfHeight of the OpenGLWindow
+    unsigned int                propType; // property type for displaying 0:area 1:perimeter 2:bleb
 
     QVector<unsigned int>       stage; // frame index that separates stages
     std::vector<floatArray>     propSeq;
@@ -51,8 +52,16 @@ private:
     void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
                                qreal innerRadius, qreal thickness,
                                qreal strtRto, QColor color);
+    void drawCircularLineChart_fixMax(QPainter *painter,
+                               std::vector<float> feature, qreal maxV,
+                               qreal innerRadius, qreal thickness,
+                               QColor color);
 
     void mouseMoveEvent(QMouseEvent *ev);
+
+private slots:
+    void setPropType(int);
+
 };
 
 #endif // NARR_H

@@ -52,8 +52,8 @@
    <widget class="QSlider" name="adaptThreshSlider">
     <property name="geometry">
      <rect>
-      <x>891</x>
-      <y>450</y>
+      <x>881</x>
+      <y>270</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -68,8 +68,8 @@
    <widget class="QSlider" name="blkSizeSlider">
     <property name="geometry">
      <rect>
-      <x>1101</x>
-      <y>450</y>
+      <x>1091</x>
+      <y>270</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -81,8 +81,8 @@
    <widget class="QLabel" name="differenceLabel">
     <property name="geometry">
      <rect>
-      <x>891</x>
-      <y>430</y>
+      <x>881</x>
+      <y>250</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -99,8 +99,8 @@
    <widget class="QLabel" name="blkSizeLabel">
     <property name="geometry">
      <rect>
-      <x>1101</x>
-      <y>430</y>
+      <x>1091</x>
+      <y>250</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -150,9 +150,9 @@
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>280</y>
+      <y>370</y>
       <width>371</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
@@ -308,7 +308,7 @@
       <x>880</x>
       <y>110</y>
       <width>371</width>
-      <height>35</height>
+      <height>31</height>
      </rect>
     </property>
    </widget>
@@ -416,8 +416,8 @@
    <widget class="QLabel" name="diffrerenceNum">
     <property name="geometry">
      <rect>
-      <x>980</x>
-      <y>430</y>
+      <x>970</x>
+      <y>250</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -429,8 +429,8 @@
    <widget class="QLabel" name="blkSizeNum">
     <property name="geometry">
      <rect>
-      <x>1210</x>
-      <y>440</y>
+      <x>1200</x>
+      <y>260</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -442,8 +442,8 @@
    <widget class="QSlider" name="dilSizeSlider">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>510</y>
+      <x>880</x>
+      <y>320</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -455,8 +455,8 @@
    <widget class="QLabel" name="dilSizeLabel">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>490</y>
+      <x>880</x>
+      <y>300</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -473,8 +473,8 @@
    <widget class="QLabel" name="dilSizeNum">
     <property name="geometry">
      <rect>
-      <x>980</x>
-      <y>490</y>
+      <x>970</x>
+      <y>300</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -486,8 +486,8 @@
    <widget class="QSlider" name="blebSizeRatioSlider">
     <property name="geometry">
      <rect>
-      <x>1101</x>
-      <y>510</y>
+      <x>1091</x>
+      <y>320</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -499,8 +499,8 @@
    <widget class="QLabel" name="blebSizeRatioLabel">
     <property name="geometry">
      <rect>
-      <x>1101</x>
-      <y>490</y>
+      <x>1091</x>
+      <y>300</y>
       <width>121</width>
       <height>20</height>
      </rect>
@@ -517,8 +517,8 @@
    <widget class="QLabel" name="blebSizeRatioNum">
     <property name="geometry">
      <rect>
-      <x>1210</x>
-      <y>490</y>
+      <x>1200</x>
+      <y>300</y>
       <width>41</width>
       <height>20</height>
      </rect>
@@ -531,7 +531,7 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>380</y>
+      <y>440</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -546,7 +546,7 @@
     <property name="geometry">
      <rect>
       <x>980</x>
-      <y>380</y>
+      <y>440</y>
       <width>41</width>
       <height>21</height>
      </rect>
@@ -564,7 +564,7 @@
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>380</y>
+      <y>440</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -579,7 +579,7 @@
     <property name="geometry">
      <rect>
       <x>1160</x>
-      <y>380</y>
+      <y>440</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -597,7 +597,7 @@
     <property name="geometry">
      <rect>
       <x>1020</x>
-      <y>380</y>
+      <y>440</y>
       <width>41</width>
       <height>21</height>
      </rect>
@@ -618,9 +618,9 @@
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>170</y>
+      <y>180</y>
       <width>371</width>
-      <height>81</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
@@ -632,13 +632,13 @@
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="title">
-     <string>Cell Role</string>
+     <string/>
     </property>
     <widget class="QCheckBox" name="checkBox_compressed">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>40</y>
+       <y>10</y>
        <width>171</width>
        <height>20</height>
       </rect>
@@ -662,7 +662,7 @@
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>40</y>
+       <y>10</y>
        <width>131</width>
        <height>20</height>
       </rect>
@@ -738,6 +738,34 @@
     </property>
     <property name="text">
      <string>File</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="propComboBox">
+    <property name="geometry">
+     <rect>
+      <x>970</x>
+      <y>480</y>
+      <width>281</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>480</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>15</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Property</string>
     </property>
    </widget>
   </widget>
