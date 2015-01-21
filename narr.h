@@ -13,7 +13,8 @@ public:
     ~Narr();
     void setBeginFrame(int beginFrame);
     void updateProperty(floatArray prop, int currFrame);
-    void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour);
+    void updateCellImg(QImage &cell);
+    void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour); // when need the cell image contours
     void updateStage(unsigned int index);
     void setMaxFrm(unsigned int m);
     void clear();

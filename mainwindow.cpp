@@ -298,6 +298,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 MainWindow::~MainWindow(){
 //    delete prop2Vis;
 //    delete prop1Vis;
+    delete dataFilename;
     delete encircler;
     delete myController;
     delete ui;
@@ -669,12 +670,13 @@ void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3
 //            std::cout << std::endl;
             //qDebug() << myController->getCurrentFrame();
             narr1Vis->updateProperty(property, myController->getCurrentFrame()/*property[0]*/);
-            narr2Vis->updateCoord(QPointF(property[3], property[4]), /*myController->getCurrentFrame()*/property[0]);
+            narr2Vis->updateCoord(QPointF(property[3], property[4]), myController->getCurrentFrame()/*property[0]*/);
         }else{
 //            for(unsigned int n = 0; n < property.size(); n++)
 //                std::cout << property[n] << " ";
 //            std::cout << std::endl;
             narr1Vis->updateProperty(property, property[0]);
+            narr2Vis->updateCoord(QPointF(property[3], property[4]), property[0]);
         }
     }
 }
@@ -687,6 +689,13 @@ void MainWindow::updateCellImg(QImage cell, QVector<QPoint> smoothContour)
     }
 }
 
+void MainWindow::updateCellImg(QImage cell)
+{
+    //cell.save("cellImg"+QString::number(int(myController->getCurrentFrame()))+".png", "PNG");
+    if(NARR_MODE){
+        narr1Vis->updateCellImg(cell);
+    }
+}
 
 
 void MainWindow::box_checked(int state) {
@@ -758,9 +767,15 @@ void MainWindow::loadCellData()
     fileMode = true;
     cout << "'Load Cell Data' menu selected." << endl;
 
+    narr1Vis->clear();
+    narr2Vis->clear();
+    cellData.clear();
+
     //*** read-property-from-file mode (fileMode = true) //
     connect(this, SIGNAL(readProperties(floatArray)),
             this, SLOT(updatePropsVisUI(floatArray)));
+    connect(this, SIGNAL(readCellImg(QImage)),
+            this, SLOT(updateCellImg(QImage)));
     // read-property-from-file mode (fileMode = true) *** //
 
     QFileDialog *dialog = new QFileDialog();
@@ -768,30 +783,50 @@ void MainWindow::loadCellData()
                                             tr("Open Video"),
                                             "../../../video", /*QDir::homePath()+"/Desktop/",*/
                                             tr("Data Files (*.csv)"));
-
-    //prepare writing data to file
-    QFileInfo   fi  = QFileInfo(*dataFilename);
-    QString     ff  = fi.path()+"/"+fi.baseName();
-    //string      fn  = ff.toUtf8().constData();
-
-    this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
     delete dialog;
 
-    readDataFile();
-    unsigned int cellDataSize = cellData.size();
-    narr1Vis->setBeginFrame(cellData[0][0]);
-    narr1Vis->setMaxFrm(cellData[cellDataSize-1][0]);
-    for(unsigned int n = 0; n < cellDataSize; n++){
-        emit readProperties(cellData[n]);
+    if(!dataFilename->isEmpty()){
+        //prepare writing data to file
+        QFileInfo   fi  = QFileInfo(*dataFilename);
+        QString     ff  = fi.path()+"/"+fi.baseName();
+        //string      fn  = ff.toUtf8().constData();
+
+        this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
+
+        if(readDataFile()){
+            unsigned int cellDataSize = cellData.size();
+            if(cellDataSize > 20){
+                narr1Vis->setBeginFrame(cellData[0][0]);
+                narr1Vis->setMaxFrm(cellData[cellDataSize-1][0]);
+                for(unsigned int n = 0; n < cellDataSize; n++){
+                    // data
+                    emit readProperties(cellData[n]);
+                    // img
+                    QImage img = readImgFile(fi.path(), cellData[n][0]/*index*/);
+                    emit readCellImg(img);
+                }
+            }
+            else{
+                qDebug() << "Cell Data Size ERROR!";
+            }
+        }
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("Filename empty!");
+        msgBox.exec();
     }
 
+//    delete dataFilename;
+//    dataFilename = new QString("");
 }
 
-void MainWindow::readDataFile()
+bool MainWindow::readDataFile()
 {
     QFile f(*dataFilename);
     if(!f.open(QIODevice::ReadOnly)){
         qDebug() << "Reading csv file not found.";
+        return false;
     }else{
         QTextStream in(&f);
         while(!in.atEnd()) { // each row
@@ -808,26 +843,32 @@ void MainWindow::readDataFile()
                 row.append(cell.trimmed().toFloat());
             }
             //qDebug() << row;
-            //area.push_back(row[2]);
-            //blebNum.push_back(row[6]);
             floatArray prop;
-            prop.push_back(float(row[0]));
-            prop.push_back(float(row[1]));
-            prop.push_back(float(row[2]));
-            prop.push_back(float(row[3]));
-            prop.push_back(float(row[4]));
-            prop.push_back(float(row[5]));
-//            prop.push_back(float(row[6]));
+            prop.push_back(float(row[0])); // frameIndex
+            prop.push_back(float(row[1])); // area
+            prop.push_back(float(row[2])); // perimeter
+            prop.push_back(float(row[3])); // centroid.x
+            prop.push_back(float(row[4])); // centroid.y
+            prop.push_back(float(row[5])); // shape
+            prop.push_back(float(row[6])); // blebNum
 //            for(unsigned int n = 0; n < prop.size(); n++)
-//                std::cout << prop[n];
+//                std::cout << prop[n] << " ";
 //            std::cout << std::endl;
             cellData.push_back(prop);
             //emit readProperties(prop);
         }
-
+        f.close();
+        return true;
     }
-    f.close();
+}
 
+QImage MainWindow::readImgFile(QString fp, unsigned int idx) // filepath, index
+{
+    QImage img;
+    QString str = fp+"/cell"+QString::number(int(idx))+".png";
+    //qDebug() << str;
+    img.load(str);
+    return img;
 }
 
 void MainWindow::on_drawROIButton_clicked(){

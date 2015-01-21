@@ -443,14 +443,6 @@ void Controller::run(){
             imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
 
 
-            floatArray property;
-            property.push_back(float(frameIdx));
-            property.push_back(float(area));
-            property.push_back(float(perimeter));
-            property.push_back(centroid.x);
-            property.push_back(centroid.y);
-            property.push_back(shape);
-            //property.push_back(0.0);//not appliable yet
 
             // keep a time(frame) window and filter the detected features
             if(blebsImgWIN.size() < WINSIZE){
@@ -480,8 +472,15 @@ void Controller::run(){
             }
             avg_blebsize = avg_blebsize/blebs.size();
 
+            floatArray property;
+            property.push_back(float(frameIdx));
+            property.push_back(float(area * area_ratio));
+            property.push_back(float(perimeter * len_ratio));
+            property.push_back(centroid.x);
+            property.push_back(centroid.y);
+            property.push_back(shape);
             property.push_back(blebs.size());
-            property.push_back(avg_blebsize);
+            property.push_back(avg_blebsize * area_ratio);
 
             emit detectedProperties(property);
 

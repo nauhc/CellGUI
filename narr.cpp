@@ -21,6 +21,7 @@ QColor BLUE     = QColor(28, 120, 159);
 QColor PURPLE   = QColor(123, 57, 144);
 QColor WHITE    = QColor(255, 255, 255);
 QColor YELLOW   = QColor(247, 154, 1);
+QColor RED      = QColor(208, 81, 38);
 
 inline int larger(int a, int b){
     return (a > b ? a : b);
@@ -112,11 +113,22 @@ void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
     QImage cell_conv = cell.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell.width(),cellScale*cell.height(),Qt::KeepAspectRatio);
     cellImg.push_back(cell_conv);
     //qDebug() << cellImg.size();
+
+    /*
+    // need this when drawing contour if cell images
     QPolygon contour;
     for(int n = 0; n < smoothContour.size(); n++)
         contour << QPoint(smoothContour[n].x()/2-cell_conv.width()/2, smoothContour[n].y()/2-cell_conv.height()/2);
 
-    contours.push_back(contour);
+    contours.push_back(contour);*/
+}
+
+void Narr::updateCellImg(QImage &cell)
+{
+    qreal cellScale = 0.6;
+    QImage cell_conv = cell.convertToFormat(QImage::Format_ARGB32).scaled(cellScale*cell.width(),cellScale*cell.height(),Qt::KeepAspectRatio);
+    cellImg.push_back(cell_conv);
+
 }
 
 void Narr::updateStage(unsigned int index)
@@ -419,13 +431,13 @@ void Narr::render(QPainter *painter)
 
     if(propType == 0){ // area
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(ORANGE, 0.95));
-        qreal maxArea = 20000;
+        qreal maxArea = 150;
         drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.7));
         drawCircularLineChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
     }
     else if(propType == 1){ // perimeter
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(PURPLE, 0.95));
-        qreal maxPerimeter = 500;
+        qreal maxPerimeter = 40;
         drawCircularBarChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.7));
         drawCircularLineChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
     }
@@ -469,7 +481,7 @@ void Narr::render(QPainter *painter)
 */
 
     //draw frame index indicator
-    painter->setPen(QPen(QColor(128,128,128)));
+    painter->setPen(QPen(GREEN));
     penContour.setWidth(1);
     painter->rotate(angle);
     painter->drawLine(QPoint(0,0), QPoint(propBarInnerRadius + propBarThickness+2, 0));

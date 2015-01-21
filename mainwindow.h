@@ -42,6 +42,7 @@ private slots:
 
     void updatePropsVisUI(floatArray property); ///*int prop1, int prop2*/
     void updateCellImg(QImage cell, QVector<QPoint> smoothContour);
+    void updateCellImg(QImage cell);
 
     void on_loadVideoButton_pressed();
     void on_loadVideoButton_released();
@@ -85,10 +86,13 @@ private:
     bool                fileMode;
     vector<floatArray>  cellData;
     QString             *dataFilename;
-    void readDataFile();
+
+    bool readDataFile();
+    QImage readImgFile(QString fp, unsigned int idx);
 
 signals:
     void readProperties(floatArray prop);
+    void readCellImg(QImage img);
 
 };
 
