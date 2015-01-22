@@ -432,8 +432,9 @@ void Narr::render(QPainter *painter)
     if(propType == 0){ // area
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(ORANGE, 0.95));
         qreal maxArea = 150;
-        drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.7));
-        drawCircularLineChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
+        drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
+//        drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.7));
+//        drawCircularLineChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
     }
     else if(propType == 1){ // perimeter
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(PURPLE, 0.95));
@@ -444,7 +445,8 @@ void Narr::render(QPainter *painter)
     else if(propType == 2){ // bleb
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(BLUE, 0.95));
         qreal maxBlebNum = 6;
-        drawCircularLineChart_fixMax(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, gradualColor(BLUE, 0.3));
+        drawCircularBarChart_fixMax(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, gradualColor(BLUE, 0.3));
+//        drawCircularLineChart_fixMax(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, gradualColor(BLUE, 0.3));
 
     }
 
