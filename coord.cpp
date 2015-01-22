@@ -232,13 +232,14 @@ void Coord::render(QPainter *painter)
     painter->rotate(-90); //***x->up, y->right***
     int xx = 5;
     int yy = halfH*2/180;
+    qreal lengthRto = 0.75;
     for(int n = 0; n < 180; n++){
         QColor c = mapNumToHue(60, 180, 0, 180, n);
         //c.setHsv(60+n, 255, 200);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));
-        QRect rect(QPoint(-(halfW*rto1 + 60), (-halfH+30+yy*n)*rto1), QSize(xx, yy));
+        QRect rect(QPoint(-(halfW*lengthRto + 60), (-halfH+30+yy*n)*lengthRto), QSize(xx, yy));
         painter->drawRect(rect);
     }
 
