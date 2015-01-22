@@ -105,6 +105,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
             myController, SLOT(setPixel(QString)));
     connect(ui->mmeterLineEdit, SIGNAL(textChanged(QString)),
             myController, SLOT(setMicMeter(QString)));
+//    connect(ui->pixelLineEdit, SIGNAL(textChanged(QString)),  //!!!!
+//            narr2Vis, SLOT(setPixel(QString)));
+//    connect(ui->mmeterLineEdit, SIGNAL(textChanged(QString)),
+//            narr2Vis, SLOT(setMicMeter(QString)));
+
 
 
     ui->orgVideo->setStyleSheet(videoDisplayStyle);
@@ -798,6 +803,8 @@ void MainWindow::loadCellData()
             if(cellDataSize > 20){
                 narr1Vis->setBeginFrame(cellData[0][0]);
                 narr1Vis->setMaxFrm(cellData[cellDataSize-1][0]);
+                narr2Vis->getMaxFrm(cellData[cellDataSize-1][0]);
+                narr2Vis->getMaxSize(QSize(640, 480));
                 for(unsigned int n = 0; n < cellDataSize; n++){
                     // data
                     emit readProperties(cellData[n]);

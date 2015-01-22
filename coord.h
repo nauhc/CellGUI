@@ -29,12 +29,21 @@ private:
     unsigned int        currFrm;
 
     QVector<QPointF>    centroid; // the values of a particular feature
+    QPointF             origin; // the first centroid position
     QPointF             max; // video size
     QPointF             min; // (0,0)
     QPointF             win; // size of ruler window
     QPointF             win_off; // offset of ruler window
     QPointF             currCent;
     int                 cnt = 0;
+
+    double              pixel;
+    double              micMeter;
+    double              micMtr_Pixel;
+
+private slots:
+    void    setPixel(QString text);
+    void    setMicMeter(QString text);
 
 };
 

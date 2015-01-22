@@ -265,7 +265,7 @@ void Narr::drawCircularBarChart_fixMax(QPainter *painter,
             painter->translate(0, innerRadius);
             //draw a bar
             float barheight = float(feature[n]) * thickness/ maxV;
-            float w = 2.*M_PI/(max-begin)*number;
+            float w = /*2.*M_PI/(max-begin)*number*/1;
             painter->drawRect(0, 0, w, barheight);
             // translate and rotate back to the center
             painter->translate(0, -innerRadius);
@@ -439,8 +439,8 @@ void Narr::render(QPainter *painter)
     else if(propType == 1){ // perimeter
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(PURPLE, 0.95));
         qreal maxPerimeter = 40;
-        drawCircularBarChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.7));
-        drawCircularLineChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
+        drawCircularBarChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
+//        drawCircularLineChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
     }
     else if(propType == 2){ // bleb
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(BLUE, 0.95));
