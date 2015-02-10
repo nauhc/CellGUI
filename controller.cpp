@@ -342,7 +342,7 @@ void Controller::findBlebs(int &area, Point2f &centroid, int &BIN, vector<Bleb> 
             }
         }
     }
-    imshow("overlapBlebs", overlapBlebs);
+//    imshow("overlapBlebs", overlapBlebs);
     threshold(overlapBlebs, overlapBlebs, 200*1/2, 255, THRESH_BINARY);
     //Mat ero;
     //erode(overlapBlebs, ero, getStructuringElement(
@@ -362,7 +362,7 @@ void Controller::run(){
     bool paused = pause;
     pauseMutex.unlock();
 
-    while(!paused && cnt < frameCnt){
+    while(!paused && cnt < frameCnt-1){
         if(!inputVideo->read(nextFrame)){
             cout << "Unable to retrieve frame from video stream." << endl;
             pauseMutex.lock();
@@ -406,7 +406,7 @@ void Controller::run(){
             Rect            rect;
             vector<Bleb>    blebs; // the deteced blebs
             vector<int>     blebs_bin(BIN, 0); // for each bin, if there is a bleb -> size, if not -> 0
-            vector<Point2f> contur; // contour of the cell
+
 
             // optflow detection of entire frame
             vector<Point2f> points1, points2;
@@ -470,7 +470,8 @@ void Controller::run(){
                 blebs_bin[blebs[n].bin] = blebs[n].size /** area_ratio*/;
                 avg_blebsize += blebs[n].size;
             }
-            avg_blebsize = avg_blebsize/blebs.size();
+            if(blebs.size() > 0)
+                avg_blebsize = avg_blebsize/blebs.size();
 
             floatArray property;
             property.push_back(float(frameIdx));
@@ -482,6 +483,7 @@ void Controller::run(){
             property.push_back(blebs.size());
             property.push_back(avg_blebsize * area_ratio);
 
+
             emit detectedProperties(property);
 
             csvFile << frameIdx << ","
@@ -489,7 +491,8 @@ void Controller::run(){
                     << perimeter * len_ratio << ","
                     << centroid.x << "," << centroid.y << ","
                     << shape << ","
-                    << blebs.size() << ", ";
+                    << blebs.size() << ", "
+                    << avg_blebsize * area_ratio << ", ";
 
 //            for(unsigned int b = 0; b < blebs_bin.size(); b++)
 //                cout << blebs_bin[b] << " ";

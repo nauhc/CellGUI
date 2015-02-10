@@ -48,7 +48,7 @@ void Coord::updateCoord(QPointF point, int currFrame)
 
     if(centroid.size() == 1){
         origin = QPoint(centroid[0].x(), centroid[0].y());
-        qDebug() << "centroid origin " << origin;
+        //qDebug() << "centroid origin " << origin;
     }
 }
 
@@ -214,6 +214,8 @@ void Coord::render(QPainter *painter)
 //    QPointF botleft  = QPointF(topleft.x(), topleft.y() + win.y());
 //    QPointF botright  = QPointF(topleft.x()+win.x(), topleft.y() + win.y());
 
+
+    // !!! need to move to other place (one-time calculation!) - start
     qreal topY      = 20/*-center.y()*/;
     qreal leftX     = 20/*-center.x()*/;
     qreal bottomY   = this->height()-20/*-center.y()*/;
@@ -236,6 +238,7 @@ void Coord::render(QPainter *painter)
     painter->drawText(origin_tran.x()-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, "0" );
     painter->drawLine(QPointF(leftX-5, origin_tran.y()), QPointF(leftX+5, origin_tran.y())); // left
     painter->drawText(leftX+5+2, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
+    painter->drawText(leftX+5+2+20, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "μm" );
     painter->drawLine(QPointF(rightX-5, origin_tran.y()), QPointF(rightX+5, origin_tran.y())); // right
     painter->drawText(rightX-5-15, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
 
@@ -244,34 +247,47 @@ void Coord::render(QPainter *painter)
     qreal unit  = pixel/10.;
     qreal unitX = unit/video2visScaleX;
     qreal unitY = unit/video2visScaleY;
+    // !!! need to move to other place (one-time calculation!) -end
 
     int rightU = (max.x()-origin.x()-20)/unitX ; // number of units on the right
     int bottomU = (max.y()-origin.y()-20)/unitY; // number of units on the bottom
     for(int i = 1; i < rightU; i++){
-        painter->drawLine(QPointF(origin_tran.x() + i * unitX, topY-3), QPointF(origin_tran.x() + i * unitX, topY+3));
-        painter->drawText(origin_tran.x() + i * unitX - 10, topY-3+10, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
-        painter->drawLine(QPointF(origin_tran.x() + i * unitX, bottomY-3), QPointF(origin_tran.x() + i * unitX, bottomY+3));
-        painter->drawText(origin_tran.x() + i * unitX - 10, bottomY-3-15, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        qreal xx = origin_tran.x() + i * unitX;
+        if(xx > win_off.x() && xx < win.x()){
+            painter->drawLine(QPointF(xx, topY-3), QPointF(xx, topY+3));
+            painter->drawLine(QPointF(xx, bottomY-3), QPointF(xx, bottomY+3));
+            painter->drawText(xx - 10, topY-3+10, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+            painter->drawText(xx - 10, bottomY-3-15, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        }
     }
     for(int i = 1; i < bottomU; i++){
-        painter->drawLine(QPointF(leftX-3, origin_tran.y()+ i * unitY), QPointF(leftX+3, origin_tran.y() + i * unitY));
-        painter->drawText(leftX+3+5, origin_tran.y() + i * unitY-5, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
-        painter->drawLine(QPointF(rightX-3, origin_tran.y()+ i * unitY), QPointF(rightX+3, origin_tran.y() + i * unitY));
-        painter->drawText(rightX-3-20, origin_tran.y() + i * unitY-10, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        qreal yy = origin_tran.y() + i * unitY;
+        if(yy > win_off.y() && yy < win.y()){
+            painter->drawLine(QPointF(leftX-3, origin_tran.y()+ i * unitY), QPointF(leftX+3, yy));
+            painter->drawLine(QPointF(rightX-3, origin_tran.y()+ i * unitY), QPointF(rightX+3, yy));
+            painter->drawText(leftX+3+5, yy-5, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+            painter->drawText(rightX-3-20, yy-10, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        }
     }
     int leftU = (origin.x()-20)/unitX ; // number of units on the left
     int upU = (origin.y()-20)/unitY; // number of units on the up
     for(int i = 1; i < leftU; i++){
-        painter->drawLine(QPointF(origin_tran.x() - i * unitX, topY-3), QPointF(origin_tran.x() - i * unitX, topY+3));
-        painter->drawText(origin_tran.x() - i * unitX - 10, topY-3+10, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
-        painter->drawLine(QPointF(origin_tran.x() - i * unitX, bottomY-3), QPointF(origin_tran.x() - i * unitX, bottomY+3));
-        painter->drawText(origin_tran.x() - i * unitX - 10, bottomY-3-15, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        qreal xx = origin_tran.x() - i * unitX;
+        if(xx > win_off.x() && xx < win.x()){
+            painter->drawLine(QPointF(xx, topY-3), QPointF(xx, topY+3));
+            painter->drawLine(QPointF(xx, bottomY-3), QPointF(xx, bottomY+3));
+            painter->drawText(xx - 10, topY-3+10, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+            painter->drawText(xx - 10, bottomY-3-15, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        }
     }
     for(int i = 1; i < upU; i++){
-        painter->drawLine(QPointF(leftX-3, origin_tran.y() - i * unitY), QPointF(leftX+3, origin_tran.y() - i * unitY));
-        painter->drawText(leftX+3+5, origin_tran.y() - i * unitY-5, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
-        painter->drawLine(QPointF(rightX-3, origin_tran.y() - i * unitY), QPointF(rightX+3, origin_tran.y() - i * unitY));
-        painter->drawText(rightX-3-20, origin_tran.y() - i * unitY-3-7, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        qreal yy = origin_tran.y() - i * unitY;
+        if(yy > win_off.y() && yy < win.y()){
+            painter->drawLine(QPointF(leftX-3, yy), QPointF(leftX+3, yy));
+            painter->drawLine(QPointF(rightX-3, yy), QPointF(rightX+3, yy));
+            painter->drawText(leftX+3+5, yy-5, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+            painter->drawText(rightX-3-20, yy-3-7, 20, 10, Qt::AlignCenter, QString::number(i*unit*micMtr_Pixel));
+        }
     }
 
 
@@ -301,8 +317,8 @@ void Coord::render(QPainter *painter)
     // draw color map bar indicating time old / new
     painter->translate(center.x(), center.y());
     // ***x->right, y->down***
-    painter->drawText(-halfW, halfH-50, 150, 40, Qt::AlignCenter, "Old");
-    painter->drawText(halfW-150, halfH-50, 160, 40, Qt::AlignCenter, "New");
+    painter->drawText(-halfW, halfH-90, 150, 40, Qt::AlignCenter, "Old");
+    painter->drawText(halfW-150, halfH-90, 160, 40, Qt::AlignCenter, "New");
 
     painter->rotate(-90); //***x->up, y->right***
     int xx = 5;

@@ -1,14 +1,32 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QIcon>
+#include <QDialog>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include "coord.h"
+
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+//    QDialog *dialog = new QDialog();
+//    QVBoxLayout *layout = new QVBoxLayout();
+
+//    QPushButton *topbutton = new QPushButton("Analyze Single Video");
+//    QPushButton *botbutton = new QPushButton("Analyze Multiple Videos");
+//    layout->addWidget(topbutton);
+//    layout->addWidget(botbutton);
+//    dialog->setLayout(layout);
+
+//    dialog->show();
+
     MainWindow w;
     w.setWindowIcon(QIcon("./cell.icns"));
     w.show();
+
+
 
 //    QGLFormat qglFormat;
 //    qglFormat.setDepthBufferSize(24);
@@ -26,6 +44,7 @@ int main(int argc, char *argv[])
 //    Coord coord;
 //    coord.resize(512, 512);
 //    coord.show();
+
 
     return a.exec();
 }

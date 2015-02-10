@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     bleb.cpp \
     narr.cpp \
     OpenGLWindow.cpp \
-    coord.cpp
+    coord.cpp \
+    multiview.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     bleb.h \
     narr.h \
     OpenGLWindow.h \
-    coord.h
+    coord.h \
+    multiview.h
 
 FORMS    += mainwindow.ui
 

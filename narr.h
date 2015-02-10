@@ -34,6 +34,7 @@ private:
     std::vector<float>          area; // the values of a particular feature
     std::vector<float>          perimeter; // the values of a particular feature
     std::vector<float>          blebNum; // the values of a particular feature
+    std::vector<float>          blebAvgSize; // the values of a particular feature
     QVector<QPoint>             centroid; // the values of a particular feature
     QVector<QPolygon>           contours; // smoothed contours
     QVector<QImage>             cellImg; // all the cell imgs
@@ -50,6 +51,7 @@ private:
     void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
                               qreal innerRadius, qreal thickness,
                               qreal strtRto, QColor color);
+
     void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
                                qreal innerRadius, qreal thickness,
                                qreal strtRto, QColor color);
@@ -58,6 +60,13 @@ private:
                                      std::vector<float> feature, qreal maxV,
                                      qreal innerRadius, qreal thickness,
                                      QColor color);
+
+    void drawCircularBarChart_bleb(QPainter *painter,
+                                   std::vector<float> feature, qreal maxV,
+                                   qreal innerRadius,
+                                   qreal thickness,
+                                   QColor color);
+
     void drawCircularLineChart_fixMax(QPainter *painter,
                                std::vector<float> feature, qreal maxV,
                                qreal innerRadius, qreal thickness,

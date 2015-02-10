@@ -13,6 +13,8 @@
 #include "narr.h"
 #include "coord.h"
 
+#include "multiview.h"
+
 typedef vector<float> floatArray;
 
 namespace Ui {

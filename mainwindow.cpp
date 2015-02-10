@@ -6,6 +6,8 @@
 #include "ui_mainwindow.h"
 #include "qdebug.h"
 
+#include "multiview.h"
+
 #define PI 3.14159265
 
 
@@ -770,6 +772,9 @@ void MainWindow::compressed_box_checked(int state)
 void MainWindow::loadCellData()
 {
     fileMode = true;
+    /*MultiView *multiview = new MultiView();
+    this->setCentralWidget(multiview);*/
+
     cout << "'Load Cell Data' menu selected." << endl;
 
     narr1Vis->clear();
@@ -793,7 +798,7 @@ void MainWindow::loadCellData()
     if(!dataFilename->isEmpty()){
         //prepare writing data to file
         QFileInfo   fi  = QFileInfo(*dataFilename);
-        QString     ff  = fi.path()+"/"+fi.baseName();
+        //QString     ff  = fi.path()+"/"+fi.baseName();
         //string      fn  = ff.toUtf8().constData();
 
         this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
@@ -802,8 +807,8 @@ void MainWindow::loadCellData()
             unsigned int cellDataSize = cellData.size();
             if(cellDataSize > 20){
                 narr1Vis->setBeginFrame(cellData[0][0]);
-                narr1Vis->setMaxFrm(cellData[cellDataSize-1][0]);
-                narr2Vis->getMaxFrm(cellData[cellDataSize-1][0]);
+                narr1Vis->setMaxFrm(cellData[cellDataSize-2][0]);
+                narr2Vis->getMaxFrm(cellData[cellDataSize-2][0]);
                 narr2Vis->getMaxSize(QSize(640, 480));
                 for(unsigned int n = 0; n < cellDataSize; n++){
                     // data

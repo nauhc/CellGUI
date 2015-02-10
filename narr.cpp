@@ -23,6 +23,9 @@ QColor WHITE    = QColor(255, 255, 255);
 QColor YELLOW   = QColor(247, 154, 1);
 QColor RED      = QColor(208, 81, 38);
 
+float BlebSizeMax = /*1.5*//*12*/7;
+float BlebSizeMin = /*0.2*/2;
+
 inline int larger(int a, int b){
     return (a > b ? a : b);
 }
@@ -41,6 +44,7 @@ void Narr::clear()
     area.clear();
     perimeter.clear();
     blebNum.clear();
+    blebAvgSize.clear();
     stage.clear();
     cells.clear();
     stage.push_back(0);
@@ -105,6 +109,7 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     area.push_back(prop[1]);
     perimeter.push_back(prop[2]);
     blebNum.push_back(prop[6]);
+    blebAvgSize.push_back(prop[7]);
 }
 
 void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
@@ -258,6 +263,44 @@ void Narr::drawCircularBarChart_fixMax(QPainter *painter,
 
         int number = feature.size();
         for(int n = 0; n < number; n++){
+            //qDebug() << feature[n];
+            //rotate and translate from the center to location on the ring
+            float degree = 360./(max-begin) * n;
+            painter->rotate(degree);
+            painter->translate(0, innerRadius);
+            //draw a bar
+            float barheight = float(feature[n]) * thickness/ maxV;
+            float w = /*2.*M_PI/(max-begin)*number*/1;
+            painter->drawRect(0, 0, w, barheight);
+            // translate and rotate back to the center
+            painter->translate(0, -innerRadius);
+            painter->rotate(-degree);
+        }
+    }
+
+}
+
+void Narr::drawCircularBarChart_bleb(QPainter *painter,
+                                     std::vector<float> feature, qreal maxV,
+                                     qreal innerRadius,
+                                     qreal thickness,
+                                     QColor color)
+{
+
+    if (feature.size() != 0){
+//        QPen myPen(color);
+//        myPen.setCapStyle(Qt::FlatCap);
+//        painter->setPen(myPen);
+//        painter->setBrush(QBrush(color));
+
+        int number = feature.size();
+        for(int n = 0; n < number; n++){
+            qreal size = blebAvgSize[n] > BlebSizeMin ? blebAvgSize[n] - BlebSizeMin : 0;
+            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
+            QColor cc = gradualColor(color, 1-g);
+            painter->setPen(cc);
+            painter->setBrush(QBrush(cc));
+
             //qDebug() << feature[n];
             //rotate and translate from the center to location on the ring
             float degree = 360./(max-begin) * n;
@@ -430,23 +473,43 @@ void Narr::render(QPainter *painter)
 //    drawCircularLineChart(painter, area, propBarInnerRadius, propBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
     if(propType == 0){ // area
+        qreal maxArea = 250;
+
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(ORANGE, 0.95));
-        qreal maxArea = 150;
         drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
 //        drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.7));
 //        drawCircularLineChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
+        painter->rotate(180);
+        painter->setPen(ORANGE);
+        painter->drawLine(QPointF(0, -propBarInnerRadius), QPointF(0, -propBarInnerRadius-propBarThickness-2));
+        painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxArea))+" μm²");
+        painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, "0 μm²");
+        painter->rotate(180);
     }
     else if(propType == 1){ // perimeter
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(PURPLE, 0.95));
-        qreal maxPerimeter = 40;
+        qreal maxPerimeter = 100;
         drawCircularBarChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
 //        drawCircularLineChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
+        painter->rotate(180);
+        painter->setPen(PURPLE);
+        painter->drawLine(QPointF(0, -propBarInnerRadius), QPointF(0, -propBarInnerRadius-propBarThickness-2));
+        painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxPerimeter))+" μm");
+        painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, "0 μm");
+        painter->rotate(180);
     }
     else if(propType == 2){ // bleb
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(BLUE, 0.95));
-        qreal maxBlebNum = 6;
-        drawCircularBarChart_fixMax(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, gradualColor(BLUE, 0.3));
+        qreal maxBlebNum = 7;
+        drawCircularBarChart_bleb(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, BLUE/*gradualColor(BLUE, 0.3)*/);
 //        drawCircularLineChart_fixMax(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, gradualColor(BLUE, 0.3));
+        painter->rotate(180);
+        painter->setPen(BLUE);
+        painter->drawLine(QPointF(0, -propBarInnerRadius), QPointF(0, -propBarInnerRadius-propBarThickness-2));
+        painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxBlebNum))+" blebs");
+        painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, "0 bleb");
+        painter->rotate(180);
+
 
     }
 

@@ -532,7 +532,7 @@
      <rect>
       <x>890</x>
       <y>440</y>
-      <width>81</width>
+      <width>111</width>
       <height>21</height>
      </rect>
     </property>
@@ -545,7 +545,7 @@
    <widget class="QLabel" name="pixelLabel">
     <property name="geometry">
      <rect>
-      <x>980</x>
+      <x>1010</x>
       <y>440</y>
       <width>41</width>
       <height>21</height>
@@ -563,9 +563,9 @@
    <widget class="QLineEdit" name="mmeterLineEdit">
     <property name="geometry">
      <rect>
-      <x>1080</x>
+      <x>1100</x>
       <y>440</y>
-      <width>71</width>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -578,9 +578,9 @@
    <widget class="QLabel" name="mmeterLabel">
     <property name="geometry">
      <rect>
-      <x>1160</x>
+      <x>1210</x>
       <y>440</y>
-      <width>91</width>
+      <width>41</width>
       <height>21</height>
      </rect>
     </property>
@@ -589,14 +589,20 @@
       <pointsize>15</pointsize>
      </font>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
     <property name="text">
-     <string>micrometer</string>
+     <string>μm</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="convertLabel">
     <property name="geometry">
      <rect>
-      <x>1020</x>
+      <x>1050</x>
       <y>440</y>
       <width>41</width>
       <height>21</height>
