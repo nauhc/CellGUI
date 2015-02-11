@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include "coord.h"
 
+#include "singleview.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +27,8 @@ int main(int argc, char *argv[])
     w.setWindowIcon(QIcon("./cell.icns"));
     w.show();
 
+    SingleView s;
+    s.show();
 
 
 //    QGLFormat qglFormat;

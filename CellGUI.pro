@@ -37,7 +37,8 @@ SOURCES += main.cpp\
     narr.cpp \
     OpenGLWindow.cpp \
     coord.cpp \
-    multiview.cpp
+    multiview.cpp \
+    singleview.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -48,7 +49,9 @@ HEADERS  += mainwindow.h \
     narr.h \
     OpenGLWindow.h \
     coord.h \
-    multiview.h
+    multiview.h \
+    singleview.h \
+    style.h
 
 FORMS    += mainwindow.ui
 

@@ -29,8 +29,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
-
 private slots:
     void updateBlebSizeSliderText(int value);
 
@@ -58,7 +56,7 @@ private slots:
     void on_drawROIButton_pressed();
     void on_drawROIButton_released();
 
-    void box_checked(int state);
+
     void control_box_checked(int state);
     void compressed_box_checked(int state);
 
@@ -72,8 +70,6 @@ private:
     Encircle        *encircler;
     bool            encircled;
 
-    DataVis         *prop1Vis;
-    DataVis         *prop2Vis;
     QVector<QString> checkedBoxes;
 
     Narr            *narr1Vis;

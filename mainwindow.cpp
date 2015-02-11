@@ -5,42 +5,10 @@
 #include <QMessageBox>
 #include "ui_mainwindow.h"
 #include "qdebug.h"
-
 #include "multiview.h"
+#include "singleview.h"
 
-#define PI 3.14159265
-
-
-//const QString button_pressed        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; \
-//                                         border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
-//const QString button_released_on    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; \
-//                                         border-color:rgb(150,150,150); border-radius:4px; background-color:rgb(38,42,43)";
-//const QString button_released_off   = "color:rgb(80,80,80); font: bold 16px; border-style:outset; border-width:2px; \
-//                                         border-color:rgb(80,80,80); border-radius:4px; background-color:rgb(38,42,43)";
-
-const QString button_pressed        = "color:rgb(81,85,96); font: bold 16px; border-style:inset; border-width:2px; \
-                                       border-color:rgb(186,192,206); border-radius:4px; background-color:rgb(163,203,215)";
-const QString button_released_on    = "color:rgb(82,89,99); font: bold 16px; border-style:outset; border-width:2px; \
-                                       border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(162,191,216)";
-const QString button_released_off   = "color:rgb(193,194,199); font: bold 16px; border-style:outset; border-width:2px; \
-                                       border-color:rgb(217,217,219); border-radius:4px; background-color:rgb(239,245,248)";
-const QString frameLabelStyle       = "color:rgb(82,89,99); font:12px; background-color:rgba(0,0,0,0%) ";
-const QString transBkgrd            = "background-color: rgba(0,0,0,0%);";
-const QString halfTransBkgrd        = "background-color: rgba(128,128,128,80%);";
-const QString forgrdWhite           = "color:white;";
-const QString forgrdBlue            = "color:rgb(28, 120, 159);";
-
-const QString forgrdGray            = "color:rgb(82,89,99);";
-const QString visStyle              = "color:rgb(239,240,244); border: 2px solid; border-color:rgb(217,217,219)"; //color:rgb(54,58,59)
-const QString videoDisplayStyle     = "background-color:rgb(216,222,224)";
-const QString forgrdGreen           = "color:rgb(153, 204, 49);"; //(79, 193, 131)
-const QString forgrdOrage           = "color:rgb(251, 172, 81);"; //(238, 122, 83)
-const QString font20                = "font: 20px";
-const QString font16                = "font: 16px";
-const QString font16bld             = "font: bold 16px";
-const QString checkboxStyle         = "color:rgb(82,89,99); font-size: 14px; background-color:rgba(0,0,0,0%)";
-
-const bool    NARR_MODE             = true; // TRUE -> Narrative mode; FALSE -> Line Chart mode
+#include "style.h"
 
 template <class T>
 inline T sqre(T value){
@@ -65,11 +33,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->setFixedSize(this->width(), this->height());
     this->setWindowTitle(" Dancing Cell Visualization ");
 
-    // connect displying images
+
+    SingleView *singleview = new SingleView();
+
+//    singleview->setStyleSheet(HALFTRANS_BKGRD);
+//    singleview->show();
+
+
+
+    // connect displaying images
     connect(myController, SIGNAL(load1stImage(QImage)),
             this, SLOT(initialVideoPlayerUI(QImage)));
     connect(myController, SIGNAL(processedImage(QImage, QImage, QImage)),
             this, SLOT(updateVideoplayerUI(QImage, QImage, QImage)));
+
+
 
     //connect slide bar values
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
@@ -94,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(ui->typeComboBox, SIGNAL(currentIndexChanged(int)),
             myController, SLOT(setVideoType(int)));
 
-    ui->typeComboBox->setStyleSheet(button_released_on);
+    ui->typeComboBox->setStyleSheet(BUTTON_RELEASED_ON);
     ui->typeComboBox->addItem("Single cell (no overlapping)");
     ui->typeComboBox->addItem("Fix cell window");
     ui->typeComboBox->addItem("Flexible cell window");
@@ -114,21 +92,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 
 
-    ui->orgVideo->setStyleSheet(videoDisplayStyle);
-    ui->roiVideo1->setStyleSheet(videoDisplayStyle);
-    ui->roiVideo2->setStyleSheet(videoDisplayStyle);
+    ui->orgVideo->setStyleSheet(VIDEO_DISPLAY);
+    ui->roiVideo1->setStyleSheet(VIDEO_DISPLAY);
+    ui->roiVideo2->setStyleSheet(VIDEO_DISPLAY);
 
-    ui->loadVideoButton->setStyleSheet(button_released_on);
+    ui->loadVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
     ui->loadVideoButton->setEnabled(true);
-    ui->playVideoButton->setStyleSheet(button_released_off);
+    ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
     ui->playVideoButton->setEnabled(false);
-    ui->stopVideoButton->setStyleSheet(button_released_off);
+    ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
     ui->stopVideoButton->setEnabled(false);
-    ui->drawROIButton->setStyleSheet(button_released_off);
+    ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_OFF);
     ui->drawROIButton->setEnabled(false);
 
 
-    ui->propComboBox->setStyleSheet(button_released_on);
+    ui->propComboBox->setStyleSheet(BUTTON_RELEASED_ON);
     ui->propComboBox->addItem("Area");
     ui->propComboBox->addItem("Perimeter");
     ui->propComboBox->addItem("Bleb size & number");
@@ -144,153 +122,61 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->blebSizeRatioSlider->setRange(1, 10);
     ui->blebSizeRatioSlider->setValue(7);
 
-    ui->videoDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font20);
+    ui->videoDisplayerLabel->setStyleSheet(TRANS_BKGRD+FORGRD_BLUE+FONT20);
     ui->videoDisplayerLabel->setText("Video");
 
-    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font16);
+    ui->contourDisplayerLabel->setStyleSheet(TRANS_BKGRD+FORGRD_BLUE+FONT16);
     ui->contourDisplayerLabel->setText("Cell Contour");
-    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdBlue+font16);
+    ui->cellDetectionDisplayerLabel->setStyleSheet(TRANS_BKGRD+FORGRD_BLUE+FONT16);
     ui->cellDetectionDisplayerLabel->setText("Cell Detection");
 
-    ui->differenceLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->differenceLabel->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
     ui->differenceLabel->setText("Neighb Diff ");
-    ui->diffrerenceNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->diffrerenceNum->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
 
-    ui->blkSizeLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->blkSizeLabel->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
     ui->blkSizeLabel->setText("Neighb Size ");
-    ui->blkSizeNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->blkSizeNum->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
 
-    ui->dilSizeLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->dilSizeLabel->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
     ui->dilSizeLabel->setText("Dilation Size ");
-    ui->dilSizeNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->dilSizeNum->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
 
-    ui->blebSizeRatioLabel->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->blebSizeRatioLabel->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
     ui->blebSizeRatioLabel->setText("Bleb Size Ratio ");
-    ui->blebSizeRatioNum->setStyleSheet(transBkgrd+forgrdGray+"font:12px");
+    ui->blebSizeRatioNum->setStyleSheet(TRANS_BKGRD+FORGRD_GRAY+"font:12px");
 
-    ui->frameLabelLeft->setStyleSheet(frameLabelStyle);
-    ui->frameLabelLeft->setText("Frame No.");
-    ui->frameLabelRight->setStyleSheet(frameLabelStyle);
-
-    ui->groupBox->hide();
-
-    if(!NARR_MODE){
-        // connect properties and dataVis
-        qRegisterMetaType<floatArray>("floatArray");
-
-        connect(myController, SIGNAL(detectedProperties(floatArray)), this, SLOT(floatArray));
-
-        // connect checkbox to box_checked event
-        connect(ui->checkBox_area, SIGNAL(stateChanged(int)),
-                this, SLOT(box_checked(int)));
-        connect(ui->checkBox_perimeter, SIGNAL(stateChanged(int)),
-                this, SLOT(box_checked(int)));
-        connect(ui->checkBox_centroid, SIGNAL(stateChanged(int)),
-                this, SLOT(box_checked(int)));
-        connect(ui->checkBox_blebbing, SIGNAL(stateChanged(int)),
-                this, SLOT(box_checked(int)));
-        connect(ui->checkBox_shape, SIGNAL(stateChanged(int)),
-                this, SLOT(box_checked(int)));
-        connect(ui->checkBox_speed, SIGNAL(stateChanged(int)),
-                this, SLOT(box_checked(int)));
-
-        // groupbox and checkbox -> selecting features to show
-        ui->groupBox->setStyleSheet("QGroupBox { color:rgb(82,89,99); \
-                                    border: 2px solid; border-color:rgb(217,217,219);  border-radius: 5px;\
-        font-size: 16px; font-weight: bold; \
-        margin-top: 7px; margin-bottom: 7px; padding: 0px} \
-            QGroupBox::title {top:-7px;left: 10px; subcontrol-origin: border }");
-
-        ui->checkBox_area->setChecked(true);
-        ui->checkBox_perimeter->setChecked(true);
-        ui->checkBox_area->setStyleSheet(checkboxStyle);
-        ui->checkBox_blebbing->setStyleSheet(checkboxStyle);
-        ui->checkBox_centroid->setStyleSheet(checkboxStyle);
-        ui->checkBox_perimeter->setStyleSheet(checkboxStyle);
-        ui->checkBox_shape->setStyleSheet(checkboxStyle);
-        ui->checkBox_speed->setStyleSheet(checkboxStyle);
-
-        ui->groupBox->show();
+    ui->frameLabelLeft->setStyleSheet(FRM_LABEL);
+    ui->frameLabelLeft->setText("Frame");
+    ui->frameLabelRight->setStyleSheet(FRM_LABEL);
+    ui->frameLabelRight->setText("0000");
 
 
-        // prop1Vis initialize -- areaVis
-        QRect areaVisRect = QRect(40, 620, this->width()-80, 280);
-        QColor areaVisColor = QColor(153, 204, 49); // green color
-        ui->prop1Vis->setGeometry(areaVisRect);
-        ui->prop1Vis->setStyleSheet(visStyle);
-        prop1Vis = new DataVis(this->centralWidget(), areaVisColor/*, 500, 8000*/);
-        prop1Vis->setGeometry(areaVisRect);
-        QRect areaRectLabel = QRect(areaVisRect.x(), areaVisRect.y()-25, areaVisRect.width(), 20);
-        ui->prop1VisLabel->setGeometry(areaRectLabel);
-        ui->prop1VisLabel->setStyleSheet(transBkgrd+"color:rgb("+
-                                         QString::number(areaVisColor.red())+","+
-                                         QString::number(areaVisColor.green())+","+
-                                         QString::number(areaVisColor.blue())+");"+font20);
-        ui->prop1VisLabel->setText("  AREA (pixels)");
+    // connect properties and dataVis
+    qRegisterMetaType<floatArray>("floatArray");
+    qRegisterMetaType<QVector<QPoint> >("QVector<QPoint>");
 
-        // prop2Vis initialize -- prmtVis
-        QRect prmtVisRect = QRect(areaVisRect.x(), areaVisRect.y()+areaVisRect.height()+35, areaVisRect.width(), areaVisRect.height());
-        QColor prmtVisColor = QColor(251, 172, 81); // orange color
-        ui->prop2Vis->setGeometry(prmtVisRect);
-        ui->prop2Vis->setStyleSheet(visStyle);
-        prop2Vis = new DataVis(this->centralWidget(), prmtVisColor/*, 0, 1350*/);
-        prop2Vis->setGeometry(prmtVisRect);
-        QRect prmtRectLabel = QRect(prmtVisRect.x(), prmtVisRect.y()-25, prmtVisRect.width(), 20);
-        ui->prop2VisLabel->setGeometry(prmtRectLabel);
-        ui->prop2VisLabel->setStyleSheet(transBkgrd+"color:rgb("+
-                                         QString::number(prmtVisColor.red())+","+
-                                         QString::number(prmtVisColor.green())+","+
-                                         QString::number(prmtVisColor.blue())+");"+font20);
-        ui->prop2VisLabel->setText("  PERIMETER (pixels)");
-    }
-    else //Narrative Mode: On
-    {
-        // connect properties and dataVis
-        qRegisterMetaType<floatArray>("floatArray");
-        qRegisterMetaType<QVector<QPoint> >("QVector<QPoint>");
+    // Vis
+    narr1Vis = new Narr();
+    narr1Vis->resize(512, 512);
+    narr1Vis->show();
+    QWidget *container = QWidget::createWindowContainer(narr1Vis, this->centralWidget());
+    QRect narr1VisRect = QRect(40, 600, /*(this->width()-160)/2*/600, 600);
+    container->setGeometry(narr1VisRect);
 
-//        if(!fileMode){
-//            connect(myController, SIGNAL(detectedProperties(floatArray)),
-//                    this, SLOT(_realtime(floatArray)));
-//            connect(myController, SIGNAL(detectedCellImg(QImage, QVector<QPoint>)),
-//                    this, SLOT(updateCellImg(QImage, QVector<QPoint>)));
-
-//            // groupbox and checkbox -> selecting cell type
-//            connect(ui->checkBox_compressed, SIGNAL(stateChanged(int)),
-//                    this, SLOT(compressed_box_checked(int)));
-//            connect(ui->checkBox_control, SIGNAL(stateChanged(int)),
-//                    this, SLOT(control_box_checked(int)));
-//            ui->checkBox_compressed->setChecked(true);
-//            ui->checkBox_compressed->setStyleSheet(checkboxStyle);
-//            ui->checkBox_control->setStyleSheet(checkboxStyle);
-//            ui->groupBox_cellRole->show();
-//        }
-//        else{
-//            connect(this, SIGNAL(readProperties(floatArray)),
-//                    this, SLOT(_loadfile(floatArray)));
-//        }
-
-        // Vis
-        narr1Vis = new Narr();
-        narr1Vis->resize(512, 512);
-        narr1Vis->show();
-        QWidget *container = QWidget::createWindowContainer(narr1Vis, this->centralWidget());
-        QRect narr1VisRect = QRect(40, 600, /*(this->width()-160)/2*/600, 600);
-        container->setGeometry(narr1VisRect);
-
-        // connect property type combobox to function
-        connect(ui->propComboBox, SIGNAL(currentIndexChanged(int)),
-                narr1Vis, SLOT(setPropType(int)));
+    // connect property type combobox to function
+    connect(ui->propComboBox, SIGNAL(currentIndexChanged(int)),
+            narr1Vis, SLOT(setPropType(int)));
 
 
-        narr2Vis = new Coord();
-        narr2Vis->resize(512, 512);
-        narr2Vis->show();
-        QWidget *container2 = QWidget::createWindowContainer(narr2Vis, this->centralWidget());
-        QRect narr2VisRect = QRect(40+620, 600, /*(this->width()-160)/2*/600, 600);
-        container2->setGeometry(narr2VisRect);
+    narr2Vis = new Coord();
+    narr2Vis->resize(512, 512);
+    narr2Vis->show();
+    QWidget *container2 = QWidget::createWindowContainer(narr2Vis, this->centralWidget());
+    QRect narr2VisRect = QRect(40+620, 600, /*(this->width()-160)/2*/600, 600);
+    container2->setGeometry(narr2VisRect);
 
-    }
+
 
     encircler = new Encircle(this->centralWidget());
     //encircle->setGeometry(40, 30, 500, 500);
@@ -303,9 +189,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 MainWindow::~MainWindow(){
-//    delete prop2Vis;
-//    delete prop1Vis;
     delete dataFilename;
+    delete loadCellDataAct;
+    delete fileMenu;
+    delete narr1Vis;
+    delete narr2Vis;
     delete encircler;
     delete myController;
     delete ui;
@@ -434,27 +322,27 @@ void MainWindow::updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2)
         int totalFrm    = myController->getNumberOfFrames();
         ui->horizontalSlider->setValue(currFrm);
         ui->frameLabelRight->setText(QString::number(currFrm) +" / "+ QString::number(totalFrm));
-        ui->frameLabelRight->setStyleSheet(frameLabelStyle);
+        ui->frameLabelRight->setStyleSheet(FRM_LABEL);
         if(currFrm == totalFrm){
             ui->playVideoButton->setEnabled(false);
-            ui->playVideoButton->setStyleSheet(button_released_off);
+            ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
             ui->stopVideoButton->setEnabled(true);
-            ui->stopVideoButton->setStyleSheet(button_released_on);
+            ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
             ui->drawROIButton->setEnabled(false);
-            ui->drawROIButton->setStyleSheet(button_released_off);
+            ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_OFF);
         }
     }
 
 }
 
 void MainWindow::on_playVideoButton_pressed(){
-    ui->playVideoButton->setStyleSheet(button_pressed);
+    ui->playVideoButton->setStyleSheet(BUTTON_PRESSED);
 }
 void MainWindow::on_playVideoButton_released(){
     if(ui->playVideoButton->isEnabled())
-        ui->playVideoButton->setStyleSheet(button_released_on);
+        ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
     else
-        ui->playVideoButton->setStyleSheet(button_released_off);
+        ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
 }
 // play or pause video
 void MainWindow::on_playVideoButton_clicked()
@@ -463,32 +351,32 @@ void MainWindow::on_playVideoButton_clicked()
     if(myController->videoIsPaused()){
         myController->playVideo();
         ui->playVideoButton->setText("Pause");
-        ui->playVideoButton->setStyleSheet(button_released_on);
+        ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
         ui->stopVideoButton->setEnabled(false);
-        ui->stopVideoButton->setStyleSheet(button_released_off);
+        ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
         ui->drawROIButton->setEnabled(false);
-        ui->drawROIButton->setStyleSheet(button_released_off);
+        ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_OFF);
     }else{
         myController->pauseVideo();
         ui->playVideoButton->setText("Play");
-        ui->playVideoButton->setStyleSheet(button_released_on);
+        ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
         ui->stopVideoButton->setEnabled(true);
-        ui->stopVideoButton->setStyleSheet(button_released_on);
+        ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
         if(!encircled){
             ui->drawROIButton->setEnabled(true);
-            ui->drawROIButton->setStyleSheet(button_released_on);
+            ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_ON);
         }
     }
 }
 
 void MainWindow::on_stopVideoButton_pressed(){
-    ui->stopVideoButton->setStyleSheet(button_pressed);
+    ui->stopVideoButton->setStyleSheet(BUTTON_PRESSED);
 }
 void MainWindow::on_stopVideoButton_released(){
     if(ui->stopVideoButton->isEnabled())
-        ui->stopVideoButton->setStyleSheet(button_released_on);
+        ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
     else
-        ui->stopVideoButton->setStyleSheet(button_released_off);
+        ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
 }
 //stop and release video
 void MainWindow::on_stopVideoButton_clicked(){
@@ -503,11 +391,9 @@ void MainWindow::on_stopVideoButton_clicked(){
 
     narr1Vis->clear();
     narr2Vis->clear();
-//    prop2Vis->releaseDataVis();
-//    prop1Vis->releaseDataVis();
 
     ui->typeComboBox->setEnabled(true);
-    ui->typeComboBox->setStyleSheet(button_released_on);
+    ui->typeComboBox->setStyleSheet(BUTTON_RELEASED_ON);
 
     QPixmap pixmap(1,1); // Works
     pixmap = pixmap.scaled(ui->orgVideo->width(), ui->orgVideo->height());
@@ -523,29 +409,29 @@ void MainWindow::on_stopVideoButton_clicked(){
     ui->roiVideo2->setPixmap(pixmap2);
 
     ui->loadVideoButton->setEnabled(true);
-    ui->loadVideoButton->setStyleSheet(button_released_on);
+    ui->loadVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
     ui->playVideoButton->setText("play");
     ui->playVideoButton->setEnabled(false);
-    ui->playVideoButton->setStyleSheet(button_released_off);
+    ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
     ui->stopVideoButton->setEnabled(false);
-    ui->stopVideoButton->setStyleSheet(button_released_off);
+    ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
     ui->horizontalSlider->setValue(0);
     ui->drawROIButton->setEnabled(false);
-    ui->drawROIButton->setStyleSheet(button_released_off);
-    ui->contourDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
-    ui->cellDetectionDisplayerLabel->setStyleSheet(transBkgrd+forgrdWhite+font16bld);
+    ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_OFF);
+    ui->contourDisplayerLabel->setStyleSheet(TRANS_BKGRD+FORGRD_WHITE+FONT16BLD);
+    ui->cellDetectionDisplayerLabel->setStyleSheet(TRANS_BKGRD+FORGRD_WHITE+FONT16BLD);
 
 }
 
 void MainWindow::on_loadVideoButton_pressed(){
-    ui->loadVideoButton->setStyleSheet(button_pressed);
+    ui->loadVideoButton->setStyleSheet(BUTTON_PRESSED);
 
 }
 void MainWindow::on_loadVideoButton_released(){
     if(ui->loadVideoButton->isEnabled())
-        ui->loadVideoButton->setStyleSheet(button_released_on);
+        ui->loadVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
     else
-        ui->loadVideoButton->setStyleSheet(button_released_off);
+        ui->loadVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
 }
 
 void MainWindow::on_loadVideoButton_clicked()
@@ -561,17 +447,6 @@ void MainWindow::on_loadVideoButton_clicked()
             this, SLOT(updatePropsVisUI(floatArray)));
     connect(myController, SIGNAL(detectedCellImg(QImage, QVector<QPoint>)),
             this, SLOT(updateCellImg(QImage, QVector<QPoint>)));
-
-    // groupbox and checkbox -> selecting cell type
-    connect(ui->checkBox_compressed, SIGNAL(stateChanged(int)),
-            this, SLOT(compressed_box_checked(int)));
-    connect(ui->checkBox_control, SIGNAL(stateChanged(int)),
-            this, SLOT(control_box_checked(int)));
-    ui->checkBox_compressed->setChecked(true);
-    ui->checkBox_compressed->setStyleSheet(checkboxStyle);
-    ui->checkBox_control->setStyleSheet(checkboxStyle);
-    ui->groupBox_cellRole->show();
-    // realtime recognition mode (fileMode = false) *** //
 
 
     QFileDialog *dialog = new QFileDialog();
@@ -611,11 +486,11 @@ void MainWindow::on_loadVideoButton_clicked()
         }
         else{
             ui->loadVideoButton->setEnabled(false);
-            ui->loadVideoButton->setStyleSheet(button_released_off);
+            ui->loadVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
             ui->playVideoButton->setEnabled(true);
-            ui->playVideoButton->setStyleSheet(button_released_on);
+            ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
             ui->drawROIButton->setEnabled(false);
-            ui->drawROIButton->setStyleSheet(button_released_off);
+            ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_OFF);
             ui->horizontalSlider->setMaximum(myController->getNumberOfFrames());
             ui->frameLabelRight->setText(" 0 / " + QString::number(myController->getNumberOfFrames()));
             narr1Vis->setMaxFrm(myController->getNumberOfFrames());
@@ -630,14 +505,14 @@ void MainWindow::on_loadVideoButton_clicked()
 }
 
 void MainWindow::on_drawROIButton_pressed(){
-    ui->drawROIButton->setStyleSheet(button_pressed);
+    ui->drawROIButton->setStyleSheet(BUTTON_PRESSED);
 }
 
 void MainWindow::on_drawROIButton_released(){
     if(ui->drawROIButton->isEnabled())
-        ui->drawROIButton->setStyleSheet(button_released_on);
+        ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_ON);
     else
-        ui->drawROIButton->setStyleSheet(button_released_off);
+        ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_OFF);
 }
 
 inline int propIndex(QString str){
@@ -659,91 +534,29 @@ inline int propIndex(QString str){
 
 void MainWindow::updatePropsVisUI(floatArray property){ //int prop1,prop2, prop3, prop4, prop5
 
-    //property[]: float(area), float(perimeter), centroid.x, centroid.y, shape, 0.0
+    if(!fileMode){
+        narr1Vis->updateProperty(property, myController->getCurrentFrame()/*property[0]*/);
+        narr2Vis->updateCoord(QPointF(property[3], property[4]), myController->getCurrentFrame()/*property[0]*/);
+    }else{
+        narr1Vis->updateProperty(property, property[0]);
+        narr2Vis->updateCoord(QPointF(property[3], property[4]), property[0]);
+    }
 
-    if(!NARR_MODE){
-        if(checkedBoxes.size()==1){
-            prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
-            prop2Vis->turnVisOff();
-        }else{
-            prop1Vis->updateData(property[propIndex(checkedBoxes[0])], myController->getCurrentFrame());
-            prop2Vis->updateData(property[propIndex(checkedBoxes[1])], myController->getCurrentFrame());
-        }
-    }
-    else {
-        if(!fileMode){
-//            for(unsigned int n = 0; n < property.size(); n++)
-//                std::cout << property[n] << " ";
-//            std::cout << std::endl;
-            //qDebug() << myController->getCurrentFrame();
-            narr1Vis->updateProperty(property, myController->getCurrentFrame()/*property[0]*/);
-            narr2Vis->updateCoord(QPointF(property[3], property[4]), myController->getCurrentFrame()/*property[0]*/);
-        }else{
-//            for(unsigned int n = 0; n < property.size(); n++)
-//                std::cout << property[n] << " ";
-//            std::cout << std::endl;
-            narr1Vis->updateProperty(property, property[0]);
-            narr2Vis->updateCoord(QPointF(property[3], property[4]), property[0]);
-        }
-    }
 }
 
 void MainWindow::updateCellImg(QImage cell, QVector<QPoint> smoothContour)
 {
     //cell.save("cellImg"+QString::number(int(myController->getCurrentFrame()))+".png", "PNG");
-    if(NARR_MODE){
-        narr1Vis->updateCellImg(cell, smoothContour);
-    }
+    narr1Vis->updateCellImg(cell, smoothContour);
 }
 
 void MainWindow::updateCellImg(QImage cell)
 {
     //cell.save("cellImg"+QString::number(int(myController->getCurrentFrame()))+".png", "PNG");
-    if(NARR_MODE){
-        narr1Vis->updateCellImg(cell);
-    }
-}
-
-
-void MainWindow::box_checked(int state) {
-
-    QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
-    if (!checkBox) return;
-
-    if (state == Qt::Checked) {
-        if (checkedBoxes.size() == 2) {
-            checkBox->setCheckState(Qt::Unchecked);
-            return;
-        } else if (!checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
-            checkedBoxes.push_back(checkBox->objectName().remove(0, 9));
-        }
-    } else if (state == Qt::Unchecked) {
-        if (checkedBoxes.size() == 0) {
-            return; // should not happen
-        } else if (checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
-            checkedBoxes.remove(checkedBoxes.indexOf(checkBox->objectName().remove(0, 9)));
-        }
-    }
-
-    /*
-    for(int n = 0; n < checkedBoxes.size(); n++)
-        std::cout << checkedBoxes[n].toStdString() << "\n";
-    std::cout << "---" << std::endl;*/
-
-    if(checkedBoxes.size()==0){
-        QMessageBox msgBox;
-        msgBox.setText("Warning: no property is selected!");
-        msgBox.exec();
-    }
-    else if(checkedBoxes.size()==1){
-        ui->prop1VisLabel->setText("  "+checkedBoxes[0].toUpper()+" (pixels)");
-        ui->prop2VisLabel->setText("  ");
-    }else{
-        ui->prop1VisLabel->setText("  "+checkedBoxes[0].toUpper()+" (pixels)");
-        ui->prop2VisLabel->setText("  "+checkedBoxes[1].toUpper()+" (pixels)");
-    }
+    narr1Vis->updateCellImg(cell);
 
 }
+
 
 void MainWindow::control_box_checked(int state)
 {
@@ -772,65 +585,66 @@ void MainWindow::compressed_box_checked(int state)
 void MainWindow::loadCellData()
 {
     fileMode = true;
-    /*MultiView *multiview = new MultiView();
-    this->setCentralWidget(multiview);*/
+    MultiView *multiview = new MultiView(this->centralWidget());
+    multiview->show();
+//    this->setCentralWidget(multiview);
 
-    cout << "'Load Cell Data' menu selected." << endl;
+//    cout << "'Load Cell Data' menu selected." << endl;
 
-    narr1Vis->clear();
-    narr2Vis->clear();
-    cellData.clear();
+//    narr1Vis->clear();
+//    narr2Vis->clear();
+//    cellData.clear();
 
-    //*** read-property-from-file mode (fileMode = true) //
-    connect(this, SIGNAL(readProperties(floatArray)),
-            this, SLOT(updatePropsVisUI(floatArray)));
-    connect(this, SIGNAL(readCellImg(QImage)),
-            this, SLOT(updateCellImg(QImage)));
-    // read-property-from-file mode (fileMode = true) *** //
+//    //*** read-property-from-file mode (fileMode = true) //
+//    connect(this, SIGNAL(readProperties(floatArray)),
+//            this, SLOT(updatePropsVisUI(floatArray)));
+//    connect(this, SIGNAL(readCellImg(QImage)),
+//            this, SLOT(updateCellImg(QImage)));
+//    // read-property-from-file mode (fileMode = true) *** //
 
-    QFileDialog *dialog = new QFileDialog();
-    *dataFilename = dialog->getOpenFileName(this,
-                                            tr("Open Video"),
-                                            "../../../video", /*QDir::homePath()+"/Desktop/",*/
-                                            tr("Data Files (*.csv)"));
-    delete dialog;
+//    QFileDialog *dialog = new QFileDialog();
+//    *dataFilename = dialog->getOpenFileName(this,
+//                                            tr("Open Video"),
+//                                            "../../../video", /*QDir::homePath()+"/Desktop/",*/
+//                                            tr("Data Files (*.csv)"));
+//    delete dialog;
 
-    if(!dataFilename->isEmpty()){
-        //prepare writing data to file
-        QFileInfo   fi  = QFileInfo(*dataFilename);
-        //QString     ff  = fi.path()+"/"+fi.baseName();
-        //string      fn  = ff.toUtf8().constData();
+//    if(!dataFilename->isEmpty()){
+//        //prepare writing data to file
+//        QFileInfo   fi  = QFileInfo(*dataFilename);
+//        //QString     ff  = fi.path()+"/"+fi.baseName();
+//        //string      fn  = ff.toUtf8().constData();
 
-        this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
+//        this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
 
-        if(readDataFile()){
-            unsigned int cellDataSize = cellData.size();
-            if(cellDataSize > 20){
-                narr1Vis->setBeginFrame(cellData[0][0]);
-                narr1Vis->setMaxFrm(cellData[cellDataSize-2][0]);
-                narr2Vis->getMaxFrm(cellData[cellDataSize-2][0]);
-                narr2Vis->getMaxSize(QSize(640, 480));
-                for(unsigned int n = 0; n < cellDataSize; n++){
-                    // data
-                    emit readProperties(cellData[n]);
-                    // img
-                    QImage img = readImgFile(fi.path(), cellData[n][0]/*index*/);
-                    emit readCellImg(img);
-                }
-            }
-            else{
-                qDebug() << "Cell Data Size ERROR!";
-            }
-        }
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText("Filename empty!");
-        msgBox.exec();
-    }
+//        if(readDataFile()){
+//            unsigned int cellDataSize = cellData.size();
+//            if(cellDataSize > 20){
+//                narr1Vis->setBeginFrame(cellData[0][0]);
+//                narr1Vis->setMaxFrm(cellData[cellDataSize-2][0]);
+//                narr2Vis->getMaxFrm(cellData[cellDataSize-2][0]);
+//                narr2Vis->getMaxSize(QSize(640, 480));
+//                for(unsigned int n = 0; n < cellDataSize; n++){
+//                    // data
+//                    emit readProperties(cellData[n]);
+//                    // img
+//                    QImage img = readImgFile(fi.path(), cellData[n][0]/*index*/);
+//                    emit readCellImg(img);
+//                }
+//            }
+//            else{
+//                qDebug() << "Cell Data Size ERROR!";
+//            }
+//        }
+//    }
+//    else{
+//        QMessageBox msgBox;
+//        msgBox.setText("Filename empty!");
+//        msgBox.exec();
+//    }
 
-//    delete dataFilename;
-//    dataFilename = new QString("");
+////    delete dataFilename;
+////    dataFilename = new QString("");
 }
 
 bool MainWindow::readDataFile()
@@ -900,9 +714,9 @@ void MainWindow::on_drawROIButton_clicked(){
     if(!encircler->isEncircled()){
         this->setCursor(Qt::CrossCursor);
         ui->playVideoButton->setEnabled(false);
-        ui->playVideoButton->setStyleSheet(button_released_off);
+        ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
         ui->stopVideoButton->setEnabled(false);
-        ui->stopVideoButton->setStyleSheet(button_released_off);
+        ui->stopVideoButton->setStyleSheet(BUTTON_RELEASED_OFF);
         ui->drawROIButton->setText("Track Cell");
 
         myController->pauseVideo();
@@ -912,9 +726,6 @@ void MainWindow::on_drawROIButton_clicked(){
         encircler->clearCircle();
         encircler->turnOnEncircleMode();
         encircled = true;
-
-//        prop1Vis->turnVisOn();
-//        prop2Vis->turnVisOn();
     }
 
     // when circling mode is turned off, track starts
@@ -923,20 +734,16 @@ void MainWindow::on_drawROIButton_clicked(){
     else{
         //ui->stopVideoButton->setEnabled(true);
         ui->playVideoButton->setEnabled(true);
-        ui->playVideoButton->setStyleSheet(button_released_on);
+        ui->playVideoButton->setStyleSheet(BUTTON_RELEASED_ON);
         on_playVideoButton_clicked();
         ui->drawROIButton->setText("Encircle Cell");
-        ui->drawROIButton->setStyleSheet(button_released_off);
-        ui->contourDisplayerLabel->setStyleSheet(halfTransBkgrd+forgrdOrage+"border-radius:4px;"+font16bld);
-        ui->cellDetectionDisplayerLabel->setStyleSheet(halfTransBkgrd+forgrdGreen+"border-radius:4px;"+font16bld);
+        ui->drawROIButton->setStyleSheet(BUTTON_RELEASED_OFF);
+        ui->contourDisplayerLabel->setStyleSheet(HALFTRANS_BKGRD+FORGRD_ORAGE+"border-radius:4px;"+FONT16BLD);
+        ui->cellDetectionDisplayerLabel->setStyleSheet(HALFTRANS_BKGRD+FORGRD_GREEN+"border-radius:4px;"+FONT16BLD);
         this->setCursor(Qt::ArrowCursor);
-//        prop1Vis->turnTrackOn(myController->getNumberOfFrames(),
-//                             myController->getCurrentFrame());
-//        prop2Vis->turnTrackOn(myController->getNumberOfFrames(),
-//                             myController->getCurrentFrame());
 
         ui->typeComboBox->setEnabled(false);
-        ui->typeComboBox->setStyleSheet(button_released_off);
+        ui->typeComboBox->setStyleSheet(BUTTON_RELEASED_OFF);
 
         encircler->turnOffEncircleMode();
         //delete encircle;
@@ -956,8 +763,6 @@ void MainWindow::on_drawROIButton_clicked(){
             int prmt_min = ((int)p/5/100-1)*100;
             prmt_min = prmt_min > 0 ? prmt_min : 0;
             int prmt_max = ((int)p*3/100+1)*100;
-//            prop1Vis->setMinMax(area_min, area_max); //(a/3, a*5)
-//            prop2Vis->setMinMax(prmt_min, prmt_max); //(p/5, p*3)
             cout << "area min " << area_min << " max " << area_max << endl;
             cout << "prmt min " << prmt_min << " max " << prmt_max << endl;
             myController->setCircle(circle);
