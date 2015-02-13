@@ -98,7 +98,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1301, 1250);
+        MainWindow->resize(2301, 1213);
         actionLoad_existing_cell_data = new QAction(MainWindow);
         actionLoad_existing_cell_data->setObjectName(QStringLiteral("actionLoad_existing_cell_data"));
         QFont font;
@@ -181,6 +181,7 @@ public:
 
         horizontalSlider = new QSlider(layoutWidget);
         horizontalSlider->setObjectName(QStringLiteral("horizontalSlider"));
+        horizontalSlider->setMaximumSize(QSize(16777215, 30));
         horizontalSlider->setOrientation(Qt::Horizontal);
 
         playerBarLayout->addWidget(horizontalSlider);

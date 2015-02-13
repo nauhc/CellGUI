@@ -14,21 +14,16 @@ int main(int argc, char *argv[])
 
 //    QDialog *dialog = new QDialog();
 //    QVBoxLayout *layout = new QVBoxLayout();
-
 //    QPushButton *topbutton = new QPushButton("Analyze Single Video");
 //    QPushButton *botbutton = new QPushButton("Analyze Multiple Videos");
 //    layout->addWidget(topbutton);
 //    layout->addWidget(botbutton);
 //    dialog->setLayout(layout);
-
 //    dialog->show();
 
     MainWindow w;
     w.setWindowIcon(QIcon("./cell.icns"));
     w.show();
-
-    SingleView s;
-    s.show();
 
 
 //    QGLFormat qglFormat;

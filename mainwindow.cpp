@@ -33,12 +33,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->setFixedSize(this->width(), this->height());
     this->setWindowTitle(" Dancing Cell Visualization ");
 
+    QWidget *tempWidget = new QWidget(this);
+    tempWidget->setGeometry(this->width()/2+120, 0, this->width()/2-120, this->height());
 
-    SingleView *singleview = new SingleView();
-
-//    singleview->setStyleSheet(HALFTRANS_BKGRD);
-//    singleview->show();
-
+    SingleView *singleview = new SingleView(tempWidget);
+    singleview->show();
 
 
     // connect displaying images
