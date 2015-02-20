@@ -9,6 +9,7 @@
 #include "singleview.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
+#include <QtCore/QVector>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'singleview.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
@@ -19,8 +20,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_SingleView_t {
-    QByteArrayData data[1];
-    char stringdata[11];
+    QByteArrayData data[23];
+    char stringdata[336];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -29,9 +30,39 @@ struct qt_meta_stringdata_SingleView_t {
     )
 static const qt_meta_stringdata_SingleView_t qt_meta_stringdata_SingleView = {
     {
-QT_MOC_LITERAL(0, 0, 10)
+QT_MOC_LITERAL(0, 0, 10),
+QT_MOC_LITERAL(1, 11, 18),
+QT_MOC_LITERAL(2, 30, 0),
+QT_MOC_LITERAL(3, 31, 19),
+QT_MOC_LITERAL(4, 51, 18),
+QT_MOC_LITERAL(5, 70, 20),
+QT_MOC_LITERAL(6, 91, 3),
+QT_MOC_LITERAL(7, 95, 20),
+QT_MOC_LITERAL(8, 116, 7),
+QT_MOC_LITERAL(9, 124, 7),
+QT_MOC_LITERAL(10, 132, 17),
+QT_MOC_LITERAL(11, 150, 10),
+QT_MOC_LITERAL(12, 161, 8),
+QT_MOC_LITERAL(13, 170, 14),
+QT_MOC_LITERAL(14, 185, 4),
+QT_MOC_LITERAL(15, 190, 15),
+QT_MOC_LITERAL(16, 206, 13),
+QT_MOC_LITERAL(17, 220, 18),
+QT_MOC_LITERAL(18, 239, 19),
+QT_MOC_LITERAL(19, 259, 18),
+QT_MOC_LITERAL(20, 278, 18),
+QT_MOC_LITERAL(21, 297, 19),
+QT_MOC_LITERAL(22, 317, 18)
     },
-    "SingleView"
+    "SingleView\0loadButton_pressed\0\0"
+    "loadButton_released\0loadButton_clicked\0"
+    "initialVideoPlayerUI\0img\0updateVideoplayerUI_\0"
+    "ROIimg1\0ROIimg2\0updatePropsVisUI_\0"
+    "floatArray\0property\0updateCellImg_\0"
+    "cell\0QVector<QPoint>\0smoothContour\0"
+    "playButton_pressed\0playButton_released\0"
+    "playButton_clicked\0stopButton_pressed\0"
+    "stopButton_released\0stopButton_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -41,22 +72,81 @@ static const uint qt_meta_data_SingleView[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+      14,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: name, argc, parameters, tag, flags
+       1,    0,   84,    2, 0x08 /* Private */,
+       3,    0,   85,    2, 0x08 /* Private */,
+       4,    0,   86,    2, 0x08 /* Private */,
+       5,    1,   87,    2, 0x08 /* Private */,
+       7,    3,   90,    2, 0x08 /* Private */,
+      10,    1,   97,    2, 0x08 /* Private */,
+      13,    2,  100,    2, 0x08 /* Private */,
+      13,    1,  105,    2, 0x08 /* Private */,
+      17,    0,  108,    2, 0x08 /* Private */,
+      18,    0,  109,    2, 0x08 /* Private */,
+      19,    0,  110,    2, 0x08 /* Private */,
+      20,    0,  111,    2, 0x08 /* Private */,
+      21,    0,  112,    2, 0x08 /* Private */,
+      22,    0,  113,    2, 0x08 /* Private */,
+
+ // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QImage,    6,
+    QMetaType::Void, QMetaType::QImage, QMetaType::QImage, QMetaType::QImage,    6,    8,    9,
+    QMetaType::Void, 0x80000000 | 11,   12,
+    QMetaType::Void, QMetaType::QImage, 0x80000000 | 15,   14,   16,
+    QMetaType::Void, QMetaType::QImage,   14,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+
        0        // eod
 };
 
 void SingleView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
-    Q_UNUSED(_o);
-    Q_UNUSED(_id);
-    Q_UNUSED(_c);
-    Q_UNUSED(_a);
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        SingleView *_t = static_cast<SingleView *>(_o);
+        switch (_id) {
+        case 0: _t->loadButton_pressed(); break;
+        case 1: _t->loadButton_released(); break;
+        case 2: _t->loadButton_clicked(); break;
+        case 3: _t->initialVideoPlayerUI((*reinterpret_cast< QImage(*)>(_a[1]))); break;
+        case 4: _t->updateVideoplayerUI_((*reinterpret_cast< QImage(*)>(_a[1])),(*reinterpret_cast< QImage(*)>(_a[2])),(*reinterpret_cast< QImage(*)>(_a[3]))); break;
+        case 5: _t->updatePropsVisUI_((*reinterpret_cast< floatArray(*)>(_a[1]))); break;
+        case 6: _t->updateCellImg_((*reinterpret_cast< QImage(*)>(_a[1])),(*reinterpret_cast< QVector<QPoint>(*)>(_a[2]))); break;
+        case 7: _t->updateCellImg_((*reinterpret_cast< QImage(*)>(_a[1]))); break;
+        case 8: _t->playButton_pressed(); break;
+        case 9: _t->playButton_released(); break;
+        case 10: _t->playButton_clicked(); break;
+        case 11: _t->stopButton_pressed(); break;
+        case 12: _t->stopButton_released(); break;
+        case 13: _t->stopButton_clicked(); break;
+        default: ;
+        }
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        switch (_id) {
+        default: *reinterpret_cast<int*>(_a[0]) = -1; break;
+        case 6:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<int*>(_a[0]) = -1; break;
+            case 1:
+                *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QVector<QPoint> >(); break;
+            }
+            break;
+        }
+    }
 }
 
 const QMetaObject SingleView::staticMetaObject = {
@@ -83,6 +173,15 @@ int SingleView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 14)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 14;
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 14)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 14;
+    }
     return _id;
 }
 QT_END_MOC_NAMESPACE

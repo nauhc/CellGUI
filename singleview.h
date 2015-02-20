@@ -10,6 +10,11 @@
 #include <QSlider>
 #include <QCheckBox>
 #include <QGroupBox>
+#include <QFileDialog>
+#include <QMessageBox>
+
+#include "controller.h"
+#include "encircle.h"
 
 #include "narr.h"
 #include "coord.h"
@@ -24,7 +29,27 @@ public:
 
 signals:
 
-public slots:
+private slots:
+    //load video button
+    void loadButton_pressed();
+    void loadButton_released();
+    void loadButton_clicked();
+
+    void initialVideoPlayerUI(QImage img);
+    void updateVideoplayerUI_(QImage img, QImage ROIimg1, QImage ROIimg2);
+    void updatePropsVisUI_(floatArray property); ///*int prop1, int prop2*/
+    void updateCellImg_(QImage cell, QVector<QPoint> smoothContour);
+    void updateCellImg_(QImage cell);
+
+    //play video button
+    void playButton_pressed();
+    void playButton_released();
+    void playButton_clicked();
+
+    //stop video button
+    void stopButton_pressed();
+    void stopButton_released();
+    void stopButton_clicked();
 
 private:
     QVBoxLayout *mainVLayout;
@@ -32,11 +57,16 @@ private:
     //--- Original Video ---
     QVBoxLayout *orgVideoVLayout;
     QLabel *_orgVideo;
+    QLabel *_orgVideoBgd;
 
     //--- ROI Video ---
     QVBoxLayout *roiVideoVLayout;
+    QLabel *roiVdo1Label;
+    QLabel *roiVdo2Label;
     QLabel *roiVdo1;
     QLabel *roiVdo2;
+    QLabel *roiVdo1Bgd;
+    QLabel *roiVdo2Bgd;
 
     //--- Control Panel ---
     QVBoxLayout *controlVLayout;
@@ -89,6 +119,15 @@ private:
     Coord       *cod;
     QHBoxLayout *botHLayout;
 
+
+    // controller
+    Controller  *controller;
+    Encircle    *encircler;
+    bool        encircled_;
+
+
+
+    // UI
     void createOrignalVideo();
     void createROIVideo();
 
@@ -102,6 +141,9 @@ private:
 
     void createNarrVis();
     void createCoordVis();
+
+    //
+    void setCanvas();
 
 };
 
