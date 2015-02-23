@@ -465,6 +465,11 @@ void SingleView::createCellRoleCheckBox()
 
 }
 
+void SingleView::updateBlebSizeText(int val)
+{
+    blebSizeValLabel->setText("1/"+QString::number((11-val)*50));
+}
+
 void SingleView::createPrmtrPanel()
 {
     // prmter sliderbars
@@ -499,9 +504,9 @@ void SingleView::createPrmtrPanel()
     dilValSlidr = new QSlider(Qt::Horizontal);
     dilValSlidr->setMaximumHeight(30);
     dilValSlidr->setStyleSheet(TRANS_BKGRD);
-    blebSizeValSlidr = new QSlider(Qt::Horizontal);
-    blebSizeValSlidr->setMaximumHeight(30);
-    blebSizeValSlidr->setStyleSheet(TRANS_BKGRD);
+    blebSizeRtoSlidr = new QSlider(Qt::Horizontal);
+    blebSizeRtoSlidr->setMaximumHeight(30);
+    blebSizeRtoSlidr->setStyleSheet(TRANS_BKGRD);
 
     prmtrGridLayout->addWidget(diffLabel, 0, 0);
     prmtrGridLayout->addWidget(diffValLabel, 0, 1);
@@ -514,7 +519,7 @@ void SingleView::createPrmtrPanel()
     prmtrGridLayout->addWidget(blebSizeLabel, 2, 2);
     prmtrGridLayout->addWidget(blebSizeValLabel, 2, 3);
     prmtrGridLayout->addWidget(dilValSlidr, 3, 0, 3, 2);
-    prmtrGridLayout->addWidget(blebSizeValSlidr, 3, 2, 3, 2);
+    prmtrGridLayout->addWidget(blebSizeRtoSlidr, 3, 2, 3, 2);
 
     prmterGroup->setLayout(prmtrGridLayout);
     prmterGroup->setMaximumHeight(120);
@@ -526,8 +531,9 @@ void SingleView::createPrmtrPanel()
     connect(blkSizeValSlidr, SIGNAL(valueChanged(int)), controller,   SLOT(setBlkSize(int)));
     connect(dilValSlidr,     SIGNAL(valueChanged(int)), dilSizeValLabel, SLOT(setNum(int)));
     connect(dilValSlidr,     SIGNAL(valueChanged(int)), controller,   SLOT(setDilSize(int)));
-    connect(blebSizeValSlidr,SIGNAL(valueChanged(int)), blebSizeValLabel, SLOT(setNum(int)));
-    connect(blebSizeValSlidr,SIGNAL(valueChanged(int)), controller,   SLOT(setblebSizeRatio(int)));
+    connect(blebSizeRtoSlidr,SIGNAL(valueChanged(int)), this, SLOT(updateBlebSizeText(int)));
+    connect(blebSizeRtoSlidr,SIGNAL(valueChanged(int)), controller,   SLOT(setblebSizeRatio(int)));
+
 
     diffValSlidr->setRange(1, 51);
     diffValSlidr->setValue(3);
@@ -535,8 +541,8 @@ void SingleView::createPrmtrPanel()
     blkSizeValSlidr->setValue(11);
     dilValSlidr->setRange(1, 8);
     dilValSlidr->setValue(5);
-    blebSizeValSlidr->setRange(1, 10);
-    blebSizeValSlidr->setValue(7);
+    blebSizeRtoSlidr->setRange(1, 10);
+    blebSizeRtoSlidr->setValue(7);
 
 }
 

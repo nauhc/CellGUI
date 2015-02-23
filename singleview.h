@@ -55,6 +55,9 @@ private slots:
     void compressedCheckBox_checked(int state);
     void controlCheckBox_checked(int state);
 
+    // parameter setting
+    void updateBlebSizeText(int val);
+
     //draw ROI
     void drawROIButton_pressed();
     void drawROIButton_released();
@@ -107,7 +110,7 @@ private:
     QSlider     *diffValSlidr;
     QSlider     *blkSizeValSlidr;
     QSlider     *dilValSlidr;
-    QSlider     *blebSizeValSlidr;
+    QSlider     *blebSizeRtoSlidr;
     //encircle button
     QHBoxLayout *encircleButtonHLayout;
     QPushButton *drawROI;

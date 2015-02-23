@@ -53,14 +53,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
             myController, SLOT(setAdaptThresh(int)));
     connect(ui->adaptThreshSlider, SIGNAL(valueChanged(int)),
             ui->diffrerenceNum, SLOT(setNum(int)));
+
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setBlkSize(int)));
     connect(ui->blkSizeSlider, SIGNAL(valueChanged(int)),
             ui->blkSizeNum, SLOT(setNum(int)));
+
     connect(ui->dilSizeSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setDilSize(int)));
     connect(ui->dilSizeSlider, SIGNAL(valueChanged(int)),
             ui->dilSizeNum, SLOT(setNum(int)));
+
     connect(ui->blebSizeRatioSlider, SIGNAL(valueChanged(int)),
             myController, SLOT(setblebSizeRatio(int)));
     connect(ui->blebSizeRatioSlider, SIGNAL(valueChanged(int)),
