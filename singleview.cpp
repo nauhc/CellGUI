@@ -9,7 +9,8 @@ inline T sqre(T value){
 
 SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Controller())
 {
-    resize(1024, 1024);
+    //resize(1280, 1280);
+    resize(parent->size());
     setStyleSheet("background-color:rgb(251,251,251)");
 
     mainVLayout = new QVBoxLayout(this);
@@ -187,6 +188,7 @@ void SingleView::loadButton_clicked()
         qDebug() << ff << " already exists";
     }
 
+    this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
     //this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
     delete dialog;
     if (!filename.isEmpty()){
@@ -675,6 +677,8 @@ void SingleView::createPropertySelector()
     propComBox->addItem("Area");
     propComBox->addItem("Perimeter");
     propComBox->addItem("Bleb size and number");
+    propComBox->setEnabled(true);
+    propComBox->setStyleSheet(BUTTON_RELEASED_ON);
     propertyHLayout->addWidget(new QLabel("Property"));
     propertyHLayout->addWidget(propComBox);
 
@@ -707,7 +711,7 @@ void SingleView::createCoordVis()
 
 void calcSizes(int &videoWidth, int &videoHeight,
                int x_border, int y_border, int width_border, int height_border,
-               int &x,        int &y,        int &width,        int &height,
+               int &x,       int &y,       int &width,       int &height,
                double &scale){
 
     if(videoWidth >= videoHeight){
@@ -757,5 +761,6 @@ void SingleView::setCanvas()
     cout << "scale " << scale << endl;
 
 }
+
 
 

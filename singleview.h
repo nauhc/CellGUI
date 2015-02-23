@@ -154,8 +154,9 @@ private:
     void createNarrVis();
     void createCoordVis();
 
-    //
+    // setCanvas
     void setCanvas();
+
 
 };
 

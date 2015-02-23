@@ -30,35 +30,35 @@ public:
     ~MainWindow();
 
 private slots:
-    void updateBlebSizeSliderText(int value);
+//    void updateBlebSizeSliderText(int value);
 
-    void initialVideoPlayerUI(QImage img);
-    void updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2);
+//    void initialVideoPlayerUI(QImage img);
+//    void updateVideoplayerUI(QImage img, QImage ROIimg1, QImage ROIimg2);
 
-    void on_playVideoButton_clicked();
-    void on_loadVideoButton_clicked();
-    void on_stopVideoButton_clicked();
-    void on_drawROIButton_clicked();
+//    void on_playVideoButton_clicked();
+//    void on_loadVideoButton_clicked();
+//    void on_stopVideoButton_clicked();
+//    void on_drawROIButton_clicked();
 
-    void updatePropsVisUI(floatArray property); ///*int prop1, int prop2*/
-    void updateCellImg(QImage cell, QVector<QPoint> smoothContour);
-    void updateCellImg(QImage cell);
+//    void updatePropsVisUI(floatArray property); ///*int prop1, int prop2*/
+//    void updateCellImg(QImage cell, QVector<QPoint> smoothContour);
+//    void updateCellImg(QImage cell);
 
-    void on_loadVideoButton_pressed();
-    void on_loadVideoButton_released();
+//    void on_loadVideoButton_pressed();
+//    void on_loadVideoButton_released();
 
-    void on_playVideoButton_pressed();
-    void on_playVideoButton_released();
+//    void on_playVideoButton_pressed();
+//    void on_playVideoButton_released();
 
-    void on_stopVideoButton_pressed();
-    void on_stopVideoButton_released();
+//    void on_stopVideoButton_pressed();
+//    void on_stopVideoButton_released();
 
-    void on_drawROIButton_pressed();
-    void on_drawROIButton_released();
+//    void on_drawROIButton_pressed();
+//    void on_drawROIButton_released();
 
 
-    void control_box_checked(int state);
-    void compressed_box_checked(int state);
+//    void control_box_checked(int state);
+//    void compressed_box_checked(int state);
 
     //read temporal data from file
     void loadCellData();
@@ -66,19 +66,19 @@ private slots:
 
 private:
     Ui::MainWindow  *ui;
-    Controller      *myController;
-    Encircle        *encircler;
-    bool            encircled;
+//    Controller      *myController;
+//    Encircle        *encircler;
+//    bool            encircled;
 
-    QVector<QString> checkedBoxes;
+//    QVector<QString> checkedBoxes;
 
-    Narr            *narr1Vis;
-    Coord           *narr2Vis;
+//    Narr            *narr1Vis;
+//    Coord           *narr2Vis;
 
     QMenu           *fileMenu;
     QAction         *loadCellDataAct;
 
-    void setCanvas();
+//    void setCanvas();
 
     //read temporal data from file
     bool                fileMode;

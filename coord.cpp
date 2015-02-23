@@ -170,7 +170,7 @@ void Coord::render(QPainter *painter)
     painter->setRenderHint(QPainter::Antialiasing);
 
 
-//    //draw the x-y coordinate system'
+    //draw the x-y coordinate system
     QPen myPen(QColor(120, 120, 118));
     myPen.setWidth(1);
     painter->setPen(myPen);
@@ -317,20 +317,32 @@ void Coord::render(QPainter *painter)
     // draw color map bar indicating time old / new
     painter->translate(center.x(), center.y());
     // ***x->right, y->down***
-    painter->drawText(-halfW, halfH-90, 150, 40, Qt::AlignCenter, "Old");
-    painter->drawText(halfW-150, halfH-90, 160, 40, Qt::AlignCenter, "New");
+    int bar_txt_y   = halfH-90;
+    int bar_txt_h   = 20;
+    int bar_txt_w   = 120;
+    QRect txt_old   = QRect(-halfW,           bar_txt_y, bar_txt_w, bar_txt_h);
+    QRect txt_new   = QRect(halfW-bar_txt_w,  bar_txt_y, bar_txt_w, bar_txt_h);
+    //painter->drawRect(txt_old);
+    //painter->drawRect(txt_new);
+    painter->drawText(txt_old, Qt::AlignRight, "Old");
+    painter->drawText(txt_new, Qt::AlignLeft, "New");
 
     painter->rotate(-90); //***x->up, y->right***
-    int xx = 5;
-    int yy = halfH*2/180;
-    qreal lengthRto = 0.75;
-    for(int n = 0; n < 180; n++){
-        QColor c = mapNumToHue(60, 180, 0, 180, n);
-        //c.setHsv(60+n, 255, 200);
+    int space   = 50;
+    int bar_h   = /*bar_txt_h*/10;
+    int bar_len = 2*(halfW - bar_txt_w - space);
+    int bar_w   = bar_len/bar_len;
+    int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
+    int bar_y   = -(halfW - bar_txt_w - space);
+    QRect bar_rect  = QRect(bar_x, bar_y, bar_h, bar_len);
+    //painter->drawRect(bar_rect);
+
+    for(int n = 0; n < bar_len; n++){
+        QColor c = mapNumToHue(60, 180, 0, bar_len, n);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));
-        QRect rect(QPoint(-(halfW*lengthRto + 10), (-halfH+30+yy*n)*lengthRto), QSize(xx, yy));
+        QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
         painter->drawRect(rect);
     }
 
