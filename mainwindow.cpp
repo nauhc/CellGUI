@@ -27,36 +27,50 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //tempWidget->setGeometry(this->width()/2+120, 0, this->width()/2-120, this->height());
     //SingleView *singleview = new SingleView(tempWidget);
 
-    QHBoxLayout *centralLayout = new QHBoxLayout();
+    centralLayout = new QHBoxLayout();
     this->centralWidget()->setLayout(centralLayout);
-    this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//    this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     SingleView *singleview = new SingleView(this->centralWidget());
     centralLayout->addWidget(singleview);
     //singleview->show();
 
 
-    // connect properties and dataVis
-    qRegisterMetaType<floatArray>("floatArray");
-    qRegisterMetaType<QVector<QPoint> >("QVector<QPoint>");
-
-    loadCellDataAct = new QAction(tr("&Load Processed Temporal Data"), this);
-    connect(loadCellDataAct, SIGNAL(triggered()), this, SLOT(loadCellData()));
+    // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(loadCellDataAct);
+
+    // Add MultiView to centralWidget layout
+    loadMultiViewAct = new QAction(tr("&Load Processed Temporal Data"), this);
+    connect(loadMultiViewAct, SIGNAL(triggered()), this, SLOT(loadMultiView()));
+    fileMenu->addAction(loadMultiViewAct);
+
+    // Add SigleView to centralWidget layout
+    loadSigleViewAct = new QAction(tr("&Extract Data From Video File"), this);
+    connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSigleView()));
+    fileMenu->addAction(loadSigleViewAct);
+
+
 }
 
 MainWindow::~MainWindow(){
     delete dataFilename;
-    delete loadCellDataAct;
+    delete loadMultiViewAct;
     delete fileMenu;
     delete ui;
 }
 
-void MainWindow::loadCellData()
+void MainWindow::loadMultiView()
 {
     fileMode = true;
+
+    if(!centralLayout->isEmpty()){
+        delete centralLayout->itemAt(0)->widget();
+    }
+
     MultiView *multiview = new MultiView(this->centralWidget());
+    centralLayout->addWidget(multiview);
     multiview->show();
+
+
 //    this->setCentralWidget(multiview);
 
 //    cout << "'Load Cell Data' menu selected." << endl;
@@ -114,7 +128,19 @@ void MainWindow::loadCellData()
 //    }
 
 ////    delete dataFilename;
-////    dataFilename = new QString("");
+    ////    dataFilename = new QString("");
+}
+
+void MainWindow::loadSigleView()
+{
+    fileMode = false;
+    if(!centralLayout->isEmpty()){
+        delete centralLayout->itemAt(0)->widget();
+    }
+
+    SingleView *singleview = new SingleView(this->centralWidget());
+    centralLayout->addWidget(singleview);
+
 }
 
 bool MainWindow::readDataFile()

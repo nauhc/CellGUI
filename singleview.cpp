@@ -9,6 +9,10 @@ inline T sqre(T value){
 
 SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Controller())
 {
+    // connect properties and dataVis
+    qRegisterMetaType<floatArray>("floatArray");
+    qRegisterMetaType<QVector<QPoint> >("QVector<QPoint>");
+
     //resize(1280, 1280);
     resize(parent->size());
     setStyleSheet("background-color:rgb(251,251,251)");
@@ -333,7 +337,7 @@ void SingleView::createOrignalVideo()
 {
     //orignal video
     orgVideoVLayout = new QVBoxLayout();
-    _orgVideo = new QLabel("orgVideo");
+    _orgVideo = new QLabel(""); //orignal video
     _orgVideo->setMaximumHeight(this->height()/2);
     _orgVideo->setStyleSheet(VIDEO_DISPLAY);
     orgVideoVLayout->addWidget(_orgVideo);
@@ -351,8 +355,8 @@ void SingleView::createROIVideo()
     roiVdo2Label->setMaximumHeight(45);
     roiVdo1Label->setStyleSheet("color:rgb(28, 120, 159); font: bold 18px; background-color:rgba(0,0,0,0%)");
     roiVdo2Label->setStyleSheet("color:rgb(28, 120, 159); font: bold 18px; background-color:rgba(0,0,0,0%)");
-    roiVdo1 = new QLabel("roi1");
-    roiVdo2 = new QLabel("roi2");
+    roiVdo1 = new QLabel(""); //roi1
+    roiVdo2 = new QLabel(""); //roi2
     roiVdo1->setMaximumHeight(this->height()/4);
     roiVdo2->setMaximumHeight(this->height()/4);
     roiVdo1->setStyleSheet(VIDEO_DISPLAY);
@@ -591,6 +595,8 @@ void SingleView::drawROIButton_clicked()
     // when it is circling mode
     // user can circle the cell of interest
     if(!encircler_->isEncircled()){
+        //this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
         this->setCursor(Qt::CrossCursor);
         playButton->setEnabled(false);
         playButton->setStyleSheet(BUTTON_RELEASED_OFF);
@@ -611,6 +617,8 @@ void SingleView::drawROIButton_clicked()
     // pass the circled region to controller
     // and clear the drawing
     else{
+        //this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
         //stopButton->setEnabled(true);
         playButton->setEnabled(true);
         playButton->setStyleSheet(BUTTON_RELEASED_ON);

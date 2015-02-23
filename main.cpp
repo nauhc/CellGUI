@@ -39,10 +39,6 @@ int main(int argc, char *argv[])
 //    narrative.resize(1024, 1024);
 //    narrative.show();
 
-//    Coord coord;
-//    coord.resize(512, 512);
-//    coord.show();
-
 
     return a.exec();
 }

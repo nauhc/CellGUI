@@ -317,9 +317,9 @@ void Coord::render(QPainter *painter)
     // draw color map bar indicating time old / new
     painter->translate(center.x(), center.y());
     // ***x->right, y->down***
-    int bar_txt_y   = halfH-90;
+    int bar_txt_y   = halfH*3/4;
     int bar_txt_h   = 20;
-    int bar_txt_w   = 120;
+    int bar_txt_w   = /*120*/halfW/4;
     QRect txt_old   = QRect(-halfW,           bar_txt_y, bar_txt_w, bar_txt_h);
     QRect txt_new   = QRect(halfW-bar_txt_w,  bar_txt_y, bar_txt_w, bar_txt_h);
     //painter->drawRect(txt_old);
@@ -328,13 +328,13 @@ void Coord::render(QPainter *painter)
     painter->drawText(txt_new, Qt::AlignLeft, "New");
 
     painter->rotate(-90); //***x->up, y->right***
-    int space   = 50;
+    int space   = /*50*/halfW/8;
     int bar_h   = /*bar_txt_h*/10;
     int bar_len = 2*(halfW - bar_txt_w - space);
     int bar_w   = bar_len/bar_len;
     int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
     int bar_y   = -(halfW - bar_txt_w - space);
-    QRect bar_rect  = QRect(bar_x, bar_y, bar_h, bar_len);
+    //QRect bar_rect  = QRect(bar_x, bar_y, bar_h, bar_len);
     //painter->drawRect(bar_rect);
 
     for(int n = 0; n < bar_len; n++){
