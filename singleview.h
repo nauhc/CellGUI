@@ -25,7 +25,7 @@ class SingleView : public QWidget
 
 public:
     explicit SingleView(QWidget *parent = 0);
-
+    ~SingleView();
 
 signals:
 
@@ -50,6 +50,15 @@ private slots:
     void stopButton_pressed();
     void stopButton_released();
     void stopButton_clicked();
+
+    //cell roll
+    void compressedCheckBox_checked(int state);
+    void controlCheckBox_checked(int state);
+
+    //draw ROI
+    void drawROIButton_pressed();
+    void drawROIButton_released();
+    void drawROIButton_clicked();
 
 private:
     QVBoxLayout *mainVLayout;
@@ -122,8 +131,8 @@ private:
 
     // controller
     Controller  *controller;
-    Encircle    *encircler;
-    bool        encircled_;
+    Encircle    *encircler_;
+    bool         encircled_;
 
 
 

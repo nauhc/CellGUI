@@ -2,7 +2,10 @@
 #include "style.h"
 #include "QDebug"
 
-
+template <class T>
+inline T sqre(T value){
+    return value*value;
+}
 
 SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Controller())
 {
@@ -51,8 +54,17 @@ SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Contro
     connect(controller, SIGNAL(processedImage(QImage,QImage,QImage)),
             this, SLOT(updateVideoplayerUI_(QImage,QImage,QImage)));
 
+    encircler_ = new Encircle(this);
     encircled_ = false;
 
+}
+
+SingleView::~SingleView()
+{
+    delete nar;
+    delete cod;
+    delete encircler_;
+    delete controller;
 }
 
 void SingleView::initialVideoPlayerUI(QImage img)
@@ -315,7 +327,6 @@ void SingleView::stopButton_clicked()
 
 }
 
-
 void SingleView::createOrignalVideo()
 {
     //orignal video
@@ -412,6 +423,29 @@ void SingleView::createVideoTypeSeletionComBox()
     videoTypeHLayout->addWidget(typeComBox);
 }
 
+void SingleView::compressedCheckBox_checked(int state)
+{
+    if (state == Qt::Checked) {
+        controlCheckBox->setCheckState(Qt::Unchecked);
+        controller->compressedCell = true;
+    }else{
+        controlCheckBox->setCheckState(Qt::Checked);
+        controller->compressedCell = false;
+    }
+}
+
+void SingleView::controlCheckBox_checked(int state)
+{
+    if (state == Qt::Checked) {
+        compressedCheckBox->setCheckState(Qt::Unchecked);
+        controller->compressedCell = false;
+    }else{
+        compressedCheckBox->setCheckState(Qt::Checked);
+        controller->compressedCell = true;
+    }
+
+}
+
 void SingleView::createCellRoleCheckBox()
 {
     // cellRole
@@ -425,6 +459,10 @@ void SingleView::createCellRoleCheckBox()
     cellRoleHLayout->addStretch(1);
     roleGroup->setLayout(cellRoleHLayout);
     roleGroup->setMaximumHeight(50);
+
+    connect(this->compressedCheckBox, SIGNAL(stateChanged(int)), this, SLOT(compressedCheckBox_checked(int)));
+    connect(this->controlCheckBox, SIGNAL(stateChanged(int)), this, SLOT(controlCheckBox_checked(int)));
+
 }
 
 void SingleView::createPrmtrPanel()
@@ -511,6 +549,97 @@ void SingleView::createEncircler()
     drawROI->setStyleSheet(BUTTON_RELEASED_OFF);
     encircleButtonHLayout->addWidget(drawROI);
 
+    connect(drawROI, SIGNAL(clicked()), this, SLOT(drawROIButton_clicked()));
+
+}
+
+void SingleView::drawROIButton_pressed()
+{
+    drawROI->setStyleSheet(BUTTON_PRESSED);
+}
+
+void SingleView::drawROIButton_released()
+{
+    if(drawROI->isEnabled())
+        drawROI->setStyleSheet(BUTTON_RELEASED_ON);
+    else
+        drawROI->setStyleSheet(BUTTON_RELEASED_OFF);
+}
+
+void SingleView::drawROIButton_clicked()
+{
+
+    encircler_->setGeometry(_orgVideo->x(), _orgVideo->y(),
+                           _orgVideo->width(), _orgVideo->height());
+
+    cout << "video pos:  x " << _orgVideo->x()
+         << " y " << _orgVideo->y()
+         << " width " << _orgVideo->width()
+         << " height " << _orgVideo->height() << endl;
+
+    cout << "Encircle Cell Button clicked." << endl;
+
+
+    // when it is circling mode
+    // user can circle the cell of interest
+    if(!encircler_->isEncircled()){
+        this->setCursor(Qt::CrossCursor);
+        playButton->setEnabled(false);
+        playButton->setStyleSheet(BUTTON_RELEASED_OFF);
+        stopButton->setEnabled(false);
+        stopButton->setStyleSheet(BUTTON_RELEASED_OFF);
+        drawROI->setText("Track Cell");
+
+        controller->pauseVideo();
+
+        nar->setBeginFrame(controller->getCurrentFrame());
+
+        encircler_->clearCircle();
+        encircler_->turnOnEncircleMode();
+        encircled_ = true;
+    }
+
+    // when circling mode is turned off, track starts
+    // pass the circled region to controller
+    // and clear the drawing
+    else{
+        //stopButton->setEnabled(true);
+        playButton->setEnabled(true);
+        playButton->setStyleSheet(BUTTON_RELEASED_ON);
+        playButton_clicked();
+        drawROI->setText("Encircle Cell");
+        drawROI->setStyleSheet(BUTTON_RELEASED_OFF);
+//        ui->contourDisplayerLabel->setStyleSheet(HALFTRANS_BKGRD+FORGRD_ORAGE+"border-radius:4px;"+FONT16BLD);
+//        ui->cellDetectionDisplayerLabel->setStyleSheet(HALFTRANS_BKGRD+FORGRD_GREEN+"border-radius:4px;"+FONT16BLD);
+        this->setCursor(Qt::ArrowCursor);
+
+        typeComBox->setEnabled(false);
+        typeComBox->setStyleSheet(BUTTON_RELEASED_OFF);
+
+        encircler_->turnOffEncircleMode();
+        //delete encircle;
+        QVector<QPoint> circle;
+        encircler_->getRegion(circle);
+        int circleSize = circle.size();
+        if(circleSize < 5){
+            cout << "circle not found." << endl;
+        }
+        else{
+            double a = sqre(circleSize/2)/PI;
+            double p = /*PI**/circleSize;
+            //cout << p << " " << a << endl;
+            int area_min = ((int)a/3/100-1)*100;
+            area_min = area_min > 0 ? area_min : 0;
+            int area_max = ((int)a*10/100+1)*100;
+            int prmt_min = ((int)p/5/100-1)*100;
+            prmt_min = prmt_min > 0 ? prmt_min : 0;
+            int prmt_max = ((int)p*3/100+1)*100;
+            cout << "area min " << area_min << " max " << area_max << endl;
+            cout << "prmt min " << prmt_min << " max " << prmt_max << endl;
+            controller->setCircle(circle);
+
+        }
+    }
 }
 
 void SingleView::createScaleConverter()
@@ -603,6 +732,9 @@ void SingleView::setCanvas()
     int x, y, w, h;
     double scale;
     calcSizes(width, height, _orgVideo->x(), _orgVideo->y(), _orgVideo->width(), _orgVideo->height(), x, y, w, h, scale);
+    encircler_->setGeometry(x, y, w, h);
+    controller->setScale(scale);
+
     // ROIVideo1
     int x1, y1, w1, h1;
     double scale1;
@@ -617,17 +749,6 @@ void SingleView::setCanvas()
 //         << " width " << _orgVideo->width() << " height " << _orgVideo->height() << endl;
     cout << "video pos:  x " << x << " y " << y << " width " << w << " height " << h << endl;
     cout << "scale " << scale << endl;
-
-
-//    _orgVideo->setGeometry(x, y, w, h);
-//    encircler->setGeometry(x, y, w, h);
-//    controller->setScale(scale);
-
-//    roiVdo1->setGeometry(x1, y1, w1, h1);
-//    roiVdo1->setAlignment(Qt::AlignCenter);
-
-//    roiVdo2->setGeometry(x2, y2, w2, h2);
-//    roiVdo2->setAlignment(Qt::AlignCenter);
 
 }
 
