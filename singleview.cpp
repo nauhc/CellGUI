@@ -21,7 +21,7 @@ SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Contro
     topHLayout = new QHBoxLayout();
     botHLayout = new QHBoxLayout();
 
-    //*************** Top Half ***************
+    //*************** Top Half **************
 
     //--- Original Video ---
     createOrignalVideo();

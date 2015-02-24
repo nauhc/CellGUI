@@ -8,35 +8,33 @@
 #include "multiview.h"
 #include "singleview.h"
 
-#include "style.h"
+//#include "style.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    dataFilename(new QString(""))
+    ui(new Ui::MainWindow)
+    //,dataFilename(new QString(""))
 {
-    fileMode = false;
-
     ui->setupUi(this);
-    this->setStyleSheet(/*"background-color:rgb(38,42,43)"*/"background-color:rgb(251,251,251)");
-    //this->setFixedSize(this->width(), this->height());
+    this->setStyleSheet("background-color:rgb(251,251,251)");
     this->setBaseSize(this->width(), this->height());
     this->setWindowTitle(" Dancing Cell Visualization ");
 
-    //QWidget *tempWidget = new QWidget(this);
-    //tempWidget->setGeometry(this->width()/2+120, 0, this->width()/2-120, this->height());
-    //SingleView *singleview = new SingleView(tempWidget);
-
     centralLayout = new QHBoxLayout();
     this->centralWidget()->setLayout(centralLayout);
-//    this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    SingleView *singleview = new SingleView(this->centralWidget());
-    centralLayout->addWidget(singleview);
-    //singleview->show();
+    //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+//    // set to singleview at the beginning
+//    SingleView *singleview = new SingleView(this->centralWidget());
+//    centralLayout->addWidget(singleview);
+
+    MultiView *multiview = new MultiView(this->centralWidget());
+    centralLayout->addWidget(multiview);
 
 
     // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMode = false;
 
     // Add MultiView to centralWidget layout
     loadMultiViewAct = new QAction(tr("&Load Processed Temporal Data"), this);
@@ -48,11 +46,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSigleView()));
     fileMenu->addAction(loadSigleViewAct);
 
-
 }
 
 MainWindow::~MainWindow(){
-    delete dataFilename;
+    //delete dataFilename;
     delete loadMultiViewAct;
     delete fileMenu;
     delete ui;
@@ -68,7 +65,7 @@ void MainWindow::loadMultiView()
 
     MultiView *multiview = new MultiView(this->centralWidget());
     centralLayout->addWidget(multiview);
-    multiview->show();
+    //multiview->show();
 
 
 //    this->setCentralWidget(multiview);
@@ -143,52 +140,3 @@ void MainWindow::loadSigleView()
 
 }
 
-bool MainWindow::readDataFile()
-{
-    QFile f(*dataFilename);
-    if(!f.open(QIODevice::ReadOnly)){
-        qDebug() << "Reading csv file not found.";
-        return false;
-    }else{
-        QTextStream in(&f);
-        while(!in.atEnd()) { // each row
-            QString line = in.readLine();
-            if(line.isEmpty()){
-                continue;
-            }
-            if(line.isNull()){
-                break;
-            }
-            QVector<float> row;
-            foreach (const QString &cell, line.split(",")) {
-                //row.append(cell.trimmed());
-                row.append(cell.trimmed().toFloat());
-            }
-            //qDebug() << row;
-            floatArray prop;
-            prop.push_back(float(row[0])); // frameIndex
-            prop.push_back(float(row[1])); // area
-            prop.push_back(float(row[2])); // perimeter
-            prop.push_back(float(row[3])); // centroid.x
-            prop.push_back(float(row[4])); // centroid.y
-            prop.push_back(float(row[5])); // shape
-            prop.push_back(float(row[6])); // blebNum
-//            for(unsigned int n = 0; n < prop.size(); n++)
-//                std::cout << prop[n] << " ";
-//            std::cout << std::endl;
-            cellData.push_back(prop);
-            //emit readProperties(prop);
-        }
-        f.close();
-        return true;
-    }
-}
-
-QImage MainWindow::readImgFile(QString fp, unsigned int idx) // filepath, index
-{
-    QImage img;
-    QString str = fp+"/cell"+QString::number(int(idx))+".png";
-    //qDebug() << str;
-    img.load(str);
-    return img;
-}

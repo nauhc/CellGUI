@@ -46,10 +46,7 @@ private:
 
 
     vector<floatArray>  cellData;
-    QString             *dataFilename;
-
-    bool readDataFile();
-    QImage readImgFile(QString fp, unsigned int idx);
+    //QString             *dataFilename;
 
 signals:
     void readProperties(floatArray prop);
