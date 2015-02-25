@@ -489,6 +489,8 @@ void Controller::run(){
             float  avg_blebsize = 0;
 
             QDataStream out_b(&blebsFile);
+            out_b << qreal(centroid.x);
+            out_b << qreal(centroid.y);
             out_b << qint32(blebs.size());
             for(unsigned int n = 0; n < blebs.size(); n++){
                 circle(boxedImg, blebs[n].center, 3, Scalar(144, 57, 123, 64), -1);

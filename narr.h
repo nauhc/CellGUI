@@ -8,6 +8,7 @@ typedef std::vector<float> floatArray;
 class Narr : public OpenGLWindow
 {
     Q_OBJECT
+
 public:
     Narr(QWidget *parent = 0);
     ~Narr();
