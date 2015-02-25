@@ -38,6 +38,15 @@ Bleb::Bleb(vector<Point> &bunch, Point2f &centroid, int &BIN)
 
 }
 
+Bleb::Bleb()
+{
+    size = 0;
+    center = Point(0, 0);
+    bunch_polar.clear();
+    roughArea = RotatedRect();
+    bin = 0;
+}
+
 Bleb::~Bleb(){
 
 }

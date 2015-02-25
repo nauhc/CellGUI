@@ -8,12 +8,8 @@
 #include "multiview.h"
 #include "singleview.h"
 
-//#include "style.h"
-
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
-    //,dataFilename(new QString(""))
 {
     ui->setupUi(this);
     this->setStyleSheet("background-color:rgb(251,251,251)");
@@ -24,12 +20,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->centralWidget()->setLayout(centralLayout);
     //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-//    // set to singleview at the beginning
-//    SingleView *singleview = new SingleView(this->centralWidget());
-//    centralLayout->addWidget(singleview);
+    // set to singleview at the beginning
+    SingleView *singleview = new SingleView(this->centralWidget());
+    centralLayout->addWidget(singleview);
 
-    MultiView *multiview = new MultiView(this->centralWidget());
-    centralLayout->addWidget(multiview);
+//    MultiView *multiview = new MultiView(this->centralWidget());
+//    centralLayout->addWidget(multiview);
 
 
     // Add menu to menu bar
@@ -49,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 MainWindow::~MainWindow(){
-    //delete dataFilename;
+    delete loadSigleViewAct;
     delete loadMultiViewAct;
     delete fileMenu;
     delete ui;
@@ -65,67 +61,6 @@ void MainWindow::loadMultiView()
 
     MultiView *multiview = new MultiView(this->centralWidget());
     centralLayout->addWidget(multiview);
-    //multiview->show();
-
-
-//    this->setCentralWidget(multiview);
-
-//    cout << "'Load Cell Data' menu selected." << endl;
-
-//    narr1Vis->clear();
-//    narr2Vis->clear();
-//    cellData.clear();
-
-//    //*** read-property-from-file mode (fileMode = true) //
-//    connect(this, SIGNAL(readProperties(floatArray)),
-//            this, SLOT(updatePropsVisUI(floatArray)));
-//    connect(this, SIGNAL(readCellImg(QImage)),
-//            this, SLOT(updateCellImg(QImage)));
-//    // read-property-from-file mode (fileMode = true) *** //
-
-//    QFileDialog *dialog = new QFileDialog();
-//    *dataFilename = dialog->getOpenFileName(this,
-//                                            tr("Open Video"),
-//                                            "../../../video", /*QDir::homePath()+"/Desktop/",*/
-//                                            tr("Data Files (*.csv)"));
-//    delete dialog;
-
-//    if(!dataFilename->isEmpty()){
-//        //prepare writing data to file
-//        QFileInfo   fi  = QFileInfo(*dataFilename);
-//        //QString     ff  = fi.path()+"/"+fi.baseName();
-//        //string      fn  = ff.toUtf8().constData();
-
-//        this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
-
-//        if(readDataFile()){
-//            unsigned int cellDataSize = cellData.size();
-//            if(cellDataSize > 20){
-//                narr1Vis->setBeginFrame(cellData[0][0]);
-//                narr1Vis->setMaxFrm(cellData[cellDataSize-2][0]);
-//                narr2Vis->getMaxFrm(cellData[cellDataSize-2][0]);
-//                narr2Vis->getMaxSize(QSize(640, 480));
-//                for(unsigned int n = 0; n < cellDataSize; n++){
-//                    // data
-//                    emit readProperties(cellData[n]);
-//                    // img
-//                    QImage img = readImgFile(fi.path(), cellData[n][0]/*index*/);
-//                    emit readCellImg(img);
-//                }
-//            }
-//            else{
-//                qDebug() << "Cell Data Size ERROR!";
-//            }
-//        }
-//    }
-//    else{
-//        QMessageBox msgBox;
-//        msgBox.setText("Filename empty!");
-//        msgBox.exec();
-//    }
-
-////    delete dataFilename;
-    ////    dataFilename = new QString("");
 }
 
 void MainWindow::loadSigleView()

@@ -11,6 +11,7 @@
 #include <video/tracking.hpp>
 #include <bleb.h>
 #include <QDir>
+#include <QFile>
 
 using namespace std;
 using namespace cv;
@@ -35,9 +36,10 @@ private:
     int             frameCnt; // total frame number
     double          fps; // fps
 
-    ofstream        csvFile;// output to file
-    string          csvFileName;
     string          filepath; // filepath for a particular movie
+    ofstream        csvFile;// output to file
+    QFile           blebsFile; // output blebs positions to file
+    QFile           contourFile; // output contours to file
 
     FindContour     *contour; // findcontour class object
     bool            encircled;

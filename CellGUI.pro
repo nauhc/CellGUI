@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     OpenGLWindow.cpp \
     coord.cpp \
     multiview.cpp \
-    singleview.cpp
+    singleview.cpp \
+    shape.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -51,7 +52,8 @@ HEADERS  += mainwindow.h \
     coord.h \
     multiview.h \
     singleview.h \
-    style.h
+    style.h \
+    shape.h
 
 FORMS    += mainwindow.ui
 

@@ -13,6 +13,7 @@ MultiView::MultiView(QWidget *parent) : QWidget(parent), dataFilename(new QStrin
     createNarVis();
     createCodVis();
 
+
     //QLabel *label1 = new QLabel("111111");
     //QLabel *label2 = new QLabel("222222");
     QLabel *label3 = new QLabel("333333");
@@ -38,20 +39,29 @@ void MultiView::createNarVis()
 {
     nar_tmp1 = new Narr();
     nar_container1 = QWidget::createWindowContainer(nar_tmp1, this);
-    nar_container1->setMinimumSize(218, 218);
+    nar_container1->setMinimumSize(256, 256);
+    nar_container1->setMaximumSize(512, 512);
     nar_tmp2 = new Narr();
     nar_container2 = QWidget::createWindowContainer(nar_tmp2, this);
-    nar_container2->setMinimumSize(218, 218);
+    nar_container2->setMinimumSize(256, 256);
+    nar_container2->setMaximumSize(512, 512);
 }
 
 void MultiView::createCodVis()
 {
     cod_tmp1 = new Coord();
     cod_container1 = QWidget::createWindowContainer(cod_tmp1, this);
-    cod_container1->setMinimumSize(218, 218);
+    cod_container1->setMinimumSize(256, 256);
+    cod_container1->setMaximumSize(512, 512);
     cod_tmp2 = new Coord();
     cod_container2 = QWidget::createWindowContainer(cod_tmp2, this);
-    cod_container2->setMinimumSize(218, 218);
+    cod_container2->setMinimumSize(256, 256);
+    cod_container2->setMaximumSize(512, 512);
+
+}
+
+void MultiView::createSpacers()
+{
 
 }
 
@@ -129,8 +139,6 @@ void MultiView::loadFilesButton_clicked()
         msgBox.exec();
     }
 
-//    delete dataFilename;
-//    dataFilename = new QString("");
 }
 
 void MultiView::updatePropsVisUI(floatArray property)
@@ -187,15 +195,93 @@ bool MultiView::readDataFile()
             prop.push_back(float(row[4])); // centroid.y
             prop.push_back(float(row[5])); // shape
             prop.push_back(float(row[6])); // blebNum
-//            for(unsigned int n = 0; n < prop.size(); n++)
-//                std::cout << prop[n] << " ";
-//            std::cout << std::endl;
+            //            for(unsigned int n = 0; n < prop.size(); n++)
+            //                std::cout << prop[n] << " ";
+            //            std::cout << std::endl;
             cellData.push_back(prop);
             //emit readProperties(prop);
         }
         f.close();
+        readBlebsFile();
+        readContoursFile();
         return true;
     }
+
+}
+
+bool MultiView::readBlebsFile()
+{
+    QString fn_b = dataFilename->remove(dataFilename->length()-15, 15) + "_b_compressed.dat" ;
+
+    QFile f(fn_b);
+    if(!f.open(QIODevice::ReadOnly)){
+        qDebug() << "Reading bleb's dat file not found.";
+        return false;
+    }
+    else{
+        QDataStream in(&f);
+        while(!in.atEnd()){
+            Bleb bleb;
+            qint32 blebsSize;
+            in >> blebsSize;
+            for(int i = 0; i < blebsSize; i++){
+                qint32 blebSize;
+                in >> blebSize;
+                //qDebug() << blebSize;
+                bleb.size = blebSize;
+                for(int j = 0; j < blebSize; j++){
+                    polarPoint p;
+                    in >> p.r;
+                    in >> p.theta;
+                    bleb.bunch_polar.push_back(p);
+                }
+            }
+            blebs.push_back(bleb);
+        }
+    }
+
+    std::cout << "blebs size " << blebs.size() << std::endl;
+    for(unsigned int n = 0; n < blebs.size(); n++){
+        for(unsigned int m = 0; m < blebs[n].bunch_polar.size(); m++){
+            std::cout << "r " << blebs[n].bunch_polar[m].r
+                      << " theta " << blebs[n].bunch_polar[m].theta << std::endl;
+        }
+        std::cout << std::endl;
+    }
+}
+
+bool MultiView::readContoursFile()
+{
+    QString fn_c = dataFilename->remove(dataFilename->length()-15, 15) + "_c_compressed.dat" ;
+    QFile f(fn_c);
+    if(!f.open(QIODevice::ReadOnly)){
+        qDebug() << "Reading contours' dat file not found.";
+        return false;
+    }
+    else{
+        QDataStream in(&f);
+        while(!in.atEnd()){
+            qint32 contourSize;
+            in >> contourSize;
+            std::vector<Point> contour;
+            for(int i = 0; i < contourSize; i++){
+                Point p;
+                in >> p.x;
+                in >> p.y;
+                contour.push_back(p);
+            }
+            contours.push_back(contour);
+        }
+    }
+
+//    std::cout << "contour size " << contours.size() << std::endl;
+//    for(unsigned int n = 0; n < contours.size(); n++){
+//        for(unsigned int m = 0; m < contours[n].size(); m++){
+//            std::cout << "x "  << contours[n][m].x << " y " << contours[n][m].y << std::endl;
+//        }
+//        std::cout << std::endl;
+//    }
+
 }
 
 QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index

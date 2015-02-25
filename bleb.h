@@ -21,6 +21,7 @@ public:
     int bin;
 
     Bleb(vector<Point> &bunch, Point2f &centroid, int &BIN);
+    Bleb();
     ~Bleb();
 };
 

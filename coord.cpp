@@ -338,7 +338,7 @@ void Coord::render(QPainter *painter)
     //painter->drawRect(bar_rect);
 
     for(int n = 0; n < bar_len; n++){
-        QColor c = mapNumToHue(60, 180, 0, bar_len, n);
+        QColor c = mapNumToHue(60, 300, 0, bar_len, n);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QBoxLayout>
+#include <QSpacerItem>
 #include <QLabel>
 #include <QPushButton>
 #include <QFileDialog>
@@ -10,6 +11,7 @@
 #include "style.h"
 #include "narr.h"
 #include "coord.h"
+#include "bleb.h"
 
 class MultiView : public QWidget
 {
@@ -40,8 +42,11 @@ private:
     Narr                    *nar_tmp1, *nar_tmp2;
     Coord                   *cod_tmp1, *cod_tmp2;
 
-    std::vector<floatArray>  cellData;
-    QString                 *dataFilename;
+
+    std::vector<floatArray>             cellData;
+    std::vector<Bleb>                   blebs;
+    std::vector<std::vector<Point> >    contours;
+    QString                             *dataFilename;
 
     QVBoxLayout *mainVLayout;
     QGridLayout *visGLayout;
@@ -50,11 +55,15 @@ private:
 
     void    createLoadFilesButton();
     bool    readDataFile();
+    bool    readBlebsFile();
+    bool    readContoursFile();
     QImage  readImgFile(QString fp, unsigned int idx);
+    void    clearAll();
 
-    void createNarVis();
-    void createCodVis();
-    void clearAll();
+
+    void    createNarVis();
+    void    createCodVis();
+    void    createSpacers();
 };
 
 #endif // MULTIVIEW_H

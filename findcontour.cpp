@@ -675,7 +675,7 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       vector<Point> &smooth_contour_curve,
                                       Mat &blebsImg,
                                       Rect &rectangle,
-//                                      vector<int> &blebs,
+                                      //vector<int> &blebs,
                                       int &frameNum)
 {
     frame = &img;
@@ -808,9 +808,9 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     bitwise_not(smooth, smooth);
     //Mat blebsImg;
     bitwise_and(smooth, cellArea, blebsImg);
-    //imshow("blebs", blebsImg);
-    //QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
-    //imwrite(cellFileName2.toStdString(), blebs);
+//    imshow("blebs", blebsImg);
+//    QString cellFileName2 = "blebs" + QString::number(frameNum) + ".png";
+//    imwrite(cellFileName2.toStdString(), blebs);
 
     //QString cellFileName2 = "dispImg1" + QString::number(frameNum) + ".png";
     //imwrite(cellFileName2.toStdString(), dispImg1);

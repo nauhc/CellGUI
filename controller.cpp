@@ -25,6 +25,11 @@ Controller::~Controller(){
     }
     if(csvFile.is_open())
         csvFile.close();
+    if(blebsFile.isOpen())
+        blebsFile.close();
+    if(contourFile.isOpen())
+        contourFile.close();
+
     delete roiFrame;
 //    delete frame; // Do not delete frame here. It has been released in FindContour class!
     delete contour;
@@ -85,14 +90,22 @@ bool Controller::loadVideo(string file, string ff, string fb){
 
         filepath = ff; // file path
         string fn = ff+"/"+fb; //fn: file path and file name (file extension exclusive)
+        string fn_b = "";
+        string fn_c = "";
 
         //prepare to write data to file
         std::transform(fn.begin(), fn.end(), fn.begin(), ::tolower);
 
-        if(compressedCell)  // compressed cell
+        if(compressedCell){  // compressed cell
+            fn_b = fn + "_b_compressed.dat";
+            fn_c = fn + "_c_compressed.dat";
             fn = fn + "_compressed.csv";
-        else // control cell
+        }
+        else{ // control cell
+            fn_b = fn + "_b_control.dat";
+            fn_c = fn + "_c_control.dat";
             fn = fn + "_control.csv";
+        }
 
         const char* fnn = fn.c_str();
         //check if file exists, if exists delete the file
@@ -108,6 +121,13 @@ bool Controller::loadVideo(string file, string ff, string fb){
 
         cout << "writing data to file " << fn << endl;
         csvFile.open(fn, ios::out);
+
+        blebsFile.setFileName(QString::fromStdString(fn_b));
+        blebsFile.open(QIODevice::WriteOnly);
+
+        contourFile.setFileName(QString::fromStdString(fn_c));
+        contourFile.open(QIODevice::WriteOnly);
+
         if(!inputVideo->read(*frame)){
             cout << "Unable to retrieve the first frame from video stream." << endl;
             return false;
@@ -150,6 +170,8 @@ void Controller::releaseVideo()
     encircled = false;
     hull.clear();
     csvFile.close();
+    blebsFile.close();
+    contourFile.close();
 }
 
 
@@ -465,13 +487,30 @@ void Controller::run(){
             double len_ratio  = micMtr_Pixel/scale/scale;
             //cout << "area_ratio " << area_ratio << endl;
             float  avg_blebsize = 0;
+
+            QDataStream out_b(&blebsFile);
+            out_b << qint32(blebs.size());
             for(unsigned int n = 0; n < blebs.size(); n++){
                 circle(boxedImg, blebs[n].center, 3, Scalar(144, 57, 123, 64), -1);
                 blebs_bin[blebs[n].bin] = blebs[n].size /** area_ratio*/;
                 avg_blebsize += blebs[n].size;
+
+                unsigned int b_pixel_num = blebs[n].bunch_polar.size();
+                out_b << qint32(b_pixel_num);
+                for(unsigned int m = 0; m < b_pixel_num; m++){
+                    out_b << qreal(blebs[n].bunch_polar[m].r);
+                    out_b << qreal(blebs[n].bunch_polar[m].theta);
+                }
             }
             if(blebs.size() > 0)
                 avg_blebsize = avg_blebsize/blebs.size();
+
+            QDataStream out_c(&contourFile);
+            out_c << qint32(smooth_contour_curve.size());
+            for(unsigned int n = 0; n < smooth_contour_curve.size(); n++){
+                out_c << qint32(smooth_contour_curve[n].x);
+                out_c << qint32(smooth_contour_curve[n].y);
+            }
 
             floatArray property;
             property.push_back(float(frameIdx));
@@ -527,6 +566,8 @@ void Controller::run(){
 
     if(cnt==frameCnt){
         csvFile.close();
+        blebsFile.close();
+        contourFile.close();
         cout << "data file (csv) saved." << endl;
     }
 }
