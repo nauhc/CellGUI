@@ -240,14 +240,14 @@ bool MultiView::readBlebsFile()
         }
     }
 
-    std::cout << "blebs size " << blebs.size() << std::endl;
-    for(unsigned int n = 0; n < blebs.size(); n++){
-        for(unsigned int m = 0; m < blebs[n].bunch_polar.size(); m++){
-            std::cout << "r " << blebs[n].bunch_polar[m].r
-                      << " theta " << blebs[n].bunch_polar[m].theta << std::endl;
-        }
-        std::cout << std::endl;
-    }
+    std::cout << "blebs sizes load to file " << blebs.size() << std::endl;
+//    for(unsigned int n = 0; n < blebs.size(); n++){
+//        for(unsigned int m = 0; m < blebs[n].bunch_polar.size(); m++){
+//            std::cout << "r " << blebs[n].bunch_polar[m].r
+//                      << " theta " << blebs[n].bunch_polar[m].theta << std::endl;
+//        }
+//        std::cout << std::endl;
+//    }
 }
 
 bool MultiView::readContoursFile()
@@ -274,7 +274,7 @@ bool MultiView::readContoursFile()
         }
     }
 
-//    std::cout << "contour size " << contours.size() << std::endl;
+    std::cout << "contours sizes load to file " << contours.size() << std::endl;
 //    for(unsigned int n = 0; n < contours.size(); n++){
 //        for(unsigned int m = 0; m < contours[n].size(); m++){
 //            std::cout << "x "  << contours[n][m].x << " y " << contours[n][m].y << std::endl;
