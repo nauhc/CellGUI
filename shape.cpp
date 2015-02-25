@@ -43,11 +43,12 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 {
     QPolygon contour;
     for(int n = 0; n < smoothContour.size(); n++)
-        contour << QPoint((smoothContour[n].x()-cent.x())*0.5, (smoothContour[n].y()-cent.y())*0.5);
+        contour << QPoint((smoothContour[n].x()-bleb[n].center.x), (smoothContour[n].y()-bleb[n].center.y));/**0.5*/
 
     contours.push_back(contour);
     blebs.push_back(bleb);
 
+    /*
 //    std::cout << "blebs sizes load to file " << blebs.size() << std::endl;
 //    for(unsigned int n = 0; n < blebs.size(); n++){
 //        std::cout << "frame  " << n << std::endl;
@@ -69,17 +70,24 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 //            std::cout << "(x "  << contours[n][m].x() << ", y " << contours[n][m].y() << ") ";
 //        }
 //        std::cout << std::endl;
-//    }
+//    } */
 
-        for(int m = 0; m < contours[0].size(); m++){
-            std::cout << "(x "  << contours[0][m].x() << ", y " << contours[0][m].y() << ") ";
-        }
-        std::cout << std::endl;
 }
 
 void Shape::initializeGL()
 {
 
+}
+
+QColor _mapNumToHue_(int start, int range, int min, int max, int v){
+    // start:   starting hue (0-360)
+    // end:     ending hue (0-360)
+    // min:     min value
+    // max:     max value
+    // v:       value
+    QColor color;
+    color.setHsv(start+range*v/(max-min), 255, 200);
+    return color;
 }
 
 void Shape::render(QPainter *painter)
@@ -95,14 +103,6 @@ void Shape::render(QPainter *painter)
     painter->rotate(-90); //***x->up, y->right***
     painter->setRenderHint(QPainter::Antialiasing);
 
-
-    //qDebug() << contours.size() << blebs.size();
-
-//    QPen myPen(QColor(255,0,0));
-//    myPen.setWidth(5);
-//    painter->setPen(myPen);
-//    painter->drawPoint(-72, -73);
-
     qreal size  = contours.size();
     if(size > 20){ // draw when data is valid
         // draw contours
@@ -110,17 +110,29 @@ void Shape::render(QPainter *painter)
         qreal opacity = 1/size;
         //qDebug() << size << trans;
 
-        painter->setOpacity(opacity*10);
-        QPen myPen(QColor(255,0,0));
+        QPen myPen(QColor(0,0,0));
         myPen.setWidth(1);
-        painter->setPen(myPen);
+        for(int i = 0; i < int(size); i++){ // one frame
+            // contours
+            painter->setOpacity(opacity*10);
+            painter->setPen(myPen);
+            for(int j = 0; j < contours[i].size(); j++) // one contour
+                painter->drawPoint(contours[i][j]);
 
-        painter->drawPolyline(contours[0]);
-
-//        for(int i = 0; i < int(size); i++){
-//            //painter->drawPolygon(contours[i]);
-//        }
-//        painter->drawPolygon(contours[0]);
+            // blebs
+            QColor c = _mapNumToHue_(60, 300, 0, int(size), i);
+            painter->setOpacity(1);
+            painter->setPen(QPen(c));
+            for(int j = 0; j < blebs[i].size(); j++){ // one set of blebs
+                for(int k = 0; k < blebs[i][j].size; k++){ // one bleb
+                    polarPoint  polarP = blebs[i][j].bunch_polar[k];
+                    Point       center = blebs[i][j].center;
+                    int x = center.x + polarP.r * cos(polarP.theta);
+                    int y = center.y + polarP.r * sin(polarP.theta);
+                    painter->drawPoint(QPoint(x, y));
+                }
+            }
+        }
 
 
 
