@@ -357,8 +357,8 @@ void SingleView::createROIVideo()
     roiVdo2Label->setStyleSheet("color:rgb(28, 120, 159); font: bold 18px; background-color:rgba(0,0,0,0%)");
     roiVdo1 = new QLabel(""); //roi1
     roiVdo2 = new QLabel(""); //roi2
-    roiVdo1->setMaximumHeight(this->height()/4);
-    roiVdo2->setMaximumHeight(this->height()/4);
+//    roiVdo1->setMaximumHeight(this->height()/4);
+//    roiVdo2->setMaximumHeight(this->height()/4);
     roiVdo1->setStyleSheet(VIDEO_DISPLAY);
     roiVdo2->setStyleSheet(VIDEO_DISPLAY);
     roiVideoVLayout->addWidget(roiVdo1Label);

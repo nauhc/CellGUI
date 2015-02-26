@@ -90,10 +90,56 @@ QColor _mapNumToHue_(int start, int range, int min, int max, int v){
     return color;
 }
 
+
+void Shape::drawColorBar(QPainter *painter){ // (center,
+
+
+    halfW = this->width()/2;
+    halfH = this->height()/2;
+
+    // *** draw coordinates of each frame ***
+    int COLOR_RANGE = 180;
+    // *** draw color map bar indicating time old / new ***
+
+    painter->rotate(90); //***x->right, y->down***
+
+    int bar_txt_y   = halfH*3/4;
+    int bar_txt_h   = 20;
+    int bar_txt_w   = halfW/4;
+    QRect txt_old   = QRect(-halfW,           bar_txt_y, bar_txt_w, bar_txt_h);
+    QRect txt_new   = QRect(halfW-bar_txt_w,  bar_txt_y, bar_txt_w, bar_txt_h);
+
+    QPen myPen(QColor(120, 120, 118));
+    painter->setPen(myPen);
+    painter->drawText(txt_old, Qt::AlignRight, "Old");
+    painter->drawText(txt_new, Qt::AlignLeft,  "New");
+
+
+    painter->rotate(-90); //***x->up, y->right***
+
+    int space   = halfW/8;
+    int bar_h   = 10;
+    int bar_len = 2*(halfW - bar_txt_w - space);
+    int bar_w   = bar_len/bar_len;
+    int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
+    int bar_y   = -(halfW - bar_txt_w - space);
+
+    for(int n = 0; n < bar_len; n++){
+        QColor c = _mapNumToHue_(60, COLOR_RANGE, 0, bar_len, n);
+        myPen.setWidth(0);
+        painter->setPen(c);
+        painter->setBrush(QBrush(c));
+        QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
+        painter->drawRect(rect);
+    }
+
+}
+
+
 void Shape::render(QPainter *painter)
 {
-    qreal halfW = this->width()/2;
-    qreal halfH = this->height()/2;
+    halfW = this->width()/2;
+    halfH = this->height()/2;
 
     // set (0,0) to the center of the canvas
     QPointF center(halfW, halfH);
@@ -104,7 +150,7 @@ void Shape::render(QPainter *painter)
     painter->setRenderHint(QPainter::Antialiasing);
 
     qreal size  = contours.size();
-    if(size > 20){ // draw when data is valid
+    if(size > 1){ // draw when data is valid
         // draw contours
 
         qreal opacity = 1/size;
@@ -134,8 +180,9 @@ void Shape::render(QPainter *painter)
             }
         }
 
-
-
     }
+
+    drawColorBar(painter);
+
 
 }

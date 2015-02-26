@@ -18,6 +18,7 @@ public:
 protected:
     void initializeGL();
     void render(QPainter *painter);
+    void drawColorBar(QPainter *painter);
     //void resizeGL(int w, int h);
 
 private:

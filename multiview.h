@@ -40,12 +40,12 @@ private:
 //    QVector<Coord>    cod_list;
 //    QVector<QString>  file_list;
 
-    QWidget                 *nar_container1, *nar_container2;
-    QWidget                 *cod_container1, *cod_container2;
-    QWidget                 *shp_container1, *shp_container2;
-    Narr                    *nar_tmp1, *nar_tmp2;
-    Coord                   *cod_tmp1, *cod_tmp2;
-    Shape                   *shp_tmp1, *shp_tmp2;
+    QWidget                 *nar_container1, *nar_container2, *nar_container3;
+    QWidget                 *cod_container1, *cod_container2, *cod_container3;
+    QWidget                 *shp_container1, *shp_container2, *shp_container3;
+    Narr                    *nar_tmp1, *nar_tmp2, *nar_tmp3;
+    Coord                   *cod_tmp1, *cod_tmp2, *cod_tmp3;
+    Shape                   *shp_tmp1, *shp_tmp2, *shp_tmp3;
 
 
     std::vector<floatArray>             cellData;

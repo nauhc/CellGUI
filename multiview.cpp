@@ -20,13 +20,13 @@ MultiView::MultiView(QWidget *parent) : QWidget(parent), dataFilename(new QStrin
     QLabel *label9 = new QLabel("999999");
     visGLayout->addWidget(nar_container1, 0, 0);
     visGLayout->addWidget(nar_container2, 0, 1);
-    visGLayout->addWidget(label3, 0, 2);
+    visGLayout->addWidget(nar_container3, 0, 2);
     visGLayout->addWidget(cod_container1, 1, 0);
     visGLayout->addWidget(cod_container2, 1, 1);
-    visGLayout->addWidget(label6, 1, 2);
+    visGLayout->addWidget(cod_container3, 1, 2);
     visGLayout->addWidget(shp_container1, 2, 0);
     visGLayout->addWidget(shp_container2, 2, 1);
-    visGLayout->addWidget(label9, 2, 2);
+    visGLayout->addWidget(shp_container3, 2, 2);
 
     createLoadFilesButton();
 
@@ -42,10 +42,16 @@ void MultiView::createNarVis()
     nar_container1 = QWidget::createWindowContainer(nar_tmp1, this);
     nar_container1->setMinimumSize(256, 256);
     nar_container1->setMaximumSize(512, 512);
+
     nar_tmp2 = new Narr();
     nar_container2 = QWidget::createWindowContainer(nar_tmp2, this);
     nar_container2->setMinimumSize(256, 256);
     nar_container2->setMaximumSize(512, 512);
+
+    nar_tmp3 = new Narr();
+    nar_container3 = QWidget::createWindowContainer(nar_tmp3, this);
+    nar_container3->setMinimumSize(256, 256);
+    nar_container3->setMaximumSize(512, 512);
 }
 
 void MultiView::createCodVis()
@@ -54,10 +60,16 @@ void MultiView::createCodVis()
     cod_container1 = QWidget::createWindowContainer(cod_tmp1, this);
     cod_container1->setMinimumSize(256, 256);
     cod_container1->setMaximumSize(512, 512);
+
     cod_tmp2 = new Coord();
     cod_container2 = QWidget::createWindowContainer(cod_tmp2, this);
     cod_container2->setMinimumSize(256, 256);
     cod_container2->setMaximumSize(512, 512);
+
+    cod_tmp3 = new Coord();
+    cod_container3 = QWidget::createWindowContainer(cod_tmp3, this);
+    cod_container3->setMinimumSize(256, 256);
+    cod_container3->setMaximumSize(512, 512);
 
 }
 
@@ -73,6 +85,10 @@ void MultiView::createShpVis()
     shp_container2->setMinimumSize(256, 256);
     shp_container2->setMaximumSize(512, 512);
 
+    shp_tmp3 = new Shape();
+    shp_container3 = QWidget::createWindowContainer(shp_tmp3, this);
+    shp_container3->setMinimumSize(256, 256);
+    shp_container3->setMaximumSize(512, 512);
 }
 
 void MultiView::createSpacers()
