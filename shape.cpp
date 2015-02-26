@@ -43,14 +43,15 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 {
     QPolygon contour;
     for(int n = 0; n < smoothContour.size(); n++)
-        contour << QPoint((smoothContour[n].x()/*-cent.x()*/), (smoothContour[n].y()/*-cent.y()*/));/**0.5*/
+        contour << QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y()));/**0.5*/
 
     contours.push_back(contour);
     blebs.push_back(bleb);
 
-    qDebug() << "centroid " << cent;
-    qDebug() << "contour_org" << smoothContour;
-    qDebug() << "contour_trans " << contour;
+    /*
+//    qDebug() << "centroid " << cent;
+//    qDebug() << "contour_org" << smoothContour;
+//    qDebug() << "contour_trans " << contour;
 
 //    std::cout << "blebs and contours sizes load to file " << blebs.size() << std::endl;
 //    for(unsigned int n = 0; n < blebs.size(); n++){
@@ -69,7 +70,7 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 ////        }
 //        std::cout << std::endl;
 //    }
-
+*/
 
 }
 

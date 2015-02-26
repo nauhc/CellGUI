@@ -424,6 +424,7 @@ void Controller::run(){
             float           shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
             Mat             cell_alpha; // cell image without background
             vector<Point>   smooth_contour_curve; // smoothed contour
+            vector<Point>   smooth_contour_curve_abs; // smoothed contour
             Mat             blebsImg;
             Rect            rect;
             vector<Bleb>    blebs; // the deteced blebs
@@ -441,7 +442,8 @@ void Controller::run(){
 //            switch (videoType) {
 //            case 0:
                 contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
-                                             area, perimeter, centroid, shape, cell_alpha, smooth_contour_curve,
+                                             area, perimeter, centroid, shape, cell_alpha,
+                                             smooth_contour_curve, smooth_contour_curve_abs,
                                              blebsImg, rect, /*blebs,*/ frameIdx);
 //                break;
 //            case 1:
@@ -507,10 +509,10 @@ void Controller::run(){
                 avg_blebsize = avg_blebsize/blebs.size();
 
             QDataStream out_c(&contourFile);
-            out_c << qint32(smooth_contour_curve.size());
-            for(unsigned int n = 0; n < smooth_contour_curve.size(); n++){
-                out_c << qint32(smooth_contour_curve[n].x);
-                out_c << qint32(smooth_contour_curve[n].y);
+            out_c << qint32(smooth_contour_curve_abs.size());
+            for(unsigned int n = 0; n < smooth_contour_curve_abs.size(); n++){
+                out_c << qint32(smooth_contour_curve_abs[n].x);
+                out_c << qint32(smooth_contour_curve_abs[n].y);
             }
 
             floatArray property;
@@ -544,8 +546,8 @@ void Controller::run(){
 
 
             QVector<QPoint> smoothContour;
-            for(unsigned int n = 0; n < smooth_contour_curve.size(); n++)
-                smoothContour.push_back(QPoint(smooth_contour_curve[n].x, smooth_contour_curve[n].y));
+            for(unsigned int n = 0; n < smooth_contour_curve_abs.size(); n++)
+                smoothContour.push_back(QPoint(smooth_contour_curve_abs[n].x, smooth_contour_curve_abs[n].y));
             emit detectedCellImg(cvMatToQImage(cell_alpha), smoothContour);
 
 

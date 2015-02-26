@@ -673,7 +673,8 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
                                       int &area, int &perimeter,
                                       Point2f &ctroid, float &shape,
                                       Mat &cell_alpha, // only the area inside cell (without background)
-                                      vector<Point> &smooth_contour_curve,
+                                      vector<Point> &smooth_contour_curve, // relative position (without counting rect.x and rect.y)
+                                      vector<Point> &smooth_contour_curve_abs, // absolut position
                                       Mat &blebsImg,
                                       Rect &rectangle,
                                       //vector<int> &blebs,
@@ -797,6 +798,19 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     smooth_contour = curveSmooth(borderImg, w, contours[largest_contour_index], smooth_contour_curve, convHull);
     //smooth_contour = curveSmooth(borderImg, w, contours[largest_contour_index], smooth_contour_curve, ctroid/*Point(ctroid.x, ctroid.y)*/);
     //imshow("smooth_contour", smooth_contour);
+
+    for(unsigned int i = 0; i < smooth_contour_curve.size(); i++){
+         Point p(smooth_contour_curve[i].x + rect.x, smooth_contour_curve[i].y + rect.y);
+         smooth_contour_curve_abs.push_back(p);
+    }
+
+//    cout << "ctroid X " << ctroid.x << " Y " << ctroid.y << endl;
+////    for(unsigned int i = 0; i < contours[largest_contour_index].size(); i++)
+////        cout << "(" << contours[largest_contour_index][i].x + rect.x << ", " << contours[largest_contour_index][i].y + rect.y << ") ";
+////    cout << endl;
+//    for(unsigned int i = 0; i < smooth_contour_curve_abs.size(); i++)
+//        cout << "(" << smooth_contour_curve_abs[i].x << ", " << smooth_contour_curve_abs[i].y << ") ";
+//    cout << endl;
 
     //cout << mask_conv_dil.type() << " " << sub.type() << endl;
     Mat cell_convex;

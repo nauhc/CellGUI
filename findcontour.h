@@ -62,6 +62,7 @@ public:
                              float &shape,
                              Mat &cell_alpha,
                              vector<Point> &smooth_contour_curve,
+                             vector<Point> &smooth_contour_curve_abs,
                              Mat &blebsImg,
                              Rect &rectangle,
 //                             vector<int> &blebs,
