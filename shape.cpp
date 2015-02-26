@@ -43,34 +43,33 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 {
     QPolygon contour;
     for(int n = 0; n < smoothContour.size(); n++)
-        contour << QPoint((smoothContour[n].x()-bleb[n].center.x), (smoothContour[n].y()-bleb[n].center.y));/**0.5*/
+        contour << QPoint((smoothContour[n].x()/*-cent.x()*/), (smoothContour[n].y()/*-cent.y()*/));/**0.5*/
 
     contours.push_back(contour);
     blebs.push_back(bleb);
 
-    /*
-//    std::cout << "blebs sizes load to file " << blebs.size() << std::endl;
-//    for(unsigned int n = 0; n < blebs.size(); n++){
-//        std::cout << "frame  " << n << std::endl;
-//        for(unsigned int m = 0; m < blebs[n].size(); m++){
-//            std::cout << "bleb  " << m << std::endl;
-//            for(unsigned int k = 0; k < blebs[n][m].bunch_polar.size(); k++){
-//                std::cout << "(r " << blebs[n][m].bunch_polar[k].r
-//                          << " , theta " << blebs[n][m].bunch_polar[k].theta << ") ";
-//            }
-//            std::cout << std::endl;
-//        }
-//        std::cout << std::endl;
-//    }
+    qDebug() << "centroid " << cent;
+    qDebug() << "contour_org" << smoothContour;
+    qDebug() << "contour_trans " << contour;
 
-//    std::cout << "contours sizes load to file " << contours.size() << std::endl;
-//    for(int n = 0; n < contours.size(); n++){
+//    std::cout << "blebs and contours sizes load to file " << blebs.size() << std::endl;
+//    for(unsigned int n = 0; n < blebs.size(); n++){
 //        std::cout << "frame  " << n << std::endl;
 //        for(int m = 0; m < contours[n].size(); m++){
 //            std::cout << "(x "  << contours[n][m].x() << ", y " << contours[n][m].y() << ") ";
 //        }
+
+////        for(unsigned int m = 0; m < blebs[n].size(); m++){
+////            std::cout << "bleb  " << m << std::endl;
+////            for(unsigned int k = 0; k < blebs[n][m].bunch_polar.size(); k++){
+////                std::cout << "(r " << blebs[n][m].bunch_polar[k].r
+////                          << " , theta " << blebs[n][m].bunch_polar[k].theta << ") ";
+////            }
+////            std::cout << std::endl;
+////        }
 //        std::cout << std::endl;
-//    } */
+//    }
+
 
 }
 
@@ -120,7 +119,7 @@ void Shape::render(QPainter *painter)
                 painter->drawPoint(contours[i][j]);
 
             // blebs
-            QColor c = _mapNumToHue_(60, 300, 0, int(size), i);
+            QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
             painter->setOpacity(1);
             painter->setPen(QPen(c));
             for(int j = 0; j < blebs[i].size(); j++){ // one set of blebs

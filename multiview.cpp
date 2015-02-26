@@ -15,11 +15,7 @@ MultiView::MultiView(QWidget *parent) : QWidget(parent), dataFilename(new QStrin
     createShpVis();
 
 
-    //QLabel *label1 = new QLabel("111111");
-    //QLabel *label2 = new QLabel("222222");
     QLabel *label3 = new QLabel("333333");
-    //QLabel *label4 = new QLabel("444444");
-    //QLabel *label5 = new QLabel("555555");
     QLabel *label6 = new QLabel("666666");
     QLabel *label9 = new QLabel("999999");
     visGLayout->addWidget(nar_container1, 0, 0);
@@ -285,23 +281,23 @@ bool MultiView::readBlebsFile()
             blebs.push_back(blebs_1frm);
             centers.push_back(QPoint(centX, centY));
         }
-        return true;
     }
 
 //    std::cout << "blebs sizes load to file " << blebs.size() << std::endl;
 //    for(unsigned int n = 0; n < blebs.size(); n++){
 //        std::cout << "frame  " << n << std::endl;
 //        std::cout << "centroid  (" << centers[n].x() << ", " << centers[n].y() << ")" << std::endl;
-//        for(unsigned int m = 0; m < blebs[n].size(); m++){
-//            std::cout << "bleb  " << m << std::endl;
-//            for(unsigned int k = 0; k < blebs[n][m].bunch_polar.size(); k++){
-//                std::cout << "(r " << blebs[n][m].bunch_polar[k].r
-//                          << " , theta " << blebs[n][m].bunch_polar[k].theta << ") ";
-//            }
-//            std::cout << std::endl;
-//        }
-//        std::cout << std::endl;
+////        for(unsigned int m = 0; m < blebs[n].size(); m++){
+////            std::cout << "bleb  " << m << std::endl;
+////            for(unsigned int k = 0; k < blebs[n][m].bunch_polar.size(); k++){
+////                std::cout << "(r " << blebs[n][m].bunch_polar[k].r
+////                          << " , theta " << blebs[n][m].bunch_polar[k].theta << ") ";
+////            }
+////            std::cout << std::endl;
+////        }
+////        std::cout << std::endl;
 //    }
+    return true;
 }
 
 bool MultiView::readContoursFile()
@@ -329,7 +325,6 @@ bool MultiView::readContoursFile()
             }
             contours.push_back(contour);
         }
-        return true;
     }
 
 //    std::cout << "contours sizes load to file " << contours.size() << std::endl;
@@ -341,6 +336,7 @@ bool MultiView::readContoursFile()
 //        std::cout << std::endl;
 //    }
 
+    return true;
 }
 
 QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index

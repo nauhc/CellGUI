@@ -291,6 +291,7 @@ void Coord::render(QPainter *painter)
     }
 
 
+    int COLOR_RANGE = 180;
 
     int size = centroid.size();
     for(int n = 0; n < size; n++/*n+=10*/)
@@ -298,7 +299,8 @@ void Coord::render(QPainter *painter)
         //QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);
 
         QColor c;
-        c.setHsv(60+qreal(n)/size*180, 255, 200);
+        //c.setHsv(60+qreal(n)/size*180, 255, 200); //color.setHsv(start+range*v/(max-min), 255, 200);
+        c = mapNumToHue(60, COLOR_RANGE, 0, size, n);
         QPen penDot(c);
         painter->setPen(penDot);
         painter->setBrush(c);
@@ -325,7 +327,7 @@ void Coord::render(QPainter *painter)
     //painter->drawRect(txt_old);
     //painter->drawRect(txt_new);
     painter->drawText(txt_old, Qt::AlignRight, "Old");
-    painter->drawText(txt_new, Qt::AlignLeft, "New");
+    painter->drawText(txt_new, Qt::AlignLeft,  "New");
 
     painter->rotate(-90); //***x->up, y->right***
     int space   = /*50*/halfW/8;
@@ -338,7 +340,7 @@ void Coord::render(QPainter *painter)
     //painter->drawRect(bar_rect);
 
     for(int n = 0; n < bar_len; n++){
-        QColor c = mapNumToHue(60, 300, 0, bar_len, n);
+        QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));

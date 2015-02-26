@@ -2,6 +2,7 @@
 #define COORD_H
 
 #include "OpenGLWindow.h"
+
 typedef std::vector<float> floatArray;
 
 class Coord : public OpenGLWindow

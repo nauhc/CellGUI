@@ -15,7 +15,7 @@ class Bleb
 {
 public:
     int size;
-    Point center;
+    Point center; // bleb center
     vector<polarPoint> bunch_polar;
     RotatedRect roughArea;
     int bin;

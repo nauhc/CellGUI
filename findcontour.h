@@ -37,6 +37,12 @@ public:
 
     void binaryImage(const Mat &img, Mat &binaryImg);
 
+    Mat curveSmooth(Mat &contourImg,
+                    int WIN,
+                    vector<Point> &border,
+                    vector<Point> &smooth,
+                    /*Point cntoid*/vector<Point> &convHull );
+
     // getROI+edgeDetection
     void cellDetection(const Mat &img, vector<Point> &cir_org,
                        Mat &dispImg1, Mat &dispImg2,

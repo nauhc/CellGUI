@@ -412,8 +412,6 @@ void SingleView::createPlayerController()
     connect(this->stopButton, SIGNAL(pressed()), this, SLOT(stopButton_pressed()));
     connect(this->stopButton, SIGNAL(released()), this, SLOT(stopButton_released()));
 
-
-
 }
 
 void SingleView::createVideoTypeSeletionComBox()
@@ -427,6 +425,9 @@ void SingleView::createVideoTypeSeletionComBox()
     typeComBox->addItem("Fix cell window");
     typeComBox->addItem("Flexible cell window");
     videoTypeHLayout->addWidget(typeComBox);
+
+    connect(typeComBox, SIGNAL(currentIndexChanged(int)),
+            controller, SLOT(setVideoType(int)));
 }
 
 void SingleView::compressedCheckBox_checked(int state)

@@ -438,32 +438,31 @@ void Controller::run(){
                 continue;
             }
 
-            switch (videoType) {
-            case 0:
+//            switch (videoType) {
+//            case 0:
                 contour->singleCellDetection(*frame, hull, contourImg, edgeImg,
                                              area, perimeter, centroid, shape, cell_alpha, smooth_contour_curve,
                                              blebsImg, rect, /*blebs,*/ frameIdx);
-                break;
-            case 1:
-                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
-                break;
-            case 2:
-                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
-                break;
-            default:
-                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
-                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
-                break;
-            }
+//                break;
+//            case 1:
+//                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
+//                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
+//                break;
+//            case 2:
+//                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
+//                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
+//                break;
+//            default:
+//                contour->cellDetection(*frame, hull, contourImg, edgeImg, points1, points2,
+//                                       area, perimeter, centroid, shape, /*blebs,*/ frameIdx);
+//                break;
+//            }
 
             vector<int> compression_params;
             compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
             compression_params.push_back(9);
             QString cellFileName1 = QString::fromStdString(filepath) + "/cell" + QString::number(frameIdx) + ".png";
             imwrite(cellFileName1.toStdString(), cell_alpha, compression_params);
-
 
 
             // keep a time(frame) window and filter the detected features

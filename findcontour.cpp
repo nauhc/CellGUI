@@ -309,11 +309,11 @@ Point polarToCartesian(Point &ctr, polarPoint p){
 bool sortByTheta(const polarPoint &l, const polarPoint &r){
     return l.theta < r.theta;
 }
-Mat curveSmooth(Mat &contourImg,
+Mat FindContour::curveSmooth(Mat &contourImg,
                 int WIN, // half window size for laplacian smoothing
                 vector<Point> &border,
                 vector<Point> &smooth,
-                vector<Point> &convHull)
+                /*Point cntoid*/vector<Point> &convHull )
 {
 //    if(contourImg.type() != CV_8UC1){
 //        cvtColor( contourImg, contourImg, CV_BGR2GRAY );
@@ -322,17 +322,18 @@ Mat curveSmooth(Mat &contourImg,
     double height = contourImg.rows;
 
     Moments mu = moments(convHull);
-    Point ctroid = Point2f(mu.m10/mu.m00, mu.m01/mu.m00);
+//    Moments mu = moments(border);
+    Point cntoid = Point2f(mu.m10/mu.m00/* + rect.x*/, mu.m01/mu.m00/* +rect.y*/);
 
     double d_min = max(width, height)*max(width, height);
     vector<polarPoint> border_polar;
     for (unsigned int n = 0; n < border.size(); n++)
     {
         //find the polar coordinates of the border;
-        border_polar.push_back(cartesianToPolar(ctroid, border[n]));
+        border_polar.push_back(cartesianToPolar(cntoid, border[n]));
 
         //find the nearest point to the center on the border
-        double d = dist(ctroid, border[n]);
+        double d = dist(cntoid, border[n]);
         if(d < d_min){
             d_min = d;
         }
@@ -358,7 +359,7 @@ Mat curveSmooth(Mat &contourImg,
         polar.r = avg;
         polar.theta = border_polar[n].theta;
         //cout << polar.r << " " << polar.theta << " ";
-        Point p = polarToCartesian(ctroid, polar);
+        Point p = polarToCartesian(cntoid, polar);
         //circle(color, p, 1, Scalar(255, 255, 0));
         smooth.push_back(p);
         //cout << p.x << " " << p.y << "\n";
@@ -637,7 +638,7 @@ void FindContour::cellDetection(const Mat &img, vector<Point> &cir_org,
     vector<Point> smoothCurve;
     int WIN = 25;
     vector< vector<Point> > tmp;
-    smooth = curveSmooth(borderImg, WIN, contours[largest_contour_index], smoothCurve, convHull);
+    smooth = curveSmooth(borderImg, WIN, contours[largest_contour_index], smoothCurve, convHull/*ctroid*/);
     tmp.push_back(smoothCurve);
     drawContours(dispImg1, tmp, 0, Scalar(255, 0, 0));
 
@@ -787,12 +788,14 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     vector<Point> smoothCurve;
     int WIN = 25;
     smooth = curveSmooth(borderImg, WIN, contours[largest_contour_index], smoothCurve, convHull);
+    //smooth = curveSmooth(borderImg, WIN, contours[largest_contour_index], smoothCurve, ctroid/*Point(ctroid.x, ctroid.y)*/);
     //drawPointVectors(dispImg1, smoothCurve, 1, Scalar(159, 120, 28));
 
 
     Mat smooth_contour;
     int w = 10;
     smooth_contour = curveSmooth(borderImg, w, contours[largest_contour_index], smooth_contour_curve, convHull);
+    //smooth_contour = curveSmooth(borderImg, w, contours[largest_contour_index], smooth_contour_curve, ctroid/*Point(ctroid.x, ctroid.y)*/);
     //imshow("smooth_contour", smooth_contour);
 
     //cout << mask_conv_dil.type() << " " << sub.type() << endl;
