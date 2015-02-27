@@ -15,6 +15,8 @@ public:
     void updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
     void clear();
 
+    //void setNeedUpdate();
+
 protected:
     void initializeGL();
     void render(QPainter *painter);
@@ -22,6 +24,7 @@ protected:
     //void resizeGL(int w, int h);
 
 private:
+    //bool                        needUpdate;
     qreal                       halfW, halfH; // halfWidth, halfHeight of the OpenGLWindow
 
     unsigned int                begin; // beggining frame index

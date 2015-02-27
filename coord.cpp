@@ -192,6 +192,9 @@ void Coord::drawColorBar(QPainter *painter)
 
 void Coord::render(QPainter *painter)
 {
+//    if(!this->needUpdate)
+//        return;
+
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
     // set (0,0) to the center of the canvas
@@ -324,6 +327,8 @@ void Coord::render(QPainter *painter)
 //    }
 
     drawColorBar(painter);
+
+//    this->needUpdate = false;
 
 }
 

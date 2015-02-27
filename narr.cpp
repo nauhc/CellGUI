@@ -417,6 +417,9 @@ void drawXY(){
 
 void Narr::render(QPainter *painter)
 {
+//    if(!this->needUpdate)
+//        return;
+
     halfW = this->width()/2; // half width
     halfH = this->height()/2; // half height
 
@@ -473,7 +476,7 @@ void Narr::render(QPainter *painter)
 //    drawCircularLineChart(painter, area, propBarInnerRadius, propBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
     if(propType == 0){ // area
-        qreal maxArea = 250;
+        qreal maxArea = /*250*/800;
 
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(ORANGE, 0.95));
         drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
@@ -573,6 +576,7 @@ void Narr::render(QPainter *painter)
             }
     }
 
+//    this->needUpdate = false;
 
 }
 

@@ -10,20 +10,21 @@ MultiView::MultiView(QWidget *parent) : QWidget(parent), dataFilename1(new QStri
     mainVLayout = new QVBoxLayout(this);
     visGLayout = new QGridLayout();
 
+    getFileNames(); // datafileNames prepared
 
-    createNarVis();
-    createCodVis();
-    createShpVis();
+//    createNarVis();
+//    createCodVis();
+//    createShpVis();
 
-    visGLayout->addWidget(nar_container1, 0, 0);
-    visGLayout->addWidget(nar_container2, 0, 1);
-    visGLayout->addWidget(nar_container3, 0, 2);
-    visGLayout->addWidget(cod_container1, 1, 0);
-    visGLayout->addWidget(cod_container2, 1, 1);
-    visGLayout->addWidget(cod_container3, 1, 2);
-    visGLayout->addWidget(shp_container1, 2, 0);
-    visGLayout->addWidget(shp_container2, 2, 1);
-    visGLayout->addWidget(shp_container3, 2, 2);
+//    visGLayout->addWidget(nar_container1, 0, 0);
+//    visGLayout->addWidget(nar_container2, 0, 1);
+//    visGLayout->addWidget(nar_container3, 0, 2);
+//    visGLayout->addWidget(cod_container1, 1, 0);
+//    visGLayout->addWidget(cod_container2, 1, 1);
+//    visGLayout->addWidget(cod_container3, 1, 2);
+//    visGLayout->addWidget(shp_container1, 2, 0);
+//    visGLayout->addWidget(shp_container2, 2, 1);
+//    visGLayout->addWidget(shp_container3, 2, 2);
 
     createLoadFilesButton();
 
@@ -34,6 +35,17 @@ MultiView::MultiView(QWidget *parent) : QWidget(parent), dataFilename1(new QStri
 
 void MultiView::createNarVis()
 {
+//    for(int i = 0; i < datafileNames.size(); i++){
+//        Narr *nar_tmp = new Narr();
+//        QWidget *nar_container = QWidget::createWindowContainer(nar_tmp, this);
+//        nar_container->setMinimumSize(256, 256);
+//        nar_container->setMaximumSize(512, 512);
+
+//        nar_list.append(*nar_tmp);
+//        container_nar.append(*nar_container);
+//    }
+
+
     nar_tmp1 = new Narr();
     nar_container1 = QWidget::createWindowContainer(nar_tmp1, this);
     nar_container1->setMinimumSize(256, 256);
@@ -94,10 +106,11 @@ void MultiView::createSpacers()
 
 void MultiView::clearVis()
 {
-    nar_tmp1->clear();
-    nar_tmp2->clear();
-    cod_tmp1->clear();
-    cod_tmp2->clear();
+
+//    nar_tmp1->clear();
+//    nar_tmp2->clear();
+//    cod_tmp1->clear();
+//    cod_tmp2->clear();
 }
 
 void MultiView::clearData()
@@ -131,6 +144,8 @@ void MultiView::loadFilesButton_clicked()
 
     readFiles();
 
+//    qDebug() << visGLayout->children();
+
     //*** read-property-from-file mode (fileMode = true) //
     connect(this, SIGNAL(readProperties(floatArray)),
             this, SLOT(updatePropsVisUI(floatArray)));
@@ -141,59 +156,59 @@ void MultiView::loadFilesButton_clicked()
     connect(this, SIGNAL(readContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint)),
             this, SLOT(updateContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint)));
 
-    QFileDialog *dialog = new QFileDialog();
-    *dataFilename1 = dialog->getOpenFileName(this,
-                                            tr("Open Video"),
-                                            "../../../video", /*QDir::homePath()+"/Desktop/",*/
-                                            tr("Data Files (*.csv)"));
-    delete dialog;
+//    QFileDialog *dialog = new QFileDialog();
+//    *dataFilename1 = dialog->getOpenFileName(this,
+//                                            tr("Open Video"),
+//                                            "../../../video", /*QDir::homePath()+"/Desktop/",*/
+//                                            tr("Data Files (*.csv)"));
+//    delete dialog;
 
-    if(!dataFilename1->isEmpty()){
-        //prepare writing data to file
-        QFileInfo   fi  = QFileInfo(*dataFilename1);
-        //QString     ff  = fi.path()+"/"+fi.baseName();
-        //string      fn  = ff.toUtf8().constData();
+//    if(!dataFilename1->isEmpty()){
+//        //prepare writing data to file
+//        QFileInfo   fi  = QFileInfo(*dataFilename1);
+//        //QString     ff  = fi.path()+"/"+fi.baseName();
+//        //string      fn  = ff.toUtf8().constData();
 
-        //this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
+//        //this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
 
-        if(readDataFile(*dataFilename1)){
-            unsigned int cellDataSize = cellData1.size();
-            if(cellDataSize > 20){
-                nar_tmp1->setBeginFrame(cellData1[0][0]);
-                nar_tmp1->setMaxFrm(cellData1[cellDataSize-2][0]);
-                cod_tmp1->getMaxFrm(cellData1[cellDataSize-2][0]);
-                cod_tmp1->getMaxSize(QSize(640, 480));
-                for(unsigned int n = 0; n < cellDataSize; n++){
-                    // data
-                    emit readProperties(cellData1[n]);
-                    // img
-                    QImage img = readImgFile(fi.path(), cellData1[n][0]/*index*/);
-                    emit readCellImg(img);
-                }
-            }
-            if(cellDataSize <= 20){
-                qDebug() << "Cell Data Size ERROR!";
-            }
-            // bleb size
-            if(readBlebsFile(*dataFilename1) && readContoursFile(*dataFilename1)){
-                if((contours1.size() == blebs1.size()) && (blebs1.size() > 20)){
-                    shp_tmp1->setBeginFrm(cellData1[0][0]);
-                    shp_tmp1->setMaxFrm(cellData1[cellDataSize-2][0]);
-                    for(unsigned int n = 0; n < blebs1.size(); n++){
-                        emit readContourNBlebs(blebs1[n], contours1[n], centers1[n]);
-                    }
-                }
-                else qDebug() << "Bleb and Contour Data Size EROOR!" << contours1.size() << " " << blebs1.size();
-            }
-            else qDebug() << "Read Bleb and Contour Data files EROOR!";
+//        if(readDataFile(*dataFilename1)){
+//            unsigned int cellDataSize = cellData1.size();
+//            if(cellDataSize > 20){
+//                nar_tmp1->setBeginFrame(cellData1[0][0]);
+//                nar_tmp1->setMaxFrm(cellData1[cellDataSize-2][0]);
+//                cod_tmp1->getMaxFrm(cellData1[cellDataSize-2][0]);
+//                cod_tmp1->getMaxSize(QSize(640, 480));
+//                for(unsigned int n = 0; n < cellDataSize; n++){
+//                    // data
+//                    emit readProperties(cellData1[n]);
+//                    // img
+//                    QImage img = readImgFile(fi.path(), cellData1[n][0]/*index*/);
+//                    emit readCellImg(img);
+//                }
+//            }
+//            if(cellDataSize <= 20){
+//                qDebug() << "Cell Data Size ERROR!";
+//            }
+//            // bleb size
+//            if(readBlebsFile(*dataFilename1) && readContoursFile(*dataFilename1)){
+//                if((contours1.size() == blebs1.size()) && (blebs1.size() > 20)){
+//                    shp_tmp1->setBeginFrm(cellData1[0][0]);
+//                    shp_tmp1->setMaxFrm(cellData1[cellDataSize-2][0]);
+//                    for(unsigned int n = 0; n < blebs1.size(); n++){
+//                        emit readContourNBlebs(blebs1[n], contours1[n], centers1[n]);
+//                    }
+//                }
+//                else qDebug() << "Bleb and Contour Data Size EROOR!" << contours1.size() << " " << blebs1.size();
+//            }
+//            else qDebug() << "Read Bleb and Contour Data files EROOR!";
 
-        }
-     }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText("Filename empty!");
-        msgBox.exec();
-    }
+//        }
+//     }
+//    else{
+//        QMessageBox msgBox;
+//        msgBox.setText("Filename empty!");
+//        msgBox.exec();
+//    }
 
 }
 
@@ -219,15 +234,7 @@ void MultiView::updateContourNBlebs(QVector<Bleb> blebs, QVector<QPoint> contour
     shp_tmp1->updateContourNBleb(blebs, contour, centroid);
 }
 
-void MultiView::createLoadFilesButton()
-{
-    loadFilesButton = new QPushButton("Load files");
-    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
-    connect(this->loadFilesButton, SIGNAL(clicked()), this, SLOT(loadFilesButton_clicked()));
-
-}
-
-bool MultiView::readFiles()
+void MultiView::getFileNames()
 {
     QString folderPath = "../../../video/ExtectedData/";
 
@@ -238,25 +245,99 @@ bool MultiView::readFiles()
             if (QFileInfo(dirIt.filePath()).suffix() == "csv")
                 datafileNames.push_back(dirIt.filePath());
     }
+}
 
-    for(int i = 0; i < datafileNames.size(); i++){
+void MultiView::createLoadFilesButton()
+{
+    loadFilesButton = new QPushButton("Load files");
+    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
+    connect(this->loadFilesButton, SIGNAL(clicked()), this, SLOT(loadFilesButton_clicked()));
+
+}
+
+bool MultiView::readFiles()
+{
+
+    for(int i = 0; i < /*datafileNames.size()*/1; i++){
+
         if(!datafileNames[i].isEmpty()){
+            //QFileInfo   fi  = QFileInfo(datafileNames[i]);
+            if(readDataFile(datafileNames[i])){
+                unsigned int cellDataSize = cellData[i].size();
+                if(cellDataSize > 20){
+                    Narr *nar_tmp = new Narr();
+                    QWidget *nar_container = QWidget::createWindowContainer(nar_tmp, this);
+                    nar_container->setMinimumSize(256, 256);
+                    nar_container->setMaximumSize(512, 512);
+                    nar_tmp->setBeginFrame(cellData[i][0][0]);
+                    nar_tmp->setMaxFrm(cellData[i][cellDataSize-2][0]);
+
+                    Coord *cod_tmp = new Coord();
+                    QWidget *cod_container = QWidget::createWindowContainer(cod_tmp, this);
+                    cod_container->setMinimumSize(256, 256);
+                    cod_container->setMaximumSize(512, 512);
+                    cod_tmp->getMaxFrm(cellData[i][cellDataSize-2][0]);
+                    cod_tmp->getMaxSize(QSize(/*640, 480*/800, 600));
+
+//                    nar_tmp1->setBeginFrame(cellData[i][0][0]);
+//                    nar_tmp1->setMaxFrm(cellData[i][cellDataSize-2][0]);
+//                    cod_tmp1->getMaxFrm(cellData[i][cellDataSize-2][0]);
+//                    cod_tmp1->getMaxSize(QSize(/*640, 480*/800, 600));
+
+                    visGLayout->addWidget(nar_container, 0, i);
+                    visGLayout->addWidget(cod_container, 1, i);
+
+                    for(unsigned int n = 0; n < cellDataSize; n++){
+                        // data
+                        //emit readProperties(cellData[i][n]);
+                        nar_tmp->updateProperty(cellData[i][n], cellData[i][n][0]);
+                        cod_tmp->updateCoord(QPointF(cellData[i][n][3], cellData[i][n][4]), cellData[i][n][0]);
 
 
+                        // img
+                        //QImage img = readImgFile(fi.path(), cellData[i][n][0]/*index*/);
+                        //emit readCellImg(img);
+                    }
+                }
+                if(cellDataSize <= 20){
+                    qDebug() << "Cell Data Size ERROR!";
+                }
 
 
+                // bleb size
+                if(readBlebsFile(datafileNames[i]) && readContoursFile(datafileNames[i])){
+                    if((contours[i].size() == blebs[i].size()) && (blebs[i].size() > 20)){
+
+                        Shape *shp_tmp = new Shape();
+                        QWidget *shp_container = QWidget::createWindowContainer(shp_tmp, this);
+                        shp_container->setMinimumSize(256, 256);
+                        shp_container->setMaximumSize(512, 512);
+
+                        shp_tmp->setBeginFrm(cellData[i][0][0]);
+                        shp_tmp->setMaxFrm(cellData[i][cellDataSize-2][0]);
+
+                        visGLayout->addWidget(shp_container, 2, i);
 
 
+                        for(unsigned int n = 0; n < blebs[i].size(); n++){
+                            //emit readContourNBlebs(blebs[i][n], contours[i][n], centers[i][n]);
+                            shp_tmp->updateContourNBleb(blebs[i][n], contours[i][n], centers[i][n]);
+                        }
+                        shp_tmp->setNeedUpdate();
+                    }
+                    else qDebug() << "Bleb and Contour Data Size EROOR!" << contours[i].size() << " " << blebs[i].size();
+                }
+                else qDebug() << "Read Bleb and Contour Data files EROOR!";
 
-
-
-
+            }
 
         }
         else{
             qDebug() << i << "th data file is Empty.";
         }
-    }
+
+    } // for loop end
+
 }
 
 bool MultiView::readDataFile(QString &filename)

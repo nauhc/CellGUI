@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 {
     ui->setupUi(this);
     this->setStyleSheet("background-color:rgb(251,251,251)");
-    this->setBaseSize(this->width(), this->height());
+//    this->setBaseSize(this->width(), this->height());
 
     this->setWindowTitle(" Dancing Cell Visualization ");
 
@@ -22,11 +22,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // set to singleview at the beginning
-    SingleView *singleview = new SingleView(this->centralWidget());
-    centralLayout->addWidget(singleview);
+//    SingleView *singleview = new SingleView(this->centralWidget());
+//    centralLayout->addWidget(singleview);
 
-//    MultiView *multiview = new MultiView(this->centralWidget());
-//    centralLayout->addWidget(multiview);
+    MultiView *multiview = new MultiView(this->centralWidget());
+    centralLayout->addWidget(multiview);
 
 
     // Add menu to menu bar

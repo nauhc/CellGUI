@@ -7,6 +7,7 @@ OpenGLWindow::OpenGLWindow(QWindow *parent)
     : QWindow(parent)
     , _updatePending(false)
     , _animating(false)
+    , needUpdate(false)
     , _context(0)
     , _paintDevice(0)
 {
@@ -56,6 +57,11 @@ void OpenGLWindow::render(QPainter *painter)
 void OpenGLWindow::makeCurrent()
 {
     _context->makeCurrent(this);
+}
+
+void OpenGLWindow::setNeedUpdate()
+{
+    needUpdate = true;
 }
 
 void OpenGLWindow::setAnimating(bool animating)

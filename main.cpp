@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
     w.setWindowIcon(QIcon("./cell.icns"));
 //    w.setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,
 //                        w.size(), qApp->desktop()->availableGeometry()));
+//    w.showFullScreen();
+    w.showMaximized();
     w.show();
 
 

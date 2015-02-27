@@ -27,6 +27,11 @@ void Shape::clear()
     contours.clear();
 }
 
+//void Shape::setNeedUpdate()
+//{
+//    needUpdate = true;
+//}
+
 void Shape::setBeginFrm(int beginFrame)
 {
     begin = beginFrame;
@@ -137,6 +142,9 @@ void Shape::drawColorBar(QPainter *painter){ // (center,
 
 void Shape::render(QPainter *painter)
 {
+//    if(!this->needUpdate)
+//        return;
+
     halfW = this->width()/2;
     halfH = this->height()/2;
 
@@ -185,5 +193,6 @@ void Shape::render(QPainter *painter)
 
     drawColorBar(painter);
 
+//    this->needUpdate = false;
 
 }

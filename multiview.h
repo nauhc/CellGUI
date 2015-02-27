@@ -37,9 +37,9 @@ public slots:
 
 private:
     //vector
-    QVector<QWidget>  contriner_nar;
-    QVector<QWidget>  contriner_cod;
-    QVector<QWidget>  contriner_shp;
+    QVector<QWidget>  container_nar;
+    QVector<QWidget>  container_cod;
+    QVector<QWidget>  container_shp;
     QVector<Narr>     nar_list;
     QVector<Coord>    cod_list;
     QVector<Shape>    shp_list;
@@ -72,7 +72,7 @@ private:
 
     QPushButton *loadFilesButton;
 
-    void    createLoadFilesButton();
+    void    getFileNames();
     bool    readFiles();
     bool    readDataFile(QString &filename);
     bool    readBlebsFile(QString &filename);
@@ -82,6 +82,7 @@ private:
     void    clearData();
 
 
+    void    createLoadFilesButton();
     void    createNarVis();
     void    createCodVis();
     void    createShpVis();

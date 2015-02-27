@@ -16,6 +16,7 @@ public:
     //QSize   sizeHint() const;
     void setAnimating(bool animating);
     void makeCurrent();
+    void setNeedUpdate();
 
 protected:
     bool event(QEvent *event);
@@ -26,6 +27,8 @@ protected:
     virtual void render();
     virtual void render(QPainter *painter);
     virtual void resizeGL(int w, int h);
+
+    bool needUpdate;
 
 private:
     bool _updatePending;
