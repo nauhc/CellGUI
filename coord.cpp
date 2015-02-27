@@ -245,7 +245,6 @@ void Coord::render(QPainter *painter)
         painter->drawLine(QPointF(rightX-5, origin_tran.y()), QPointF(rightX+5, origin_tran.y())); // right
         painter->drawText(rightX-5-15, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
 
-
         /*
     qreal video2visScaleX = max.x()/win.x();
     qreal video2visScaleY = max.y()/win.y();

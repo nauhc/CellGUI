@@ -93,7 +93,6 @@ QColor _mapNumToHue_(int start, int range, int min, int max, int v){
 
 void Shape::drawColorBar(QPainter *painter){ // (center,
 
-
     halfW = this->width()/2;
     halfH = this->height()/2;
 
@@ -156,7 +155,7 @@ void Shape::render(QPainter *painter)
         qreal opacity = 1/size;
         //qDebug() << size << trans;
 
-        QPen myPen(QColor(0,0,0));
+        QPen myPen(QColor(123, 57, 144));
         myPen.setWidth(1);
         for(int i = 0; i < int(size); i++){ // one frame
             // contours
@@ -169,6 +168,8 @@ void Shape::render(QPainter *painter)
             QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
             painter->setOpacity(1);
             painter->setPen(QPen(c));
+            qreal scl = 1.2;
+            painter->scale(scl, scl);
             for(int j = 0; j < blebs[i].size(); j++){ // one set of blebs
                 for(int k = 0; k < blebs[i][j].size; k++){ // one bleb
                     polarPoint  polarP = blebs[i][j].bunch_polar[k];
@@ -178,8 +179,8 @@ void Shape::render(QPainter *painter)
                     painter->drawPoint(QPoint(x, y));
                 }
             }
+            painter->scale(1/scl, 1/scl);
         }
-
     }
 
     drawColorBar(painter);

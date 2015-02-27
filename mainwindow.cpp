@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->setupUi(this);
     this->setStyleSheet("background-color:rgb(251,251,251)");
     this->setBaseSize(this->width(), this->height());
+
     this->setWindowTitle(" Dancing Cell Visualization ");
 
     centralLayout = new QHBoxLayout();

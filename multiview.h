@@ -36,10 +36,23 @@ public slots:
     void updateContourNBlebs(QVector<Bleb>, QVector<QPoint>, QPoint);
 
 private:
-//    QVector<Narr>     nar_list;
-//    QVector<Coord>    cod_list;
-//    QVector<QString>  file_list;
+    //vector
+    QVector<QWidget>  contriner_nar;
+    QVector<QWidget>  contriner_cod;
+    QVector<QWidget>  contriner_shp;
+    QVector<Narr>     nar_list;
+    QVector<Coord>    cod_list;
+    QVector<Shape>    shp_list;
+    QVector<QString>  file_list;
 
+
+    QVector<QString>    datafileNames;
+    std::vector<std::vector<floatArray> >   cellData;
+    QVector<QVector<QVector<Bleb> > >       blebs;
+    QVector<QVector<QVector<QPoint> > >     contours;
+    QVector<QVector<QPoint> >               centers;
+
+    // one by one
     QWidget                 *nar_container1, *nar_container2, *nar_container3;
     QWidget                 *cod_container1, *cod_container2, *cod_container3;
     QWidget                 *shp_container1, *shp_container2, *shp_container3;
@@ -48,11 +61,11 @@ private:
     Shape                   *shp_tmp1, *shp_tmp2, *shp_tmp3;
 
 
-    std::vector<floatArray>             cellData;
-    QVector<QVector<Bleb> >             blebs;
-    QVector<QVector<QPoint> >           contours;
-    QVector<QPoint>                     centers;
-    QString                             *dataFilename;
+    std::vector<floatArray>             cellData1;
+    QVector<QVector<Bleb> >             blebs1;
+    QVector<QVector<QPoint> >           contours1;
+    QVector<QPoint>                     centers1;
+    QString                             *dataFilename1;
 
     QVBoxLayout *mainVLayout;
     QGridLayout *visGLayout;
@@ -60,11 +73,13 @@ private:
     QPushButton *loadFilesButton;
 
     void    createLoadFilesButton();
-    bool    readDataFile();
-    bool    readBlebsFile();
-    bool    readContoursFile();
+    bool    readFiles();
+    bool    readDataFile(QString &filename);
+    bool    readBlebsFile(QString &filename);
+    bool    readContoursFile(QString &filename);
     QImage  readImgFile(QString fp, unsigned int idx);
-    void    clearAll();
+    void    clearVis();
+    void    clearData();
 
 
     void    createNarVis();

@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.setWindowIcon(QIcon("./cell.icns"));
+//    w.setGeometry( QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,
+//                        w.size(), qApp->desktop()->availableGeometry()));
     w.show();
 
 
