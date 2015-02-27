@@ -318,7 +318,7 @@ bool MultiView::readFiles()
                         visGLayout->addWidget(shp_container, 2, i);
 
 
-                        for(unsigned int n = 0; n < blebs[i].size(); n++){
+                        for(int n = 0; n < blebs[i].size(); n++){
                             //emit readContourNBlebs(blebs[i][n], contours[i][n], centers[i][n]);
                             shp_tmp->updateContourNBleb(blebs[i][n], contours[i][n], centers[i][n]);
                         }

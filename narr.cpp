@@ -72,8 +72,9 @@ void Narr::setBeginFrame(int beginFrame)
 
 void Narr::setMaxFrm(unsigned int m)
 {
-    max = m;
+//    max = m;
     std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
+    max = 5000;
 }
 
 void Narr::printAreaData(){

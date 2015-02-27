@@ -22,8 +22,8 @@ protected:
     void    initializeGL();
     void    render(QPainter *painter);
     void    resizeGL(int w, int h);
-    QPointF translateCoord(QPointF p);
-    QPointF translateCoord_center(QPointF p);
+    QPointF translateCoord(QPointF p, qreal scale);
+    QPointF translateCoord_center(QPointF p, bool XGreaterThanY);
     QColor  gradColor(QColor color, qreal percent);
     void    drawColorBar(QPainter *painter);
 
@@ -31,12 +31,14 @@ private:
     unsigned int        maxFrm;
     unsigned int        currFrm;
 
-    QVector<QPointF>    centroid;   // the values of a particular feature
-    QPointF             origin;     // the first centroid position
-    QPointF             max;        // video size
-    QPointF             min;        // (0,0)
-    QPointF             win;        // size of ruler window
-    QPointF             win_off;    // offset of ruler window
+    QVector<QPointF>    centroid;       // the values of a particular feature
+    QPointF             centroid_min;   // the minimum x,y coordinates of centroid
+    QPointF             centroid_max;   // the maximum x,y coordinates of centroid
+    QPointF             origin;         // the first centroid position
+    QPointF             max;            // video size
+    QPointF             min;            // (0,0)
+    QPointF             win;            // size of ruler window
+    QPointF             win_off;        // offset of ruler window
     QPointF             currCent;
     int                 cnt = 0;
 
