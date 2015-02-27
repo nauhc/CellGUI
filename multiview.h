@@ -61,11 +61,11 @@ private:
     Shape                   *shp_tmp1, *shp_tmp2, *shp_tmp3;
 
 
-    std::vector<floatArray>             cellData1;
-    QVector<QVector<Bleb> >             blebs1;
-    QVector<QVector<QPoint> >           contours1;
-    QVector<QPoint>                     centers1;
-    QString                             *dataFilename1;
+    //std::vector<floatArray>             cellData1;
+//    QVector<QVector<Bleb> >             blebs1;
+//    QVector<QVector<QPoint> >           contours1;
+//    QVector<QPoint>                     centers1;
+//    QString                             *dataFilename1;
 
     QVBoxLayout *mainVLayout;
     QGridLayout *visGLayout;

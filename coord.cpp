@@ -125,7 +125,7 @@ QPointF Coord::translateCoord_center(QPointF p){ // center as (0, 0)
     return (org);
 }
 
-QPointF Coord::translateCoord(QPointF p){ // center as (0, 0)
+QPointF Coord::translateCoord(QPointF p){
 
     QPointF org = QPointF( p.x() * win.x() / max.x() + win_off.x() /*- this->width()/2*/,
                            p.y() * win.y() / max.y() + win_off.y() /*- this->height()/2*/);
@@ -195,8 +195,10 @@ void Coord::render(QPainter *painter)
 //    if(!this->needUpdate)
 //        return;
 
+
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
+    QPointF center(halfW, halfH);
     // set (0,0) to the center of the canvas
 
     // set the start angle to 0 o'clock;
@@ -211,7 +213,7 @@ void Coord::render(QPainter *painter)
     painter->setPen(myPen);
 
     painter->rotate(90);//***x->right, y->down***
-
+    painter->translate(halfW, halfH);
 
     //    QPointF topleft  = QPointF(win_off.x() - this->width()/2, win_off.y() - this->height()/2);
     //    QPointF topright = QPointF(topleft.x() + win.x(), topleft.y());
@@ -220,10 +222,10 @@ void Coord::render(QPainter *painter)
 
 
     // !!! need to move to other place (one-time calculation!) - start
-    qreal topY      = 20/*-center.y()*/;
-    qreal leftX     = 20/*-center.x()*/;
-    qreal bottomY   = this->height()-20/*-center.y()*/;
-    qreal rightX    = this->width()-20/*-center.x()*/;
+    qreal topY      = 20-center.y();
+    qreal leftX     = 20-center.x();
+    qreal bottomY   = this->height()-20-center.y();
+    qreal rightX    = this->width()-20-center.x();
     QPointF topleft  = QPointF(leftX, topY);
     QPointF topright = QPointF(rightX, topY);
     QPointF botleft  = QPointF(leftX, bottomY);
@@ -232,6 +234,10 @@ void Coord::render(QPainter *painter)
     painter->drawLine(topleft, botleft); // ruler window - left
     painter->drawLine(topright, botright); // ruler window - right
     painter->drawLine(botleft, botright); // ruler window - bottom
+
+
+
+
 
     if(centroid.size() > 1){
 
@@ -303,6 +309,7 @@ void Coord::render(QPainter *painter)
 
 
     // *** draw coordinates of each frame ***
+    //painter->scale(3.0, 3.0);
     int size = centroid.size();
     for(int n = 0; n < size; n++/*n+=10*/)
     {
@@ -314,7 +321,9 @@ void Coord::render(QPainter *painter)
         QPen penDot(c);
         painter->setPen(penDot);
         painter->setBrush(c);
-        painter->drawEllipse( translateCoord(centroid[n]), 2.0, 2.0);
+        QPointF visPoint = translateCoord(centroid[n]);
+        //qDebug() << visPoint;
+        painter->drawEllipse( visPoint, 2.0, 2.0);
     }
 
     //painter->drawEllipse(QPointF(165, 279), 5, 5);

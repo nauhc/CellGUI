@@ -35,7 +35,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1301, 1173);
+        MainWindow->resize(1280, 1280);
         actionLoad_existing_cell_data = new QAction(MainWindow);
         actionLoad_existing_cell_data->setObjectName(QStringLiteral("actionLoad_existing_cell_data"));
         QFont font;

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <QDirIterator>
 
-MultiView::MultiView(QWidget *parent) : QWidget(parent), dataFilename1(new QString("")){
+MultiView::MultiView(QWidget *parent) : QWidget(parent)/*, dataFilename1(new QString(""))*/{
 
     setStyleSheet("background-color:rgb(251,251,251)");
 
@@ -115,12 +115,12 @@ void MultiView::clearVis()
 
 void MultiView::clearData()
 {
-    cellData1.clear();
-    blebs1.clear();
-    contours1.clear();
-    centers1.clear();
-    delete dataFilename1;
-    dataFilename1 =  new QString("");
+//    cellData1.clear();
+//    blebs1.clear();
+//    contours1.clear();
+//    centers1.clear();
+//    delete dataFilename1;
+//    dataFilename1 =  new QString("");
 
 }
 
@@ -236,7 +236,7 @@ void MultiView::updateContourNBlebs(QVector<Bleb> blebs, QVector<QPoint> contour
 
 void MultiView::getFileNames()
 {
-    QString folderPath = "../../../video/ExtectedData/";
+    QString folderPath = "../../../video/ExtractedData/";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -258,7 +258,7 @@ void MultiView::createLoadFilesButton()
 bool MultiView::readFiles()
 {
 
-    for(int i = 0; i < /*datafileNames.size()*/1; i++){
+    for(int i = 0; i < datafileNames.size(); i++){
 
         if(!datafileNames[i].isEmpty()){
             //QFileInfo   fi  = QFileInfo(datafileNames[i]);
@@ -292,8 +292,7 @@ bool MultiView::readFiles()
                         //emit readProperties(cellData[i][n]);
                         nar_tmp->updateProperty(cellData[i][n], cellData[i][n][0]);
                         cod_tmp->updateCoord(QPointF(cellData[i][n][3], cellData[i][n][4]), cellData[i][n][0]);
-
-
+                        //qDebug() << cellData[i][n][3] << " " <<  cellData[i][n][4] << " " << cellData[i][n][0];
                         // img
                         //QImage img = readImgFile(fi.path(), cellData[i][n][0]/*index*/);
                         //emit readCellImg(img);
@@ -342,6 +341,7 @@ bool MultiView::readFiles()
 
 bool MultiView::readDataFile(QString &filename)
 {
+    std::vector<floatArray> cellData1;
     QFile f(/**dataFilename*/filename);
     if(!f.open(QIODevice::ReadOnly)){
         qDebug() << "Reading csv file not found.";
@@ -387,8 +387,12 @@ bool MultiView::readDataFile(QString &filename)
 
 bool MultiView::readBlebsFile(QString &filename)
 {
+
     QString tmp = /**dataFilename*/filename;
     QString fn_b = tmp.remove(tmp.length()-15, 15) + "_b_compressed.dat" ;
+
+    QVector<QVector<Bleb> > blebs1;
+    QVector<QPoint>         centers1;
 
     QFile f(fn_b);
     if(!f.open(QIODevice::ReadOnly)){
@@ -444,9 +448,12 @@ bool MultiView::readBlebsFile(QString &filename)
 
 bool MultiView::readContoursFile(QString &filename)
 {
+
     QString tmp = /**dataFilename*/filename;
     QString fn_c = tmp.remove(tmp.length()-15, 15) + "_c_compressed.dat" ;
     //qDebug() << fn_c;
+
+    QVector<QVector<QPoint> >   contours1;
 
     QFile ff(fn_c);
     if(!ff.open(QIODevice::ReadOnly)){
