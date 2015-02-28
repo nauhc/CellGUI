@@ -10,6 +10,8 @@
 QColor _BLUE_   = QColor(28, 120, 159);
 int COLOR_RANGE = 180;
 int startIndex = 20;
+qreal scale = 0.75; // <=1.0 the scale of the canvas that can be used to draw coordinates
+
 
 Coord::Coord(QWidget *parent)
 {
@@ -128,8 +130,7 @@ void drawTextCoord(QPainter *painter, QPointF p, QString t){
 }
 
 // Coordinate
-QPointF Coord::translateCoord_center(QPointF p, bool XGreaterThanY){ // maximize the coordinates
-    qreal scale = 0.75; // <=1.0
+QPointF Coord::translate_image2canvas_center(QPointF p, bool XGreaterThanY){ // maximize the coordinates
     qreal ratio;
     qreal x, y;
 
@@ -147,12 +148,23 @@ QPointF Coord::translateCoord_center(QPointF p, bool XGreaterThanY){ // maximize
     return QPointF(x, y);
 }
 
+
 QPointF Coord::translateCoord(QPointF p, qreal scale){
     if(scale < 1.0)
         scale = 1.0;
     QPointF org = QPointF( scale*(p.x() * win.x() / max.x() + win_off.x() /*- this->width()/2*/),
                            scale*(p.y() * win.y() / max.y() + win_off.y() /*- this->height()/2*/));
     return org;
+}
+
+QPointF Coord::translate_canvas2image(QPointF p)
+{
+    qreal W = scale*(this->width());
+    qreal H = scale*(this->height());
+    qreal x = (p.x() - (-W/2)) / W * (centroid_max.x()-centroid_min.x()) + centroid_min.x();
+    qreal y = (p.y() - (-H/2)) / H * (centroid_max.y()-centroid_min.y()) + centroid_min.y();
+
+    return QPointF(x, y);
 }
 
 QColor Coord::gradColor(QColor color, qreal percent){
@@ -214,7 +226,7 @@ void Coord::drawColorBar(QPainter *painter)
 void Coord::render(QPainter *painter)
 {
 //    if(!this->needUpdate)
-//        return;
+        return;
 
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
@@ -242,10 +254,11 @@ void Coord::render(QPainter *painter)
 
 
     // !!! need to move to other place (one-time calculation!) - start
-    qreal topY      = 20-center.y();
-    qreal leftX     = 20-center.x();
-    qreal bottomY   = this->height()-20-center.y();
-    qreal rightX    = this->width()-20-center.x();
+    qreal indent    = 10;
+    qreal topY      = indent-center.y();
+    qreal leftX     = indent-center.x();
+    qreal bottomY   = this->height()-indent-center.y();
+    qreal rightX    = this->width()-indent-center.x();
     QPointF topleft  = QPointF(leftX, topY);
     QPointF topright = QPointF(rightX, topY);
     QPointF botleft  = QPointF(leftX, bottomY);
@@ -258,25 +271,29 @@ void Coord::render(QPainter *painter)
 
     bool Xgreater = (centroid_max.x() - centroid_min.x()) > (centroid_max.y() - centroid_min.y());
 //    qDebug() << Xgreater;
-//    if(centroid.size() > startIndex){
+    if(centroid.size() > startIndex){
 
-//        //draw units on the window edges
-////        QPointF origin_tran = translateCoord(origin, 1.0);
-//        QPointF origin_tran = translateCoord_center(origin, Xgreater);
-//        painter->drawLine(QPointF(origin_tran.x(), topY-5), QPointF(origin_tran.x(), topY+5)); //top
-//        painter->drawText(origin_tran.x()-10, topY+5+2, 20, 10, Qt::AlignCenter, "0" );
-//        painter->drawText(origin_tran.x()-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
-//        painter->drawLine(QPointF(origin_tran.x(), bottomY-5), QPointF(origin_tran.x(), bottomY+5)); // bottom
-//        painter->drawText(origin_tran.x()-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, "0" );
-//        painter->drawLine(QPointF(leftX-5, origin_tran.y()), QPointF(leftX+5, origin_tran.y())); // left
-//        painter->drawText(leftX+5+2, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
-//        painter->drawText(leftX+5+2+20, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "μm" );
-//        painter->drawLine(QPointF(rightX-5, origin_tran.y()), QPointF(rightX+5, origin_tran.y())); // right
-//        painter->drawText(rightX-5-15, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
+        //draw units on the window edges
+//        QPointF origin_tran = translateCoord(origin, 1.0);
+        QPointF origin_tran = translate_image2canvas_center(origin, Xgreater);
+        painter->drawLine(QPointF(origin_tran.x(), topY-5), QPointF(origin_tran.x(), topY+5)); //top
+        painter->drawText(origin_tran.x()-10, topY+5+2, 20, 10, Qt::AlignCenter, "0" );
+        painter->drawText(origin_tran.x()-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
+        painter->drawLine(QPointF(origin_tran.x(), bottomY-5), QPointF(origin_tran.x(), bottomY+5)); // bottom
+        painter->drawText(origin_tran.x()-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, "0" );
+        painter->drawLine(QPointF(leftX-5, origin_tran.y()), QPointF(leftX+5, origin_tran.y())); // left
+        painter->drawText(leftX+5+2, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
+        painter->drawText(leftX+5+2+20, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "μm" );
+        painter->drawLine(QPointF(rightX-5, origin_tran.y()), QPointF(rightX+5, origin_tran.y())); // right
+        painter->drawText(rightX-5-15, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
 
-//    }
+    }
     // !!! need to move to other place (one-time calculation!) -end
 
+    QPointF ruler = translate_canvas2image(QPointF(this->width()/6, indent));
+    myPen.setWidth(5);
+    painter->setPen(myPen);
+    painter->drawPoint(ruler);
 
 
     // *** draw coordinates of each frame ***
@@ -292,7 +309,7 @@ void Coord::render(QPainter *painter)
         painter->setPen(penDot);
         painter->setBrush(c);
 //        QPointF visPoint = translateCoord(centroid[n], 5.0);
-        QPointF visPoint = translateCoord_center(centroid[n], Xgreater);
+        QPointF visPoint = translate_image2canvas_center(centroid[n], Xgreater);
         //qDebug() << visPoint;
         painter->drawEllipse( visPoint, 2.0, 2.0);
     }

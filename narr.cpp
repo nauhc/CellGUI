@@ -73,8 +73,8 @@ void Narr::setBeginFrame(int beginFrame)
 void Narr::setMaxFrm(unsigned int m)
 {
 //    max = m;
-    std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
     max = 5000;
+    std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
 }
 
 void Narr::printAreaData(){
@@ -419,7 +419,7 @@ void drawXY(){
 void Narr::render(QPainter *painter)
 {
 //    if(!this->needUpdate)
-//        return;
+        return;
 
     halfW = this->width()/2; // half width
     halfH = this->height()/2; // half height

@@ -23,7 +23,8 @@ protected:
     void    render(QPainter *painter);
     void    resizeGL(int w, int h);
     QPointF translateCoord(QPointF p, qreal scale);
-    QPointF translateCoord_center(QPointF p, bool XGreaterThanY);
+    QPointF translate_canvas2image(QPointF p);
+    QPointF translate_image2canvas_center(QPointF p, bool XGreaterThanY);
     QColor  gradColor(QColor color, qreal percent);
     void    drawColorBar(QPainter *painter);
 

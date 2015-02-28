@@ -6,10 +6,10 @@
 Shape::Shape(QObject *parent)
 {
     clear();
+
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(1);
-
 }
 
 Shape::~Shape()
@@ -167,7 +167,7 @@ void Shape::render(QPainter *painter)
         myPen.setWidth(1);
         for(int i = 0; i < int(size); i++){ // one frame
             // contours
-            painter->setOpacity(opacity*10);
+            painter->setOpacity(/*opacity*10*/0.01);
             painter->setPen(myPen);
             for(int j = 0; j < contours[i].size(); j++) // one contour
                 painter->drawPoint(contours[i][j]);
@@ -176,7 +176,7 @@ void Shape::render(QPainter *painter)
             QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
             painter->setOpacity(1);
             painter->setPen(QPen(c));
-            qreal scl = 1.2;
+            qreal scl = 1.4;
             painter->scale(scl, scl);
             for(int j = 0; j < blebs[i].size(); j++){ // one set of blebs
                 for(int k = 0; k < blebs[i][j].size; k++){ // one bleb
