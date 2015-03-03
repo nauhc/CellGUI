@@ -226,7 +226,7 @@ void Coord::drawColorBar(QPainter *painter)
 void Coord::render(QPainter *painter)
 {
 //    if(!this->needUpdate)
-        return;
+//        return;
 
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;

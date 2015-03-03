@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'singleview.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.3.2)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.4.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -13,7 +13,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'singleview.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.3.2. It"
+#error "This file was generated using the moc from 5.4.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -30,37 +30,38 @@ struct qt_meta_stringdata_SingleView_t {
     )
 static const qt_meta_stringdata_SingleView_t qt_meta_stringdata_SingleView = {
     {
-QT_MOC_LITERAL(0, 0, 10),
-QT_MOC_LITERAL(1, 11, 18),
-QT_MOC_LITERAL(2, 30, 0),
-QT_MOC_LITERAL(3, 31, 19),
-QT_MOC_LITERAL(4, 51, 18),
-QT_MOC_LITERAL(5, 70, 20),
-QT_MOC_LITERAL(6, 91, 3),
-QT_MOC_LITERAL(7, 95, 20),
-QT_MOC_LITERAL(8, 116, 7),
-QT_MOC_LITERAL(9, 124, 7),
-QT_MOC_LITERAL(10, 132, 17),
-QT_MOC_LITERAL(11, 150, 10),
-QT_MOC_LITERAL(12, 161, 8),
-QT_MOC_LITERAL(13, 170, 14),
-QT_MOC_LITERAL(14, 185, 4),
-QT_MOC_LITERAL(15, 190, 15),
-QT_MOC_LITERAL(16, 206, 13),
-QT_MOC_LITERAL(17, 220, 18),
-QT_MOC_LITERAL(18, 239, 19),
-QT_MOC_LITERAL(19, 259, 18),
-QT_MOC_LITERAL(20, 278, 18),
-QT_MOC_LITERAL(21, 297, 19),
-QT_MOC_LITERAL(22, 317, 18),
-QT_MOC_LITERAL(23, 336, 26),
-QT_MOC_LITERAL(24, 363, 5),
-QT_MOC_LITERAL(25, 369, 23),
-QT_MOC_LITERAL(26, 393, 18),
-QT_MOC_LITERAL(27, 412, 3),
-QT_MOC_LITERAL(28, 416, 21),
-QT_MOC_LITERAL(29, 438, 22),
-QT_MOC_LITERAL(30, 461, 21)
+QT_MOC_LITERAL(0, 0, 10), // "SingleView"
+QT_MOC_LITERAL(1, 11, 18), // "loadButton_pressed"
+QT_MOC_LITERAL(2, 30, 0), // ""
+QT_MOC_LITERAL(3, 31, 19), // "loadButton_released"
+QT_MOC_LITERAL(4, 51, 18), // "loadButton_clicked"
+QT_MOC_LITERAL(5, 70, 20), // "initialVideoPlayerUI"
+QT_MOC_LITERAL(6, 91, 3), // "img"
+QT_MOC_LITERAL(7, 95, 20), // "updateVideoplayerUI_"
+QT_MOC_LITERAL(8, 116, 7), // "ROIimg1"
+QT_MOC_LITERAL(9, 124, 7), // "ROIimg2"
+QT_MOC_LITERAL(10, 132, 17), // "updatePropsVisUI_"
+QT_MOC_LITERAL(11, 150, 10), // "floatArray"
+QT_MOC_LITERAL(12, 161, 8), // "property"
+QT_MOC_LITERAL(13, 170, 14), // "updateCellImg_"
+QT_MOC_LITERAL(14, 185, 4), // "cell"
+QT_MOC_LITERAL(15, 190, 15), // "QVector<QPoint>"
+QT_MOC_LITERAL(16, 206, 13), // "smoothContour"
+QT_MOC_LITERAL(17, 220, 18), // "playButton_pressed"
+QT_MOC_LITERAL(18, 239, 19), // "playButton_released"
+QT_MOC_LITERAL(19, 259, 18), // "playButton_clicked"
+QT_MOC_LITERAL(20, 278, 18), // "stopButton_pressed"
+QT_MOC_LITERAL(21, 297, 19), // "stopButton_released"
+QT_MOC_LITERAL(22, 317, 18), // "stopButton_clicked"
+QT_MOC_LITERAL(23, 336, 26), // "compressedCheckBox_checked"
+QT_MOC_LITERAL(24, 363, 5), // "state"
+QT_MOC_LITERAL(25, 369, 23), // "controlCheckBox_checked"
+QT_MOC_LITERAL(26, 393, 18), // "updateBlebSizeText"
+QT_MOC_LITERAL(27, 412, 3), // "val"
+QT_MOC_LITERAL(28, 416, 21), // "drawROIButton_pressed"
+QT_MOC_LITERAL(29, 438, 22), // "drawROIButton_released"
+QT_MOC_LITERAL(30, 461, 21) // "drawROIButton_clicked"
+
     },
     "SingleView\0loadButton_pressed\0\0"
     "loadButton_released\0loadButton_clicked\0"
@@ -181,7 +182,7 @@ void SingleView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
 
 const QMetaObject SingleView::staticMetaObject = {
     { &QWidget::staticMetaObject, qt_meta_stringdata_SingleView.data,
-      qt_meta_data_SingleView,  qt_static_metacall, 0, 0}
+      qt_meta_data_SingleView,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
 
@@ -192,7 +193,7 @@ const QMetaObject *SingleView::metaObject() const
 
 void *SingleView::qt_metacast(const char *_clname)
 {
-    if (!_clname) return 0;
+    if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_SingleView.stringdata))
         return static_cast<void*>(const_cast< SingleView*>(this));
     return QWidget::qt_metacast(_clname);

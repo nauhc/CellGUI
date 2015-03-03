@@ -419,7 +419,7 @@ void drawXY(){
 void Narr::render(QPainter *painter)
 {
 //    if(!this->needUpdate)
-        return;
+//        return;
 
     halfW = this->width()/2; // half width
     halfH = this->height()/2; // half height

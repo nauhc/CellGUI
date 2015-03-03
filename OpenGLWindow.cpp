@@ -43,7 +43,7 @@ void OpenGLWindow::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);     //!!
     glClearColor(1.f, 1.f, 1.f, 0.f);
 
-    _paintDevice->setSize(cnt());
+    _paintDevice->setSize(/*cnt*/size());
 
     QPainter painter(_paintDevice);
     render(&painter);
@@ -140,7 +140,7 @@ void OpenGLWindow::renderNow()
     {
         initializeOpenGLFunctions();
         initializeGL();
-        QCoreApplication::postEvent(this, new QResizeEvent(cnt(), cnt()));
+        QCoreApplication::postEvent(this, new QResizeEvent(/*cnt(), cnt()*/ size(), size()));
     }
 
     render();

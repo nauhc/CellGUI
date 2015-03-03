@@ -3,18 +3,13 @@
 #include <iostream>
 #include <QDirIterator>
 
-MultiView::MultiView(QWidget *parent) : QWidget(parent)/*, dataFilename1(new QString(""))*/{
+MultiView::MultiView(QWidget *parent) : QWidget(parent), filenamesLoaded(false){
 
     setStyleSheet("background-color:rgb(251,251,251)");
 
     mainVLayout = new QVBoxLayout(this);
     visGLayout = new QGridLayout();
 
-    getFileNames(); // datafileNames prepared
-
-//    createNarVis();
-//    createCodVis();
-//    createShpVis();
 
 //    visGLayout->addWidget(nar_container1, 0, 0);
 //    visGLayout->addWidget(nar_container2, 0, 1);
@@ -33,72 +28,6 @@ MultiView::MultiView(QWidget *parent) : QWidget(parent)/*, dataFilename1(new QSt
 
 }
 
-void MultiView::createNarVis()
-{
-//    for(int i = 0; i < datafileNames.size(); i++){
-//        Narr *nar_tmp = new Narr();
-//        QWidget *nar_container = QWidget::createWindowContainer(nar_tmp, this);
-//        nar_container->setMinimumSize(256, 256);
-//        nar_container->setMaximumSize(512, 512);
-
-//        nar_list.append(*nar_tmp);
-//        container_nar.append(*nar_container);
-//    }
-
-
-    nar_tmp1 = new Narr();
-    nar_container1 = QWidget::createWindowContainer(nar_tmp1, this);
-    nar_container1->setMinimumSize(256, 256);
-    nar_container1->setMaximumSize(512, 512);
-
-    nar_tmp2 = new Narr();
-    nar_container2 = QWidget::createWindowContainer(nar_tmp2, this);
-    nar_container2->setMinimumSize(256, 256);
-    nar_container2->setMaximumSize(512, 512);
-
-    nar_tmp3 = new Narr();
-    nar_container3 = QWidget::createWindowContainer(nar_tmp3, this);
-    nar_container3->setMinimumSize(256, 256);
-    nar_container3->setMaximumSize(512, 512);
-}
-
-void MultiView::createCodVis()
-{
-    cod_tmp1 = new Coord();
-    cod_container1 = QWidget::createWindowContainer(cod_tmp1, this);
-    cod_container1->setMinimumSize(256, 256);
-    cod_container1->setMaximumSize(512, 512);
-
-    cod_tmp2 = new Coord();
-    cod_container2 = QWidget::createWindowContainer(cod_tmp2, this);
-    cod_container2->setMinimumSize(256, 256);
-    cod_container2->setMaximumSize(512, 512);
-
-    cod_tmp3 = new Coord();
-    cod_container3 = QWidget::createWindowContainer(cod_tmp3, this);
-    cod_container3->setMinimumSize(256, 256);
-    cod_container3->setMaximumSize(512, 512);
-
-}
-
-void MultiView::createShpVis()
-{
-    shp_tmp1 = new Shape();
-    shp_container1 = QWidget::createWindowContainer(shp_tmp1, this);
-    shp_container1->setMinimumSize(256, 256);
-    shp_container1->setMaximumSize(512, 512);
-
-    shp_tmp2 = new Shape();
-    shp_container2 = QWidget::createWindowContainer(shp_tmp2, this);
-    shp_container2->setMinimumSize(256, 256);
-    shp_container2->setMaximumSize(512, 512);
-
-    shp_tmp3 = new Shape();
-    shp_container3 = QWidget::createWindowContainer(shp_tmp3, this);
-    shp_container3->setMinimumSize(256, 256);
-    shp_container3->setMaximumSize(512, 512);
-}
-
 void MultiView::createSpacers()
 {
 
@@ -107,21 +36,34 @@ void MultiView::createSpacers()
 void MultiView::clearVis()
 {
 
-//    nar_tmp1->clear();
-//    nar_tmp2->clear();
-//    cod_tmp1->clear();
-//    cod_tmp2->clear();
 }
 
 void MultiView::clearData()
 {
-//    cellData1.clear();
-//    blebs1.clear();
-//    contours1.clear();
-//    centers1.clear();
-//    delete dataFilename1;
-//    dataFilename1 =  new QString("");
+    filenamesLoaded = false;
+    if(!cellData.empty())
+        cellData.clear();
 
+    if(!blebs.empty())
+        blebs.clear();
+
+    if(!contours.empty())
+        contours.clear();
+
+    if(!centers.empty())
+        centers.clear();
+
+    if(!datafileNames.empty())
+        datafileNames.clear();
+
+/*
+//    nar_list.clear();
+//    cod_list.clear();
+//    shp_list.clear();
+//    file_list.clear();
+//    container_cod.clear();
+//    container_nar.clear();
+//    container_shp.clear(); */
 }
 
 void MultiView::loadFilesButton_pressed()
@@ -142,42 +84,43 @@ void MultiView::loadFilesButton_clicked()
     clearVis();
     clearData();
 
+    getFileNames(); // datafileNames prepared
     readFiles();
 
-    //*** read-property-from-file mode (fileMode = true) //
-    connect(this, SIGNAL(readProperties(floatArray)),
-            this, SLOT(updatePropsVisUI(floatArray)));
+/*
+//    connect(this, SIGNAL(readProperties(floatArray)),
+//            this, SLOT(updatePropsVisUI(floatArray)));
 
-    connect(this, SIGNAL(readCellImg(QImage)),
-            this, SLOT(updateCellImg(QImage)));
+//    connect(this, SIGNAL(readCellImg(QImage)),
+//            this, SLOT(updateCellImg(QImage)));
 
-    connect(this, SIGNAL(readContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint)),
-            this, SLOT(updateContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint)));
-    // read-property-from-file mode (fileMode = true) *** //
+//    connect(this, SIGNAL(readContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint)),
+//            this, SLOT(updateContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint))); */
 
 }
 
-void MultiView::updatePropsVisUI(floatArray property)
-{
-    nar_tmp1->updateProperty(property, property[0]);
-    cod_tmp1->updateCoord(QPointF(property[3], property[4]), property[0]);
-//    shp_tmp1->updateContourNBleb();
-}
+/*
+//void MultiView::updatePropsVisUI(floatArray property)
+//{
+//    nar_tmp1->updateProperty(property, property[0]);
+//    cod_tmp1->updateCoord(QPointF(property[3], property[4]), property[0]);
+////    shp_tmp1->updateContourNBleb();
+//}
 
-void MultiView::updateCellImg(QImage cell)
-{
-    nar_tmp1->updateCellImg(cell);
-}
+//void MultiView::updateCellImg(QImage cell)
+//{
+//    nar_tmp1->updateCellImg(cell);
+//}
 
-void MultiView::updateCellImg(QImage cell, QVector<QPoint> smoothContour)
-{
-    nar_tmp1->updateCellImg(cell, smoothContour);
-}
+//void MultiView::updateCellImg(QImage cell, QVector<QPoint> smoothContour)
+//{
+//    nar_tmp1->updateCellImg(cell, smoothContour);
+//}
 
-void MultiView::updateContourNBlebs(QVector<Bleb> blebs, QVector<QPoint> contour, QPoint centroid) //QVector<Bleb>, QVector<QPoint>
-{
-    shp_tmp1->updateContourNBleb(blebs, contour, centroid);
-}
+//void MultiView::updateContourNBlebs(QVector<Bleb> blebs, QVector<QPoint> contour, QPoint centroid) //QVector<Bleb>, QVector<QPoint>
+//{
+//    shp_tmp1->updateContourNBleb(blebs, contour, centroid);
+//}*/
 
 void MultiView::getFileNames()
 {
@@ -190,6 +133,8 @@ void MultiView::getFileNames()
             if (QFileInfo(dirIt.filePath()).suffix() == "csv")
                 datafileNames.push_back(dirIt.filePath());
     }
+
+    filenamesLoaded = true;
 }
 
 void MultiView::createLoadFilesButton()
@@ -224,11 +169,6 @@ bool MultiView::readFiles()
                     cod_container->setMaximumSize(512, 512);
                     cod_tmp->getMaxFrm(cellData[i][cellDataSize-2][0]);
                     cod_tmp->getMaxSize(QSize(/*640, 480*/800, 600));
-
-//                    nar_tmp1->setBeginFrame(cellData[i][0][0]);
-//                    nar_tmp1->setMaxFrm(cellData[i][cellDataSize-2][0]);
-//                    cod_tmp1->getMaxFrm(cellData[i][cellDataSize-2][0]);
-//                    cod_tmp1->getMaxSize(QSize(/*640, 480*/800, 600));
 
                     visGLayout->addWidget(nar_container, 0, i);
                     visGLayout->addWidget(cod_container, 1, i);
@@ -283,7 +223,8 @@ bool MultiView::readFiles()
 
     } // for loop end
 
-    qDebug() << "DONE!!!!!!!!!!!!!!";
+
+    qDebug() << "All files reading done."; // until here: fast enough
 
 }
 
