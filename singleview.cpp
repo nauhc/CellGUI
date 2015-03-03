@@ -700,6 +700,8 @@ void SingleView::createPropertySelector()
     controlVLayout->addLayout(encircleButtonHLayout, 2);
     controlVLayout->addLayout(scaleConvertHLayout, 2);
     controlVLayout->addLayout(propertyHLayout, 2);
+
+
 }
 
 void SingleView::createNarrVis()
@@ -707,7 +709,7 @@ void SingleView::createNarrVis()
     nar = new Narr();
     nar_container = QWidget::createWindowContainer(nar, this);
     nar_container->setMinimumSize(512, 512);
-
+    connect(propComBox, SIGNAL(currentIndexChanged(int)), nar, SLOT(setPropType(int)) );
 }
 
 void SingleView::createCoordVis()

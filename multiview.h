@@ -48,6 +48,8 @@ private:
 
     QVector<QString>                        datafileNames; //stores all the filenames
     bool                                    filenamesLoaded;
+    QWidget                                 visContainer; // large conainer storing all the vis info
+    QImage                                  vis; // large canvas for drawing all vis once
     std::vector<std::vector<floatArray> >   cellData;
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
