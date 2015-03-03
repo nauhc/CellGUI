@@ -582,8 +582,8 @@ void SingleView::drawROIButton_released()
 void SingleView::drawROIButton_clicked()
 {
 
-    encircler_->setGeometry(_orgVideo->x(), _orgVideo->y(),
-                           _orgVideo->width(), _orgVideo->height());
+//    encircler_->setGeometry(_orgVideo->x(), _orgVideo->y(),
+//                           _orgVideo->width(), _orgVideo->height());
 
     cout << "video pos:  x " << _orgVideo->x()
          << " y " << _orgVideo->y()
@@ -700,8 +700,6 @@ void SingleView::createPropertySelector()
     controlVLayout->addLayout(encircleButtonHLayout, 2);
     controlVLayout->addLayout(scaleConvertHLayout, 2);
     controlVLayout->addLayout(propertyHLayout, 2);
-
-
 }
 
 void SingleView::createNarrVis()
@@ -723,20 +721,22 @@ void SingleView::createCoordVis()
 void calcSizes(int &videoWidth, int &videoHeight,
                int x_border, int y_border, int width_border, int height_border,
                int &x,       int &y,       int &width,       int &height,
-               double &scale){
+               double &scale){ // assume the video displaying area is square
 
     if(videoWidth >= videoHeight){
         scale = double(width_border)/double(videoWidth);
         width   = width_border;
         height  = width_border*videoHeight/videoWidth; //(width > height)
         x = x_border;
-        y = y_border + (width-height)/2;
+        //y = y_border + (width-height)/2;
+        y = y_border + (height_border-height)/2;
     }
     else{
         scale = double(height_border)/double(videoHeight);
         height  = height_border;
         width   = height_border*videoWidth/videoHeight; //(width < height)
-        x = x_border + (height-width)/2;
+        //x = x_border + (height-width)/2;
+        x = x_border + (width_border-width)/2;
         y = y_border;
     }
 }
@@ -753,6 +753,7 @@ void SingleView::setCanvas()
     int x, y, w, h;
     double scale;
     calcSizes(width, height, _orgVideo->x(), _orgVideo->y(), _orgVideo->width(), _orgVideo->height(), x, y, w, h, scale);
+    _orgVideo->setGeometry(x, y, w, h);
     encircler_->setGeometry(x, y, w, h);
     controller->setScale(scale);
 
@@ -766,10 +767,10 @@ void SingleView::setCanvas()
     calcSizes(width, height, roiVdo2->x(), roiVdo2->y(), roiVdo2->width(), roiVdo2->height(), x2, y2, w2, h2, scale2);
 
 
+
 //    cout << "orgVideo Widget: x " << _orgVideo->x() << " y " << _orgVideo->y()
 //         << " width " << _orgVideo->width() << " height " << _orgVideo->height() << endl;
     cout << "video pos:  x " << x << " y " << y << " width " << w << " height " << h << endl;
-    cout << "scale " << scale << endl;
 
 }
 

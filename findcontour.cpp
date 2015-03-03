@@ -683,9 +683,12 @@ void FindContour::singleCellDetection(const Mat &img, vector<Point> &cir_org,
     frame = &img;
 
     vector<Point> cir; //***global coordinates of circle***
+    //cout << "[";
     for(unsigned int i = 0; i < cir_org.size(); i++){
         cir.push_back(Point(cir_org[i].x / scale, cir_org[i].y / scale));
+        //cout << int(cir_org[i].x / scale) << ", " << int(cir_org[i].y / scale) << "; ";
     }
+    //cout << "]" << endl;
 
     //enlarge the bounding rect by adding a margin (e) to it
     rect = enlargeRect(boundingRect(Mat(cir)), 5, img.cols, img.rows);
