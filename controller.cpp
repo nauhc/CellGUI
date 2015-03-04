@@ -3,6 +3,10 @@
 #include "iostream"
 #include <QFileInfo>
 
+template <class T>
+inline T sqre(T value){
+    return value*value;
+}
 
 Controller::Controller(QObject *parent) : QThread(parent),
    inputVideo(new VideoCapture()),
@@ -384,6 +388,10 @@ void Controller::run(){
     bool paused = pause;
     pauseMutex.unlock();
 
+    Point2f         centroid_pre1(0, 0); // centroid of the cell in previous 1 frame
+//    Point2f         centroid_pre2(0, 0); //  centroid of the cell in previous 2 frame
+    QList<Point2f>  centroidWIN; // record all the centroid within a window
+
     while(!paused && cnt < frameCnt-1){
         if(!inputVideo->read(nextFrame)){
             cout << "Unable to retrieve frame from video stream." << endl;
@@ -421,6 +429,9 @@ void Controller::run(){
             int             area; // area of the cell
             int             perimeter; // perimeter of the cell
             Point2f         centroid; // centroid of the cell
+            Point2f         centroid_avg(0,0); // centroid of the cell filtered in time winodw
+            Point2f         speed(0,0); // (distance, direction) of centroid's movement
+
             float           shape; // shape of the cell: standard deviation of distances (contour points 2 centroid)
             Mat             cell_alpha; // cell image without background
             vector<Point>   smooth_contour_curve; // smoothed contour
@@ -483,6 +494,43 @@ void Controller::run(){
                 cout << "error: time window size too large. " << endl;
             }
 
+
+            // keep a time(frame) window and filter the speed
+            if(centroidWIN.size() < WINSIZE){
+                centroidWIN.push_back(centroid);
+            }
+            else if(centroidWIN.size() == WINSIZE){
+                centroidWIN.pop_front();
+                centroidWIN.push_back(centroid);
+                //calculate speed from centroid
+
+                for(int i = 0; i < WINSIZE; i++){
+                    centroid_avg.x += centroidWIN[i].x;
+                    centroid_avg.y += centroidWIN[i].y;
+                }
+                centroid_avg.x = centroid_avg.x / float(WINSIZE);
+                centroid_avg.y = centroid_avg.y / float(WINSIZE);
+
+            }
+
+            if(centroid_pre1 != Point2f(0,0)){
+                float yy = centroid_avg.y - centroid_pre1.y;
+                float xx = centroid_avg.x - centroid_pre1.x;
+                speed.x = sqrt(sqre(xx)+sqre(yy));
+                if(xx > 0 && yy >= 0)
+                    speed.y = atan2f(yy, xx);
+                if(xx < 0 && yy >= 0)
+                    speed.y = atan2f(yy, xx) + M_PI_2;
+                if(xx < 0 && yy < 0)
+                    speed.y = atan2f(yy, xx) + M_PI;
+                if(xx > 0 && yy < 0)
+                    speed.y = atan2f(yy, xx) + M_PI_2 + M_PI;
+            }
+
+
+            centroid_pre1 = centroid_avg;
+            //cout << centroid_avg << " " << centroid_pre1 << endl;
+
             //double subImgSize = contourImg.cols*contourImg.rows;
             double area_ratio = micMtr_Pixel*micMtr_Pixel/scale/scale;
             double len_ratio  = micMtr_Pixel/scale/scale;
@@ -521,6 +569,8 @@ void Controller::run(){
             property.push_back(float(perimeter * len_ratio));
             property.push_back(centroid.x);
             property.push_back(centroid.y);
+            property.push_back(speed.x);
+            property.push_back(speed.y);
             property.push_back(shape);
             property.push_back(blebs.size());
             property.push_back(avg_blebsize * area_ratio);
@@ -532,6 +582,7 @@ void Controller::run(){
                     << area * area_ratio << ","
                     << perimeter * len_ratio << ","
                     << centroid.x << "," << centroid.y << ","
+                    << speed.x << "," << speed.y << ","
                     << shape << ","
                     << blebs.size() << ", "
                     << avg_blebsize * area_ratio << ", ";

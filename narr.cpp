@@ -103,14 +103,20 @@ void Narr::updateProperty(floatArray prop, int currFrame)
 //    property.push_back(float(perimeter)); //2
 //    property.push_back(centroid.x); // 3
 //    property.push_back(centroid.y); // 4
+//    property.push_back(speed.x); // 5
+//    property.push_back(speed.y); // 6
+//    property.push_back(shape); // 7
+//    property.push_back(blebs.size()); // 8
+//    property.push_back(avg_blebsize * area_ratio); // 9
+
 //    property.push_back(shape); // 5
 //    property.push_back(blebs.size()); // 6
 //    property.push_back(avg_blebsize); // 7
 
     area.push_back(prop[1]);
     perimeter.push_back(prop[2]);
-    blebNum.push_back(prop[6]);
-    blebAvgSize.push_back(prop[7]);
+    blebNum.push_back(prop[8]);
+    blebAvgSize.push_back(prop[9]);
 }
 
 void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
@@ -559,23 +565,23 @@ void Narr::render(QPainter *painter)
     painter->drawLine(QPoint(ringArcInnerRadius + ringArcThickness,0), QPoint(propBarInnerRadius, 0));
     painter->rotate(-angle);
 
-    // draw cell according to mouse Index
-    //qDebug() << mouseIndex << curr << begin;
-    if(begin > 0 && mouseIndex > 0 && curr > 0){
-            int idx = curr > mouseIndex ? (mouseIndex - begin) : (curr - begin);
-            if(idx > 0 && idx < cellImg.size()){
-                //qDebug() << "Idx " << idx;
-                painter->translate(0,0);
-                painter->rotate(90); //***x->up, y->right***
-                //int side = 2*ringArcInnerRadius/1.3;
-                float scale = 1.2;
-                QImage cell = cellImg[idx];
-                QRect centerRect = QRect(-cell.width()/2*scale, -cell.height()/2*scale, cell.width()*scale, cell.height()*scale);
-                painter->drawImage(centerRect, cell);
-                //painter->drawImage(-cellImg[idx-1].width()/2, -cellImg[idx-1].height()/2, cellImg[idx-1]);
-                painter->rotate(-90);
-            }
-    }
+//    // draw cell according to mouse Index
+//    //qDebug() << mouseIndex << curr << begin;
+//    if(begin > 0 && mouseIndex > 0 && curr > 0){
+//            int idx = curr > mouseIndex ? (mouseIndex - begin) : (curr - begin);
+//            if(idx > 0 && idx < cellImg.size()){
+//                //qDebug() << "Idx " << idx;
+//                painter->translate(0,0);
+//                painter->rotate(90); //***x->up, y->right***
+//                //int side = 2*ringArcInnerRadius/1.3;
+//                float scale = 1.2;
+//                QImage cell = cellImg[idx];
+//                QRect centerRect = QRect(-cell.width()/2*scale, -cell.height()/2*scale, cell.width()*scale, cell.height()*scale);
+//                painter->drawImage(centerRect, cell);
+//                //painter->drawImage(-cellImg[idx-1].width()/2, -cellImg[idx-1].height()/2, cellImg[idx-1]);
+//                painter->rotate(-90);
+//            }
+//    }
 
 //    this->needUpdate = false;
 

@@ -2,6 +2,12 @@
 #include <QPainter>
 #include <QTimer>
 #include <qdebug.h>
+//#include "cubehelix.h"
+#include "colormap.h"
+
+const int Shape_COLOR_START = 30;
+const int Shape_COLOR_RANGE = 90;
+
 
 Shape::Shape(QObject *parent)
 {
@@ -129,7 +135,9 @@ void Shape::drawColorBar(QPainter *painter){ // (center,
     int bar_y   = -(halfW - bar_txt_w - space);
 
     for(int n = 0; n < bar_len; n++){
-        QColor c = _mapNumToHue_(60, COLOR_RANGE, 0, bar_len, n);
+        //QColor c = _mapNumToHue_(60, COLOR_RANGE, 0, bar_len, n);
+        ColorMap colorMap;
+        QColor c = colorMap.cubehelix(Shape_COLOR_START, Shape_COLOR_RANGE, 0, bar_len, n);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));
@@ -173,7 +181,9 @@ void Shape::render(QPainter *painter)
                 painter->drawPoint(contours[i][j]);
 
             // blebs
-            QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
+            //QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
+            ColorMap colorMap;
+            QColor c = colorMap.cubehelix(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
             painter->setOpacity(1);
             painter->setPen(QPen(c));
             qreal scl = 1.4;

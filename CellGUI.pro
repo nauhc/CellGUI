@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     coord.cpp \
     multiview.cpp \
     singleview.cpp \
-    shape.cpp
+    shape.cpp \
+    colormap.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -53,7 +54,8 @@ HEADERS  += mainwindow.h \
     multiview.h \
     singleview.h \
     style.h \
-    shape.h
+    shape.h \
+    colormap.h
 
 FORMS    += mainwindow.ui
 

@@ -189,30 +189,30 @@ bool MultiView::readFiles()
                 }
 
 
-                // bleb size
-                if(readBlebsFile(datafileNames[i]) && readContoursFile(datafileNames[i])){
-                    if((contours[i].size() == blebs[i].size()) && (blebs[i].size() > 20)){
+//                // bleb size
+//                if(readBlebsFile(datafileNames[i]) && readContoursFile(datafileNames[i])){
+//                    if((contours[i].size() == blebs[i].size()) && (blebs[i].size() > 20)){
 
-                        Shape *shp_tmp = new Shape();
-                        QWidget *shp_container = QWidget::createWindowContainer(shp_tmp, this);
-                        shp_container->setMinimumSize(256, 256);
-                        shp_container->setMaximumSize(512, 512);
+//                        Shape *shp_tmp = new Shape();
+//                        QWidget *shp_container = QWidget::createWindowContainer(shp_tmp, this);
+//                        shp_container->setMinimumSize(256, 256);
+//                        shp_container->setMaximumSize(512, 512);
 
-                        shp_tmp->setBeginFrm(cellData[i][0][0]);
-                        shp_tmp->setMaxFrm(cellData[i][cellDataSize-2][0]);
+//                        shp_tmp->setBeginFrm(cellData[i][0][0]);
+//                        shp_tmp->setMaxFrm(cellData[i][cellDataSize-2][0]);
 
-                        visGLayout->addWidget(shp_container, 2, i);
+//                        visGLayout->addWidget(shp_container, 2, i);
 
 
-                        for(int n = 0; n < blebs[i].size(); n++){
-                            //emit readContourNBlebs(blebs[i][n], contours[i][n], centers[i][n]);
-                            shp_tmp->updateContourNBleb(blebs[i][n], contours[i][n], centers[i][n]);
-                        }
-                        shp_tmp->setNeedUpdate();
-                    }
-                    else qDebug() << "Bleb and Contour Data Size EROOR!" << contours[i].size() << " " << blebs[i].size();
-                }
-                else qDebug() << "Read Bleb and Contour Data files EROOR!";
+//                        for(int n = 0; n < blebs[i].size(); n++){
+//                            //emit readContourNBlebs(blebs[i][n], contours[i][n], centers[i][n]);
+//                            shp_tmp->updateContourNBleb(blebs[i][n], contours[i][n], centers[i][n]);
+//                        }
+//                        shp_tmp->setNeedUpdate();
+//                    }
+//                    else qDebug() << "Bleb and Contour Data Size EROOR!" << contours[i].size() << " " << blebs[i].size();
+//                }
+//                else qDebug() << "Read Bleb and Contour Data files EROOR!";
 
             }
 
@@ -257,8 +257,13 @@ bool MultiView::readDataFile(QString &filename)
             prop.push_back(float(row[2])); // perimeter
             prop.push_back(float(row[3])); // centroid.x
             prop.push_back(float(row[4])); // centroid.y
-            prop.push_back(float(row[5])); // shape
-            prop.push_back(float(row[6])); // blebNum
+//            prop.push_back(float(row[5])); // shape
+//            prop.push_back(float(row[6])); // blebNum
+            prop.push_back(float(row[5])); // speed.dist
+            prop.push_back(float(row[6])); // speed.theta
+            prop.push_back(float(row[7])); // shape
+            prop.push_back(float(row[8])); // blebNum
+
             //            for(unsigned int n = 0; n < prop.size(); n++)
             //                std::cout << prop[n] << " ";
             //            std::cout << std::endl;

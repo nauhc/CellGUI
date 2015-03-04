@@ -6,11 +6,16 @@
 #include <limits>
 #include <QTimer>
 #include "coord.h"
+//#include "cubehelix.h"
+#include "colormap.h"
 
-QColor _BLUE_   = QColor(28, 120, 159);
-int COLOR_RANGE = 180;
-int startIndex = 20;
-qreal scale = 0.75; // <=1.0 the scale of the canvas that can be used to draw coordinates
+const QColor _BLUE_   = QColor(28, 120, 159);
+const int COLOR_RANGE = 180;
+const int startIndex = 20;
+const qreal scale = 0.75; // <=1.0 the scale of the canvas that can be used to draw coordinates
+
+const int Coord_COLOR_START = 30;
+const int Coord_COLOR_RANGE = 90;
 
 
 Coord::Coord(QWidget *parent)
@@ -213,7 +218,9 @@ void Coord::drawColorBar(QPainter *painter)
     int bar_y   = -(halfW - bar_txt_w - space);
 
     for(int n = 0; n < bar_len; n++){
-        QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
+        //QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
+        ColorMap colorMap;
+        QColor c = colorMap.cubehelix(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));
@@ -290,10 +297,10 @@ void Coord::render(QPainter *painter)
     }
     // !!! need to move to other place (one-time calculation!) -end
 
-    QPointF ruler = translate_canvas2image(QPointF(this->width()/6, indent));
-    myPen.setWidth(5);
-    painter->setPen(myPen);
-    painter->drawPoint(ruler);
+    //QPointF ruler = translate_canvas2image(QPointF(this->width()/6, indent));
+    //myPen.setWidth(5);
+    //painter->setPen(myPen);
+    //painter->drawPoint(ruler);
 
 
     // *** draw coordinates of each frame ***
@@ -303,8 +310,9 @@ void Coord::render(QPainter *painter)
         //QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);
 
         QColor c;
-        //c.setHsv(60+qreal(n)/size*180, 255, 200); //color.setHsv(start+range*v/(max-min), 255, 200);
-        c = mapNumToHue(60, COLOR_RANGE, 0, size, n);
+        //c = mapNumToHue(60, COLOR_RANGE, 0, size, n);
+        ColorMap colorMap;
+        c = colorMap.cubehelix(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
         QPen penDot(c);
         painter->setPen(penDot);
         painter->setBrush(c);
