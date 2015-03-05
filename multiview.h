@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "style.h"
+#include "viswindow.h"
 #include "narr.h"
 #include "coord.h"
 #include "shape.h"
@@ -48,8 +49,8 @@ private:
 
     QVector<QString>                        datafileNames; //stores all the filenames
     bool                                    filenamesLoaded;
-    QWidget                                 visContainer; // large conainer storing all the vis info
-    QImage                                  vis; // large canvas for drawing all vis once
+    QWidget                                 *visContainer; // large conainer storing all the vis info
+    VisWindow                               *visWindow; // large canvas for drawing all vis once
     std::vector<std::vector<floatArray> >   cellData;
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
@@ -71,6 +72,7 @@ private:
 
 
     void    createLoadFilesButton();
+    void    createVisCanvas();
     void    createSpacers();
 };
 

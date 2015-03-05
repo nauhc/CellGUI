@@ -11,7 +11,7 @@ struct polarPoint{
     double theta;
 };
 
-class Bleb
+class Bleb // one bleb
 {
 public:
     int size;

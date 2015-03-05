@@ -5,8 +5,8 @@
 //#include "cubehelix.h"
 #include "colormap.h"
 
-const int Shape_COLOR_START = 30;
-const int Shape_COLOR_RANGE = 90;
+const int Shape_COLOR_START = /*30*/0;
+const int Shape_COLOR_RANGE = /*90*/230;
 
 
 Shape::Shape(QObject *parent)
@@ -59,6 +59,20 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
     contours.push_back(contour);
     blebs.push_back(bleb);
 
+    QVector<QPoint> points_in1frame;
+    for(int k = 0; k < bleb.size(); k++){ // one bleb
+        vector<polarPoint>  polarPBunch = bleb[k].bunch_polar;
+        int num = polarPBunch.size();
+        Point center = bleb[k].center;
+        for(int l = 0; l < num; l++){ // one point
+            polarPoint polarP = polarPBunch[l];
+            int x = center.x + polarP.r * cos(polarP.theta);
+            int y = center.y + polarP.r * sin(polarP.theta);
+            points_in1frame.push_back(QPoint(x,y));
+        }
+    }
+    blebPoints.push_back(points_in1frame);
+    //qDebug() << points_in1frame;
     /*
 //    qDebug() << "centroid " << cent;
 //    qDebug() << "contour_org" << smoothContour;
@@ -188,15 +202,19 @@ void Shape::render(QPainter *painter)
             painter->setPen(QPen(c));
             qreal scl = 1.4;
             painter->scale(scl, scl);
-            for(int j = 0; j < blebs[i].size(); j++){ // one set of blebs
-                for(int k = 0; k < blebs[i][j].size; k++){ // one bleb
-                    polarPoint  polarP = blebs[i][j].bunch_polar[k];
-                    Point       center = blebs[i][j].center;
-                    int x = center.x + polarP.r * cos(polarP.theta);
-                    int y = center.y + polarP.r * sin(polarP.theta);
-                    painter->drawPoint(QPoint(x, y));
-                }
-            }
+//            for(int j = 0; j < blebs[i].size(); j++){ // one set of blebs
+//                for(int k = 0; k < blebs[i][j].size; k++){ // one bleb
+//                    polarPoint  polarP = blebs[i][j].bunch_polar[k];
+//                    Point       center = blebs[i][j].center;
+//                    int x = center.x + polarP.r * cos(polarP.theta);
+//                    int y = center.y + polarP.r * sin(polarP.theta);
+//                    painter->drawPoint(QPoint(x, y));
+//                }
+//            }
+
+            //for(int i = 0; i < blebPoints.size(); i++){
+            painter->drawPoints(blebPoints[i].data(), blebPoints[i].size());
+            //}
             painter->scale(1/scl, 1/scl);
         }
     }

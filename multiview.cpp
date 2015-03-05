@@ -3,7 +3,10 @@
 #include <iostream>
 #include <QDirIterator>
 
-MultiView::MultiView(QWidget *parent) : QWidget(parent), filenamesLoaded(false){
+MultiView::MultiView(QWidget *parent) :
+    QWidget(parent)
+    , filenamesLoaded(false)
+    {
 
     setStyleSheet("background-color:rgb(251,251,251)");
 
@@ -22,9 +25,11 @@ MultiView::MultiView(QWidget *parent) : QWidget(parent), filenamesLoaded(false){
 //    visGLayout->addWidget(shp_container3, 2, 2);
 
     createLoadFilesButton();
+    createVisCanvas();
 
     mainVLayout->addWidget(loadFilesButton);
     mainVLayout->addLayout(visGLayout);
+//    mainVLayout->addWidget(visContainer);
 
 }
 
@@ -144,6 +149,15 @@ void MultiView::createLoadFilesButton()
     loadFilesButton->setMaximumHeight(30);
     connect(this->loadFilesButton, SIGNAL(clicked()), this, SLOT(loadFilesButton_clicked()));
 
+}
+
+void MultiView::createVisCanvas()
+{
+    visWindow = new VisWindow();
+    visContainer = QWidget::createWindowContainer(visWindow, this);
+//    visContainer->setMinimumSize(this->width()*0.8, this->height()*0.8);
+    visContainer->setBaseSize(this->width()*0.8, this->height()*0.8);
+    visWindow->resize(/*visContainer->size()*/ QSize(1024, 768));
 }
 
 bool MultiView::readFiles()
