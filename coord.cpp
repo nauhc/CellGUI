@@ -22,9 +22,9 @@ Coord::Coord(QWidget *parent)
 {
     clear();
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1);
+//    QTimer* timer = new QTimer(this);
+//    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+//    timer->start(1);
 
 }
 
@@ -69,6 +69,7 @@ void Coord::updateCoord(QPointF point, int currFrame)
         origin = QPoint(centroid[startIndex-1].x(), centroid[startIndex-1].y());
         //qDebug() << "centroid origin " << origin;
     }
+    update();
 }
 
 void Coord::getMaxFrm(unsigned int m)

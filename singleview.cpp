@@ -338,8 +338,12 @@ void SingleView::createOrignalVideo()
     //orignal video
     orgVideoVLayout = new QVBoxLayout();
     _orgVideo = new QLabel(""); //orignal video
-    _orgVideo->setMaximumHeight(this->height()/2);
+//    _orgVideo->setMinimumWidth(55);
+//    _orgVideo->setMinimumHeight(512);
+    _orgVideo->setFixedSize(550, 550);
+    //_orgVideo->setMaximumHeight(this->height()/2);
     _orgVideo->setStyleSheet(VIDEO_DISPLAY);
+    _orgVideo->heightForWidth(_orgVideo->width());
     orgVideoVLayout->addWidget(_orgVideo);
     topHLayout->addLayout(orgVideoVLayout, 3);
 
@@ -700,6 +704,7 @@ void SingleView::createPropertySelector()
     controlVLayout->addLayout(encircleButtonHLayout, 2);
     controlVLayout->addLayout(scaleConvertHLayout, 2);
     controlVLayout->addLayout(propertyHLayout, 2);
+
 }
 
 void SingleView::createNarrVis()
@@ -707,7 +712,10 @@ void SingleView::createNarrVis()
     nar = new Narr();
     nar_container = QWidget::createWindowContainer(nar, this);
     nar_container->setMinimumSize(512, 512);
-    connect(propComBox, SIGNAL(currentIndexChanged(int)), nar, SLOT(setPropType(int)) );
+    nar_container->setMaximumSize(640, 640);
+
+    connect(propComBox, SIGNAL(currentIndexChanged(int)),
+            nar, SLOT(setPropType(int)));
 }
 
 void SingleView::createCoordVis()
@@ -715,7 +723,7 @@ void SingleView::createCoordVis()
     cod = new Coord();
     cod_container = QWidget::createWindowContainer(cod, this);
     cod_container->setMinimumSize(512, 512);
-
+    cod_container->setMaximumSize(640, 640);
 }
 
 void calcSizes(int &videoWidth, int &videoHeight,

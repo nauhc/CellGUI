@@ -156,8 +156,6 @@ private:
 
     // setCanvas
     void setCanvas();
-
-
 };
 
 #endif // SINGLEVIEW_H

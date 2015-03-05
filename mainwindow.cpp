@@ -22,12 +22,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // set to singleview at the beginning
-//    SingleView *singleview = new SingleView(this->centralWidget());
-//    centralLayout->addWidget(singleview);
+    loadSigleView();
 
-    MultiView *multiview = new MultiView(this->centralWidget());
-    centralLayout->addWidget(multiview);
-
+    // set to cultiview at the beginning
+    //loadMultiView();
 
     // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -62,6 +60,7 @@ void MainWindow::loadMultiView()
 
     MultiView *multiview = new MultiView(this->centralWidget());
     centralLayout->addWidget(multiview);
+    this->showMaximized();
 }
 
 void MainWindow::loadSigleView()
@@ -73,6 +72,8 @@ void MainWindow::loadSigleView()
 
     SingleView *singleview = new SingleView(this->centralWidget());
     centralLayout->addWidget(singleview);
+    this->setFixedSize(1280, 1300);
+//    this->showMaximized();
 
 }
 

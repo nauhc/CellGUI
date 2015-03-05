@@ -25,7 +25,7 @@ MultiView::MultiView(QWidget *parent) :
 //    visGLayout->addWidget(shp_container3, 2, 2);
 
     createLoadFilesButton();
-    createVisCanvas();
+//    createVisCanvas();
 
     mainVLayout->addWidget(loadFilesButton);
     mainVLayout->addLayout(visGLayout);
