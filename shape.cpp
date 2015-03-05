@@ -29,8 +29,9 @@ void Shape::clear()
     curr    = 0;
     max     = 1;
     centroids.clear();
-    blebs.clear();
+//    blebs.clear();
     contours.clear();
+    blebPoints.clear();
 }
 
 //void Shape::setNeedUpdate()
@@ -56,10 +57,15 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
     for(int n = 0; n < smoothContour.size(); n++)
         contour << QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y()));/**0.5*/
 
-    contours.push_back(contour);
-    blebs.push_back(bleb);
+//    QVector<QPoint> contour_in1frm;
+//    for(int n = 0; n < smoothContour.size(); n++)
+//        contour_in1frm.push_back( QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y())) );/**0.5*/
+//    contourPoints.push_back(contour_in1frm);
 
-    QVector<QPoint> points_in1frame;
+    contours.push_back(contour);
+//    blebs.push_back(bleb);
+
+    QVector<QPoint> points_in1frm;
     for(int k = 0; k < bleb.size(); k++){ // one bleb
         vector<polarPoint>  polarPBunch = bleb[k].bunch_polar;
         int num = polarPBunch.size();
@@ -68,10 +74,10 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
             polarPoint polarP = polarPBunch[l];
             int x = center.x + polarP.r * cos(polarP.theta);
             int y = center.y + polarP.r * sin(polarP.theta);
-            points_in1frame.push_back(QPoint(x,y));
+            points_in1frm.push_back(QPoint(x,y));
         }
     }
-    blebPoints.push_back(points_in1frame);
+    blebPoints.push_back(points_in1frm);
     //qDebug() << points_in1frame;
     /*
 //    qDebug() << "centroid " << cent;
@@ -179,6 +185,8 @@ void Shape::render(QPainter *painter)
     painter->setRenderHint(QPainter::Antialiasing);
 
     qreal size  = contours.size();
+//    qreal size  = contourPoints.size();
+
     if(size > 1){ // draw when data is valid
         // draw contours
 
@@ -189,10 +197,13 @@ void Shape::render(QPainter *painter)
         myPen.setWidth(1);
         for(int i = 0; i < int(size); i++){ // one frame
             // contours
-            painter->setOpacity(/*opacity*10*/0.01);
+            //painter->setOpacity(opacity*10);
+            painter->setOpacity(0.005);
             painter->setPen(myPen);
-            for(int j = 0; j < contours[i].size(); j++) // one contour
-                painter->drawPoint(contours[i][j]);
+//            for(int j = 0; j < contours[i].size(); j++) // one contour
+//                painter->drawPoint(contours[i][j]);
+//            painter->drawPoints(contourPoints[i].data(), contourPoints[i].size());
+            painter->drawPoints(contours[i]);
 
             // blebs
             //QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
