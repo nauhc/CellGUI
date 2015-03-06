@@ -178,7 +178,8 @@ void Shape::render(QPainter *painter)
     painter->rotate(-90); //***x->up, y->right***
     painter->setRenderHint(QPainter::Antialiasing);
 
-    qreal size  = contours.size();
+    //qreal size  = contours.size();
+    qreal size  = contours.size() > max ? max : contours.size();
 //    qreal size  = contourPoints.size();
 
     if(size > 1){ // draw when data is valid
@@ -194,7 +195,7 @@ void Shape::render(QPainter *painter)
             //painter->setOpacity(opacity*10);
             painter->setOpacity(0.005);
             painter->setPen(myPen);
-            qreal scl = 0.8;
+            qreal scl = 0.7;
             painter->scale(scl, scl);
             painter->drawPoints(contours[i]);
             painter->scale(1/scl, 1/scl);

@@ -14,8 +14,9 @@ public:
     ~Coord();
 
     void updateCoord(QPointF point, int currFrame);
-    void getMaxFrm(unsigned int m);
-    void getMaxSize(QSize s);
+    void setMaxFrm(unsigned int m);
+    void setBeginFrm(unsigned int m);
+    void setMaxSize(QSize s);
     void clear();
 
 protected:
@@ -30,6 +31,7 @@ protected:
 
 private:
     unsigned int        maxFrm;
+    unsigned int        minFrm;
     unsigned int        currFrm;
 
     QVector<QPointF>    centroid;       // the values of a particular feature

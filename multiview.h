@@ -49,7 +49,8 @@ private:
 //    QVector<QString>  file_list;
 
 
-    QVector<QString>                        datafileNames; //stores all the filenames
+    //QVector<QString>                        datafileNames; //stores all the filenames
+    QVector<QFileInfo>                      datafileInfos; //stores all the filenames
     bool                                    filenamesLoaded;
     QWidget                                 *visContainer; // large conainer storing all the vis info
     VisWindow                               *visWindow; // large canvas for drawing all vis once
@@ -57,6 +58,11 @@ private:
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
     QVector<QVector<QPoint> >               centers;
+    QVector<qreal>                          pressure;
+    QVector<unsigned int>                   index_sort; // sorted index
+    unsigned int                            minFrm; // selecting frame range to show (min)
+    unsigned int                            maxFrm; // selecting frame range to show (max)
+
 
     QVBoxLayout *mainVLayout;
     QGridLayout *visGLayout;
@@ -68,6 +74,7 @@ private:
     bool    readDataFile(QString &filename);
     bool    readBlebsFile(QString &filename);
     bool    readContoursFile(QString &filename);
+    bool    readExpParaFile(QString &filename);
     QImage  readImgFile(QString fp, unsigned int idx);
     void    clearVis();
     void    clearData();

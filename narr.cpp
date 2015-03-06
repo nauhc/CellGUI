@@ -56,7 +56,7 @@ void Narr::clear()
     angle       = 0;
     mouseIndex  = 0;
 
-    propType    = 0;
+    propType    = 1;
 }
 
 Narr::~Narr()
@@ -64,7 +64,7 @@ Narr::~Narr()
 
 }
 
-void Narr::setBeginFrame(int beginFrame)
+void Narr::setBeginFrm(int beginFrame)
 {
     begin = beginFrame;
     std::cout << "NARRATIVE VIS BEGIN frame number " << begin << std::endl;
@@ -72,8 +72,8 @@ void Narr::setBeginFrame(int beginFrame)
 
 void Narr::setMaxFrm(unsigned int m)
 {
-//    max = m;
-    max = 5000;
+    max = m;
+//    max = 5000;
     std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
 }
 
@@ -269,7 +269,8 @@ void Narr::drawCircularBarChart_fixMax(QPainter *painter,
         painter->setPen(myPen);
         painter->setBrush(QBrush(color));
 
-        int number = feature.size();
+        //int number = feature.size();
+        int number = feature.size() < max ?  feature.size() : max;
         for(int n = 0; n < number; n++){
             //qDebug() << feature[n];
             //rotate and translate from the center to location on the ring
@@ -302,7 +303,8 @@ void Narr::drawCircularBarChart_bleb(QPainter *painter,
 //        painter->setPen(myPen);
 //        painter->setBrush(QBrush(color));
 
-        int number = feature.size();
+        //int number = feature.size();
+        int number = feature.size() < max ?  feature.size() : max;
         for(int n = 0; n < number; n++){
             qreal size = blebAvgSize[n] > BlebSizeMin ? blebAvgSize[n] - BlebSizeMin : 0;
             qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
@@ -452,15 +454,6 @@ void Narr::render(QPainter *painter)
     qreal ringArcThickness      = .05 * halfS;
     drawRingArc(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
 
-//    // draw total frame number inside the ring
-//    if(propSeq.size() > 0){
-//        painter->rotate(90);
-//        painter->setPen(QColor(128, 128, 128));
-//        painter->drawText(-60, -20, 120, 20, Qt::AlignCenter, QString::number(int(curr)));
-//        painter->drawText(-60, -10, 120, 20, Qt::AlignCenter, "-----");
-//        painter->drawText(-60,   2, 120, 20, Qt::AlignCenter, QString::number(int(max)));
-//        painter->rotate(-90);
-//    }
 
     // draw real-time changing ring arcs
     float p = float(curr-begin)/(max-begin);
@@ -498,15 +491,15 @@ void Narr::render(QPainter *painter)
         painter->rotate(180);
     }
     else if(propType == 1){ // perimeter
-        qreal maxPerimeter = 100;
-        qreal minPerimeter = 30;
+        qreal maxPerimeter = 300;
+        qreal minPerimeter = 50;
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(PURPLE, 0.95));
         drawCircularBarChart_fixMax(painter, perimeter, minPerimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
         painter->rotate(180);
         painter->setPen(PURPLE);
         painter->drawLine(QPointF(0, -propBarInnerRadius), QPointF(0, -propBarInnerRadius-propBarThickness-2));
         painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxPerimeter))+" μm");
-        painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, "0 μm");
+        painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(minPerimeter))+" μm");
         painter->rotate(180);
     }
     else if(propType == 2){ // bleb
@@ -527,33 +520,6 @@ void Narr::render(QPainter *painter)
     painter->rotate(90); //***x->up, y->right***
     //painter->drawLine(QPoint(0, 0), QPoint(50, 0)); // x
     //painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
-
-    /*
-    // draw cells (key stages)
-//    qreal cellRadius = ringArcInnerRadius + ringArcThickness + 40;
-//    int stp = (max-begin)/9;
-//    for(int n = 0; n < cellImg.size(); n+=stp)
-//    {
-//        float degree = n * 360./(max-begin);
-//        int x_center = cellRadius * cos(degree*M_PI/180);
-//        int y_center = cellRadius * sin(degree*M_PI/180);
-
-//        painter->translate(x_center, y_center);
-//        painter->rotate(90);
-
-//        //        float opa;
-//        //        opa = 0.2 + (n/stp+1) * 0.8/(cellImg.size()/stp+1); // set opacity
-//        //        painter->setOpacity(opa);
-//        //        QPen penContour(QColor(153, 204, 49));
-//        //        penContour.setWidth(2);
-//        //        painter->setPen(penContour);
-//        //        painter->drawPoints(contours[n]);
-//        painter->drawImage(-cellImg[n].width()/2, -cellImg[n].height()/2, cellImg[n]);
-
-//        painter->rotate(-90);
-//        painter->translate(-x_center, -y_center);
-//    }
-*/
 
     //draw frame index indicator
     painter->setPen(QPen(GREEN));

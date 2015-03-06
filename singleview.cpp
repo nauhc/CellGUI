@@ -211,7 +211,7 @@ void SingleView::loadButton_clicked()
             playerSlider->setMaximum(controller->getNumberOfFrames());
             frmLabelRight->setText(" 0 / " + QString::number(controller->getNumberOfFrames()));
             nar->setMaxFrm(controller->getNumberOfFrames());
-            cod->getMaxSize(controller->getVideoSize());
+            cod->setMaxSize(controller->getVideoSize());
         }
     }
     else{
@@ -611,7 +611,7 @@ void SingleView::drawROIButton_clicked()
 
         controller->pauseVideo();
 
-        nar->setBeginFrame(controller->getCurrentFrame());
+        nar->setBeginFrm(controller->getCurrentFrame());
 
         encircler_->clearCircle();
         encircler_->turnOnEncircleMode();

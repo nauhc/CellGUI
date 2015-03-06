@@ -72,9 +72,14 @@ void Coord::updateCoord(QPointF point, int currFrame)
     update();
 }
 
-void Coord::getMaxFrm(unsigned int m)
+void Coord::setMaxFrm(unsigned int m)
 {
     maxFrm = m;
+}
+
+void Coord::setBeginFrm(unsigned int m)
+{
+    minFrm = m;
 }
 
 void Coord::setPixel(QString text)
@@ -91,7 +96,7 @@ void Coord::setMicMeter(QString text)
 //    cout << "micrometerPerPixel: " << micMtr_Pixel << endl;
 }
 
-void Coord::getMaxSize(QSize s) // video size
+void Coord::setMaxSize(QSize s) // video size
 {
     max = QPoint(s.width(), s.height());
     min = QPoint(0, 0);
@@ -305,7 +310,8 @@ void Coord::render(QPainter *painter)
 
 
     // *** draw coordinates of each frame ***
-    int size = centroid.size();
+    //int size = centroid.size();
+    int size = centroid.size() > maxFrm ? maxFrm : centroid.size();
     for(int n = startIndex; n < size; n++/*n+=10*/)
     {
         //QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);

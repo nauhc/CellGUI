@@ -12,8 +12,9 @@ class Narr : public OpenGLWindow
 public:
     Narr(QWidget *parent = 0);
     ~Narr();
-    void setBeginFrame(int beginFrame);
+    void setBeginFrm(int beginFrame);
     void setMaxFrm(unsigned int m);
+    void setPropType(int);
     void updateProperty(floatArray prop, int currFrame);
     void updateCellImg(QImage &cell);
     void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour); // when need the cell image contours
@@ -77,7 +78,7 @@ private:
     void mouseMoveEvent(QMouseEvent *ev);
 
 private slots:
-    void setPropType(int);
+    //void setPropType(int);
 
 };
 
