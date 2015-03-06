@@ -38,11 +38,18 @@ private:
     Ui::MainWindow  *ui;
     QHBoxLayout     *centralLayout;
 
+
     //read temporal data from file
     bool             fileMode;
     QMenu           *fileMenu;
     QAction         *loadMultiViewAct;
     QAction         *loadSigleViewAct;
+
+    // for multiview only
+    QMenu           *viewMenu;
+    QAction         *viewByProp1Act;
+    QAction         *viewByProp2Act;
+    QAction         *viewByProp3Act;
 
 
     vector<floatArray>  cellData;

@@ -36,6 +36,8 @@ public slots:
 //    void updateCellImg(QImage, QVector<QPoint> /*smoothContour*/);
 //    void updateContourNBlebs(QVector<Bleb>, QVector<QPoint>, QPoint);
 
+    void viewByProp1();
+
 private:
     //vector
 //    QVector<QWidget>  container_nar;

@@ -58,7 +58,8 @@ private:
                                qreal strtRto, QColor color);
 
     void drawCircularBarChart_fixMax(QPainter *painter,
-                                     std::vector<float> feature, qreal maxV,
+                                     std::vector<float> feature,
+                                     qreal minV, qreal maxV,
                                      qreal innerRadius, qreal thickness,
                                      QColor color);
 

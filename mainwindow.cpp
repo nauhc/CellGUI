@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // set to singleview at the beginning
-    loadSigleView();
+//    loadSigleView();
 
     // set to cultiview at the beginning
-    //loadMultiView();
+    loadMultiView();
 
     // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -61,6 +61,11 @@ void MainWindow::loadMultiView()
     MultiView *multiview = new MultiView(this->centralWidget());
     centralLayout->addWidget(multiview);
     this->showMaximized();
+
+    viewMenu = menuBar()->addMenu(tr("MultiView"));
+    viewByProp1Act = new QAction(tr("&view by Area"), this);
+    //connect(viewByProp1Act, SIGNAL(triggered()), multiview, SLOT());
+
 }
 
 void MainWindow::loadSigleView()

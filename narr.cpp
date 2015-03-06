@@ -257,7 +257,8 @@ void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
 }
 
 void Narr::drawCircularBarChart_fixMax(QPainter *painter,
-                                       std::vector<float> feature, qreal maxV,
+                                       std::vector<float> feature,
+                                       qreal minV, qreal maxV,
                                        qreal innerRadius,
                                        qreal thickness,
                                        QColor color)
@@ -276,7 +277,8 @@ void Narr::drawCircularBarChart_fixMax(QPainter *painter,
             painter->rotate(degree);
             painter->translate(0, innerRadius);
             //draw a bar
-            float barheight = float(feature[n]) * thickness/ maxV;
+            //float barheight = float(feature[n]) * thickness/ maxV; // minV == 0;
+            float barheight = float(feature[n] - minV) * thickness/ (maxV - minV);
             float w = /*2.*M_PI/(max-begin)*number*/1;
             painter->drawRect(0, 0, w, barheight);
             // translate and rotate back to the center
@@ -483,24 +485,23 @@ void Narr::render(QPainter *painter)
 //    drawCircularLineChart(painter, area, propBarInnerRadius, propBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
     if(propType == 0){ // area
-        qreal maxArea = /*250*/800;
+        qreal maxArea = 1300;
+        qreal minArea = 200;
 
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(ORANGE, 0.95));
-        drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
-//        drawCircularBarChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.7));
-//        drawCircularLineChart_fixMax(painter, area, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
+        drawCircularBarChart_fixMax(painter, area, minArea, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
         painter->rotate(180);
         painter->setPen(ORANGE);
         painter->drawLine(QPointF(0, -propBarInnerRadius), QPointF(0, -propBarInnerRadius-propBarThickness-2));
         painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxArea))+" μm²");
-        painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, "0 μm²");
+        painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(minArea))+" μm²");
         painter->rotate(180);
     }
     else if(propType == 1){ // perimeter
-        drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(PURPLE, 0.95));
         qreal maxPerimeter = 100;
-        drawCircularBarChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
-//        drawCircularLineChart_fixMax(painter, perimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
+        qreal minPerimeter = 30;
+        drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(PURPLE, 0.95));
+        drawCircularBarChart_fixMax(painter, perimeter, minPerimeter, maxPerimeter, propBarInnerRadius, propBarThickness, gradualColor(PURPLE, 0.3));
         painter->rotate(180);
         painter->setPen(PURPLE);
         painter->drawLine(QPointF(0, -propBarInnerRadius), QPointF(0, -propBarInnerRadius-propBarThickness-2));
@@ -512,7 +513,6 @@ void Narr::render(QPainter *painter)
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(BLUE, 0.95));
         qreal maxBlebNum = 7;
         drawCircularBarChart_bleb(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, BLUE/*gradualColor(BLUE, 0.3)*/);
-//        drawCircularLineChart_fixMax(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, gradualColor(BLUE, 0.3));
         painter->rotate(180);
         painter->setPen(BLUE);
         painter->drawLine(QPointF(0, -propBarInnerRadius), QPointF(0, -propBarInnerRadius-propBarThickness-2));

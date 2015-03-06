@@ -194,7 +194,10 @@ void Shape::render(QPainter *painter)
             //painter->setOpacity(opacity*10);
             painter->setOpacity(0.005);
             painter->setPen(myPen);
+            qreal scl = 0.8;
+            painter->scale(scl, scl);
             painter->drawPoints(contours[i]);
+            painter->scale(1/scl, 1/scl);
 
             // blebs
             //QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
@@ -202,13 +205,11 @@ void Shape::render(QPainter *painter)
             QColor c = colorMap.cubehelix(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
             painter->setOpacity(1);
             painter->setPen(QPen(c));
-            qreal scl = 1.4;
-            painter->scale(scl, scl);
+
 
             //for(int i = 0; i < blebPoints.size(); i++){
             painter->drawPoints(blebPoints[i].data(), blebPoints[i].size());
             //}
-            painter->scale(1/scl, 1/scl);
         }
     }
 
