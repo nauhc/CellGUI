@@ -2,12 +2,15 @@
 #define MULTIVIEW_H
 
 #include <QWidget>
+#include <QSlider>
+#include <QComboBox>
 #include <QBoxLayout>
 #include <QSpacerItem>
 #include <QLabel>
 #include <QPushButton>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDockWidget>
 #include "style.h"
 #include "viswindow.h"
 #include "narr.h"
@@ -20,6 +23,7 @@ class MultiView : public QWidget
     Q_OBJECT
 public:
     explicit MultiView(QWidget *parent = 0);
+    void    createDockMenu(QDockWidget *dockWidget);
 
 signals:
 //    void readProperties(floatArray prop);
@@ -51,6 +55,7 @@ private:
 
     //QVector<QString>                        datafileNames; //stores all the filenames
     QVector<QFileInfo>                      datafileInfos; //stores all the filenames
+    QVector<bool>                           datafileRea; //stores all the filenames
     bool                                    filenamesLoaded;
     QWidget                                 *visContainer; // large conainer storing all the vis info
     VisWindow                               *visWindow; // large canvas for drawing all vis once
@@ -64,10 +69,18 @@ private:
     unsigned int                            maxFrm; // selecting frame range to show (max)
 
 
-    QVBoxLayout *mainVLayout;
-    QGridLayout *visGLayout;
+    QVBoxLayout                             *mainVLayout;
+    QGridLayout                             *visGLayout;
 
-    QPushButton *loadFilesButton;
+    QPushButton                             *loadFilesButton;
+
+    QDockWidget                             *dock; // UI for manipulating vis
+    QSlider                                 *timeSlider;
+    QVBoxLayout                             *singlePropHLayout;
+    QComboBox                               *propertyComBox;
+
+
+    QDockWidget                             *dataFiles;
 
     void    getFileNames();
     bool    readFiles();
@@ -78,7 +91,6 @@ private:
     QImage  readImgFile(QString fp, unsigned int idx);
     void    clearVis();
     void    clearData();
-
 
     void    createLoadFilesButton();
     void    createVisCanvas();

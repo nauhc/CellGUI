@@ -50,6 +50,7 @@ private:
     QAction         *viewByProp1Act;
     QAction         *viewByProp2Act;
     QAction         *viewByProp3Act;
+    QDockWidget     *dock;
 
 
     vector<floatArray>  cellData;

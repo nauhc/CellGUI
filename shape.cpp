@@ -5,8 +5,8 @@
 //#include "cubehelix.h"
 #include "colormap.h"
 
-const int Shape_COLOR_START = /*30*/0;
-const int Shape_COLOR_RANGE = /*90*/230;
+const int Shape_COLOR_START = 30/*0*/;
+const int Shape_COLOR_RANGE = 90/*230*/;
 
 
 Shape::Shape(QObject *parent)

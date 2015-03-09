@@ -16,17 +16,6 @@ MultiView::MultiView(QWidget *parent) :
     mainVLayout = new QVBoxLayout(this);
     visGLayout = new QGridLayout();
 
-
-    //    visGLayout->addWidget(nar_container1, 0, 0);
-    //    visGLayout->addWidget(nar_container2, 0, 1);
-    //    visGLayout->addWidget(nar_container3, 0, 2);
-    //    visGLayout->addWidget(cod_container1, 1, 0);
-    //    visGLayout->addWidget(cod_container2, 1, 1);
-    //    visGLayout->addWidget(cod_container3, 1, 2);
-    //    visGLayout->addWidget(shp_container1, 2, 0);
-    //    visGLayout->addWidget(shp_container2, 2, 1);
-    //    visGLayout->addWidget(shp_container3, 2, 2);
-
     createLoadFilesButton();
     //    createVisCanvas();
 
@@ -72,6 +61,30 @@ void MultiView::clearData()
 //    container_cod.clear();
 //    container_nar.clear();
 //    container_shp.clear(); */
+}
+
+void MultiView::createDockMenu(QDockWidget *dockWidget)
+{
+//    dock = new QDockWidget(tr("Control Area"), this);
+
+//    dock->setAllowedAreas(Qt::RightDockWidgetArea);
+//    dock->setFixedWidth(300);
+////    dock->setFloating(true);
+
+
+    // property combobox
+    singlePropHLayout = new QVBoxLayout();
+    propertyComBox = new QComboBox();
+    propertyComBox->addItem("Area");
+    propertyComBox->addItem("Perimeter");
+    propertyComBox->addItem("Bleb size and number");
+    propertyComBox->setEnabled(true);
+    propertyComBox->setStyleSheet(BUTTON_RELEASED_ON);
+    singlePropHLayout->addWidget(new QLabel("Property"));
+    singlePropHLayout->addWidget(propertyComBox);
+
+    dockWidget->setLayout(singlePropHLayout);
+
 }
 
 void MultiView::loadFilesButton_pressed()
@@ -182,6 +195,16 @@ bool MultiView::readFiles()
     //containerSide = (this->height()-space*6)/7;
     containerSide = (this->height()-space*3 - 20*4)/4 - 20;
 
+//    for(int n = 0; n < fileNum; n++){
+
+//        if(!datafilename.isEmpty()){
+//            QString datafilename = datafileInfos[index].absoluteFilePath();
+////            if(readDataFile())
+
+//        }
+
+//    }
+
 
     for(int j = 0; j < int(fileNum/7); j++){
 
@@ -198,7 +221,7 @@ bool MultiView::readFiles()
                 //QFileInfo   fi  = QFileInfo(datafileNames[index]);
                 qDebug() << "Reading file " << datafilename;
                 if(readDataFile(datafilename)){
-                    maxFrm = 5000;
+                    maxFrm = /*5000*/100;
                     unsigned int cellDataSize = cellData[index].size();
                     if(cellDataSize > 20){
                         int idxMin = cellData[index][0][0];

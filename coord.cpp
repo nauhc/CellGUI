@@ -10,12 +10,12 @@
 #include "colormap.h"
 
 const QColor _BLUE_   = QColor(28, 120, 159);
-const int COLOR_RANGE = 180;
+//const int COLOR_RANGE = 180;
 const int startIndex = 20;
 const qreal scale = 0.75; // <=1.0 the scale of the canvas that can be used to draw coordinates
 
-const int Coord_COLOR_START = /*30*/0;
-const int Coord_COLOR_RANGE = /*90*/230;
+const int Coord_COLOR_START = 30/*0*/;
+const int Coord_COLOR_RANGE = 90/*230*/;
 
 
 Coord::Coord(QWidget *parent)
