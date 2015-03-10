@@ -20,8 +20,8 @@ QColor ColorMap::cubehelix(int strt, int range, int min, int max, int v)
     double fract = double(v-min)/double(min-max)*double(range)/255.+double(strt+range)/255.;
 
     double start = 0.5;
-    double rots = -1.5;
-    double hue = 1.5/*1.0*/;
+    double rots = 0.1 /*-1.5*/;
+    double hue = /*1.5*/1.0;
     double gamma = 1.0;
 
     /* variables */

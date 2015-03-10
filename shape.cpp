@@ -5,8 +5,8 @@
 //#include "cubehelix.h"
 #include "colormap.h"
 
-const int Shape_COLOR_START = 30/*0*/;
-const int Shape_COLOR_RANGE = 90/*230*/;
+const int Shape_COLOR_START = /*30*/0;
+const int Shape_COLOR_RANGE = /*90*/230;
 
 
 Shape::Shape(QObject *parent)
@@ -55,9 +55,16 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 {
     QPolygon contour;
     for(int n = 0; n < smoothContour.size(); n++)
-        contour << QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y()));/**0.5*/
+//        contour << QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y()));/**0.5*/
+        contour << QPoint((smoothContour[n].y()-cent.y()), (smoothContour[n].x()-cent.x()));/**0.5*/  // x and y coordincates exchanged for drawing purpose
+
+//    QVector<QPoint> contour;
+//    for(int n = 0; n < smoothContour.size(); n++)
+//        contour.push_back(QPoint((smoothContour[n].y()-cent.y()), (smoothContour[n].x()-cent.x())));/**0.5*/
+//    //qDebug() << contour;
 
     contours.push_back(contour);
+
 
     QVector<QPoint> points_in1frm;
     for(int k = 0; k < bleb.size(); k++){ // one bleb
@@ -188,16 +195,17 @@ void Shape::render(QPainter *painter)
         qreal opacity = 1/size;
         //qDebug() << size << trans;
 
-        QPen myPen(QColor(123, 57, 144));
+//        QPen myPen(QColor(123, 57, 144));
+        QPen myPen(QColor(32, 32, 32));
         myPen.setWidth(1);
         for(int i = 0; i < int(size); i++){ // one frame
             // contours
             //painter->setOpacity(opacity*10);
-            painter->setOpacity(0.005);
+            painter->setOpacity(0.05);
             painter->setPen(myPen);
             qreal scl = 0.7;
             painter->scale(scl, scl);
-            painter->drawPoints(contours[i]);
+            painter->drawPoints(contours[i].data(), contours[i].size());
             painter->scale(1/scl, 1/scl);
 
             // blebs

@@ -175,11 +175,11 @@ void MultiView::createLoadFilesButton()
 
 void MultiView::createVisCanvas()
 {
-    visWindow = new VisWindow();
-    visContainer = QWidget::createWindowContainer(visWindow, this);
+//    visWindow = new VisWindow();
+//    visContainer = QWidget::createWindowContainer(visWindow, this);
     //    visContainer->setMinimumSize(this->width()*0.8, this->height()*0.8);
-    visContainer->setBaseSize(this->width()*0.8, this->height()*0.8);
-    visWindow->resize(/*visContainer->size()*/ QSize(1024, 768));
+//    visContainer->setBaseSize(this->width()*0.8, this->height()*0.8);
+//    visWindow->resize(/*visContainer->size()*/ QSize(1024, 768));
 }
 
 bool MultiView::readFiles()
@@ -242,14 +242,14 @@ bool MultiView::readFiles()
 
 
 
-                    Narr *nar_tmp = new Narr();
-                    QWidget *nar_container = QWidget::createWindowContainer(nar_tmp, this);
-                    nar_container->setFixedSize(containerSide, containerSide+10);
-//                    nar_tmp->setPropType(0); // show "area"
-                    nar_tmp->setPropType(1); // show "perimeter"
-                    //nar_tmp->setPropType(2); // show "bleb"
-                    nar_tmp->setBeginFrm(idxMin);
-                    nar_tmp->setMaxFrm(maxFrm);
+//                    Narr *nar_tmp = new Narr();
+//                    QWidget *nar_container = QWidget::createWindowContainer(nar_tmp, this);
+//                    nar_container->setFixedSize(containerSide, containerSide+10);
+////                    nar_tmp->setPropType(0); // show "area"
+//                    nar_tmp->setPropType(1); // show "perimeter"
+//                    //nar_tmp->setPropType(2); // show "bleb"
+//                    nar_tmp->setBeginFrm(idxMin);
+//                    nar_tmp->setMaxFrm(maxFrm);
 
 
 
@@ -264,38 +264,40 @@ bool MultiView::readFiles()
 ////                    visGLayout->addWidget(nar_container, 1, i);
 //                    //visGLayout->addWidget(cod_container, 2, i);
 
-                    for(unsigned int n = 0; n < cellDataSize; n++){
-                        // data
-                        //emit readProperties(cellData[index][n]);
-                        nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0]);
-                        //cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
-                        //qDebug() << cellData[index][n][3] << " " <<  cellData[index][n][4] << " " << cellData[index][n][0];
-                        // img
-                        //QImage img = readImgFile(fi.path(), cellData[index][n][0]);
-                        //emit readCellImg(img);
-                    }
+//                    for(unsigned int n = 0; n < cellDataSize; n++){
+//                        // data
+//                        //emit readProperties(cellData[index][n]);
+//                        nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0]);
+//                        //cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
+//                        //qDebug() << cellData[index][n][3] << " " <<  cellData[index][n][4] << " " << cellData[index][n][0];
+//                        // img
+//                        //QImage img = readImgFile(fi.path(), cellData[index][n][0]);
+//                        //emit readCellImg(img);
+//                    }
 
 
-                    visGLayout->addWidget(nar_container, 2*j+1, i);
+//                    visGLayout->addWidget(nar_container, 2*j+1, i);
 
-//                        // bleb size
-//                        if(readBlebsFile(datafilename) && readContoursFile(datafilename)){
-//                            int SIZE = contours[index].size() >= blebs[index].size() ? blebs[index].size() : contours[index].size();
-//                            Shape *shp_tmp = new Shape();
+                        // bleb size
+                        if(readBlebsFile(datafilename) && readContoursFile(datafilename)){
+                            int SIZE = contours[index].size() >= blebs[index].size() ? blebs[index].size() : contours[index].size();
+                            Shape *shp_tmp = new Shape();
+                            shp_tmp->setFixedSize(containerSide, containerSide);
 //                            QWidget *shp_container = QWidget::createWindowContainer(shp_tmp, this);
-//                            shp_container->setFixedSize(containerSide, containerSide);
-//                            shp_tmp->setBeginFrm(idxMin);
-//                            shp_tmp->setMaxFrm(maxFrm);
+                            //shp_container->setFixedSize(containerSide, containerSide);
+                            shp_tmp->setBeginFrm(idxMin);
+                            shp_tmp->setMaxFrm(maxFrm);
 
-//                            //visGLayout->addWidget(shp_container, 3, i);
-//                            visGLayout->addWidget(shp_container, 2*j+1, i);
+                            //visGLayout->addWidget(shp_container, 3, i);
+                            //visGLayout->addWidget(shp_container, 2*j+1, i);
+                            visGLayout->addWidget(shp_tmp, 2*j+1, i);
 
-//                            for(int n = 0; n < SIZE; n++){
-//                                //emit readContourNBlebs(blebs[index][n], contours[index][n], centers[index][n]);
-//                                shp_tmp->updateContourNBleb(blebs[index][n], contours[index][n], centers[index][n]);
-//                            }
-//                            shp_tmp->setNeedUpdate();
-//                        }
+                            for(int n = 0; n < SIZE; n++){
+                                //emit readContourNBlebs(blebs[index][n], contours[index][n], centers[index][n]);
+                                shp_tmp->updateContourNBleb(blebs[index][n], contours[index][n], centers[index][n]);
+                            }
+                            //shp_tmp->setNeedUpdate();
+                        }
 
 
                         //parameter

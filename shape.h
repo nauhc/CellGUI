@@ -33,6 +33,7 @@ private:
 
     QVector<QPoint>             centroids; // the values of a particular feature
     QVector<QPolygon>           contours; // smoothed contours
+//    QVector<QVector<QPoint> >   contours; // smoothed contours
     QVector<QVector<QPoint> >   blebPoints; // blebs
 
 signals:

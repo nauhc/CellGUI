@@ -58,7 +58,7 @@ private:
     QVector<bool>                           datafileRea; //stores all the filenames
     bool                                    filenamesLoaded;
     QWidget                                 *visContainer; // large conainer storing all the vis info
-    VisWindow                               *visWindow; // large canvas for drawing all vis once
+    //VisWindow                               *visWindow; // large canvas for drawing all vis once
     std::vector<std::vector<floatArray> >   cellData;
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;

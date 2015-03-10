@@ -1,3 +1,5 @@
+
+#if 0
 #include <QCoreApplication>
 #include <QPainter>
 #include <QResizeEvent>
@@ -155,3 +157,4 @@ void OpenGLWindow::update()
 {
     renderNow();
 }
+#endif
