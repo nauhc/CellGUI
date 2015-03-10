@@ -137,8 +137,6 @@ private:
     Encircle    *encircler_;
     bool         encircled_;
 
-
-
     // UI
     void createOrignalVideo();
     void createROIVideo();

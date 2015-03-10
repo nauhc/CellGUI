@@ -46,8 +46,8 @@ SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Contro
     createNarrVis();
     createCoordVis();
 
-    botHLayout->addWidget(nar_container);
-    botHLayout->addWidget(cod_container);
+    botHLayout->addWidget(nar);
+    botHLayout->addWidget(cod);
 
 
     //************* Main = top + bottom *********
@@ -709,21 +709,26 @@ void SingleView::createPropertySelector()
 
 void SingleView::createNarrVis()
 {
-//    nar = new Narr();
+    nar = new Narr();
 //    nar_container = QWidget::createWindowContainer(nar, this);
 //    nar_container->setMinimumSize(512, 512);
 //    nar_container->setMaximumSize(640, 640);
+    nar->setMinimumSize(512, 512);
+    nar->setMaximumSize(640, 640);
 
-//    connect(propComBox, SIGNAL(currentIndexChanged(int)),
-//            nar, SLOT(setPropType(int)));
+    connect(propComBox, SIGNAL(currentIndexChanged(int)),
+            nar, SLOT(setPropType(int)));
 }
 
 void SingleView::createCoordVis()
 {
-//    cod = new Coord();
+    cod = new Coord();
 //    cod_container = QWidget::createWindowContainer(cod, this);
 //    cod_container->setMinimumSize(512, 512);
 //    cod_container->setMaximumSize(640, 640);
+
+    cod->setMinimumSize(512, 512);
+    cod->setMaximumSize(640, 640);
 }
 
 void calcSizes(int &videoWidth, int &videoHeight,
@@ -773,7 +778,6 @@ void SingleView::setCanvas()
     int x2, y2, w2, h2;
     double scale2;
     calcSizes(width, height, roiVdo2->x(), roiVdo2->y(), roiVdo2->width(), roiVdo2->height(), x2, y2, w2, h2, scale2);
-
 
 
 //    cout << "orgVideo Widget: x " << _orgVideo->x() << " y " << _orgVideo->y()

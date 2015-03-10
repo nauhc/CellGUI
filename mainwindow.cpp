@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 
     // set to singleview at the beginning
-    //loadSigleView();
+//    loadSigleView();
 
     // set to cultiview at the beginning
     loadMultiView();
@@ -60,6 +60,7 @@ MainWindow::~MainWindow(){
 void MainWindow::loadMultiView()
 {
 
+    this->showMaximized();
 
     fileMode = true;
 
@@ -69,21 +70,15 @@ void MainWindow::loadMultiView()
 
     MultiView *multiview = new MultiView(this->centralWidget());
     centralLayout->addWidget(multiview);
-    this->showMaximized();
 
     dock->show();
     multiview->createDockMenu(dock);
-
-
-    viewMenu = menuBar()->addMenu(tr("MultiView")); // delete!!!
-    viewByProp1Act = new QAction(tr("&view by Area"), this);
-    //connect(viewByProp1Act, SIGNAL(triggered()), multiview, SLOT());
 
 }
 
 void MainWindow::loadSigleView()
 {
-    //dock->hide();
+    dock->hide();
 
     fileMode = false;
     if(!centralLayout->isEmpty()){
@@ -93,7 +88,6 @@ void MainWindow::loadSigleView()
     SingleView *singleview = new SingleView(this->centralWidget());
     centralLayout->addWidget(singleview);
     this->setFixedSize(1280, 1300);
-//    this->showMaximized();
 
 }
 

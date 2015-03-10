@@ -46,10 +46,6 @@ private:
     QAction         *loadSigleViewAct;
 
     // for multiview only
-    QMenu           *viewMenu;
-    QAction         *viewByProp1Act;
-    QAction         *viewByProp2Act;
-    QAction         *viewByProp3Act;
     QDockWidget     *dock;
 
 

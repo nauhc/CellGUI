@@ -72,18 +72,18 @@ void MultiView::createDockMenu(QDockWidget *dockWidget)
 ////    dock->setFloating(true);
 
 
-    // property combobox
-    singlePropHLayout = new QVBoxLayout();
-    propertyComBox = new QComboBox();
-    propertyComBox->addItem("Area");
-    propertyComBox->addItem("Perimeter");
-    propertyComBox->addItem("Bleb size and number");
-    propertyComBox->setEnabled(true);
-    propertyComBox->setStyleSheet(BUTTON_RELEASED_ON);
-    singlePropHLayout->addWidget(new QLabel("Property"));
-    singlePropHLayout->addWidget(propertyComBox);
+//    // property combobox
+//    singlePropHLayout = new QVBoxLayout();
+//    propertyComBox = new QComboBox();
+//    propertyComBox->addItem("Area");
+//    propertyComBox->addItem("Perimeter");
+//    propertyComBox->addItem("Bleb size and number");
+//    propertyComBox->setEnabled(true);
+//    propertyComBox->setStyleSheet(BUTTON_RELEASED_ON);
+//    singlePropHLayout->addWidget(new QLabel("Property"));
+//    singlePropHLayout->addWidget(propertyComBox);
 
-    dockWidget->setLayout(singlePropHLayout);
+//    dockWidget->setLayout(singlePropHLayout);
 
 }
 
