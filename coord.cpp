@@ -7,15 +7,16 @@
 #include <QTimer>
 #include "coord.h"
 //#include "cubehelix.h"
-#include "colormap.h"
+//#include "colormap.h"
+#include "cubicYFColormap.h"
 
 const QColor _BLUE_   = QColor(28, 120, 159);
 //const int COLOR_RANGE = 180;
 const int startIndex = 20;
 const qreal scale = 0.75; // <=1.0 the scale of the canvas that can be used to draw coordinates
 
-const int Coord_COLOR_START = 30/*0*/;
-const int Coord_COLOR_RANGE = 90/*230*/;
+const int Coord_COLOR_START = /*30*/0;
+const int Coord_COLOR_RANGE = /*90*/120;
 
 
 Coord::Coord(QWidget *parent)
@@ -225,8 +226,8 @@ void Coord::drawColorBar(QPainter *painter)
 
     for(int n = 0; n < bar_len; n++){
         //QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
-        ColorMap colorMap;
-        QColor c = colorMap.cubehelix(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
+        CubicYFColorMap colorMap;
+        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));
@@ -318,8 +319,8 @@ void Coord::render(QPainter *painter)
 
         QColor c;
         //c = mapNumToHue(60, COLOR_RANGE, 0, size, n);
-        ColorMap colorMap;
-        c = colorMap.cubehelix(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
+        CubicYFColorMap colorMap;
+        c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
         QPen penDot(c);
         painter->setPen(penDot);
         painter->setBrush(c);

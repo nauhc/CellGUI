@@ -397,6 +397,24 @@ void Narr::setPropType(int propTp)
     }
 }
 
+void Narr::setPropertyType(int propTp)
+{
+    propType = propTp;
+    switch(propType){
+    case 0:
+        std::cout << "Property Type 'Area' selected. \n" << std::endl;
+        break;
+    case 1:
+        std::cout << "Property Type: 'Perimeter' selected. \n" << std::endl;
+        break;
+    case 2:
+        std::cout << "Property Type: 'Bleb' selected. \n" << std::endl;
+        break;
+    default:
+        std::cout << "Property Type: 'Area' selected. \n" << std::endl;
+        break;
+    }
+}
 
 void drawTriangle(QPainter *painter,
                   qreal p0x, qreal p0y,

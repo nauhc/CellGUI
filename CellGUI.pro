@@ -41,7 +41,9 @@ SOURCES += main.cpp\
     singleview.cpp \
     shape.cpp \
     colormap.cpp \
-    viswindow.cpp
+    viswindow.cpp \
+    dockmenu.cpp \
+    cubicYFColormap.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -57,7 +59,9 @@ HEADERS  += mainwindow.h \
     style.h \
     shape.h \
     colormap.h \
-    viswindow.h
+    viswindow.h \
+    dockmenu.h \
+    cubicYFColormap.h
 
 FORMS    += mainwindow.ui
 

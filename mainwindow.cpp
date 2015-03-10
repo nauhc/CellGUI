@@ -21,11 +21,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->centralWidget()->setLayout(centralLayout);
     //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    dock = new QDockWidget(this);
-    this->addDockWidget(Qt::RightDockWidgetArea, dock);
-    //dock->setAllowedAreas(Qt::RightDockWidgetArea | Qt::TopDockWidgetArea);
-    dock->setFixedSize(300, 800);
-    //dock->showMaximized();
+//    dock = new QDockWidget(tr("Basic operations"), this);
+//    this->addDockWidget(Qt::RightDockWidgetArea, dock);
+//    //dock->setAllowedAreas(Qt::RightDockWidgetArea | Qt::TopDockWidgetArea);
+//    dock->setFixedSize(300, 800);
+//    //dock->showMaximized();
 
 
     // set to singleview at the beginning
@@ -71,13 +71,19 @@ void MainWindow::loadMultiView()
     MultiView *multiview = new MultiView(this->centralWidget());
     centralLayout->addWidget(multiview);
 
-    dock->show();
-    multiview->createDockMenu(dock);
+//    dockMenu = new DockMenu();
+//    //multiview->createDockMenu(dock);
+//    dock->setWidget(dockMenu);
+//    dockMenu->show();
+//    dock->showMaximized();
+////    dock->show();
 
 }
 
 void MainWindow::loadSigleView()
 {
+    this->setFixedSize(1280, 1300);
+
     dock->hide();
 
     fileMode = false;
@@ -87,7 +93,6 @@ void MainWindow::loadSigleView()
 
     SingleView *singleview = new SingleView(this->centralWidget());
     centralLayout->addWidget(singleview);
-    this->setFixedSize(1280, 1300);
 
 }
 

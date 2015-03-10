@@ -3,10 +3,11 @@
 #include <QTimer>
 #include <qdebug.h>
 //#include "cubehelix.h"
-#include "colormap.h"
+//#include "colormap.h"
+#include "cubicYFColormap.h"
 
 const int Shape_COLOR_START = /*30*/0;
-const int Shape_COLOR_RANGE = /*90*/230;
+const int Shape_COLOR_RANGE = /*90*/120;
 
 
 Shape::Shape(QObject *parent)
@@ -157,8 +158,8 @@ void Shape::drawColorBar(QPainter *painter){ // (center,
 
     for(int n = 0; n < bar_len; n++){
         //QColor c = _mapNumToHue_(60, COLOR_RANGE, 0, bar_len, n);
-        ColorMap colorMap;
-        QColor c = colorMap.cubehelix(Shape_COLOR_START, Shape_COLOR_RANGE, 0, bar_len, n);
+        CubicYFColorMap colorMap;
+        QColor c = colorMap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, bar_len, n);
         myPen.setWidth(0);
         painter->setPen(c);
         painter->setBrush(QBrush(c));
@@ -196,7 +197,7 @@ void Shape::render(QPainter *painter)
         //qDebug() << size << trans;
 
 //        QPen myPen(QColor(123, 57, 144));
-        QPen myPen(QColor(32, 32, 32));
+        QPen myPen(QColor(64, 64, 64));
         myPen.setWidth(1);
         for(int i = 0; i < int(size); i++){ // one frame
             // contours
@@ -210,8 +211,10 @@ void Shape::render(QPainter *painter)
 
             // blebs
             //QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
-            ColorMap colorMap;
-            QColor c = colorMap.cubehelix(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
+            CubicYFColorMap colormap;
+            QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
+//            ColorMap colorMap;
+//            QColor c = colorMap.cubehelix(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
             painter->setOpacity(1);
             painter->setPen(QPen(c));
 

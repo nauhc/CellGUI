@@ -12,8 +12,8 @@
 #include "areavis.h"
 #include "narr.h"
 #include "coord.h"
-
 #include "multiview.h"
+#include "dockmenu.h"
 
 typedef vector<float> floatArray;
 
@@ -47,7 +47,7 @@ private:
 
     // for multiview only
     QDockWidget     *dock;
-
+    DockMenu        *dockMenu;
 
     vector<floatArray>  cellData;
     //QString             *dataFilename;
