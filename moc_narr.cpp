@@ -72,7 +72,7 @@ void Narr::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void *
 }
 
 const QMetaObject Narr::staticMetaObject = {
-    { &OpenGLWindow::staticMetaObject, qt_meta_stringdata_Narr.data,
+    { &RenderWidget::staticMetaObject, qt_meta_stringdata_Narr.data,
       qt_meta_data_Narr,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
@@ -87,12 +87,12 @@ void *Narr::qt_metacast(const char *_clname)
     if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_Narr.stringdata))
         return static_cast<void*>(const_cast< Narr*>(this));
-    return OpenGLWindow::qt_metacast(_clname);
+    return RenderWidget::qt_metacast(_clname);
 }
 
 int Narr::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = OpenGLWindow::qt_metacall(_c, _id, _a);
+    _id = RenderWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {

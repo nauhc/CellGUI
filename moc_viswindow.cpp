@@ -61,7 +61,7 @@ void VisWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
 }
 
 const QMetaObject VisWindow::staticMetaObject = {
-    { &OpenGLWindow::staticMetaObject, qt_meta_stringdata_VisWindow.data,
+    { &RenderWidget::staticMetaObject, qt_meta_stringdata_VisWindow.data,
       qt_meta_data_VisWindow,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
@@ -76,12 +76,12 @@ void *VisWindow::qt_metacast(const char *_clname)
     if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_VisWindow.stringdata))
         return static_cast<void*>(const_cast< VisWindow*>(this));
-    return OpenGLWindow::qt_metacast(_clname);
+    return RenderWidget::qt_metacast(_clname);
 }
 
 int VisWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = OpenGLWindow::qt_metacall(_c, _id, _a);
+    _id = RenderWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;

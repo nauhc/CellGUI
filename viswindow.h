@@ -3,7 +3,7 @@
 #include "OpenGLWindow.h"
 #include <QImage>
 
-class VisWindow: public OpenGLWindow
+class VisWindow: public RenderWidget
 {
     Q_OBJECT
 

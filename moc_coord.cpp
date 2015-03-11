@@ -77,7 +77,7 @@ void Coord::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void 
 }
 
 const QMetaObject Coord::staticMetaObject = {
-    { &OpenGLWindow::staticMetaObject, qt_meta_stringdata_Coord.data,
+    { &RenderWidget::staticMetaObject, qt_meta_stringdata_Coord.data,
       qt_meta_data_Coord,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
@@ -92,12 +92,12 @@ void *Coord::qt_metacast(const char *_clname)
     if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_Coord.stringdata))
         return static_cast<void*>(const_cast< Coord*>(this));
-    return OpenGLWindow::qt_metacast(_clname);
+    return RenderWidget::qt_metacast(_clname);
 }
 
 int Coord::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = OpenGLWindow::qt_metacall(_c, _id, _a);
+    _id = RenderWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {

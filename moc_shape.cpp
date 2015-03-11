@@ -61,7 +61,7 @@ void Shape::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void 
 }
 
 const QMetaObject Shape::staticMetaObject = {
-    { &OpenGLWindow::staticMetaObject, qt_meta_stringdata_Shape.data,
+    { &RenderWidget::staticMetaObject, qt_meta_stringdata_Shape.data,
       qt_meta_data_Shape,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
@@ -76,12 +76,12 @@ void *Shape::qt_metacast(const char *_clname)
     if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_Shape.stringdata))
         return static_cast<void*>(const_cast< Shape*>(this));
-    return OpenGLWindow::qt_metacast(_clname);
+    return RenderWidget::qt_metacast(_clname);
 }
 
 int Shape::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = OpenGLWindow::qt_metacall(_c, _id, _a);
+    _id = RenderWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;

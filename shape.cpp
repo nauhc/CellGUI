@@ -17,11 +17,15 @@ Shape::Shape(QObject *parent)
 //    QTimer* timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 //    timer->start(1);
+    bufferSize = width() * height() * 4;
+    buffer = new unsigned char[bufferSize]();
+    for (int i = 0; i < bufferSize; i++)
+        buffer[i] = 255;
 }
 
 Shape::~Shape()
 {
-
+//    delete [] buffer;
 }
 
 void Shape::clear()
@@ -29,10 +33,12 @@ void Shape::clear()
     begin   = 0;
     curr    = 0;
     max     = 1;
-    centroids.clear();
 //    blebs.clear();
-    contours.clear();
-    blebPoints.clear();
+
+//    contours.clear();
+//    blebPoints.clear();
+
+
 }
 
 //void Shape::setNeedUpdate()
@@ -54,32 +60,57 @@ void Shape::setMaxFrm(int maxFrame)
 
 void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
 {
-    QPolygon contour;
-    for(int n = 0; n < smoothContour.size(); n++)
+
+    qreal scl = 0.7;
+//    QPolygon contour;
+    for(int n = 0; n < smoothContour.size(); n++){
 //        contour << QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y()));/**0.5*/
-        contour << QPoint((smoothContour[n].y()-cent.y()), (smoothContour[n].x()-cent.x()));/**0.5*/  // x and y coordincates exchanged for drawing purpose
+        // x and y coordincates exchanged for drawing purpose
+        int x = (smoothContour[n].y()-cent.y())*scl+this->width()/2;
+        int y = (smoothContour[n].x()-cent.x())*scl+this->height()/2;
+//        contour << QPoint(x, y);/**0.5*/
+        unsigned int pixel = (y*width()+x)*4;
+        if(pixel< 0 || pixel+3 >= bufferSize)
+            continue;
+        buffer[ pixel + 3 ] = 32;
+        buffer[ pixel + 2 ] = 64;
+        buffer[ pixel + 1 ] = 64;
+        buffer[ pixel + 0 ] = 64;
+    }
 
 //    QVector<QPoint> contour;
 //    for(int n = 0; n < smoothContour.size(); n++)
 //        contour.push_back(QPoint((smoothContour[n].y()-cent.y()), (smoothContour[n].x()-cent.x())));/**0.5*/
 //    //qDebug() << contour;
 
-    contours.push_back(contour);
+//    contours.push_back(contour);
 
 
-    QVector<QPoint> points_in1frm;
+    CubicYFColorMap colormap;
+    QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(6000), curr); // 6000 !!!!!
+
+//    QVector<QPoint> points_in1frm;
     for(int k = 0; k < bleb.size(); k++){ // one bleb
         vector<polarPoint>  polarPBunch = bleb[k].bunch_polar;
         int num = polarPBunch.size();
         Point center = bleb[k].center;
         for(int l = 0; l < num; l++){ // one point
             polarPoint polarP = polarPBunch[l];
-            int x = center.x + polarP.r * cos(polarP.theta);
-            int y = center.y + polarP.r * sin(polarP.theta);
-            points_in1frm.push_back(QPoint(x,y));
+//            int x = center.x + polarP.r * cos(polarP.theta);
+//            int y = center.y + polarP.r * sin(polarP.theta);
+            int x = (center.x + polarP.r * cos(polarP.theta))+this->width()/2;
+            int y = (center.y + polarP.r * sin(polarP.theta))+this->height()/2;
+//            points_in1frm.push_back(QPoint(x,y));
+            unsigned int pixel = (y*width()+x)*4;
+            if(pixel< 0 || pixel+3 >= bufferSize)
+                continue;
+            buffer[ pixel + 3] = c.alpha();
+            buffer[ pixel + 2] = c.red();
+            buffer[ pixel + 1] = c.green();
+            buffer[ pixel + 0] = c.blue();
         }
     }
-    blebPoints.push_back(points_in1frm);
+//    blebPoints.push_back(points_in1frm);
 
     /*
 //    qDebug() << "centroid " << cent;
@@ -105,6 +136,9 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 //    }
 */
 
+
+
+    curr++; // local counter
 }
 
 void Shape::initializeGL()
@@ -182,45 +216,63 @@ void Shape::render(QPainter *painter)
     QPointF center(halfW, halfH);
 
     // set the start angle to 0 o'clock;
-    painter->translate(center.x(), center.y());
-    painter->rotate(-90); //***x->up, y->right***
+
     painter->setRenderHint(QPainter::Antialiasing);
 
     //qreal size  = contours.size();
-    qreal size  = contours.size() > max ? max : contours.size();
+//    qreal size  = contours.size() > max ? max : contours.size();
 //    qreal size  = contourPoints.size();
 
-    if(size > 1){ // draw when data is valid
-        // draw contours
+//    if(size > 1){ // draw when data is valid
+//        // draw contours
 
-        qreal opacity = 1/size;
-        //qDebug() << size << trans;
+//        qreal opacity = 1/size;
+//        //qDebug() << size << trans;
 
-        QPen myPen(QColor(64, 64, 64)); // color for contours
-        myPen.setWidth(1);
-        for(int i = 0; i < int(size); i++){ // one frame
-            // contours
-            //painter->setOpacity(opacity*10);
-            painter->setOpacity(0.05);
-            painter->setPen(myPen);
-            qreal scl = 0.7;
-            painter->scale(scl, scl);
-            painter->drawPoints(contours[i].data(), contours[i].size());
-            painter->scale(1/scl, 1/scl);
+//        QPen myPen(QColor(64, 64, 64)); // color for contours
+//        myPen.setWidth(1);
+//        for(int i = 0; i < int(size); i++){ // one frame
+//            // contours
+//            //painter->setOpacity(opacity*10);
+//            painter->setOpacity(0.05);
+//            painter->setPen(myPen);
+//            qreal scl = 0.7;
+//            painter->scale(scl, scl);
+//            painter->drawPoints(contours[i].data(), contours[i].size());
+//            painter->scale(1/scl, 1/scl);
 
-            // blebs
-            CubicYFColorMap colormap;
-            QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
-            painter->setOpacity(1);
-            painter->setPen(QPen(c));
+//            // blebs
+//            CubicYFColorMap colormap;
+//            QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
+//            painter->setOpacity(1);
+//            painter->setPen(QPen(c));
 
 
-            //for(int i = 0; i < blebPoints.size(); i++){
-            painter->drawPoints(blebPoints[i].data(), blebPoints[i].size());
-            //}
-        }
-    }
+//            //for(int i = 0; i < blebPoints.size(); i++){
+//            painter->drawPoints(blebPoints[i].data(), blebPoints[i].size());
+//            //}
+//        }
+//    }
 
+//    buffer = new unsigned char[width() * height() * 4]();
+//    for (int i = 0; i < width() * height() * 4; i++)
+//        buffer[i] = 128;
+//    for (int i = 0; i < width() * 4; i += 4)
+//    {
+//        buffer[height() * 20 * 4 + i] = 255;
+//        buffer[height() * 20 * 4 + i + 3] = 255;
+
+//    }
+
+    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
+
+    //delete [] buffer;
+    //QImage img(buffer, width(), height(), QImage::Format_ARGB32);
+
+    painter->drawImage(0, 0, img);
+
+    painter->translate(center.x(), center.y());
+    painter->rotate(-90); //***x->up, y->right***
     drawColorBar(painter);
 
 //    this->needUpdate = false;

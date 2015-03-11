@@ -1,9 +1,9 @@
-
-#if 0
 #include <QCoreApplication>
 #include <QPainter>
 #include <QResizeEvent>
 #include "OpenGLWindow.h"
+
+#include <QVBoxLayout>
 
 OpenGLWindow::OpenGLWindow(QWindow *parent)
     : QWindow(parent)
@@ -54,6 +54,7 @@ void OpenGLWindow::render()
 void OpenGLWindow::render(QPainter *painter)
 {
     Q_UNUSED(painter);
+    emit renderEvent(painter);
 }
 
 void OpenGLWindow::makeCurrent()
@@ -157,4 +158,16 @@ void OpenGLWindow::update()
 {
     renderNow();
 }
-#endif
+
+GLRenderWidget::GLRenderWidget()
+{
+    OpenGLWindow *win = new OpenGLWindow();
+    QWidget *widget = QWidget::createWindowContainer(win, this);
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(widget);
+    setLayout(layout);
+
+    connect(win, SIGNAL(renderEvent(QPainter *)), this, SLOT(render(QPainter *)));
+}
+

@@ -3,7 +3,7 @@
 #include "OpenGLWindow.h"
 #include "bleb.h"
 
-class Shape : public OpenGLWindow
+class Shape : public RenderWidget
 {
     Q_OBJECT
 public:
@@ -31,10 +31,13 @@ private:
     unsigned int                curr; // current frame index
     unsigned int                max; // total number of frame
 
-    QVector<QPoint>             centroids; // the values of a particular feature
     QVector<QPolygon>           contours; // smoothed contours
 //    QVector<QVector<QPoint> >   contours; // smoothed contours
     QVector<QVector<QPoint> >   blebPoints; // blebs
+
+    unsigned char               *buffer;
+    unsigned int                bufferSize;
+    QImage                      img;
 
 signals:
 

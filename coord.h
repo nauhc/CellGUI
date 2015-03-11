@@ -5,7 +5,7 @@
 
 typedef std::vector<float> floatArray;
 
-class Coord : public OpenGLWindow
+class Coord : public RenderWidget
 {
     Q_OBJECT
 
