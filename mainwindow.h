@@ -33,24 +33,33 @@ private slots:
     //read temporal data from file
     void loadMultiView();
     void loadSigleView();
+    void box_checked(int state);
 
 private:
-    Ui::MainWindow  *ui;
-    QHBoxLayout     *centralLayout;
+    Ui::MainWindow      *ui;
+    QHBoxLayout         *centralLayout;
 
 
     //read temporal data from file
-    bool             fileMode;
-    QMenu           *fileMenu;
-    QAction         *loadMultiViewAct;
-    QAction         *loadSigleViewAct;
+    bool                fileMode;
+    QMenu               *fileMenu;
+    QAction             *loadMultiViewAct;
+    QAction             *loadSigleViewAct;
 
     // for multiview only
-    QDockWidget     *dock;
-    DockMenu        *dockMenu;
+    QDockWidget         *dock;
+    QWidget             *dockWidget;
+    QGroupBox           *propGroup;
+    QVBoxLayout         *propVLayout;
+    QVBoxLayout         *mainVLayout;
+    QCheckBox           *prop0;
+    QCheckBox           *prop1;
+    QCheckBox           *prop2;
+    QCheckBox           *prop3;
+    QCheckBox           *prop4;
+    QVector<QString>    checkedBoxes;
 
-    vector<floatArray>  cellData;
-    //QString             *dataFilename;
+    void createProptyCheckbox();
 
 signals:
     void readProperties(floatArray prop);

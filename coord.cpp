@@ -318,7 +318,6 @@ void Coord::render(QPainter *painter)
         //QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);
 
         QColor c;
-        //c = mapNumToHue(60, COLOR_RANGE, 0, size, n);
         CubicYFColorMap colorMap;
         c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
         QPen penDot(c);

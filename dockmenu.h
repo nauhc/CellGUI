@@ -17,8 +17,11 @@ signals:
 public slots:
 
 private:
+    QWidget             *temp;
+
     QGroupBox           *propGroup;
     QVBoxLayout         *propVLayout;
+    QVBoxLayout         *mainVLayout;
     QCheckBox           *prop0;
     QCheckBox           *prop1;
     QCheckBox           *prop2;

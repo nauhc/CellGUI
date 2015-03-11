@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDockWidget>
+#include <QScrollArea>
 #include "style.h"
 #include "viswindow.h"
 #include "narr.h"
@@ -68,8 +69,9 @@ private:
     unsigned int                            maxFrm; // selecting frame range to show (max)
 
 
-    QVBoxLayout                             *mainVLayout;
     QGridLayout                             *visGLayout;
+    QScrollArea                             *scrollArea;
+    QVBoxLayout                             *mainVLayout;
 
     QPushButton                             *loadFilesButton;
 
@@ -91,6 +93,7 @@ private:
     void    createSpacers();
 
     void    setShowProps();
+    void    visPropbyIdx(int index, int size, int i, int j, int propTp);
     void    showCircularProp(int index, int size, int i, int j, int propTp);
     void    showTrajectory(int index, int size, int i, int j);
     void    showShape(int index, int size, int i, int j);

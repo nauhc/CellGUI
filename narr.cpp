@@ -34,9 +34,9 @@ Narr::Narr(QWidget *parent)
 {
     clear();
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1);
+//    QTimer* timer = new QTimer(this);
+//    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+//    timer->start(1);
 }
 
 void Narr::clear()

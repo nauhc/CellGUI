@@ -29,8 +29,13 @@ void DockMenu::createProptyCheckbox()
     propVLayout->addWidget(prop4);
 
     propGroup->setLayout(propVLayout);
-    propGroup->setFixedHeight(100);
+//    propGroup->setFixedHeight(100);
 
+    mainVLayout = new QVBoxLayout;
+    mainVLayout->addWidget(propGroup);
+    mainVLayout->addStretch();
+
+    setLayout(mainVLayout);
 
     connect(prop0, SIGNAL(stateChanged(int)), this, SLOT(box_checked(int)));
     connect(prop1, SIGNAL(stateChanged(int)), this, SLOT(box_checked(int)));

@@ -15,12 +15,20 @@ MultiView::MultiView(QWidget *parent) :
     setStyleSheet("background-color:rgb(251,251,251)");
 
     mainVLayout = new QVBoxLayout(this);
+    scrollArea = new QScrollArea;
+    scrollArea->setWidgetResizable(true);
     visGLayout = new QGridLayout();
 
     createLoadFilesButton();
     setShowProps();
+
     mainVLayout->addWidget(loadFilesButton);
-    mainVLayout->addLayout(visGLayout);
+
+    QWidget *temp = new QWidget();
+    temp->setLayout(visGLayout);
+    scrollArea->setWidget(temp);
+    mainVLayout->addWidget(scrollArea);
+    //    mainVLayout->addLayout(visGLayout);
 
 }
 
@@ -34,11 +42,9 @@ void MultiView::setShowProps()
 //    showProps.push_back(0); // area
 //    showProps.push_back(1); // perimeter
 //    showProps.push_back(2); // blebs number and size
-    showProps.push_back(3); // centroid trajectory
-//    showProps.push_back(4); // shape
-
+//    showProps.push_back(3); // centroid trajectory
+    showProps.push_back(4); // shape
 }
-
 
 void MultiView::clearVis()
 {
@@ -98,6 +104,8 @@ void MultiView::loadFilesButton_clicked()
 
     getFileNames(); // datafileNames prepared
     show();
+
+
 
     /*
 //    connect(this, SIGNAL(readProperties(floatArray)),
@@ -186,6 +194,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp)
 
         Narr *nar_tmp = new Narr();
         nar_tmp->setPropertyType(propTp); // 0:"area", 1:"perimeter", 2:"bleb"
+        nar_tmp->setFixedSize(size, size);
         nar_tmp->setBeginFrm(idxMin);
         nar_tmp->setMaxFrm(idxMax);
 
@@ -219,6 +228,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j)
         visGLayout->addWidget(nameLabel, 2*j, i);
 
         Coord *cod_tmp = new Coord();
+        cod_tmp->setFixedSize(size, size);
         cod_tmp->setBeginFrm(idxMin);
         cod_tmp->setMaxFrm(idxMax);
         cod_tmp->setMaxSize(QSize(800, 600));
@@ -235,7 +245,6 @@ void MultiView::showTrajectory(int index, int size, int i, int j)
         qDebug( ) << "Cell Data Size ERROR!";
     }
 }
-
 
 void MultiView::showShape(int index, int size, int i, int j)
 {
@@ -272,6 +281,37 @@ void MultiView::showShape(int index, int size, int i, int j)
     }
 }
 
+void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx)
+{
+    switch (PropIdx){
+    case 0:
+        //std::cout << "Showing Property 'Area'. \n" << std::endl;
+        showCircularProp(fileIdx, size, i, j, PropIdx);
+        break;
+    case 1:
+        //std::cout << "Showing Property 'Perimeter'. \n" << std::endl;
+        showCircularProp(fileIdx, size, i, j, PropIdx);
+        break;
+    case 2:
+        //std::cout << "Showing Property 'Bleb size and number'. \n" << std::endl;
+        showCircularProp(fileIdx, size, i, j, PropIdx);
+        break;
+    case 3:
+        //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;
+        showTrajectory(fileIdx, size, i, j);
+        break;
+    case 4:
+        //std::cout << "Showing Property 'Shape'. \n" << std::endl;
+        showShape(fileIdx, size, i, j);
+        break;
+    default:
+        //std::cout << "Showing Property 'Shape'. \n" << std::endl;
+        showShape(fileIdx, size, i, j);
+        break;
+    }
+}
+
+
 bool MultiView::show()
 {
     // read files :
@@ -284,10 +324,15 @@ bool MultiView::show()
                 std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
                 if(readBlebsFile(datafilename) && readContoursFile(datafilename))
                     std::cout << "blebs and contours files read." << std::endl;
-                else
+                else{
                     qDebug() << "blebs and contours files reading ERROR.";
+                    return false;
+                }
             }
-            else qDebug() << "csv files read ERROR." ;
+            else {
+                qDebug() << "csv files read ERROR." ;
+                return false;
+            }
         }
     }
 
@@ -304,157 +349,50 @@ bool MultiView::show()
     containerSide = (this->height()-space*3 - 20*4)/4 - 20;
 
     if(showProps.size() == 1){ // show all the movies in one property
-            for(int j = 0; j < int(fileNum/7); j++){
-                for(int i = 0; i < /*fileNum*/7; i++){
-                    int   index = j * 7 + i;
-                    if(index > fileNum+1)
-                        continue;
-                    switch (showProps[0]){
-                    case 0:
-                        //std::cout << "Showing Property 'Area'. \n" << std::endl;
-                        showCircularProp(index, containerSide, i, j, 0);
-                        break;
-                    case 1:
-                        //std::cout << "Showing Property 'Perimeter'. \n" << std::endl;
-                        showCircularProp(index, containerSide, i, j, 1);
-                        break;
-                    case 2:
-                        //std::cout << "Showing Property 'Bleb size and number'. \n" << std::endl;
-                        showCircularProp(index, containerSide, i, j, 2);
-                        break;
-                    case 3:
-                        //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;
-                        showTrajectory(index, containerSide, i, j);
-                        break;
-                    case 4:
-                        //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-                        showShape(index, containerSide, i, j);
-                        break;
-                    default:
-                        //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-                        showShape(index, containerSide, i, j);
-                        break;
-                }
-
+        for(int j = 0; j < int(fileNum/7); j++){
+            for(int i = 0; i < /*fileNum*/7; i++){
+                int   index = j * 7 + i;
+                if(index > fileNum+1)
+                    continue;
+                visPropbyIdx(index, containerSide, i, j, showProps[0]);
+//                case 0:
+//                    //std::cout << "Showing Property 'Area'. \n" << std::endl;
+//                    showCircularProp(index, containerSide, i, j, 0);
+//                    break;
+//                case 1:
+//                    //std::cout << "Showing Property 'Perimeter'. \n" << std::endl;
+//                    showCircularProp(index, containerSide, i, j, 1);
+//                    break;
+//                case 2:
+//                    //std::cout << "Showing Property 'Bleb size and number'. \n" << std::endl;
+//                    showCircularProp(index, containerSide, i, j, 2);
+//                    break;
+//                case 3:
+//                    //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;
+//                    showTrajectory(index, containerSide, i, j);
+//                    break;
+//                case 4:
+//                    //std::cout << "Showing Property 'Shape'. \n" << std::endl;
+//                    showShape(index, containerSide, i, j);
+//                    break;
+//                default:
+//                    //std::cout << "Showing Property 'Shape'. \n" << std::endl;
+//                    showShape(index, containerSide, i, j);
+//                    break;
+//                }
             }
         }
     }
 
-
-
-
-
-
-    //    for(int j = 0; j < int(fileNum/7); j++){
-
-    //        for(int i = 0; i < /*fileNum*/7; i++){
-
-    //            int   index = j * 7 + i;
-    //            if(index > fileNum+1)
-    //                continue;
-    //            //qDebug() << index;
-
-    //            QString datafilename = datafileInfos[index].absoluteFilePath();
-
-    //            if(!datafilename.isEmpty()){
-    //                //QFileInfo   fi  = QFileInfo(datafileNames[index]);
-    //                qDebug() << "Reading file " << datafilename;
-    //                if(readDataFile(datafilename)){
-    //                    maxFrm = /*5000*/100;
-    //                    unsigned int cellDataSize = cellData[index].size();
-    //                    if(cellDataSize > 20){
-    //                        int idxMin = cellData[index][0][0];
-    //                        int idxMax = cellData[index][cellDataSize-2][0];
-
-    //                        //                    if ((idxMin + maxFrm) > idxMax)
-    //                        //                        maxFrm = idxMax;
-    //                        //                    else
-    //                        maxFrm = idxMin + maxFrm;
-
-    //                        QString file = datafileInfos[index].fileName();
-    //                        QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
-    //                        nameLabel->setFixedSize(containerSide, 15);
-    //                        nameLabel->setAlignment(Qt::AlignCenter);
-
-    //                        visGLayout->addWidget(nameLabel, 2*j, i);
-
-    //                        //                    Narr *nar_tmp = new Narr();
-    //                        //                    QWidget *nar_container = QWidget::createWindowContainer(nar_tmp, this);
-    //                        //                    nar_container->setFixedSize(containerSide, containerSide+10);
-    //                        ////                    nar_tmp->setPropType(0); // show "area"
-    //                        //                    nar_tmp->setPropType(1); // show "perimeter"
-    //                        //                    //nar_tmp->setPropType(2); // show "bleb"
-    //                        //                    nar_tmp->setBeginFrm(idxMin);
-    //                        //                    nar_tmp->setMaxFrm(maxFrm);
-
-
-
-    //                        //                    Coord *cod_tmp = new Coord();
-    //                        //                    QWidget *cod_container = QWidget::createWindowContainer(cod_tmp, this);
-    //                        //                    cod_container->setFixedSize(containerSide, containerSide);
-    //                        //                    cod_tmp->setBeginFrm(idxMin);
-    //                        //                    cod_tmp->setMaxFrm(maxFrm);
-    //                        //                    cod_tmp->setMaxSize(QSize(800, 600));
-
-    //                        ////                    visGLayout->addWidget(nameLabel, 0, i);
-    //                        ////                    visGLayout->addWidget(nar_container, 1, i);
-    //                        //                    //visGLayout->addWidget(cod_container, 2, i);
-
-    //                        //                    for(unsigned int n = 0; n < cellDataSize; n++){
-    //                        //                        // data
-    //                        //                        //emit readProperties(cellData[index][n]);
-    //                        //                        nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0]);
-    //                        //                        //cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
-    //                        //                        //qDebug() << cellData[index][n][3] << " " <<  cellData[index][n][4] << " " << cellData[index][n][0];
-    //                        //                        // img
-    //                        //                        //QImage img = readImgFile(fi.path(), cellData[index][n][0]);
-    //                        //                        //emit readCellImg(img);
-    //                        //                    }
-
-
-    //                        //                    visGLayout->addWidget(nar_container, 2*j+1, i);
-
-    //                        // bleb size
-    //                        if(readBlebsFile(datafilename) && readContoursFile(datafilename)){
-    //                            int SIZE = contours[index].size() >= blebs[index].size() ? blebs[index].size() : contours[index].size();
-    //                            Shape *shp_tmp = new Shape();
-    //                            shp_tmp->setFixedSize(containerSide, containerSide);
-    //                            //                            QWidget *shp_container = QWidget::createWindowContainer(shp_tmp, this);
-    //                            //shp_container->setFixedSize(containerSide, containerSide);
-    //                            shp_tmp->setBeginFrm(idxMin);
-    //                            shp_tmp->setMaxFrm(maxFrm);
-
-    //                            //visGLayout->addWidget(shp_container, 3, i);
-    //                            //visGLayout->addWidget(shp_container, 2*j+1, i);
-    //                            visGLayout->addWidget(shp_tmp, 2*j+1, i);
-
-    //                            for(int n = 0; n < SIZE; n++){
-    //                                //emit readContourNBlebs(blebs[index][n], contours[index][n], centers[index][n]);
-    //                                shp_tmp->updateContourNBleb(blebs[index][n], contours[index][n], centers[index][n]); //[movie][frm]
-    //                            }
-    //                            //shp_tmp->setNeedUpdate();
-    //                        }
-
-
-    //                        //parameter
-    //                        if(readExpParaFile(datafilename)){
-
-    //                        }
-
-    //                        else qDebug() << "Read Bleb / Contour / Parameter Data files EROOR!";
-
-    //                    }
-    //                    if(cellDataSize <= 20){
-    //                        qDebug() << "Cell Data Size ERROR!";
-    //                        continue;
-    //                    }
-    //                }
-    //            }
-    //            else{
-    //                qDebug() << i << "th data file is Empty.";
-    //            }
-    //        }
-    //    } // for loop end
+    else { // multiple properties showed at one time
+        visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
+        for(int p = 0; p < showProps.size(); p++){
+            for (int n = 0; n < fileNum; n++){
+//                visGLayout->SetFixedSize(fileNum*300, 300);
+                visPropbyIdx(n, containerSide, n, p, showProps[p]);
+            }
+        }
+    }
 
     //    qDebug() << "All files reading done."; // until here: fast enough
     //    qDebug() << pressure;
@@ -666,6 +604,7 @@ QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index
     QString str = fp+"/cell"+QString::number(int(idx))+".png";
     //qDebug() << str;
     img.load(str);
+
     return img;
 }
 

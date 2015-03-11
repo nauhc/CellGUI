@@ -196,8 +196,7 @@ void Shape::render(QPainter *painter)
         qreal opacity = 1/size;
         //qDebug() << size << trans;
 
-//        QPen myPen(QColor(123, 57, 144));
-        QPen myPen(QColor(64, 64, 64));
+        QPen myPen(QColor(64, 64, 64)); // color for contours
         myPen.setWidth(1);
         for(int i = 0; i < int(size); i++){ // one frame
             // contours
@@ -210,11 +209,8 @@ void Shape::render(QPainter *painter)
             painter->scale(1/scl, 1/scl);
 
             // blebs
-            //QColor c = _mapNumToHue_(60, 180, 0, int(size), i);
             CubicYFColorMap colormap;
             QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
-//            ColorMap colorMap;
-//            QColor c = colorMap.cubehelix(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
             painter->setOpacity(1);
             painter->setPen(QPen(c));
 
