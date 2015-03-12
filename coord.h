@@ -59,6 +59,7 @@ private:
 private slots:
     void    setPixel(QString text);
     void    setMicMeter(QString text);
+    void    setScale(qreal scale);
 
 };
 
