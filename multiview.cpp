@@ -42,8 +42,8 @@ void MultiView::setShowProps()
 //    showProps.push_back(0); // area
 //    showProps.push_back(1); // perimeter
 //    showProps.push_back(2); // blebs number and size
-//    showProps.push_back(3); // centroid trajectory
-    showProps.push_back(4); // shape
+    showProps.push_back(3); // centroid trajectory
+//    showProps.push_back(4); // shape
 }
 
 void MultiView::clearVis()
@@ -194,7 +194,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp)
 
         Narr *nar_tmp = new Narr();
         nar_tmp->setPropertyType(propTp); // 0:"area", 1:"perimeter", 2:"bleb"
-        nar_tmp->setFixedSize(size, size);
+        nar_tmp->setFixedSize(size, size+20);
         nar_tmp->setBeginFrm(idxMin);
         nar_tmp->setMaxFrm(idxMax);
 
@@ -321,9 +321,10 @@ bool MultiView::show()
         QString datafilename = datafileInfos[n].absoluteFilePath();
         if(!datafilename.isEmpty()){
             if(readDataFile(datafilename)){
-                std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
-                if(readBlebsFile(datafilename) && readContoursFile(datafilename))
-                    std::cout << "blebs and contours files read." << std::endl;
+                //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
+                if(readBlebsFile(datafilename) && readContoursFile(datafilename)){
+                    //std::cout << "blebs and contours files read." << std::endl;
+                }
                 else{
                     qDebug() << "blebs and contours files reading ERROR.";
                     return false;
@@ -355,31 +356,6 @@ bool MultiView::show()
                 if(index > fileNum+1)
                     continue;
                 visPropbyIdx(index, containerSide, i, j, showProps[0]);
-//                case 0:
-//                    //std::cout << "Showing Property 'Area'. \n" << std::endl;
-//                    showCircularProp(index, containerSide, i, j, 0);
-//                    break;
-//                case 1:
-//                    //std::cout << "Showing Property 'Perimeter'. \n" << std::endl;
-//                    showCircularProp(index, containerSide, i, j, 1);
-//                    break;
-//                case 2:
-//                    //std::cout << "Showing Property 'Bleb size and number'. \n" << std::endl;
-//                    showCircularProp(index, containerSide, i, j, 2);
-//                    break;
-//                case 3:
-//                    //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;
-//                    showTrajectory(index, containerSide, i, j);
-//                    break;
-//                case 4:
-//                    //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-//                    showShape(index, containerSide, i, j);
-//                    break;
-//                default:
-//                    //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-//                    showShape(index, containerSide, i, j);
-//                    break;
-//                }
             }
         }
     }

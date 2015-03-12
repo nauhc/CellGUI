@@ -30,6 +30,7 @@ private:
     unsigned int                begin; // beggining frame index
     unsigned int                curr; // current frame index
     unsigned int                max; // total number of frame
+    unsigned int                range; // how many frames to show
 
     QVector<QPolygon>           contours; // smoothed contours
 //    QVector<QVector<QPoint> >   contours; // smoothed contours

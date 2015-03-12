@@ -18,7 +18,6 @@
 #include "coord.h"
 #include "shape.h"
 #include "bleb.h"
-#include "dockmenu.h"
 
 class MultiView : public QWidget
 {
@@ -43,15 +42,6 @@ public slots:
 //    void updateContourNBlebs(QVector<Bleb>, QVector<QPoint>, QPoint);
 
 private:
-    //vector
-//    QVector<QWidget>  container_nar;
-//    QVector<QWidget>  container_cod;
-//    QVector<QWidget>  container_shp;
-//    QVector<Narr>     nar_list;
-//    QVector<Coord>    cod_list;
-//    QVector<Shape>    shp_list;
-//    QVector<QString>  file_list;
-
     //QVector<QString>                        datafileNames; //stores all the filenames
     QVector<QFileInfo>                      datafileInfos; //stores all the filenames
     QVector<bool>                           datafileRead; //stores all the filenames
@@ -68,7 +58,6 @@ private:
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
 
-
     QGridLayout                             *visGLayout;
     QScrollArea                             *scrollArea;
     QVBoxLayout                             *mainVLayout;
@@ -76,7 +65,6 @@ private:
     QPushButton                             *loadFilesButton;
 
     QDialog                                 *dialog; // UI for manipulating vis
-    DockMenu                                *dockMenu;
 
     void    getFileNames();
     bool    show();

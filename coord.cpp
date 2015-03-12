@@ -12,8 +12,8 @@
 
 const QColor _BLUE_   = QColor(28, 120, 159);
 //const int COLOR_RANGE = 180;
-const int startIndex = 20;
-const qreal scale = 0.75; // <=1.0 the scale of the canvas that can be used to draw coordinates
+const int startIndex = 1;
+const qreal shrink = 0.75; // <=1.0 the scale of the canvas that can be used to draw coordinates
 
 const int Coord_COLOR_START = /*30*/0;
 const int Coord_COLOR_RANGE = /*90*/120;
@@ -23,19 +23,24 @@ Coord::Coord(QWidget *parent)
 {
     clear();
 
-//    QTimer* timer = new QTimer(this);
-//    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-//    timer->start(1);
+    //    QTimer* timer = new QTimer(this);
+    //    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    //    timer->start(1);
+
+    bufferSize = width() * height() * 4;
+    buffer = new unsigned char[bufferSize]();
+//    for (int i = 0; i < bufferSize; i++)
+//        buffer[i] = 255;
 
 }
 
 void Coord::clear()
 {
+    coordScale = 1.;
     centroid.clear();
     currFrm = 0;
     maxFrm  = 1;
-//    min = QPoint(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-//    max = QPoint(0, 0);
+    range   = 5000;
     origin = QPointF(this->width()/2, this->height()/2);
     min = QPoint(0, 0);
     max = QPoint(50, 50);
@@ -53,6 +58,13 @@ Coord::~Coord()
 
 void Coord::updateCoord(QPointF point, int currFrame)
 {
+    QPointF center(width()/2, height()/2);
+
+    if(centroid.size() == startIndex){
+        origin = QPoint(centroid[startIndex-1].x(), centroid[startIndex-1].y());
+        //qDebug() << "centroid origin " << origin;
+    }
+
     currCent = QPoint(point.x(), point.y());
 
     if(centroid.size() > startIndex){
@@ -62,14 +74,28 @@ void Coord::updateCoord(QPointF point, int currFrame)
         if(point.y() > centroid_max.y()) centroid_max.setY(point.y());
     }
 
-    currFrm = currFrame;
     centroid.append(point);
-    //qDebug() << "Coord Class" << currFrm << centroid;
 
-    if(centroid.size() == startIndex){
-        origin = QPoint(centroid[startIndex-1].x(), centroid[startIndex-1].y());
-        //qDebug() << "centroid origin " << origin;
-    }
+////    QPointF currCoord = (point-origin)*coordScale+center;
+//    QPointF currCoord = QPointF((point.x() - origin.x())*coordScale, (point.y() - origin.y())*coordScale);
+//    qDebug() << currCoord;
+
+//    centroid.append(currCoord);
+
+//    if(currFrm > range) currFrm = range;
+//    CubicYFColorMap colormap;
+//    QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // 5000 !!!!!
+
+//    unsigned int px = (int(currCoord.y()) * width() + int(currCoord.x())) * 4;
+//    //unsigned int px = (height()/2 * width() + width()/2)*4;
+//    if(px > 0 || px+3 <= bufferSize){
+//        buffer[ px + 3] = /*c.alpha()*/255;
+//        buffer[ px + 2] = c.red();
+//        buffer[ px + 1] = c.green();
+//        buffer[ px + 0] = c.blue();
+//    }
+
+    currFrm++;
     update();
 }
 
@@ -94,7 +120,7 @@ void Coord::setMicMeter(QString text)
 {
     micMeter = text.toDouble();
     micMtr_Pixel = micMeter/pixel;
-//    cout << "micrometerPerPixel: " << micMtr_Pixel << endl;
+    //    cout << "micrometerPerPixel: " << micMtr_Pixel << endl;
 }
 
 void Coord::setMaxSize(QSize s) // video size
@@ -126,8 +152,6 @@ void Coord::setMaxSize(QSize s) // video size
     win_off = QPointF(X_MIN, Y_MIN);
 }
 
-
-
 void Coord::initializeGL()
 {
 
@@ -147,18 +171,29 @@ QPointF Coord::translate_image2canvas_center(QPointF p, bool XGreaterThanY){ // 
     qreal x, y;
 
     if(XGreaterThanY) {
-        ratio   = scale*(this->width())/(centroid_max.x() - centroid_min.x());
-        x       = (p.x() - centroid_min.x()) * ratio + scale*(-this->width()/2);
-        y       = (p.y() - centroid_min.y()) * ratio + scale*(-this->height()/2);
+        ratio   = shrink*(this->width())/(centroid_max.x() - centroid_min.x());
+        x       = (p.x() - centroid_min.x()) * ratio + shrink*(-this->width()/2);
+        y       = (p.y() - centroid_min.y()) * ratio + shrink*(-this->height()/2);
     }
     else{
-        ratio   = scale*(this->width())/(centroid_max.y() - centroid_min.y());
-        x       = (p.x() - centroid_min.x()) * ratio + scale*(-this->width()/2);
-        y       = (p.y() - centroid_min.y()) * ratio + scale*(-this->height()/2);
+        ratio   = shrink*(this->width())/(centroid_max.y() - centroid_min.y());
+        x       = (p.x() - centroid_min.x()) * ratio + shrink*(-this->width()/2);
+        y       = (p.y() - centroid_min.y()) * ratio + shrink*(-this->height()/2);
     }
 
     return QPointF(x, y);
 }
+
+QPointF Coord::translate_image2canvas_center(QPointF p, qreal ratio)
+{
+//    qreal x = (p.x() - centroid_min.x()) * ratio /*+ ratio*(-this->width()/2)*/;
+//    qreal y = (p.y() - centroid_min.y()) * ratio /*+ ratio*(-this->height()/2)*/;
+    qreal x = (p.x() - origin.x()) * ratio /*+ ratio*(-this->width()/2)*/;
+    qreal y = (p.y() - origin.y()) * ratio /*+ ratio*(-this->height()/2)*/;
+
+    return QPointF(x, y);
+}
+
 
 
 QPointF Coord::translateCoord(QPointF p, qreal scale){
@@ -171,8 +206,8 @@ QPointF Coord::translateCoord(QPointF p, qreal scale){
 
 QPointF Coord::translate_canvas2image(QPointF p)
 {
-    qreal W = scale*(this->width());
-    qreal H = scale*(this->height());
+    qreal W = shrink*(this->width());
+    qreal H = shrink*(this->height());
     qreal x = (p.x() - (-W/2)) / W * (centroid_max.x()-centroid_min.x()) + centroid_min.x();
     qreal y = (p.y() - (-H/2)) / H * (centroid_max.y()-centroid_min.y()) + centroid_min.y();
 
@@ -184,8 +219,6 @@ QColor Coord::gradColor(QColor color, qreal percent){
                    color.green() + (255-color.green()) * percent * percent,
                    color.blue() + (255-color.blue()) * percent * percent );
 }
-
-
 
 QColor mapNumToHue(int start, int range, int min, int max, int v){
     // start:   starting hue (0-360)
@@ -239,8 +272,8 @@ void Coord::drawColorBar(QPainter *painter)
 
 void Coord::render(QPainter *painter)
 {
-//    if(!this->needUpdate)
-//        return;
+    //    if(!this->needUpdate)
+    //        return;
 
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
@@ -284,11 +317,11 @@ void Coord::render(QPainter *painter)
 
 
     bool Xgreater = (centroid_max.x() - centroid_min.x()) > (centroid_max.y() - centroid_min.y());
-//    qDebug() << Xgreater;
+    //    qDebug() << Xgreater;
     if(centroid.size() > startIndex){
 
         //draw units on the window edges
-//        QPointF origin_tran = translateCoord(origin, 1.0);
+        //        QPointF origin_tran = translateCoord(origin, 1.0);
         QPointF origin_tran = translate_image2canvas_center(origin, Xgreater);
         painter->drawLine(QPointF(origin_tran.x(), topY-5), QPointF(origin_tran.x(), topY+5)); //top
         painter->drawText(origin_tran.x()-10, topY+5+2, 20, 10, Qt::AlignCenter, "0" );
@@ -323,15 +356,21 @@ void Coord::render(QPainter *painter)
         QPen penDot(c);
         painter->setPen(penDot);
         painter->setBrush(c);
-//        QPointF visPoint = translateCoord(centroid[n], 5.0);
-        QPointF visPoint = translate_image2canvas_center(centroid[n], Xgreater);
+        //        QPointF visPoint = translateCoord(centroid[n], 5.0);
+//        QPointF visPoint = translate_image2canvas_center(centroid[n], Xgreater);
+        QPointF visPoint = translate_image2canvas_center(centroid[n], 2.0);
         //qDebug() << visPoint;
         painter->drawEllipse( visPoint, 2.0, 2.0);
     }
 
+//    painter->translate(-halfW, -halfH);
+//    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
+//    painter->drawImage(0, 0, img);
+//    painter->translate(halfW, halfH);
+
     drawColorBar(painter);
 
-//    this->needUpdate = false;
+    //    this->needUpdate = false;
 
 }
 

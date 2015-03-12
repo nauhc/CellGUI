@@ -26,6 +26,7 @@ protected:
     QPointF translateCoord(QPointF p, qreal scale);
     QPointF translate_canvas2image(QPointF p);
     QPointF translate_image2canvas_center(QPointF p, bool XGreaterThanY);
+    QPointF translate_image2canvas_center(QPointF p, qreal ratio);
     QColor  gradColor(QColor color, qreal percent);
     void    drawColorBar(QPainter *painter);
 
@@ -33,6 +34,7 @@ private:
     unsigned int        maxFrm;
     unsigned int        minFrm;
     unsigned int        currFrm;
+    unsigned int        range;
 
     QVector<QPointF>    centroid;       // the values of a particular feature
     QPointF             centroid_min;   // the minimum x,y coordinates of centroid
@@ -44,10 +46,15 @@ private:
     QPointF             win_off;        // offset of ruler window
     QPointF             currCent;
     int                 cnt = 0;
+    qreal               coordScale;
 
     double              pixel;
     double              micMeter;
     double              micMtr_Pixel;
+
+    unsigned char       *buffer;
+    unsigned int        bufferSize;
+    QImage              img;
 
 private slots:
     void    setPixel(QString text);
