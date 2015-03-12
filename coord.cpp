@@ -348,11 +348,11 @@ void Coord::render(QPainter *painter)
     int size = centroid.size() > maxFrm ? maxFrm : centroid.size();
     for(int n = startIndex; n < size; n++/*n+=10*/)
     {
-        //QColor c = gradColor(_BLUE_, 0.8 - qreal(n)/size);
 
-        QColor c;
+
         CubicYFColorMap colorMap;
-        c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
+//        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
+        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, n<=range?n:range);
         QPen penDot(c);
         painter->setPen(penDot);
         painter->setBrush(c);
