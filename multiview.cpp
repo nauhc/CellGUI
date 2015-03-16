@@ -95,6 +95,37 @@ void MultiView::createDialogMenu(/*QDockWidget *dockWidget*/)
 
 }
 
+void MultiView::sortbyParameter(int i)
+{
+    qDebug() << "para" << i << "is checked";
+    if (i == 0){
+        for(int n = 0; n < datafileInfos.size(); n++){
+//            index_sort.push_back(pressure[n].second);
+            index_sort.replace(n, pressure[n].second);
+        }
+    }
+    else if (i == 1){
+        for(int n = 0; n < datafileInfos.size(); n++){
+            //index_sort.push_back(force[n].second);
+            index_sort.replace(n, force[n].second);
+        }
+    }
+    else if (i == 2){
+        for(int n = 0; n < datafileInfos.size(); n++){
+            //index_sort.push_back(pressure[n].second);
+            //index_sort.replace(n, pressure[n].second);
+            index_sort.replace(n, n);
+        }
+    }
+    else{
+        for(int n = 0; n < datafileInfos.size(); n++){
+            index_sort.replace(n, n);
+        }
+    }
+    show();
+
+}
+
 void MultiView::loadFilesButton_pressed()
 {
     loadFilesButton->setStyleSheet(BUTTON_PRESSED);
@@ -111,7 +142,7 @@ void MultiView::loadFilesButton_clicked()
     clearVis();
     clearData();
 
-    getFileNames(); // datafileNames prepared
+    loadFiles(); // datafileNames prepared
     show();
 
 
@@ -151,7 +182,7 @@ void MultiView::loadFilesButton_clicked()
 //    shp_tmp1->updateContourNBleb(blebs, contour, centroid);
 //}*/
 
-void MultiView::getFileNames()
+bool MultiView::loadFiles()
 {
     QString folderPath = "../../../video/ExtractedData/";
 
@@ -165,6 +196,41 @@ void MultiView::getFileNames()
     }
 
     filenamesLoaded = true;
+
+    // read files :
+    int fileNum = datafileInfos.size();
+    for(int n = 0; n < fileNum; n++){
+
+        QString datafilename = datafileInfos[n].absoluteFilePath();
+        index_sort.push_back(n);
+        if(!datafilename.isEmpty()){
+            if(readDataFile(datafilename)){
+                //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
+                if(readBlebsFile(datafilename) &&
+                        readContoursFile(datafilename) &&
+                        readExpParaFile(datafilename, n)){
+                    //std::cout << "blebs, contours and experiment-parameter files read." << std::endl;
+                }
+                else{
+                    qDebug() << "blebs and contours files reading ERROR.";
+                    return false;
+                }
+            }
+            else {
+                qDebug() << "csv files read ERROR." ;
+                return false;
+            }
+        }
+    }
+
+    // sort on pressure with index together
+    qSort(pressure.begin(), pressure.end(), QPairFirstComparer());
+    //qDebug() << pressure;
+
+    qSort(force.begin(), force.end(), QPairFirstComparer());
+    //qDebug() << force;
+
+    return true;
 }
 
 void MultiView::createLoadFilesButton()
@@ -208,6 +274,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp)
         nar_tmp->setMaxFrm(idxMax);
 
         for(unsigned int n = 0; n < cellDataSize; n++){
+            nar_tmp->clear();
             nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0]);
         }
 
@@ -237,14 +304,16 @@ void MultiView::showTrajectory(int index, int size, int i, int j)
         visGLayout->addWidget(nameLabel, 2*j, i);
 
         Coord *cod_tmp = new Coord();
+        cod_tmp->clear();
         cod_tmp->setFixedSize(size, size);
         cod_tmp->setBeginFrm(idxMin);
         cod_tmp->setMaxFrm(idxMax);
-        cod_tmp->setMaxSize(QSize(800, 600));
+        //cod_tmp->setMaxSize(QSize(800, 600));
 
         for(unsigned int n = 0; n < cellDataSize; n++){
             cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
         }
+        //qDebug() << cellData[index].size();
 
         visGLayout->addWidget(cod_tmp, 2*j+1, i);
 
@@ -281,6 +350,7 @@ void MultiView::showShape(int index, int size, int i, int j)
 
         for(int n = 0; n < SIZE; n++){
             //emit readContourNBlebs(blebs[index][n], contours[index][n], centers[index][n]);
+            //shp_tmp->clear();
             shp_tmp->updateContourNBleb(blebs[index][n], contours[index][n], centers[index][n]); //[movie][frm]
         }
         //shp_tmp->setNeedUpdate();
@@ -320,39 +390,9 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx)
     }
 }
 
-bool MultiView::show()
+void MultiView::show()
 {
-    // read files :
-    int fileNum = datafileInfos.size();
-    for(int n = 0; n < fileNum; n++){
 
-        QString datafilename = datafileInfos[n].absoluteFilePath();
-        if(!datafilename.isEmpty()){
-            if(readDataFile(datafilename)){
-                //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
-                if(readBlebsFile(datafilename) &&
-                        readContoursFile(datafilename) &&
-                        readExpParaFile(datafilename, n)){
-                    //std::cout << "blebs, contours and experiment-parameter files read." << std::endl;
-                }
-                else{
-                    qDebug() << "blebs and contours files reading ERROR.";
-                    return false;
-                }
-            }
-            else {
-                qDebug() << "csv files read ERROR." ;
-                return false;
-            }
-        }
-    }
-
-    // sort on pressure with index together
-    qSort(pressure.begin(), pressure.end(), QPairFirstComparer());
-    qDebug() << pressure;
-
-    qSort(force.begin(), force.end(), QPairFirstComparer());
-    qDebug() << force;
 
     // file reading succeed and draw vis
     maxFrm = 5000;
@@ -365,17 +405,17 @@ bool MultiView::show()
     //containerSide = (this->height()-space*6)/7;
     containerSide = (this->height()-space*3 - 20*4)/4 - 20;
 
+    int fileNum = datafileInfos.size();
     if(showProps.size() == 1){ // show all the movies in one property
         for(int j = 0; j < int(fileNum/7); j++){
             for(int i = 0; i < /*fileNum*/7; i++){
                 int   idx   = j * 7 + i;
-                int   index_pressure = int(pressure[idx].second);
-                int   index_force = int(force[idx].second);
+//                int   index_pressure = int(pressure[idx].second);
+//                int   index_force = int(force[idx].second);
                 //qDebug() << index;
-//                if(index_pressure > fileNum+1)
-                if(index_force > fileNum+1)
+                if(index_sort[idx] > fileNum+1)
                     continue;
-                visPropbyIdx(index_force, containerSide, i, j, showProps[0]);
+                visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0]);
             }
         }
     }
@@ -384,11 +424,11 @@ bool MultiView::show()
         visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
         for(int p = 0; p < showProps.size(); p++){
             for (int n = 0; n < fileNum; n++){
-                int   index_pressure = int(pressure[n].second);
+//                int   index_pressure = int(pressure[n].second);
                 //qDebug() << index;
 //                visGLayout->SetFixedSize(fileNum*300, 300);
 //                visPropbyIdx(n, containerSide, n, p, showProps[p]);
-                visPropbyIdx(index_pressure, containerSide, n, p, showProps[p]);
+                visPropbyIdx(index_sort[n], containerSide, n, p, showProps[p]);
             }
         }
     }

@@ -27,8 +27,8 @@ Coord::Coord(QWidget *parent)
     //    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     //    timer->start(1);
 
-    bufferSize = width() * height() * 4;
-    buffer = new unsigned char[bufferSize]();
+//    bufferSize = width() * height() * 4;
+//    buffer = new unsigned char[bufferSize]();
 //    for (int i = 0; i < bufferSize; i++)
 //        buffer[i] = 255;
 
@@ -49,6 +49,14 @@ void Coord::clear()
     micMeter = 20;
     pixel = 300;
     micMtr_Pixel = micMeter/pixel;
+
+//    if(buffer != NULL)
+//        delete[] buffer;
+//    bufferSize = width() * height() * 4;
+//    buffer = new unsigned char[bufferSize]();
+//    for (unsigned int i = 0; i < bufferSize; i++)
+//        buffer[i] = 255;
+
 }
 
 Coord::~Coord()
@@ -280,6 +288,9 @@ void Coord::render(QPainter *painter)
     //    if(!this->needUpdate)
     //        return;
 
+    // clear canvas
+    painter->eraseRect(0, 0, width(), height());
+
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
     QPointF center(halfW, halfH);
@@ -303,7 +314,6 @@ void Coord::render(QPainter *painter)
     //    QPointF topright = QPointF(topleft.x() + win.x(), topleft.y());
     //    QPointF botleft  = QPointF(topleft.x(), topleft.y() + win.y());
     //    QPointF botright  = QPointF(topleft.x()+win.x(), topleft.y() + win.y());
-
 
     // !!! need to move to other place (one-time calculation!) - start
     qreal indent    = 10;
@@ -362,8 +372,6 @@ void Coord::render(QPainter *painter)
     int size = centroid.size() > maxFrm ? maxFrm : centroid.size();
     for(int n = startIndex; n < size; n++/*n+=10*/)
     {
-
-
         CubicYFColorMap colorMap;
 //        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
         QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, n<=range?n:range);

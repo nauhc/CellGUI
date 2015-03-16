@@ -17,10 +17,6 @@ Shape::Shape(QObject *parent)
 //    QTimer* timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 //    timer->start(1);
-    bufferSize = width() * height() * 4;
-    buffer = new unsigned char[bufferSize]();
-    for (int i = 0; i < bufferSize; i++)
-        buffer[i] = 255;
 }
 
 Shape::~Shape()
@@ -39,6 +35,12 @@ void Shape::clear()
 //    contours.clear();
 //    blebPoints.clear();
 
+    if(buffer != NULL)
+        delete[] buffer;
+    bufferSize = width() * height() * 4;
+    buffer = new unsigned char[bufferSize]();
+    for (unsigned int i = 0; i < bufferSize; i++)
+        buffer[i] = 255;
 
 }
 

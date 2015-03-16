@@ -72,7 +72,7 @@ void MainWindow::loadMultiView()
         delete centralLayout->itemAt(0)->widget();
     }
 
-    MultiView *multiview = new MultiView(this->centralWidget());
+    multiview = new MultiView(this->centralWidget());
     centralLayout->addWidget(multiview);
 
     dock->setWidget(dockWidget);
@@ -134,24 +134,28 @@ void MainWindow::paraCheckBox_checked(int state)
             para1->setChecked(false);
             para2->setChecked(false);
             para3->setChecked(false);
+            multiview->sortbyParameter(0);
         }
         else if (checkBox->text() == "Force"){
             para0->setChecked(false);
             para1->setChecked(true);
             para2->setChecked(false);
             para3->setChecked(false);
+            multiview->sortbyParameter(1);
         }
-        else if (checkBox->text() == "para2"){
+        else if (checkBox->text() == "Force Offset"){
             para0->setChecked(false);
             para1->setChecked(false);
             para2->setChecked(true);
             para3->setChecked(false);
+            multiview->sortbyParameter(2);
         }
-        else if (checkBox->text() == "para3"){
+        else if (checkBox->text() == "Date"){
             para0->setChecked(false);
             para1->setChecked(false);
             para2->setChecked(false);
             para3->setChecked(true);
+            multiview->sortbyParameter(3);
         }
     }
 }
@@ -226,17 +230,17 @@ void MainWindow::createParaCheckbox()
     paraGroup->setStyleSheet(GROUPBOX);
     para0   = new QCheckBox("Pressure");
     para1   = new QCheckBox("Force");
-    para2   = new QCheckBox("para2");
-    para3   = new QCheckBox("para3");
+    para2   = new QCheckBox("Force Offset");
+    para3   = new QCheckBox("Date");
     para0->setStyleSheet(CHECKBOX);
     para1->setStyleSheet(CHECKBOX);
     para2->setStyleSheet(CHECKBOX);
     para3->setStyleSheet(CHECKBOX);
 
-    para0->setChecked(true);
+    para0->setChecked(false);
     para1->setChecked(false);
     para2->setChecked(false);
-    para3->setChecked(false);
+    para3->setChecked(true);
 
     paraVLayout = new QVBoxLayout();
     paraVLayout->addWidget(para0);
@@ -245,7 +249,7 @@ void MainWindow::createParaCheckbox()
     paraVLayout->addWidget(para3);
 
     paraGroup->setLayout(paraVLayout);
-    paraGroup->setFixedHeight(200);
+    paraGroup->setFixedHeight(150);
 
     dockMainVLayout->addWidget(paraGroup);
     dockMainVLayout->addStretch();

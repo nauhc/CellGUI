@@ -49,6 +49,7 @@ private:
     QAction             *loadSigleViewAct;
 
     // for multiview only
+    MultiView           *multiview;
     QDockWidget         *dock;
     QWidget             *dockWidget;
     QVBoxLayout         *dockMainVLayout;
