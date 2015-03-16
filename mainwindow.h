@@ -43,7 +43,6 @@ private:
 
 
     //read temporal data from file
-    bool                fileMode;
     QMenu               *fileMenu;
     QAction             *loadMultiViewAct;
     QAction             *loadSigleViewAct;

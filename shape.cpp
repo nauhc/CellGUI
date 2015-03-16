@@ -210,68 +210,16 @@ void Shape::render(QPainter *painter)
 
     // clean canvas
     painter->eraseRect(0, 0, width(), height());
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
+    painter->drawImage(0, 0, img);
 
     halfW = this->width()/2;
     halfH = this->height()/2;
 
     // set (0,0) to the center of the canvas
     QPointF center(halfW, halfH);
-
-    // set the start angle to 0 o'clock;
-
-    painter->setRenderHint(QPainter::Antialiasing);
-
-    //qreal size  = contours.size();
-//    qreal size  = contours.size() > max ? max : contours.size();
-//    qreal size  = contourPoints.size();
-
-//    if(size > 1){ // draw when data is valid
-//        // draw contours
-
-//        qreal opacity = 1/size;
-//        //qDebug() << size << trans;
-
-//        QPen myPen(QColor(64, 64, 64)); // color for contours
-//        myPen.setWidth(1);
-//        for(int i = 0; i < int(size); i++){ // one frame
-//            // contours
-//            //painter->setOpacity(opacity*10);
-//            painter->setOpacity(0.05);
-//            painter->setPen(myPen);
-//            qreal scl = 0.7;
-//            painter->scale(scl, scl);
-//            painter->drawPoints(contours[i].data(), contours[i].size());
-//            painter->scale(1/scl, 1/scl);
-
-//            // blebs
-//            CubicYFColorMap colormap;
-//            QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, int(size), i);
-//            painter->setOpacity(1);
-//            painter->setPen(QPen(c));
-
-
-//            //for(int i = 0; i < blebPoints.size(); i++){
-//            painter->drawPoints(blebPoints[i].data(), blebPoints[i].size());
-//            //}
-//        }
-//    }
-
-//    buffer = new unsigned char[width() * height() * 4]();
-//    for (int i = 0; i < width() * height() * 4; i++)
-//        buffer[i] = 128;
-//    for (int i = 0; i < width() * 4; i += 4)
-//    {
-//        buffer[height() * 20 * 4 + i] = 255;
-//        buffer[height() * 20 * 4 + i + 3] = 255;
-
-//    }
-
-    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
-
-    //delete [] buffer;
-    //QImage img(buffer, width(), height(), QImage::Format_ARGB32);
-
-    painter->drawImage(0, 0, img);
 
     painter->translate(center.x(), center.y());
     painter->rotate(-90); //***x->up, y->right***

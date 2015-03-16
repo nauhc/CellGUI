@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->centralWidget()->setLayout(centralLayout);
     //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    // add dock for multiview
     dock = new QDockWidget(tr("Basic operations"), this);
     this->addDockWidget(Qt::RightDockWidgetArea, dock);
     dock->setFixedSize(300, 800);
@@ -36,12 +37,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     // set to singleview at the beginning
     //    loadSigleView();
 
-    // set to cultiview at the beginning
+    // set to multiview at the beginning
     loadMultiView();
 
     // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMode = false;
 
     // Add MultiView to centralWidget layout
     loadMultiViewAct = new QAction(tr("&Load Processed Temporal Data"), this);
@@ -66,17 +66,22 @@ void MainWindow::loadMultiView()
 {
     this->showMaximized();
 
-    fileMode = true;
 
     if(!centralLayout->isEmpty()){
         delete centralLayout->itemAt(0)->widget();
     }
 
-    multiview = new MultiView(this->centralWidget());
-    centralLayout->addWidget(multiview);
-
     dock->setWidget(dockWidget);
     dock->showMaximized();
+
+    multiview = new MultiView(this->centralWidget());
+
+    centralLayout->addWidget(multiview);
+
+    connect(para0, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
+    connect(para1, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
+    connect(para2, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
+    connect(para3, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
 }
 
 void MainWindow::loadSigleView()
@@ -85,7 +90,6 @@ void MainWindow::loadSigleView()
 
     dock->hide();
 
-    fileMode = false;
     if(!centralLayout->isEmpty()){
         delete centralLayout->itemAt(0)->widget();
     }
@@ -253,11 +257,6 @@ void MainWindow::createParaCheckbox()
 
     dockMainVLayout->addWidget(paraGroup);
     dockMainVLayout->addStretch();
-
-    connect(para0, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
-    connect(para1, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
-    connect(para2, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
-    connect(para3, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
 
 }
 

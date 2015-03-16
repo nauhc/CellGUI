@@ -16,7 +16,6 @@ struct QPairFirstComparer
 
 MultiView::MultiView(QWidget *parent) :
     QWidget(parent)
-  , filenamesLoaded(false)
   , minFrm(0)
   , maxFrm(5000)
 {
@@ -28,10 +27,11 @@ MultiView::MultiView(QWidget *parent) :
     scrollArea->setWidgetResizable(true);
     visGLayout = new QGridLayout();
 
-    createLoadFilesButton();
-    setShowProps();
+//    createLoadFilesButton();
+    loadFilesButton_clicked();
+    //setShowProps();
 
-    mainVLayout->addWidget(loadFilesButton);
+//    mainVLayout->addWidget(loadFilesButton);
 
     QWidget *temp = new QWidget();
     temp->setLayout(visGLayout);
@@ -55,14 +55,8 @@ void MultiView::setShowProps()
     showProps.push_back(4); // shape
 }
 
-void MultiView::clearVis()
-{
-
-}
-
 void MultiView::clearData()
 {
-    filenamesLoaded = false;
     if(!cellData.empty())
         cellData.clear();
 
@@ -122,65 +116,33 @@ void MultiView::sortbyParameter(int i)
             index_sort.replace(n, n);
         }
     }
+    qDebug() << index_sort;
     show();
 
 }
 
-void MultiView::loadFilesButton_pressed()
-{
-    loadFilesButton->setStyleSheet(BUTTON_PRESSED);
-}
+//void MultiView::loadFilesButton_pressed()
+//{
+//    loadFilesButton->setStyleSheet(BUTTON_PRESSED);
+//}
 
-void MultiView::loadFilesButton_released()
-{
-    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
-}
+//void MultiView::loadFilesButton_released()
+//{
+//    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
+//}
 
 void MultiView::loadFilesButton_clicked()
 {
-    std::cout << "'Load Cell Data' menu selected." << std::endl;
-    clearVis();
     clearData();
+    setShowProps();
 
-    loadFiles(); // datafileNames prepared
-    show();
-
-
-
-    /*
-//    connect(this, SIGNAL(readProperties(floatArray)),
-//            this, SLOT(updatePropsVisUI(floatArray)));
-
-//    connect(this, SIGNAL(readCellImg(QImage)),
-//            this, SLOT(updateCellImg(QImage)));
-
-//    connect(this, SIGNAL(readContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint)),
-//            this, SLOT(updateContourNBlebs(QVector<Bleb>,QVector<QPoint>,QPoint))); */
+    if(loadFiles()){ // datafileNames prepared
+        //show();
+        std::cout << "Cell Data loaded." << std::endl;
+        sortbyParameter(3);
+     }
 
 }
-
-/*
-//void MultiView::updatePropsVisUI(floatArray property)
-//{
-//    nar_tmp1->updateProperty(property, property[0]);
-//    cod_tmp1->updateCoord(QPointF(property[3], property[4]), property[0]);
-////    shp_tmp1->updateContourNBleb();
-//}
-
-//void MultiView::updateCellImg(QImage cell)
-//{
-//    nar_tmp1->updateCellImg(cell);
-//}
-
-//void MultiView::updateCellImg(QImage cell, QVector<QPoint> smoothContour)
-//{
-//    nar_tmp1->updateCellImg(cell, smoothContour);
-//}
-
-//void MultiView::updateContourNBlebs(QVector<Bleb> blebs, QVector<QPoint> contour, QPoint centroid) //QVector<Bleb>, QVector<QPoint>
-//{
-//    shp_tmp1->updateContourNBleb(blebs, contour, centroid);
-//}*/
 
 bool MultiView::loadFiles()
 {
@@ -194,8 +156,6 @@ bool MultiView::loadFiles()
                 //                datafileNames.push_back(dirIt.filePath());
                 datafileInfos.push_back(dirIt.fileInfo());
     }
-
-    filenamesLoaded = true;
 
     // read files :
     int fileNum = datafileInfos.size();
@@ -233,14 +193,14 @@ bool MultiView::loadFiles()
     return true;
 }
 
-void MultiView::createLoadFilesButton()
-{
-    loadFilesButton = new QPushButton("Load files");
-    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
-    loadFilesButton->setMaximumHeight(30);
-    connect(this->loadFilesButton, SIGNAL(clicked()), this, SLOT(loadFilesButton_clicked()));
+//void MultiView::createLoadFilesButton()
+//{
+//    loadFilesButton = new QPushButton("Load files");
+//    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
+//    loadFilesButton->setMaximumHeight(30);
+//    connect(this->loadFilesButton, SIGNAL(clicked()), this, SLOT(loadFilesButton_clicked()));
 
-}
+//}
 
 void MultiView::createVisCanvas()
 {
@@ -401,16 +361,15 @@ void MultiView::show()
     //    else
     //        containerSide = this->height()/4-space;
     //containerSide = (this->height()-space*6)/7;
-    containerSide = (this->height()-space*3 - 20*4)/4 - 20;
+    containerSide = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
 
     int fileNum = datafileInfos.size();
+
     if(showProps.size() == 1){ // show all the movies in one property
+        //visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
         for(int j = 0; j < int(fileNum/7); j++){
             for(int i = 0; i < /*fileNum*/7; i++){
                 int   idx   = j * 7 + i;
-//                int   index_pressure = int(pressure[idx].second);
-//                int   index_force = int(force[idx].second);
-                //qDebug() << index;
                 if(index_sort[idx] > fileNum+1)
                     continue;
                 visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0]);
@@ -422,10 +381,6 @@ void MultiView::show()
         visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
         for(int p = 0; p < showProps.size(); p++){
             for (int n = 0; n < fileNum; n++){
-//                int   index_pressure = int(pressure[n].second);
-                //qDebug() << index;
-//                visGLayout->SetFixedSize(fileNum*300, 300);
-//                visPropbyIdx(n, containerSide, n, p, showProps[p]);
                 visPropbyIdx(index_sort[n], containerSide, n, p, showProps[p]);
             }
         }

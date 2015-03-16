@@ -34,27 +34,19 @@ signals:
 
 public slots:
     // load files button
-    void loadFilesButton_pressed();
-    void loadFilesButton_released();
+//    void loadFilesButton_pressed();
+//    void loadFilesButton_released();
     void loadFilesButton_clicked();
-//    void updatePropsVisUI(floatArray property);
-//    void updateCellImg(QImage);
-//    void updateCellImg(QImage, QVector<QPoint> /*smoothContour*/);
-//    void updateContourNBlebs(QVector<Bleb>, QVector<QPoint>, QPoint);     
 
 private:
-    //QVector<QString>                        datafileNames; //stores all the filenames
     QVector<QFileInfo>                      datafileInfos; //stores all the filenames
-    QVector<bool>                           datafileRead; //stores all the files read or not
+    //QVector<bool>                           datafileRead; //stores all the files read or not
     QVector<int>                            showProps; // stores the index of the properties that need to be showed
-    bool                                    filenamesLoaded;
     QWidget                                 *visContainer; // large conainer storing all the vis info
-    //VisWindow                               *visWindow; // large canvas for drawing all vis once
     std::vector<std::vector<floatArray> >   cellData;
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
     QVector<QVector<QPoint> >               centers;
-//    QVector<qreal>                          pressure;
     QList<QPair<qreal,int> >                pressure;
     QList<QPair<qreal,int> >                force;
     QVector<unsigned int>                   index_sort; // sorted index
@@ -67,8 +59,6 @@ private:
 
     QPushButton                             *loadFilesButton;
 
-    QDialog                                 *dialog; // UI for manipulating vis
-
     bool    loadFiles();
     void    show();
     bool    readDataFile(QString &filename);
@@ -76,7 +66,6 @@ private:
     bool    readContoursFile(QString &filename);
     bool    readExpParaFile(QString &filename, int n);
     QImage  readImgFile(QString fp, unsigned int idx);
-    void    clearVis();
     void    clearData();
 
     void    createLoadFilesButton();
