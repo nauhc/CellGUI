@@ -17,6 +17,10 @@ Shape::Shape(QObject *parent)
 //    QTimer* timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
 //    timer->start(1);
+    bufferSize = width() * height() * 4;
+    buffer = new unsigned char[bufferSize]();
+    //    for (unsigned int i = 0; i < bufferSize; i++)
+    //        buffer[i] = 255;
 }
 
 Shape::~Shape()
@@ -35,12 +39,9 @@ void Shape::clear()
 //    contours.clear();
 //    blebPoints.clear();
 
-    if(buffer != NULL)
-        delete[] buffer;
-    bufferSize = width() * height() * 4;
-    buffer = new unsigned char[bufferSize]();
-    for (unsigned int i = 0; i < bufferSize; i++)
-        buffer[i] = 255;
+//    if(buffer != NULL)
+//        delete[] buffer;
+
 
 }
 
@@ -52,13 +53,13 @@ void Shape::clear()
 void Shape::setBeginFrm(int beginFrame)
 {
     begin = beginFrame;
-    std::cout << "SHAPE VIS BEGIN frame number " << begin << std::endl;
+    //std::cout << "SHAPE VIS BEGIN frame number " << begin << std::endl;
 }
 
 void Shape::setMaxFrm(int maxFrame)
 {
     max = maxFrame;
-    std::cout << "SHAPE VIS MAX frame number " << max << std::endl;
+    //std::cout << "SHAPE VIS MAX frame number " << max << std::endl;
 }
 
 void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
@@ -161,7 +162,7 @@ QColor _mapNumToHue_(int start, int range, int min, int max, int v){
 }
 
 
-void Shape::drawColorBar(QPainter *painter){ // (center,
+void Shape::drawColorBar(QPainter *painter){ //
 
     halfW = this->width()/2;
     halfH = this->height()/2;
@@ -206,6 +207,9 @@ void Shape::render(QPainter *painter)
 {
 //    if(!this->needUpdate)
 //        return;
+
+    // clean canvas
+    painter->eraseRect(0, 0, width(), height());
 
     halfW = this->width()/2;
     halfH = this->height()/2;

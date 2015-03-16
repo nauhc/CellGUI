@@ -51,8 +51,8 @@ void MultiView::setShowProps()
 //    showProps.push_back(0); // area
 //    showProps.push_back(1); // perimeter
 //    showProps.push_back(2); // blebs number and size
-    showProps.push_back(3); // centroid trajectory
-//    showProps.push_back(4); // shape
+//    showProps.push_back(3); // centroid trajectory
+    showProps.push_back(4); // shape
 }
 
 void MultiView::clearVis()
@@ -392,8 +392,6 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx)
 
 void MultiView::show()
 {
-
-
     // file reading succeed and draw vis
     maxFrm = 5000;
     int containerSide = 300;
