@@ -35,6 +35,7 @@ private slots:
     void loadMultiView();
     void loadSigleView();
     void propCheckBox_checked(int state);
+    void paraCheckBox_checked(int state);
 
 private:
     Ui::MainWindow      *ui;

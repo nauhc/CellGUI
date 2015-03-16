@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     dockWidget->setLayout(dockMainVLayout);
 
     // set to singleview at the beginning
-//    loadSigleView();
+    //    loadSigleView();
 
     // set to cultiview at the beginning
     loadMultiView();
@@ -100,28 +100,60 @@ void MainWindow::propCheckBox_checked(int state)
     QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
     if (!checkBox) return;
 
-//     if (state == Qt::Checked) {
-//         if(checkedBoxes.size() == 4){
-//             checkBox->setCheckState(Qt::Unchecked);
-//             return;
-//         } else if (!checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
-//             checkedBoxes.push_back(checkBox->objectName().remove(0, 9));
-//         }
+    //     if (state == Qt::Checked) {
+    //         if(checkedBoxes.size() == 4){
+    //             checkBox->setCheckState(Qt::Unchecked);
+    //             return;
+    //         } else if (!checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
+    //             checkedBoxes.push_back(checkBox->objectName().remove(0, 9));
+    //         }
 
-//     } else if (state == Qt::Unchecked) {
-//         if (checkedBoxes.size() == 0) {
-//             return; // should not happen
-//         } else if (checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
-//             checkedBoxes.remove(checkedBoxes.indexOf(checkBox->objectName().remove(0, 9)));
-//         }
-//     }
+    //     } else if (state == Qt::Unchecked) {
+    //         if (checkedBoxes.size() == 0) {
+    //             return; // should not happen
+    //         } else if (checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
+    //             checkedBoxes.remove(checkedBoxes.indexOf(checkBox->objectName().remove(0, 9)));
+    //         }
+    //     }
 
-     if (state == Qt::Checked){
-         qDebug() << checkBox->text()/*->objectName()*/ << "checked";
-     }
-     else if (state == Qt::Unchecked) {
-         qDebug() << checkBox->text()/*objectName()*/ << "unchecked";
-     }
+    if (state == Qt::Checked){
+//        qDebug() << checkBox->text()/*->objectName()*/ << "checked";
+    }
+    else if (state == Qt::Unchecked) {
+        qDebug() << checkBox->text()/*objectName()*/ << "unchecked";
+    }
+}
+
+void MainWindow::paraCheckBox_checked(int state)
+{
+    QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
+    if (!checkBox) return;
+    if (state == Qt::Checked)    {
+        if (checkBox->text() == "Pressure"){
+            para0->setChecked(true);
+            para1->setChecked(false);
+            para2->setChecked(false);
+            para3->setChecked(false);
+        }
+        else if (checkBox->text() == "Force"){
+            para0->setChecked(false);
+            para1->setChecked(true);
+            para2->setChecked(false);
+            para3->setChecked(false);
+        }
+        else if (checkBox->text() == "para2"){
+            para0->setChecked(false);
+            para1->setChecked(false);
+            para2->setChecked(true);
+            para3->setChecked(false);
+        }
+        else if (checkBox->text() == "para3"){
+            para0->setChecked(false);
+            para1->setChecked(false);
+            para2->setChecked(false);
+            para3->setChecked(true);
+        }
+    }
 }
 
 void MainWindow::createTimeSlider()
@@ -193,7 +225,7 @@ void MainWindow::createParaCheckbox()
     paraGroup = new QGroupBox(" Sort on: ");
     paraGroup->setStyleSheet(GROUPBOX);
     para0   = new QCheckBox("Pressure");
-    para1   = new QCheckBox("para1");
+    para1   = new QCheckBox("Force");
     para2   = new QCheckBox("para2");
     para3   = new QCheckBox("para3");
     para0->setStyleSheet(CHECKBOX);
@@ -218,6 +250,10 @@ void MainWindow::createParaCheckbox()
     dockMainVLayout->addWidget(paraGroup);
     dockMainVLayout->addStretch();
 
+    connect(para0, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
+    connect(para1, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
+    connect(para2, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
+    connect(para3, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
 
 }
 

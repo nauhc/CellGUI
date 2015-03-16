@@ -39,7 +39,7 @@ public slots:
 //    void updatePropsVisUI(floatArray property);
 //    void updateCellImg(QImage);
 //    void updateCellImg(QImage, QVector<QPoint> /*smoothContour*/);
-//    void updateContourNBlebs(QVector<Bleb>, QVector<QPoint>, QPoint);
+//    void updateContourNBlebs(QVector<Bleb>, QVector<QPoint>, QPoint);     
 
 private:
     //QVector<QString>                        datafileNames; //stores all the filenames
@@ -53,7 +53,9 @@ private:
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
     QVector<QVector<QPoint> >               centers;
-    QVector<qreal>                          pressure;
+//    QVector<qreal>                          pressure;
+    QList<QPair<qreal,int> >                pressure;
+    QList<QPair<qreal,int> >                force;
     QVector<unsigned int>                   index_sort; // sorted index
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
@@ -71,7 +73,7 @@ private:
     bool    readDataFile(QString &filename);
     bool    readBlebsFile(QString &filename);
     bool    readContoursFile(QString &filename);
-    bool    readExpParaFile(QString &filename);
+    bool    readExpParaFile(QString &filename, int n);
     QImage  readImgFile(QString fp, unsigned int idx);
     void    clearVis();
     void    clearData();

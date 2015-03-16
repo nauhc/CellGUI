@@ -5,6 +5,15 @@
 #include <QtAlgorithms>
 #include <iostream>
 
+struct QPairFirstComparer
+{
+    template<typename T1, typename T2>
+    bool operator()(const QPair<T1,T2> & a, const QPair<T1,T2> & b) const
+    {
+        return a.first < b.first;
+    }
+};
+
 MultiView::MultiView(QWidget *parent) :
     QWidget(parent)
   , filenamesLoaded(false)
@@ -311,7 +320,6 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx)
     }
 }
 
-
 bool MultiView::show()
 {
     // read files :
@@ -322,8 +330,10 @@ bool MultiView::show()
         if(!datafilename.isEmpty()){
             if(readDataFile(datafilename)){
                 //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
-                if(readBlebsFile(datafilename) && readContoursFile(datafilename)){
-                    //std::cout << "blebs and contours files read." << std::endl;
+                if(readBlebsFile(datafilename) &&
+                        readContoursFile(datafilename) &&
+                        readExpParaFile(datafilename, n)){
+                    //std::cout << "blebs, contours and experiment-parameter files read." << std::endl;
                 }
                 else{
                     qDebug() << "blebs and contours files reading ERROR.";
@@ -337,8 +347,14 @@ bool MultiView::show()
         }
     }
 
-    // file reading succeed and draw vis
+    // sort on pressure with index together
+    qSort(pressure.begin(), pressure.end(), QPairFirstComparer());
+    qDebug() << pressure;
 
+    qSort(force.begin(), force.end(), QPairFirstComparer());
+    qDebug() << force;
+
+    // file reading succeed and draw vis
     maxFrm = 5000;
     int containerSide = 300;
     int space = 5;
@@ -352,10 +368,14 @@ bool MultiView::show()
     if(showProps.size() == 1){ // show all the movies in one property
         for(int j = 0; j < int(fileNum/7); j++){
             for(int i = 0; i < /*fileNum*/7; i++){
-                int   index = j * 7 + i;
-                if(index > fileNum+1)
+                int   idx   = j * 7 + i;
+                int   index_pressure = int(pressure[idx].second);
+                int   index_force = int(force[idx].second);
+                //qDebug() << index;
+//                if(index_pressure > fileNum+1)
+                if(index_force > fileNum+1)
                     continue;
-                visPropbyIdx(index, containerSide, i, j, showProps[0]);
+                visPropbyIdx(index_force, containerSide, i, j, showProps[0]);
             }
         }
     }
@@ -364,21 +384,14 @@ bool MultiView::show()
         visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
         for(int p = 0; p < showProps.size(); p++){
             for (int n = 0; n < fileNum; n++){
+                int   index_pressure = int(pressure[n].second);
+                //qDebug() << index;
 //                visGLayout->SetFixedSize(fileNum*300, 300);
-                visPropbyIdx(n, containerSide, n, p, showProps[p]);
+//                visPropbyIdx(n, containerSide, n, p, showProps[p]);
+                visPropbyIdx(index_pressure, containerSide, n, p, showProps[p]);
             }
         }
     }
-
-    //    qDebug() << "All files reading done."; // until here: fast enough
-    //    qDebug() << pressure;
-    //    QVector<qreal> pressure_sort = pressure;
-    //    qSort(pressure_sort.begin(), pressure_sort.end());
-    //    qDebug() << pressure_sort;
-    //    for(int i = 0; i < pressure_sort.size(); i++)
-    //        index_sort.push_back(pressure.indexOf(pressure_sort[i]));
-    //    qDebug() << index_sort;
-
 
 }
 
@@ -542,7 +555,7 @@ bool MultiView::readContoursFile(QString &filename)
     return true;
 }
 
-bool MultiView::readExpParaFile(QString &filename)
+bool MultiView::readExpParaFile(QString &filename, int n)
 {
     QString tmp = /**dataFilename*/filename;
     QString fn_e;
@@ -553,7 +566,7 @@ bool MultiView::readExpParaFile(QString &filename)
 
     QFile f(fn_e);
     if(!f.open(QIODevice::ReadOnly)){
-        qDebug() << "Reading experiment parameter file not found.";
+        qDebug() << "Reading experiment parameter file not found: " << fn_e;
         return false;
     }else{
         QTextStream in(&f);
@@ -568,7 +581,10 @@ bool MultiView::readExpParaFile(QString &filename)
         QString line4 = in.readLine();
         //qDebug() << line1.remove("     pressure(pa)");
         qreal pres = line1.remove("     pressure(pa)").toFloat();
-        pressure.push_back(pres);
+        qreal forc = line2.remove("     ForceOffset(N)").toFloat();
+        //qDebug() << forc;
+        pressure.append(qMakePair(pres, n));
+        force.append(qMakePair(forc, n));
         return true;
     }
 
