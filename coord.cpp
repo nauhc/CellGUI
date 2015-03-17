@@ -351,16 +351,34 @@ void Coord::render(QPainter *painter)
         painter->drawText(rightX-5-15, 0-5, 20, 10, Qt::AlignCenter, "0" );
 
         float quarterxx = (rightX - leftX)/4.0;
-        float topxx1 = quarterxx + leftX;
-        float topxx2 = rightX - quarterxx;
-        painter->drawLine(QPointF(topxx1, topY-5),    QPointF(topxx1, topY+5)); //topxx1
-        painter->drawLine(QPointF(topxx2, topY-5),    QPointF(topxx2, topY+5)); //topxx2
-        painter->drawText(topxx1-10, topY+5+2, 20, 10, Qt::AlignCenter, QString::number(int(quarterxx*micMtr_Pixel)));
-        painter->drawText(topxx1-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
-        painter->drawText(topxx2-10, topY+5+2, 20, 10, Qt::AlignCenter, QString::number(int(quarterxx*micMtr_Pixel)));
-        painter->drawText(topxx2-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
+        QString unitx = QString::number(quarterxx/coordScale*micMtr_Pixel,'f', 1);
+        float unit_x1 = quarterxx + leftX;
+        float unit_x2 = rightX - quarterxx;
+        painter->drawLine(QPointF(unit_x1, topY-5),    QPointF(unit_x1, topY+5)); //topxx1
+        painter->drawLine(QPointF(unit_x2, topY-5),    QPointF(unit_x2, topY+5)); //topxx2
+        painter->drawText(unit_x1-10, topY+5+2, 20, 10, Qt::AlignCenter, unitx);
+        painter->drawText(unit_x1-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
+        painter->drawText(unit_x2-10, topY+5+2, 20, 10, Qt::AlignCenter, unitx);
+        painter->drawText(unit_x2-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
+        painter->drawLine(QPointF(unit_x1, bottomY-5), QPointF(unit_x1, bottomY+5)); // bottomxx1
+        painter->drawLine(QPointF(unit_x2, bottomY-5), QPointF(unit_x2, bottomY+5)); // bottomxx2
+        painter->drawText(unit_x1-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, unitx );
+        painter->drawText(unit_x2-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, unitx );
 
-
+        float quarteryy = (bottomY - topY)/4.0;
+        QString unity = QString::number(quarteryy/coordScale*micMtr_Pixel,'f', 1);
+        float unit_y1 = quarteryy + topY;
+        float unit_y2 = bottomY - quarterxx;
+        painter->drawLine(QPointF(leftX-5, unit_y1), QPointF(leftX+5, unit_y1)); // leftyy1
+        painter->drawLine(QPointF(leftX-5, unit_y2), QPointF(leftX+5, unit_y2)); // leftyy2
+        painter->drawText(leftX+5+2,    unit_y1-5, 20, 10, Qt::AlignCenter, unity );
+        painter->drawText(leftX+5+2+20, unit_y1-5, 20, 10, Qt::AlignCenter, "μm" );
+        painter->drawText(leftX+5+2,    unit_y2-5, 20, 10, Qt::AlignCenter, unity );
+        painter->drawText(leftX+5+2+20, unit_y2-5, 20, 10, Qt::AlignCenter, "μm" );
+        painter->drawLine(QPointF(rightX-5, unit_y1), QPointF(rightX+5, unit_y1)); // rightyy1
+        painter->drawLine(QPointF(rightX-5, unit_y2), QPointF(rightX+5, unit_y2)); // rightyy2
+        painter->drawText(rightX-5-20,  unit_y1-5, 20, 10, Qt::AlignCenter, unity );
+        painter->drawText(rightX-5-20,  unit_y2-5, 20, 10, Qt::AlignCenter, unity );
     }
     // !!! need to move to other place (one-time calculation!) -end
 
