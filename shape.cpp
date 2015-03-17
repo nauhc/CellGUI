@@ -32,8 +32,8 @@ void Shape::clear()
 {
     begin   = 0;
     curr    = 0;
-    max     = 1;
-    range   = 5000;
+    maxIndex     = 1;
+//    range   = 5000;
 //    blebs.clear();
 
 //    contours.clear();
@@ -56,9 +56,10 @@ void Shape::setBeginFrm(int beginFrame)
     //std::cout << "SHAPE VIS BEGIN frame number " << begin << std::endl;
 }
 
-void Shape::setMaxFrm(int maxFrame)
+void Shape::setMaxFrm(int maxIdx, int maxFrm)
 {
-    max = maxFrame;
+    maxIndex = maxIdx;
+    maxFrame = maxFrm;
     //std::cout << "SHAPE VIS MAX frame number " << max << std::endl;
 }
 
@@ -88,7 +89,7 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 //    //qDebug() << contour;
 
 //    contours.push_back(contour);
-
+    range    = maxFrame - begin;
     if (curr > range) curr = range;
     CubicYFColorMap colormap;
     QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, range, curr); // 5000 !!!!!
@@ -173,16 +174,16 @@ void Shape::drawColorBar(QPainter *painter){ //
     int bar_txt_h   = 20;
     int bar_txt_w   = halfW/4;
     QRect txt_old   = QRect(-halfW,           bar_txt_y, bar_txt_w, bar_txt_h);
-    QRect txt_new   = QRect(halfW-bar_txt_w,  bar_txt_y, bar_txt_w, bar_txt_h);
+    QRect txt_new   = QRect(halfW-bar_txt_w-10,  bar_txt_y, bar_txt_w, bar_txt_h);
 
     QPen myPen(QColor(120, 120, 118));
     painter->setPen(myPen);
-    painter->drawText(txt_old, Qt::AlignRight, "Old");
-    painter->drawText(txt_new, Qt::AlignLeft,  "New");
+    painter->drawText(txt_old, Qt::AlignRight, "0");
+    painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIndex));
 
 
     painter->rotate(-90); //***x->up, y->right***
-
+    float rto   = float(maxIndex)/float(maxFrame) > 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
     int space   = halfW/8;
     int bar_h   = 10;
     int bar_len = 2*(halfW - bar_txt_w - space);
@@ -190,7 +191,7 @@ void Shape::drawColorBar(QPainter *painter){ //
     int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
     int bar_y   = -(halfW - bar_txt_w - space);
 
-    for(int n = 0; n < bar_len; n++){
+    for(int n = 0; n < bar_len*rto; n++){
         CubicYFColorMap colorMap;
         QColor c = colorMap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, bar_len, n);
         myPen.setWidth(0);

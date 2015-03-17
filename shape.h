@@ -11,7 +11,7 @@ public:
     ~Shape();
 
     void setBeginFrm(int beginFrame);
-    void setMaxFrm(int maxFrame);
+    void setMaxFrm(int maxIndex, int maxFrame);
     void updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
     void clear();
 
@@ -29,7 +29,8 @@ private:
 
     unsigned int                begin; // beggining frame index
     unsigned int                curr; // current frame index
-    unsigned int                max; // total number of frame
+    unsigned int                maxIndex; // total number of frame
+    unsigned int                maxFrame; // total number of frame
     unsigned int                range; // how many frames to show
 
     QVector<QPolygon>           contours; // smoothed contours

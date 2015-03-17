@@ -121,10 +121,38 @@ void MainWindow::propCheckBox_checked(int state)
     //     }
 
     if (state == Qt::Checked){
-//        qDebug() << checkBox->text()/*->objectName()*/ << "checked";
+        if(checkBox->text() == "Area"){
+            multiview->pushProps(0);
+        }
+        else if(checkBox->text() == "Perimeter"){
+            multiview->pushProps(1);
+        }
+        else if(checkBox->text() == "Blebs Number and Size"){
+            multiview->pushProps(2);
+        }
+        else if(checkBox->text() == "Centroid Trajectory"){
+            multiview->pushProps(3);
+        }
+        else if(checkBox->text() == "Date"){
+            multiview->pushProps(4);
+        }
     }
     else if (state == Qt::Unchecked) {
-        qDebug() << checkBox->text()/*objectName()*/ << "unchecked";
+        if(checkBox->text() == "Area"){
+            multiview->popProps(0);
+        }
+        else if(checkBox->text() == "Perimeter"){
+            multiview->popProps(1);
+        }
+        else if(checkBox->text() == "Blebs Number and Size"){
+            multiview->popProps(2);
+        }
+        else if(checkBox->text() == "Centroid Trajectory"){
+            multiview->popProps(3);
+        }
+        else if(checkBox->text() == "Date"){
+            multiview->popProps(4);
+        }
     }
 }
 
@@ -162,6 +190,7 @@ void MainWindow::paraCheckBox_checked(int state)
             multiview->sortbyParameter(3);
         }
     }
+
 }
 
 void MainWindow::createTimeSlider()
@@ -201,10 +230,10 @@ void MainWindow::createProptyCheckbox()
     prop3->setStyleSheet(CHECKBOX);
     prop4->setStyleSheet(CHECKBOX);
 
-    prop0->setChecked(true);
-    prop1->setChecked(true);
+    prop0->setChecked(false);
+    prop1->setChecked(false);
     prop2->setChecked(false);
-    prop3->setChecked(true);
+    prop3->setChecked(false);
     prop4->setChecked(true);
 
     propVLayout = new QVBoxLayout();

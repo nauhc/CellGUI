@@ -14,7 +14,7 @@ public:
     ~Coord();
 
     void updateCoord(QPointF point, int currFrame);
-    void setMaxFrm(unsigned int m);
+    void setMaxFrm(unsigned int im, unsigned int fm);
     void setBeginFrm(unsigned int m);
     void setMaxSize(QSize s);
     void clear();
@@ -32,9 +32,10 @@ protected:
 
 private:
     unsigned int        maxFrm;
+    unsigned int        maxIdx;
     unsigned int        minFrm;
     unsigned int        currFrm;
-    unsigned int        range;
+    //unsigned int        range;
 
     QVector<QPointF>    centroid;       // the values of a particular feature
     QPointF             centroid_min;   // the minimum x,y coordinates of centroid

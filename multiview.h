@@ -26,6 +26,8 @@ public:
     explicit MultiView(QWidget *parent = 0);
     void    createDialogMenu(/*QDockWidget *dockWidget*/);
     void    sortbyParameter(int i);
+    void    pushProps(int i);
+    void    popProps(int i);
 
 signals:
 //    void readProperties(floatArray prop);
@@ -72,7 +74,6 @@ private:
     void    createVisCanvas();
     void    createSpacers();
 
-    void    setShowProps();
     void    visPropbyIdx(int index, int size, int i, int j, int propTp);
     void    showCircularProp(int index, int size, int i, int j, int propTp);
     void    showTrajectory(int index, int size, int i, int j);

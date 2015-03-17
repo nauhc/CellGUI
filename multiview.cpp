@@ -46,13 +46,22 @@ void MultiView::createSpacers()
 
 }
 
-void MultiView::setShowProps()
+void MultiView::pushProps(int i)
 {
 //    showProps.push_back(0); // area
 //    showProps.push_back(1); // perimeter
 //    showProps.push_back(2); // blebs number and size
 //    showProps.push_back(3); // centroid trajectory
-    showProps.push_back(4); // shape
+    showProps.push_back(i); // shape
+    qDebug() << showProps;
+    show();
+}
+
+void MultiView::popProps(int i)
+{
+    showProps.remove(showProps.indexOf(i));
+    qDebug() << showProps;
+    show();
 }
 
 void MultiView::clearData()
@@ -131,14 +140,15 @@ void MultiView::sortbyParameter(int i)
 //    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
 //}
 
-void MultiView::loadFilesButton_clicked()
+void MultiView::loadFilesButton_clicked() // first round
 {
     clearData();
-    setShowProps();
+//    pushProps();
 
     if(loadFiles()){ // datafileNames prepared
         //show();
         std::cout << "Cell Data loaded." << std::endl;
+        pushProps(4);
         sortbyParameter(3);
      }
 
@@ -254,7 +264,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j)
         int idxMin = cellData[index][0][0];
         int idxMax = cellData[index][cellDataSize-2][0];
 
-        idxMax = idxMin + maxFrm;
+        int frmMax = idxMin + maxFrm;
 
         QString file = datafileInfos[index].fileName();
         QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
@@ -267,7 +277,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j)
         cod_tmp->clear();
         cod_tmp->setFixedSize(size, size);
         cod_tmp->setBeginFrm(idxMin);
-        cod_tmp->setMaxFrm(idxMax);
+        cod_tmp->setMaxFrm(idxMax, frmMax);
         //cod_tmp->setMaxSize(QSize(800, 600));
 
         for(unsigned int n = 0; n < cellDataSize; n++){
@@ -291,7 +301,7 @@ void MultiView::showShape(int index, int size, int i, int j)
         int idxMin = cellData[index][0][0];
         int idxMax = cellData[index][cellDataSize-2][0];
 
-        idxMax = idxMin + maxFrm;
+        int frmMax = idxMin + maxFrm;
 
         QString file = datafileInfos[index].fileName();
         QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
@@ -304,7 +314,7 @@ void MultiView::showShape(int index, int size, int i, int j)
         Shape *shp_tmp = new Shape();
         shp_tmp->setFixedSize(size, size);
         shp_tmp->setBeginFrm(idxMin);
-        shp_tmp->setMaxFrm(idxMax);
+        shp_tmp->setMaxFrm(idxMax, frmMax);
 
         visGLayout->addWidget(shp_tmp, 2*j+1, i);
 
@@ -352,6 +362,10 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx)
 
 void MultiView::show()
 {
+//    QLayoutItem *child;
+//    while ((child = visGLayout->takeAt(0)) != 0)
+//        delete child;
+
     // file reading succeed and draw vis
     maxFrm = 5000;
     int containerSide = 300;

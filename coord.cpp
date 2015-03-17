@@ -40,7 +40,7 @@ void Coord::clear()
     centroid.clear();
     currFrm = 0;
     maxFrm  = 1;
-    range   = 5000;
+    //range   = 5000;
     origin = QPointF(this->width()/2, this->height()/2);
     min = QPoint(0, 0);
     max = QPoint(50, 50);
@@ -107,9 +107,11 @@ void Coord::updateCoord(QPointF point, int currFrame)
     update();
 }
 
-void Coord::setMaxFrm(unsigned int m)
+void Coord::setMaxFrm(unsigned int im, unsigned int fm)
 {
-    maxFrm = m;
+    maxFrm = fm;
+    maxIdx = im;
+    //qDebug() << fm << im;
 }
 
 void Coord::setBeginFrm(unsigned int m)
@@ -254,23 +256,24 @@ void Coord::drawColorBar(QPainter *painter)
     int bar_txt_y   = halfH*3/4;
     int bar_txt_h   = 20;
     int bar_txt_w   = /*120*/halfW/4;
-    QRect txt_old   = QRect(-halfW,           bar_txt_y, bar_txt_w, bar_txt_h);
-    QRect txt_new   = QRect(halfW-bar_txt_w,  bar_txt_y, bar_txt_w, bar_txt_h);
+    QRect txt_old   = QRect(-halfW,             bar_txt_y, bar_txt_w, bar_txt_h);
+    QRect txt_new   = QRect(halfW-bar_txt_w-10, bar_txt_y, bar_txt_w, bar_txt_h);
 
     QPen myPen(QColor(120, 120, 118));
     painter->setPen(myPen);
-    painter->drawText(txt_old, Qt::AlignRight, "Old");
-    painter->drawText(txt_new, Qt::AlignLeft,  "New");
+    painter->drawText(txt_old, Qt::AlignRight, "0");
+    painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIdx));
 
     painter->rotate(-90); //***x->up, y->right***
+    float rto   = float(maxIdx)/float(maxFrm) > 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
     int space   = /*50*/halfW/8;
     int bar_h   = /*bar_txt_h*/10;
-    int bar_len = 2*(halfW - bar_txt_w - space);
+    int bar_len = 2*(halfW - bar_txt_w - space)/**rto*/;
     int bar_w   = bar_len/bar_len;
     int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
     int bar_y   = -(halfW - bar_txt_w - space);
 
-    for(int n = 0; n < bar_len; n++){
+    for(int n = 0; n < bar_len*rto; n++){
         //QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
         CubicYFColorMap colorMap;
         QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
@@ -370,6 +373,7 @@ void Coord::render(QPainter *painter)
     // *** draw coordinates of each frame ***
     //int size = centroid.size();
     int size = centroid.size() > maxFrm ? maxFrm : centroid.size();
+    int range = maxFrm - minFrm;
     for(int n = startIndex; n < size; n++/*n+=10*/)
     {
         CubicYFColorMap colorMap;
