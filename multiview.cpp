@@ -41,11 +41,6 @@ MultiView::MultiView(QWidget *parent) :
 
 }
 
-void MultiView::createSpacers()
-{
-
-}
-
 void MultiView::pushProps(int i)
 {
 //    showProps.push_back(0); // area
@@ -89,13 +84,6 @@ void MultiView::clearData()
 //    container_cod.clear();
 //    container_nar.clear();
 //    container_shp.clear(); */
-}
-
-void MultiView::createDialogMenu(/*QDockWidget *dockWidget*/)
-{
-    //    dockMenu = new DockMenu();
-    //    dockWidget->setWidget(dockWidget);
-
 }
 
 void MultiView::sortbyParameter(int i)
@@ -147,7 +135,7 @@ void MultiView::loadFilesButton_clicked() // first round
 //        prop2 = new QCheckBox("Blebs Number and Size"); // 2
 //        prop3 = new QCheckBox("Centroid Trajectory"); // 3
 //        prop4 = new QCheckBox("Shape"); // 4
-        pushProps(3);
+        pushProps(4);
         sortbyParameter(3);
      }
 
@@ -162,7 +150,6 @@ bool MultiView::loadFiles()
         dirIt.next();
         if (QFileInfo(dirIt.filePath()).isFile())
             if (QFileInfo(dirIt.filePath()).suffix() == "csv")
-                //                datafileNames.push_back(dirIt.filePath());
                 datafileInfos.push_back(dirIt.fileInfo());
     }
 
@@ -287,7 +274,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value)
     }
 }
 
-void MultiView::showShape(int index, int size, int i, int j)
+void MultiView::showShape(int index, int size, int i, int j, float value)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -308,6 +295,7 @@ void MultiView::showShape(int index, int size, int i, int j)
         shp_tmp->setFixedSize(size, size);
         shp_tmp->setBeginFrm(idxMin);
         shp_tmp->setMaxFrm(idxMax, frmMax);
+        shp_tmp->setValue(value);
 
         visGLayout->addWidget(shp_tmp, 2*j+1, i);
 
@@ -344,11 +332,11 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, f
         break;
     case 4:
         //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-        showShape(fileIdx, size, i, j);
+        showShape(fileIdx, size, i, j, v);
         break;
     default:
         //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-        showShape(fileIdx, size, i, j);
+        showShape(fileIdx, size, i, j, v);
         break;
     }
 }

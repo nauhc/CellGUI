@@ -63,6 +63,11 @@ void Shape::setMaxFrm(int maxIdx, int maxFrm)
     //std::cout << "SHAPE VIS MAX frame number " << max << std::endl;
 }
 
+void Shape::setValue(float v)
+{
+    value = v;
+}
+
 void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
 {
 
@@ -165,6 +170,7 @@ QColor _mapNumToHue_(int start, int range, int min, int max, int v){
 
 void Shape::drawColorBar(QPainter *painter){ //
 
+
     halfW = this->width()/2;
     halfH = this->height()/2;
 
@@ -191,6 +197,9 @@ void Shape::drawColorBar(QPainter *painter){ //
     int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
     int bar_y   = -(halfW - bar_txt_w - space);
 
+    QRect rect_empty = QRect(QPoint(bar_x, bar_y+bar_len*rto), QSize(bar_h, bar_len*(1.0-rto)));
+    painter->fillRect(rect_empty, QBrush(QColor(220, 220, 220, 128)));
+
     for(int n = 0; n < bar_len*rto; n++){
         CubicYFColorMap colorMap;
         QColor c = colorMap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, bar_len, n);
@@ -210,8 +219,18 @@ void Shape::render(QPainter *painter)
 //        return;
 
     // clean canvas
-    painter->eraseRect(0, 0, width(), height());
+    unsigned char *buffer_tmp = new unsigned char[bufferSize]();
+    for (unsigned int i = 0; i < bufferSize; i++)
+        buffer_tmp[i] = 255;
+    img = QImage(buffer_tmp, width(), height(), QImage::Format_ARGB32);
+    painter->drawImage(0, 0, img);
+    //painter->eraseRect(0, 0, width(), height());
     painter->setRenderHint(QPainter::Antialiasing);
+
+    // draw Value
+    painter->setPen(QColor(128, 0, 0));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'e', 1));
+
 
     img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
     painter->drawImage(0, 0, img);

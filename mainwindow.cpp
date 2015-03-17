@@ -103,23 +103,6 @@ void MainWindow::propCheckBox_checked(int state)
 {
     QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
     if (!checkBox) return;
-
-    //     if (state == Qt::Checked) {
-    //         if(checkedBoxes.size() == 4){
-    //             checkBox->setCheckState(Qt::Unchecked);
-    //             return;
-    //         } else if (!checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
-    //             checkedBoxes.push_back(checkBox->objectName().remove(0, 9));
-    //         }
-
-    //     } else if (state == Qt::Unchecked) {
-    //         if (checkedBoxes.size() == 0) {
-    //             return; // should not happen
-    //         } else if (checkedBoxes.contains(checkBox->objectName().remove(0, 9))) {
-    //             checkedBoxes.remove(checkedBoxes.indexOf(checkBox->objectName().remove(0, 9)));
-    //         }
-    //     }
-
     if (state == Qt::Checked){
         if(checkBox->text() == "Area"){
             multiview->pushProps(0);

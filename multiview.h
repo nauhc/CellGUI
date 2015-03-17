@@ -24,7 +24,6 @@ class MultiView : public QWidget
     Q_OBJECT
 public:
     explicit MultiView(QWidget *parent = 0);
-    void    createDialogMenu(/*QDockWidget *dockWidget*/);
     void    sortbyParameter(int i);
     void    pushProps(int i);
     void    popProps(int i);
@@ -73,12 +72,11 @@ private:
 
     void    createLoadFilesButton();
     void    createVisCanvas();
-    void    createSpacers();
 
     void    visPropbyIdx(int index, int size, int i, int j, int propTp, float v);
     void    showCircularProp(int index, int size, int i, int j, int propTp);
     void    showTrajectory(int index, int size, int i, int j, float value);
-    void    showShape(int index, int size, int i, int j);
+    void    showShape(int index, int size, int i, int j, float value);
 
 };
 
