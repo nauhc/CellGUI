@@ -133,7 +133,7 @@ void MainWindow::propCheckBox_checked(int state)
         else if(checkBox->text() == "Centroid Trajectory"){
             multiview->pushProps(3);
         }
-        else if(checkBox->text() == "Date"){
+        else if(checkBox->text() == "Shape"){
             multiview->pushProps(4);
         }
     }
@@ -150,7 +150,7 @@ void MainWindow::propCheckBox_checked(int state)
         else if(checkBox->text() == "Centroid Trajectory"){
             multiview->popProps(3);
         }
-        else if(checkBox->text() == "Date"){
+        else if(checkBox->text() == "Shape"){
             multiview->popProps(4);
         }
     }
@@ -161,14 +161,14 @@ void MainWindow::paraCheckBox_checked(int state)
     QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
     if (!checkBox) return;
     if (state == Qt::Checked)    {
-        if (checkBox->text() == "Pressure"){
+        if (checkBox->text() == "Pressure Ascending"){
             para0->setChecked(true);
             para1->setChecked(false);
             para2->setChecked(false);
             para3->setChecked(false);
             multiview->sortbyParameter(0);
         }
-        else if (checkBox->text() == "Force"){
+        else if (checkBox->text() == "Force Ascending"){
             para0->setChecked(false);
             para1->setChecked(true);
             para2->setChecked(false);
@@ -182,7 +182,7 @@ void MainWindow::paraCheckBox_checked(int state)
             para3->setChecked(false);
             multiview->sortbyParameter(2);
         }
-        else if (checkBox->text() == "Date"){
+        else if (checkBox->text() == "Date Ascending"){
             para0->setChecked(false);
             para1->setChecked(false);
             para2->setChecked(false);
@@ -261,10 +261,10 @@ void MainWindow::createParaCheckbox()
 {
     paraGroup = new QGroupBox(" Sort on: ");
     paraGroup->setStyleSheet(GROUPBOX);
-    para0   = new QCheckBox("Pressure");
-    para1   = new QCheckBox("Force");
+    para0   = new QCheckBox("Pressure Ascending");
+    para1   = new QCheckBox("Force Ascending");
     para2   = new QCheckBox("Force Offset");
-    para3   = new QCheckBox("Date");
+    para3   = new QCheckBox("Date Ascending");
     para0->setStyleSheet(CHECKBOX);
     para1->setStyleSheet(CHECKBOX);
     para2->setStyleSheet(CHECKBOX);
