@@ -233,8 +233,8 @@ void MainWindow::createProptyCheckbox()
     prop0->setChecked(false);
     prop1->setChecked(false);
     prop2->setChecked(false);
-    prop3->setChecked(false);
-    prop4->setChecked(true);
+    prop3->setChecked(true);
+    prop4->setChecked(false);
 
     propVLayout = new QVBoxLayout();
     propVLayout->addWidget(prop0);
@@ -249,11 +249,11 @@ void MainWindow::createProptyCheckbox()
     dockMainVLayout->addWidget(propGroup);
     dockMainVLayout->addStretch();
 
-    connect(prop0, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-    connect(prop1, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-    connect(prop2, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-    connect(prop3, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-    connect(prop4, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+//    connect(prop0, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+//    connect(prop1, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+//    connect(prop2, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+//    connect(prop3, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+//    connect(prop4, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
 
 }
 

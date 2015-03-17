@@ -52,6 +52,7 @@ private:
     QList<QPair<qreal,int> >                pressure;
     QList<QPair<qreal,int> >                force;
     QVector<unsigned int>                   index_sort; // sorted index
+    QVector<float>                          value_sort; // sorted value
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
 
@@ -74,9 +75,9 @@ private:
     void    createVisCanvas();
     void    createSpacers();
 
-    void    visPropbyIdx(int index, int size, int i, int j, int propTp);
+    void    visPropbyIdx(int index, int size, int i, int j, int propTp, float v);
     void    showCircularProp(int index, int size, int i, int j, int propTp);
-    void    showTrajectory(int index, int size, int i, int j);
+    void    showTrajectory(int index, int size, int i, int j, float value);
     void    showShape(int index, int size, int i, int j);
 
 };

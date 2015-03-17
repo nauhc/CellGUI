@@ -167,6 +167,11 @@ void Coord::setMaxSize(QSize s) // video size
     win_off = QPointF(X_MIN, Y_MIN);
 }
 
+void Coord::setValue(float v)
+{
+    value = v;
+}
+
 void Coord::initializeGL()
 {
 
@@ -294,6 +299,12 @@ void Coord::render(QPainter *painter)
 
     // clear canvas
     painter->eraseRect(0, 0, width(), height());
+    painter->setRenderHint(QPainter::Antialiasing);
+
+
+    // draw Value
+    painter->setPen(QColor(128, 0, 0));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'e', 1));
 
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
@@ -303,7 +314,6 @@ void Coord::render(QPainter *painter)
     // set the start angle to 0 o'clock;
     painter->rotate(-90); //***x->up, y->right***
 
-    painter->setRenderHint(QPainter::Antialiasing);
 
 
     //draw the x-y coordinate system

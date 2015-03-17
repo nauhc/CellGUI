@@ -17,6 +17,7 @@ public:
     void setMaxFrm(unsigned int im, unsigned int fm);
     void setBeginFrm(unsigned int m);
     void setMaxSize(QSize s);
+    void setValue(float v);
     void clear();
 
 protected:
@@ -48,6 +49,8 @@ private:
     QPointF             currCent;
     int                 cnt = 0;
     qreal               coordScale;
+
+    float               value; // pressure/force/offset
 
     double              pixel;
     double              micMeter;

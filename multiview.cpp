@@ -53,14 +53,14 @@ void MultiView::pushProps(int i)
 //    showProps.push_back(2); // blebs number and size
 //    showProps.push_back(3); // centroid trajectory
     showProps.push_back(i); // shape
-    qDebug() << showProps;
+    //qDebug() << showProps;
     show();
 }
 
 void MultiView::popProps(int i)
 {
     showProps.remove(showProps.indexOf(i));
-    qDebug() << showProps;
+    //qDebug() << showProps;
     show();
 }
 
@@ -105,12 +105,14 @@ void MultiView::sortbyParameter(int i)
         for(int n = 0; n < datafileInfos.size(); n++){
 //            index_sort.push_back(pressure[n].second);
             index_sort.replace(n, pressure[n].second);
+            value_sort.replace(n, pressure[n].first);
         }
     }
     else if (i == 1){
         for(int n = 0; n < datafileInfos.size(); n++){
             //index_sort.push_back(force[n].second);
             index_sort.replace(n, force[n].second);
+            value_sort.replace(n, force[n].first);
         }
     }
     else if (i == 2){
@@ -118,27 +120,19 @@ void MultiView::sortbyParameter(int i)
             //index_sort.push_back(pressure[n].second);
             //index_sort.replace(n, pressure[n].second);
             index_sort.replace(n, n);
+            value_sort.replace(n, 0);
         }
     }
     else{
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, n);
+            value_sort.replace(n, 0);
         }
     }
-    qDebug() << index_sort;
+    //qDebug() << index_sort;
     show();
 
 }
-
-//void MultiView::loadFilesButton_pressed()
-//{
-//    loadFilesButton->setStyleSheet(BUTTON_PRESSED);
-//}
-
-//void MultiView::loadFilesButton_released()
-//{
-//    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
-//}
 
 void MultiView::loadFilesButton_clicked() // first round
 {
@@ -178,6 +172,7 @@ bool MultiView::loadFiles()
 
         QString datafilename = datafileInfos[n].absoluteFilePath();
         index_sort.push_back(n);
+        value_sort.push_back(0);
         if(!datafilename.isEmpty()){
             if(readDataFile(datafilename)){
                 //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
@@ -208,14 +203,6 @@ bool MultiView::loadFiles()
     return true;
 }
 
-//void MultiView::createLoadFilesButton()
-//{
-//    loadFilesButton = new QPushButton("Load files");
-//    loadFilesButton->setStyleSheet(BUTTON_RELEASED_ON);
-//    loadFilesButton->setMaximumHeight(30);
-//    connect(this->loadFilesButton, SIGNAL(clicked()), this, SLOT(loadFilesButton_clicked()));
-
-//}
 
 void MultiView::createVisCanvas()
 {
@@ -262,7 +249,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp)
     }
 }
 
-void MultiView::showTrajectory(int index, int size, int i, int j)
+void MultiView::showTrajectory(int index, int size, int i, int j, float value)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -283,6 +270,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j)
         cod_tmp->setFixedSize(size, size);
         cod_tmp->setBeginFrm(idxMin);
         cod_tmp->setMaxFrm(idxMax, frmMax);
+        cod_tmp->setValue(value);
         //cod_tmp->setMaxSize(QSize(800, 600));
 
         for(unsigned int n = 0; n < cellDataSize; n++){
@@ -335,7 +323,7 @@ void MultiView::showShape(int index, int size, int i, int j)
     }
 }
 
-void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx)
+void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, float v)
 {
     switch (PropIdx){
     case 0:
@@ -352,7 +340,7 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx)
         break;
     case 3:
         //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;
-        showTrajectory(fileIdx, size, i, j);
+        showTrajectory(fileIdx, size, i, j, v);
         break;
     case 4:
         //std::cout << "Showing Property 'Shape'. \n" << std::endl;
@@ -391,7 +379,7 @@ void MultiView::show()
                 int   idx   = j * 7 + i;
                 if(index_sort[idx] > fileNum+1)
                     continue;
-                visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0]);
+                visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0], value_sort[idx]);
             }
         }
     }
@@ -400,7 +388,7 @@ void MultiView::show()
         visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
         for(int p = 0; p < showProps.size(); p++){
             for (int n = 0; n < fileNum; n++){
-                visPropbyIdx(index_sort[n], containerSide, n, p, showProps[p]);
+                visPropbyIdx(index_sort[n], containerSide, n, p, showProps[p], value_sort[n]);
             }
         }
     }
