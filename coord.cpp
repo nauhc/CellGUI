@@ -253,7 +253,7 @@ void Coord::drawColorBar(QPainter *painter)
 
     // *** draw color map bar indicating time old / new ***
     // ***x->right, y->down***
-    int bar_txt_y   = halfH*3/4;
+    int bar_txt_y   = halfH*3/4-10;
     int bar_txt_h   = 20;
     int bar_txt_w   = /*120*/halfW/4;
     QRect txt_old   = QRect(-halfW,             bar_txt_y, bar_txt_w, bar_txt_h);
@@ -273,6 +273,8 @@ void Coord::drawColorBar(QPainter *painter)
     int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
     int bar_y   = -(halfW - bar_txt_w - space);
 
+    QRect rect_empty = QRect(QPoint(bar_x, bar_y+bar_len*rto), QSize(bar_h, bar_len*(1.0-rto)));
+    painter->fillRect(rect_empty, QBrush(QColor(220, 220, 220, 128)));
     for(int n = 0; n < bar_len*rto; n++){
         //QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
         CubicYFColorMap colorMap;
@@ -283,7 +285,6 @@ void Coord::drawColorBar(QPainter *painter)
         QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
         painter->drawRect(rect);
     }
-
 }
 
 void Coord::render(QPainter *painter)
@@ -337,29 +338,28 @@ void Coord::render(QPainter *painter)
 //    bool Xgreater = (centroid_max.x() - centroid_min.x()) > (centroid_max.y() - centroid_min.y());
     //    qDebug() << Xgreater;
     if(centroid.size() > startIndex){
-
         //draw units on the window edges
-//        QPointF origin_tran = translate_image2canvas_center(origin, Xgreater);
-//        painter->drawLine(QPointF(origin_tran.x(), topY-5), QPointF(origin_tran.x(), topY+5)); //top
-//        painter->drawLine(QPointF(leftX-5, origin_tran.y()), QPointF(leftX+5, origin_tran.y())); // left
-//        painter->drawLine(QPointF(rightX-5, origin_tran.y()), QPointF(rightX+5, origin_tran.y())); // right
-//        painter->drawLine(QPointF(origin_tran.x(), bottomY-5), QPointF(origin_tran.x(), bottomY+5)); // bottom
-//        painter->drawText(origin_tran.x()-10, topY+5+2, 20, 10, Qt::AlignCenter, "0" );
-//        painter->drawText(origin_tran.x()-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
-//        painter->drawText(origin_tran.x()-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, "0" );
-//        painter->drawText(leftX+5+2, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
-//        painter->drawText(leftX+5+2+20, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "μm" );
-//        painter->drawText(rightX-5-15, origin_tran.y()-5, 20, 10, Qt::AlignCenter, "0" );
-        painter->drawLine(QPointF(0, topY-5), QPointF(0, topY+5)); //top
+        painter->drawLine(QPointF(0, topY-5),    QPointF(0, topY+5)); //top
+        painter->drawLine(QPointF(0, bottomY-5), QPointF(0, bottomY+5)); // bottom
         painter->drawLine(QPointF(leftX-5, 0), QPointF(leftX+5, 0)); // left
         painter->drawLine(QPointF(rightX-5, 0), QPointF(rightX+5, 0)); // right
-        painter->drawLine(QPointF(0, bottomY-5), QPointF(0, bottomY+5)); // bottom
         painter->drawText(0-10, topY+5+2, 20, 10, Qt::AlignCenter, "0" );
         painter->drawText(0-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
         painter->drawText(0-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, "0" );
         painter->drawText(leftX+5+2, 0-5, 20, 10, Qt::AlignCenter, "0" );
         painter->drawText(leftX+5+2+20, 0-5, 20, 10, Qt::AlignCenter, "μm" );
         painter->drawText(rightX-5-15, 0-5, 20, 10, Qt::AlignCenter, "0" );
+
+        float quarterxx = (rightX - leftX)/4.0;
+        float topxx1 = quarterxx + leftX;
+        float topxx2 = rightX - quarterxx;
+        painter->drawLine(QPointF(topxx1, topY-5),    QPointF(topxx1, topY+5)); //topxx1
+        painter->drawLine(QPointF(topxx2, topY-5),    QPointF(topxx2, topY+5)); //topxx2
+        painter->drawText(topxx1-10, topY+5+2, 20, 10, Qt::AlignCenter, QString::number(int(quarterxx*micMtr_Pixel)));
+        painter->drawText(topxx1-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
+        painter->drawText(topxx2-10, topY+5+2, 20, 10, Qt::AlignCenter, QString::number(int(quarterxx*micMtr_Pixel)));
+        painter->drawText(topxx2-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
+
 
     }
     // !!! need to move to other place (one-time calculation!) -end
@@ -377,13 +377,10 @@ void Coord::render(QPainter *painter)
     for(int n = startIndex; n < size; n++/*n+=10*/)
     {
         CubicYFColorMap colorMap;
-//        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, size, n);
         QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, n<=range?n:range);
         QPen penDot(c);
         painter->setPen(penDot);
         painter->setBrush(c);
-        //        QPointF visPoint = translateCoord(centroid[n], 5.0);
-//        QPointF visPoint = translate_image2canvas_center(centroid[n], Xgreater);
         QPointF visPoint = translate_image2canvas_center(centroid[n], coordScale);
         //qDebug() << visPoint;
         painter->drawEllipse( visPoint, 2.0, 2.0);

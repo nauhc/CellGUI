@@ -148,7 +148,12 @@ void MultiView::loadFilesButton_clicked() // first round
     if(loadFiles()){ // datafileNames prepared
         //show();
         std::cout << "Cell Data loaded." << std::endl;
-        pushProps(4);
+//        prop0 = new QCheckBox("Area"); // 0
+//        prop1 = new QCheckBox("Perimeter"); // 1
+//        prop2 = new QCheckBox("Blebs Number and Size"); // 2
+//        prop3 = new QCheckBox("Centroid Trajectory"); // 3
+//        prop4 = new QCheckBox("Shape"); // 4
+        pushProps(3);
         sortbyParameter(3);
      }
 

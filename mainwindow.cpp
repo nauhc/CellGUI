@@ -219,11 +219,11 @@ void MainWindow::createProptyCheckbox()
 
     propGroup = new QGroupBox(" Property Selection: ");
     propGroup->setStyleSheet(GROUPBOX);
-    prop0 = new QCheckBox("Area");
-    prop1 = new QCheckBox("Perimeter");
-    prop2 = new QCheckBox("Blebs Number and Size");
-    prop3 = new QCheckBox("Centroid Trajectory");
-    prop4 = new QCheckBox("Shape");
+    prop0 = new QCheckBox("Area"); // 0
+    prop1 = new QCheckBox("Perimeter"); // 1
+    prop2 = new QCheckBox("Blebs Number and Size"); // 2
+    prop3 = new QCheckBox("Centroid Trajectory"); // 3
+    prop4 = new QCheckBox("Shape"); // 4
     prop0->setStyleSheet(CHECKBOX);
     prop1->setStyleSheet(CHECKBOX);
     prop2->setStyleSheet(CHECKBOX);
