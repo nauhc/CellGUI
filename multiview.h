@@ -74,7 +74,7 @@ private:
     void    createVisCanvas();
 
     void    visPropbyIdx(int index, int size, int i, int j, int propTp, float v);
-    void    showCircularProp(int index, int size, int i, int j, int propTp);
+    void    showCircularProp(int index, int size, int i, int j, int propTp, float value);
     void    showTrajectory(int index, int size, int i, int j, float value);
     void    showShape(int index, int size, int i, int j, float value);
 

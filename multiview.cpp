@@ -200,7 +200,7 @@ void MultiView::createVisCanvas()
     //    visWindow->resize(/*visContainer->size()*/ QSize(1024, 768));
 }
 
-void MultiView::showCircularProp(int index, int size, int i, int j, int propTp)
+void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, float value)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -221,6 +221,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp)
         nar_tmp->setFixedSize(size, size+20);
         nar_tmp->setBeginFrm(idxMin);
         nar_tmp->setMaxFrm(idxMax);
+        nar_tmp->setValue(value);
 
         for(unsigned int n = 0; n < cellDataSize; n++){
             //nar_tmp->clear();
@@ -320,15 +321,15 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, f
     switch (PropIdx){
     case 0:
         //std::cout << "Showing Property 'Area'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx);
+        showCircularProp(fileIdx, size, i, j, PropIdx, v);
         break;
     case 1:
         //std::cout << "Showing Property 'Perimeter'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx);
+        showCircularProp(fileIdx, size, i, j, PropIdx, v);
         break;
     case 2:
         //std::cout << "Showing Property 'Bleb size and number'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx);
+        showCircularProp(fileIdx, size, i, j, PropIdx, v);
         break;
     case 3:
         //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;

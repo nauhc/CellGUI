@@ -67,14 +67,14 @@ Narr::~Narr()
 void Narr::setBeginFrm(int beginFrame)
 {
     begin = beginFrame;
-    std::cout << "NARRATIVE VIS BEGIN frame number " << begin << std::endl;
+    //std::cout << "NARRATIVE VIS BEGIN frame number " << begin << std::endl;
 }
 
 void Narr::setMaxFrm(unsigned int m)
 {
     max = m;
 //    max = 5000;
-    std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
+    //std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
 }
 
 void Narr::printAreaData(){
@@ -420,6 +420,11 @@ void Narr::setPropertyType(int propTp)
     }
 }
 
+void Narr::setValue(float v)
+{
+    value = v;
+}
+
 void drawTriangle(QPainter *painter,
                   qreal p0x, qreal p0y,
                   qreal p1x, qreal p1y,
@@ -452,6 +457,12 @@ void Narr::render(QPainter *painter)
 {
 //    if(!this->needUpdate)
 //        return;
+
+    // draw Value
+    //painter->eraseRect(0, 0, width(), height());
+    painter->eraseRect(width() - 70, 30, 60, 20);
+    painter->setPen(QColor(128, 0, 0));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'e', 1));
 
     halfW = this->width()/2; // half width
     halfH = this->height()/2; // half height

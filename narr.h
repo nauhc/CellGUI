@@ -15,6 +15,7 @@ public:
     void setBeginFrm(int beginFrame);
     void setMaxFrm(unsigned int m);
     void setPropertyType(int);
+    void setValue(float v);
     void updateProperty(floatArray prop, int currFrame);
     void updateCellImg(QImage &cell);
     void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour); // when need the cell image contours
@@ -48,6 +49,8 @@ private:
 
     float                       angle; // mouse position angle
     unsigned int                mouseIndex;
+
+    float                       value; // pressure/force/offset
 
     void printAreaData();
     void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
