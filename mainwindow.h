@@ -33,7 +33,7 @@ public:
 private slots:
     //read temporal data from file
     void loadMultiView();
-    void loadSigleView();
+    void loadSingleView();
     void propCheckBox_checked(int state);
     void paraCheckBox_checked(int state);
 

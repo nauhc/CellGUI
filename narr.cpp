@@ -34,9 +34,9 @@ Narr::Narr(QWidget *parent)
 {
     clear();
 
-//    QTimer* timer = new QTimer(this);
-//    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-//    timer->start(1);
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1);
 }
 
 void Narr::clear()
@@ -56,7 +56,7 @@ void Narr::clear()
     angle       = 0;
     mouseIndex  = 0;
 
-    propType    = 1;
+    //propType    = 1;
 }
 
 Narr::~Narr()
@@ -387,18 +387,19 @@ void Narr::setPropType(int propTp)
     propType = propTp;
     switch(propType){
     case 0:
-        //std::cout << "Property Type 'Area' selected. \n" << std::endl;
+        std::cout << "Property Type 'Area' selected. \n" << std::endl;
         break;
     case 1:
-        //std::cout << "Property Type: 'Perimeter' selected. \n" << std::endl;
+        std::cout << "Property Type: 'Perimeter' selected. \n" << std::endl;
         break;
     case 2:
-        //std::cout << "Property Type: 'Bleb' selected. \n" << std::endl;
+        std::cout << "Property Type: 'Bleb' selected. \n" << std::endl;
         break;
     default:
-        //std::cout << "Property Type: 'Area' selected. \n" << std::endl;
+        std::cout << "Property Type: 'Area' selected. \n" << std::endl;
         break;
     }
+    update();
 }
 
 void Narr::setPropertyType(int propTp)

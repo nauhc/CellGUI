@@ -35,10 +35,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     dockWidget->setLayout(dockMainVLayout);
 
     // set to singleview at the beginning
-//    loadSigleView();
+    loadSingleView();
 
     // set to multiview at the beginning
-    loadMultiView();
+//    loadMultiView();
 
     // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     // Add SigleView to centralWidget layout
     loadSigleViewAct = new QAction(tr("&Extract Data From Video File"), this);
-    connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSigleView()));
+    connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSingleView()));
     fileMenu->addAction(loadSigleViewAct);
 
 }
@@ -84,7 +84,7 @@ void MainWindow::loadMultiView()
     connect(para3, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
 }
 
-void MainWindow::loadSigleView()
+void MainWindow::loadSingleView()
 {
     this->setFixedSize(1280, 1300);
 

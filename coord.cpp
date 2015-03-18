@@ -23,9 +23,9 @@ Coord::Coord(QWidget *parent)
 {
     clear();
 
-    //    QTimer* timer = new QTimer(this);
-    //    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    //    timer->start(1);
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1);
 
 //    bufferSize = width() * height() * 4;
 //    buffer = new unsigned char[bufferSize]();
@@ -69,7 +69,7 @@ void Coord::updateCoord(QPointF point, int currFrame)
     QPointF center(width()/2, height()/2);
 
     if(centroid.size() == startIndex){
-        origin = QPoint(centroid[startIndex-1].x(), centroid[startIndex-1].y());
+        origin = QPointF(centroid[startIndex-1].x(), centroid[startIndex-1].y());
         //qDebug() << "centroid origin " << origin;
     }
 
@@ -105,6 +105,8 @@ void Coord::updateCoord(QPointF point, int currFrame)
 
     currFrm++;
     update();
+
+    //qDebug() << point << origin;
 }
 
 void Coord::setMaxFrm(unsigned int im, unsigned int fm)
@@ -270,7 +272,7 @@ void Coord::drawColorBar(QPainter *painter)
     painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIdx));
 
     painter->rotate(-90); //***x->up, y->right***
-    float rto   = float(maxIdx)/float(maxFrm) > 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
+    float rto   = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
     int space   = /*50*/halfW/8;
     int bar_h   = /*bar_txt_h*/10;
     int bar_len = 2*(halfW - bar_txt_w - space)/**rto*/;

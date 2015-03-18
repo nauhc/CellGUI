@@ -226,6 +226,7 @@ void SingleView::updatePropsVisUI_(floatArray property)
 {
     nar->updateProperty(property, controller->getCurrentFrame()/*property[0]*/);
     cod->updateCoord(QPointF(property[3], property[4]), controller->getCurrentFrame()/*property[0]*/);
+    //qDebug() << QPointF(property[3], property[4]) << controller->getCurrentFrame();
 }
 
 void SingleView::updateCellImg_(QImage cell, QVector<QPoint> smoothContour)
@@ -611,7 +612,11 @@ void SingleView::drawROIButton_clicked()
 
         controller->pauseVideo();
 
-        nar->setBeginFrm(controller->getCurrentFrame());
+        int startFrm = controller->getCurrentFrame();
+        int totalFrm = controller->getNumberOfFrames();
+        nar->setBeginFrm(startFrm);
+        cod->setBeginFrm(startFrm);
+        cod->setMaxFrm(totalFrm-startFrm, totalFrm-startFrm);
 
         encircler_->clearCircle();
         encircler_->turnOnEncircleMode();
@@ -729,6 +734,7 @@ void SingleView::createCoordVis()
 
     cod->setMinimumSize(512, 512);
     cod->setMaximumSize(640, 640);
+
 }
 
 void calcSizes(int &videoWidth, int &videoHeight,
