@@ -10,7 +10,7 @@ class Narr : public RenderWidget
     Q_OBJECT
 
 public:
-    Narr(QWidget *parent = 0);
+    Narr(QWidget *parent = 0, bool multv = true);
     ~Narr();
     void setBeginFrm(int beginFrame);
     void setMaxFrm(unsigned int m);

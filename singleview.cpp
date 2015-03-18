@@ -714,7 +714,7 @@ void SingleView::createPropertySelector()
 
 void SingleView::createNarrVis()
 {
-    nar = new Narr();
+    nar = new Narr(this, false);
 //    nar_container = QWidget::createWindowContainer(nar, this);
 //    nar_container->setMinimumSize(512, 512);
 //    nar_container->setMaximumSize(640, 640);
@@ -727,7 +727,7 @@ void SingleView::createNarrVis()
 
 void SingleView::createCoordVis()
 {
-    cod = new Coord();
+    cod = new Coord(this, false);
 //    cod_container = QWidget::createWindowContainer(cod, this);
 //    cod_container->setMinimumSize(512, 512);
 //    cod_container->setMaximumSize(640, 640);

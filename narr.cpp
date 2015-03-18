@@ -30,13 +30,14 @@ inline int larger(int a, int b){
     return (a > b ? a : b);
 }
 
-Narr::Narr(QWidget *parent)
+Narr::Narr(QWidget *parent, bool multv)
 {
     clear();
-
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1);
+     if(!multv){
+        QTimer* timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+        timer->start(1);
+    }
 }
 
 void Narr::clear()
@@ -460,8 +461,8 @@ void Narr::render(QPainter *painter)
 //        return;
 
     // draw Value
-    //painter->eraseRect(0, 0, width(), height());
-    painter->eraseRect(width() - 70, 30, 60, 20);
+    painter->eraseRect(0, 0, width(), height());
+//    painter->eraseRect(width() - 70, 30, 60, 20);
     painter->setPen(QColor(128, 0, 0));
     painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'e', 1));
 

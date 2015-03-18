@@ -10,7 +10,7 @@ class Coord : public RenderWidget
     Q_OBJECT
 
 public:
-    Coord(QWidget *parent = 0);
+    Coord(QWidget *parent = 0, bool multv = true);
     ~Coord();
 
     void updateCoord(QPointF point, int currFrame);

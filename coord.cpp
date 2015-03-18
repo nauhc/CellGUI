@@ -19,7 +19,7 @@ const int Coord_COLOR_START = /*30*/0;
 const int Coord_COLOR_RANGE = /*90*/120;
 
 
-Coord::Coord(QWidget *parent)
+Coord::Coord(QWidget *parent, bool multv)
 {
     clear();
 
