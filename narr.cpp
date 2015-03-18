@@ -23,8 +23,8 @@ QColor WHITE    = QColor(255, 255, 255);
 QColor YELLOW   = QColor(247, 154, 1);
 QColor RED      = QColor(208, 81, 38);
 
-float BlebSizeMax = /*1.5*//*12*/7;
-float BlebSizeMin = /*0.2*/2;
+float BlebSizeMax = 10.0/*1.5*//*12*//*7*/;
+float BlebSizeMin = 0.2/*2*/;
 
 inline int larger(int a, int b){
     return (a > b ? a : b);
@@ -117,6 +117,7 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     perimeter.push_back(prop[2]);
     blebNum.push_back(prop[8]);
     blebAvgSize.push_back(prop[9]);
+    //qDebug() << prop[9];
 }
 
 void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
@@ -296,7 +297,9 @@ void Narr::drawCircularBarChart_bleb(QPainter *painter,
                                      qreal thickness,
                                      QColor color)
 {
-
+//    for(int n = 0; n < blebAvgSize.size(); n++)
+//        std::cout << blebAvgSize[n];
+//    std::cout << endl;
     if (feature.size() != 0){
 //        QPen myPen(color);
 //        myPen.setCapStyle(Qt::FlatCap);
@@ -308,6 +311,7 @@ void Narr::drawCircularBarChart_bleb(QPainter *painter,
         for(int n = 0; n < number; n++){
             qreal size = blebAvgSize[n] > BlebSizeMin ? blebAvgSize[n] - BlebSizeMin : 0;
             qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
+            //qreal g = qreal(blebAvgSize[n])/BlebSizeMax;
             QColor cc = gradualColor(color, 1-g);
             painter->setPen(cc);
             painter->setBrush(QBrush(cc));

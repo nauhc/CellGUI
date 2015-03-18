@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     dockWidget->setLayout(dockMainVLayout);
 
     // set to singleview at the beginning
-    //    loadSigleView();
+//    loadSigleView();
 
     // set to multiview at the beginning
     loadMultiView();

@@ -135,7 +135,7 @@ void MultiView::loadFilesButton_clicked() // first round
 //        prop2 = new QCheckBox("Blebs Number and Size"); // 2
 //        prop3 = new QCheckBox("Centroid Trajectory"); // 3
 //        prop4 = new QCheckBox("Shape"); // 4
-        pushProps(4);
+        pushProps(2);
         sortbyParameter(3);
      }
 
@@ -223,8 +223,12 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp)
         nar_tmp->setMaxFrm(idxMax);
 
         for(unsigned int n = 0; n < cellDataSize; n++){
-            nar_tmp->clear();
+            //nar_tmp->clear();
             nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0]);
+//            for(int x = 0; x < cellData[index][n].size(); x++){
+//                std::cout << cellData[index][n][x] << " ";
+//            }
+//            std::cout << std::endl;
         }
 
         visGLayout->addWidget(nar_tmp, 2*j+1, i);
@@ -418,6 +422,7 @@ bool MultiView::readDataFile(QString &filename)
             prop.push_back(float(row[6])); // speed.theta
             prop.push_back(float(row[7])); // shape
             prop.push_back(float(row[8])); // blebNum
+            prop.push_back(float(row[9])); // blebSize
 
             //            for(unsigned int n = 0; n < prop.size(); n++)
             //                std::cout << prop[n] << " ";
