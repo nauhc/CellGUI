@@ -70,6 +70,7 @@ private:
     QCheckBox           *prop2;
     QCheckBox           *prop3;
     QCheckBox           *prop4;
+    QCheckBox           *prop5;
     QVector<QString>    checkedBoxes;
 
     // sorting parameter

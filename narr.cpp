@@ -324,7 +324,8 @@ void Narr::drawCircularBarChart_bleb(QPainter *painter,
             painter->translate(0, innerRadius);
             //draw a bar
             float barheight = float(feature[n]) * thickness/ maxV;
-            float w = /*2.*M_PI/(max-begin)*number*/1;
+            //float w = /*2.*M_PI/(max-begin)*number*/1;
+            float w = 2.*M_PI/(max-begin)*number;
             painter->drawRect(0, 0, w, barheight);
             // translate and rotate back to the center
             painter->translate(0, -innerRadius);
@@ -464,7 +465,7 @@ void Narr::render(QPainter *painter)
     painter->eraseRect(0, 0, width(), height());
 //    painter->eraseRect(width() - 70, 30, 60, 20);
     painter->setPen(QColor(128, 0, 0));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'e', 1));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
 
     halfW = this->width()/2; // half width
     halfH = this->height()/2; // half height
@@ -478,7 +479,7 @@ void Narr::render(QPainter *painter)
 
     // set (0,0) to the center of the canvas
     qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
-    QPointF center(halfW, halfH /*+ 50*/);
+    QPointF center(halfW, halfH*1.05);
     painter->translate(center.x(), center.y());
 
     // set the start angle to 0 o'clock;
@@ -489,12 +490,22 @@ void Narr::render(QPainter *painter)
     qreal ringArcThickness      = .05 * halfS;
     drawRingArc(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
 
-
     // draw real-time changing ring arcs
-    float p = float(curr-begin)/(max-begin);
+    float p;
+        if(propType == 0) // area
+            p = float(area.size())/(max-begin);
+        else if (propType == 1)
+            p = float(perimeter.size())/(max-begin);
+        else if (propType == 2)
+            p = float(blebNum.size())/(max-begin);
     qreal currAngle = p * 360 - 1.0;
-    QColor c = gradualColor(GREEN, /*p*/0.2);
-    drawRingArc(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, c);
+    drawRingArc(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, gradualColor(GREEN, /*p*/0.2));
+
+
+//    float p = float(curr-begin)/(max-begin);
+//    qreal currAngle = p * 360 - 1.0;
+//    QColor c = gradualColor(GREEN, /*p*/0.2);
+//    drawRingArc(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, c);
     //    painter->setPen(QColor(200, 200, 200));
     //    float xx = (ringArcInnerRadius - 60)*sin(currAngle*M_PI/180);
     //    float yy = (ringArcInnerRadius - 60)*cos(currAngle*M_PI/180);
@@ -505,7 +516,7 @@ void Narr::render(QPainter *painter)
     painter->rotate(-90); //***x->left, y->up***
     //draw circular bar
     qreal propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
-    qreal propBarThickness      = .30* halfS;
+    qreal propBarThickness      = .28* halfS;
     //printAreaData();
 
 //    drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThinkness+4, gradualColor(ORANGE, 0.95));
@@ -513,9 +524,10 @@ void Narr::render(QPainter *painter)
 //    drawCircularLineChart(painter, area, propBarInnerRadius, propBarThinkness, 0.1, gradualColor(ORANGE, 0.3));
 
     if(propType == 0){ // area
+        // draw real-time changing ring arcs
+
         qreal maxArea = 1300;
         qreal minArea = 200;
-
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(ORANGE, 0.95));
         drawCircularBarChart_fixMax(painter, area, minArea, maxArea, propBarInnerRadius, propBarThickness, gradualColor(ORANGE, 0.3));
         painter->rotate(180);
@@ -538,6 +550,8 @@ void Narr::render(QPainter *painter)
         painter->rotate(180);
     }
     else if(propType == 2){ // bleb
+
+
         drawRingArc(painter, QPointF(0,0), 0, 360, propBarInnerRadius, propBarThickness+4, gradualColor(BLUE, 0.95));
         qreal maxBlebNum = 7;
         drawCircularBarChart_bleb(painter, blebNum, maxBlebNum, propBarInnerRadius, propBarThickness, BLUE/*gradualColor(BLUE, 0.3)*/);

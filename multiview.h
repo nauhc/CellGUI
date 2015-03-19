@@ -26,7 +26,7 @@ public:
     explicit MultiView(QWidget *parent = 0);
     void    sortbyParameter(int i);
     void    pushProps(int i);
-    void    popProps(int i);
+    void    clearProps();
 
 signals:
 //    void readProperties(floatArray prop);

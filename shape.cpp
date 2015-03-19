@@ -229,7 +229,7 @@ void Shape::render(QPainter *painter)
 
     // draw Value
     painter->setPen(QColor(128, 0, 0));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'e', 1));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
 
 
     img = QImage(buffer, width(), height(), QImage::Format_ARGB32);

@@ -23,14 +23,16 @@ Coord::Coord(QWidget *parent, bool multv)
 {
     clear();
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(1);
+    if(!multv){
+        QTimer* timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+        timer->start(1);
+    }
 
-//    bufferSize = width() * height() * 4;
-//    buffer = new unsigned char[bufferSize]();
-//    for (int i = 0; i < bufferSize; i++)
-//        buffer[i] = 255;
+    //    bufferSize = width() * height() * 4;
+    //    buffer = new unsigned char[bufferSize]();
+    //    for (int i = 0; i < bufferSize; i++)
+    //        buffer[i] = 255;
 
 }
 
@@ -50,12 +52,12 @@ void Coord::clear()
     pixel = 300;
     micMtr_Pixel = micMeter/pixel;
 
-//    if(buffer != NULL)
-//        delete[] buffer;
-//    bufferSize = width() * height() * 4;
-//    buffer = new unsigned char[bufferSize]();
-//    for (unsigned int i = 0; i < bufferSize; i++)
-//        buffer[i] = 255;
+    //    if(buffer != NULL)
+    //        delete[] buffer;
+    //    bufferSize = width() * height() * 4;
+    //    buffer = new unsigned char[bufferSize]();
+    //    for (unsigned int i = 0; i < bufferSize; i++)
+    //        buffer[i] = 255;
 
 }
 
@@ -84,24 +86,24 @@ void Coord::updateCoord(QPointF point, int currFrame)
 
     centroid.append(point);
 
-////    QPointF currCoord = (point-origin)*coordScale+center;
-//    QPointF currCoord = QPointF((point.x() - origin.x())*coordScale, (point.y() - origin.y())*coordScale);
-//    qDebug() << currCoord;
+    ////    QPointF currCoord = (point-origin)*coordScale+center;
+    //    QPointF currCoord = QPointF((point.x() - origin.x())*coordScale, (point.y() - origin.y())*coordScale);
+    //    qDebug() << currCoord;
 
-//    centroid.append(currCoord);
+    //    centroid.append(currCoord);
 
-//    if(currFrm > range) currFrm = range;
-//    CubicYFColorMap colormap;
-//    QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // 5000 !!!!!
+    //    if(currFrm > range) currFrm = range;
+    //    CubicYFColorMap colormap;
+    //    QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // 5000 !!!!!
 
-//    unsigned int px = (int(currCoord.y()) * width() + int(currCoord.x())) * 4;
-//    //unsigned int px = (height()/2 * width() + width()/2)*4;
-//    if(px > 0 || px+3 <= bufferSize){
-//        buffer[ px + 3] = /*c.alpha()*/255;
-//        buffer[ px + 2] = c.red();
-//        buffer[ px + 1] = c.green();
-//        buffer[ px + 0] = c.blue();
-//    }
+    //    unsigned int px = (int(currCoord.y()) * width() + int(currCoord.x())) * 4;
+    //    //unsigned int px = (height()/2 * width() + width()/2)*4;
+    //    if(px > 0 || px+3 <= bufferSize){
+    //        buffer[ px + 3] = /*c.alpha()*/255;
+    //        buffer[ px + 2] = c.red();
+    //        buffer[ px + 1] = c.green();
+    //        buffer[ px + 0] = c.blue();
+    //    }
 
     currFrm++;
     update();
@@ -208,8 +210,8 @@ QPointF Coord::translate_image2canvas_center(QPointF p, bool XGreaterThanY){ // 
 
 QPointF Coord::translate_image2canvas_center(QPointF p, qreal ratio)
 {
-//    qreal x = (p.x() - centroid_min.x()) * ratio /*+ ratio*(-this->width()/2)*/;
-//    qreal y = (p.y() - centroid_min.y()) * ratio /*+ ratio*(-this->height()/2)*/;
+    //    qreal x = (p.x() - centroid_min.x()) * ratio /*+ ratio*(-this->width()/2)*/;
+    //    qreal y = (p.y() - centroid_min.y()) * ratio /*+ ratio*(-this->height()/2)*/;
     qreal x = (p.x() - origin.x()) * ratio /*+ ratio*(-this->width()/2)*/;
     qreal y = (p.y() - origin.y()) * ratio /*+ ratio*(-this->height()/2)*/;
 
@@ -306,7 +308,7 @@ void Coord::render(QPainter *painter)
 
     // draw Value
     painter->setPen(QColor(128, 0, 0));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'e', 1));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
 
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
@@ -347,7 +349,7 @@ void Coord::render(QPainter *painter)
     painter->drawLine(botleft, botright); // ruler window - bottom
 
 
-//    bool Xgreater = (centroid_max.x() - centroid_min.x()) > (centroid_max.y() - centroid_min.y());
+    //    bool Xgreater = (centroid_max.x() - centroid_min.x()) > (centroid_max.y() - centroid_min.y());
     //    qDebug() << Xgreater;
     if(centroid.size() > startIndex){
         //draw units on the window edges
@@ -416,10 +418,10 @@ void Coord::render(QPainter *painter)
         painter->drawEllipse( visPoint, 2.0, 2.0);
     }
 
-//    painter->translate(-halfW, -halfH);
-//    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
-//    painter->drawImage(0, 0, img);
-//    painter->translate(halfW, halfH);
+    //    painter->translate(-halfW, -halfH);
+    //    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
+    //    painter->drawImage(0, 0, img);
+    //    painter->translate(halfW, halfH);
 
     drawColorBar(painter);
 

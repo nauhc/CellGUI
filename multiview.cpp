@@ -47,16 +47,16 @@ void MultiView::pushProps(int i)
 //    showProps.push_back(1); // perimeter
 //    showProps.push_back(2); // blebs number and size
 //    showProps.push_back(3); // centroid trajectory
+//    showProps.push_back(4); // shape
+//    showProps.clear();
     showProps.push_back(i); // shape
     //qDebug() << showProps;
     show();
 }
 
-void MultiView::popProps(int i)
+void MultiView::clearProps()
 {
-    showProps.remove(showProps.indexOf(i));
-    //qDebug() << showProps;
-    show();
+    showProps.clear();
 }
 
 void MultiView::clearData()
@@ -100,7 +100,7 @@ void MultiView::sortbyParameter(int i)
         for(int n = 0; n < datafileInfos.size(); n++){
             //index_sort.push_back(force[n].second);
             index_sort.replace(n, force[n].second);
-            value_sort.replace(n, force[n].first);
+            value_sort.replace(n, force[n].first*1000000);
         }
     }
     else if (i == 2){
@@ -135,7 +135,7 @@ void MultiView::loadFilesButton_clicked() // first round
 //        prop2 = new QCheckBox("Blebs Number and Size"); // 2
 //        prop3 = new QCheckBox("Centroid Trajectory"); // 3
 //        prop4 = new QCheckBox("Shape"); // 4
-        pushProps(2);
+        pushProps(3);
         sortbyParameter(3);
      }
 
@@ -143,7 +143,8 @@ void MultiView::loadFilesButton_clicked() // first round
 
 bool MultiView::loadFiles()
 {
-    QString folderPath = "../../../video/ExtractedData/";
+//    QString folderPath = "../../../video/ExtractedData/";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -218,7 +219,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
 
         Narr *nar_tmp = new Narr();
         nar_tmp->setPropertyType(propTp); // 0:"area", 1:"perimeter", 2:"bleb"
-        nar_tmp->setFixedSize(size, size+20);
+        nar_tmp->setFixedSize(size, size/*+20*/);
         nar_tmp->setBeginFrm(idxMin);
         nar_tmp->setMaxFrm(idxMax);
         nar_tmp->setValue(value);
@@ -367,11 +368,13 @@ void MultiView::show()
 
     if(showProps.size() == 1){ // show all the movies in one property
         //visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
-        for(int j = 0; j < int(fileNum/7); j++){
-            for(int i = 0; i < /*fileNum*/7; i++){
+        for(int j = 0; j <= int((fileNum-1)/7); j++){
+            int numtemp = fileNum <= 7 ? fileNum : 7;
+            for(int i = 0; i < /*fileNum*/numtemp; i++){
                 int   idx   = j * 7 + i;
-                if(index_sort[idx] > fileNum+1)
+                if((idx > fileNum - 1) || (index_sort[idx] > fileNum-1))
                     continue;
+                //qDebug() << idx << i << j;
                 visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0], value_sort[idx]);
             }
         }

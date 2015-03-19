@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     // add dock for multiview
     dock = new QDockWidget(tr("Basic operations"), this);
     this->addDockWidget(Qt::RightDockWidgetArea, dock);
-    dock->setFixedSize(300, 800);
+    dock->setFixedSize(300, 600);
     dock->setFloating(true);
     dockWidget = new QWidget();
     dockMainVLayout = new QVBoxLayout;
@@ -35,10 +35,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     dockWidget->setLayout(dockMainVLayout);
 
     // set to singleview at the beginning
-    loadSingleView();
+//    loadSingleView();
 
     // set to multiview at the beginning
-//    loadMultiView();
+    loadMultiView();
 
     // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -105,38 +105,86 @@ void MainWindow::propCheckBox_checked(int state)
     if (!checkBox) return;
     if (state == Qt::Checked){
         if(checkBox->text() == "Area"){
+            prop0->setChecked(true);
+            prop1->setChecked(false);
+            prop2->setChecked(false);
+            prop3->setChecked(false);
+            prop4->setChecked(false);
+            prop5->setChecked(false);
+            multiview->clearProps();
             multiview->pushProps(0);
         }
         else if(checkBox->text() == "Perimeter"){
+            prop0->setChecked(false);
+            prop1->setChecked(true);
+            prop2->setChecked(false);
+            prop3->setChecked(false);
+            prop4->setChecked(false);
+            prop5->setChecked(false);
+            multiview->clearProps();
             multiview->pushProps(1);
         }
         else if(checkBox->text() == "Blebs Number and Size"){
+            prop0->setChecked(false);
+            prop1->setChecked(false);
+            prop2->setChecked(true);
+            prop3->setChecked(false);
+            prop4->setChecked(false);
+            prop5->setChecked(false);
+            multiview->clearProps();
             multiview->pushProps(2);
         }
         else if(checkBox->text() == "Centroid Trajectory"){
+            prop0->setChecked(false);
+            prop1->setChecked(false);
+            prop2->setChecked(false);
+            prop3->setChecked(true);
+            prop4->setChecked(false);
+            prop5->setChecked(false);
+            multiview->clearProps();
             multiview->pushProps(3);
         }
         else if(checkBox->text() == "Shape"){
+            prop0->setChecked(false);
+            prop1->setChecked(false);
+            prop2->setChecked(false);
+            prop3->setChecked(false);
+            prop4->setChecked(true);
+            prop5->setChecked(false);
+            multiview->clearProps();
+            multiview->pushProps(4);
+        }else if (checkBox->text() == "Show All Properties"){
+            prop0->setChecked(false);
+            prop1->setChecked(false);
+            prop2->setChecked(false);
+            prop3->setChecked(false);
+            prop4->setChecked(false);
+            prop5->setChecked(true);
+            multiview->clearProps();
+            multiview->pushProps(0);
+            multiview->pushProps(1);
+            multiview->pushProps(2);
+            multiview->pushProps(3);
             multiview->pushProps(4);
         }
     }
-    else if (state == Qt::Unchecked) {
-        if(checkBox->text() == "Area"){
-            multiview->popProps(0);
-        }
-        else if(checkBox->text() == "Perimeter"){
-            multiview->popProps(1);
-        }
-        else if(checkBox->text() == "Blebs Number and Size"){
-            multiview->popProps(2);
-        }
-        else if(checkBox->text() == "Centroid Trajectory"){
-            multiview->popProps(3);
-        }
-        else if(checkBox->text() == "Shape"){
-            multiview->popProps(4);
-        }
-    }
+//    else if (state == Qt::Unchecked) {
+//        if(checkBox->text() == "Area"){
+//            multiview->popProps(0);
+//        }
+//        else if(checkBox->text() == "Perimeter"){
+//            multiview->popProps(1);
+//        }
+//        else if(checkBox->text() == "Blebs Number and Size"){
+//            multiview->popProps(2);
+//        }
+//        else if(checkBox->text() == "Centroid Trajectory"){
+//            multiview->popProps(3);
+//        }
+//        else if(checkBox->text() == "Shape"){
+//            multiview->popProps(4);
+//        }
+//    }
 }
 
 void MainWindow::paraCheckBox_checked(int state)
@@ -144,14 +192,14 @@ void MainWindow::paraCheckBox_checked(int state)
     QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
     if (!checkBox) return;
     if (state == Qt::Checked)    {
-        if (checkBox->text() == "Pressure Ascending"){
+        if (checkBox->text() == "Pressure Ascending (Pa)"){
             para0->setChecked(true);
             para1->setChecked(false);
             para2->setChecked(false);
             para3->setChecked(false);
             multiview->sortbyParameter(0);
         }
-        else if (checkBox->text() == "Force Ascending"){
+        else if (checkBox->text() == "Force Ascending (µN)"){
             para0->setChecked(false);
             para1->setChecked(true);
             para2->setChecked(false);
@@ -178,6 +226,8 @@ void MainWindow::paraCheckBox_checked(int state)
 
 void MainWindow::createTimeSlider()
 {
+    dockMainVLayout->addStretch();
+
     timeRangeLayout = new QVBoxLayout;
     timeStartLayout = new QHBoxLayout;
     timeEndLayout = new QHBoxLayout;
@@ -207,17 +257,20 @@ void MainWindow::createProptyCheckbox()
     prop2 = new QCheckBox("Blebs Number and Size"); // 2
     prop3 = new QCheckBox("Centroid Trajectory"); // 3
     prop4 = new QCheckBox("Shape"); // 4
+    prop5 = new QCheckBox("Show All Properties"); // 5
     prop0->setStyleSheet(CHECKBOX);
     prop1->setStyleSheet(CHECKBOX);
     prop2->setStyleSheet(CHECKBOX);
     prop3->setStyleSheet(CHECKBOX);
     prop4->setStyleSheet(CHECKBOX);
+    prop5->setStyleSheet(CHECKBOX);
 
     prop0->setChecked(false);
     prop1->setChecked(false);
     prop2->setChecked(false);
     prop3->setChecked(true);
     prop4->setChecked(false);
+    prop5->setChecked(false);
 
     propVLayout = new QVBoxLayout();
     propVLayout->addWidget(prop0);
@@ -225,18 +278,20 @@ void MainWindow::createProptyCheckbox()
     propVLayout->addWidget(prop2);
     propVLayout->addWidget(prop3);
     propVLayout->addWidget(prop4);
+    propVLayout->addWidget(prop5);
 
     propGroup->setLayout(propVLayout);
-    propGroup->setFixedHeight(250);
+    propGroup->setFixedHeight(270);
 
     dockMainVLayout->addWidget(propGroup);
     dockMainVLayout->addStretch();
 
-//    connect(prop0, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-//    connect(prop1, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-//    connect(prop2, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-//    connect(prop3, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
-//    connect(prop4, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+    connect(prop0, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+    connect(prop1, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+    connect(prop2, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+    connect(prop3, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+    connect(prop4, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
+    connect(prop5, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
 
 }
 
@@ -244,8 +299,8 @@ void MainWindow::createParaCheckbox()
 {
     paraGroup = new QGroupBox(" Sort on: ");
     paraGroup->setStyleSheet(GROUPBOX);
-    para0   = new QCheckBox("Pressure Ascending");
-    para1   = new QCheckBox("Force Ascending");
+    para0   = new QCheckBox("Pressure Ascending (Pa)");
+    para1   = new QCheckBox("Force Ascending (µN)");
     para2   = new QCheckBox("Force Offset");
     para3   = new QCheckBox("Date Ascending");
     para0->setStyleSheet(CHECKBOX);
