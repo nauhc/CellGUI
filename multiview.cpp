@@ -152,7 +152,8 @@ void MultiView::loadFilesButton_clicked() // first round
 //        prop2 = new QCheckBox("Blebs Number and Size"); // 2
 //        prop3 = new QCheckBox("Centroid Trajectory"); // 3
 //        prop4 = new QCheckBox("Shape"); // 4
-        pushProps(0);
+//        pushProps(0);
+        pushProps(3);
         sortbyParameter(3);
      }
 

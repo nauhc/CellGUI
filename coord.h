@@ -61,6 +61,10 @@ private:
     QImage              img;
 
     void                drawPoint(QPointF p, QColor c);
+    void                drawHLine(QPointF p1, QPointF p2, QColor c);
+    void                drawVLine(QPointF p1, QPointF p2, QColor c);
+    void                drawRuler();
+
 private slots:
     void    setPixel(QString text);
     void    setMicMeter(QString text);

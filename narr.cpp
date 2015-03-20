@@ -194,6 +194,7 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     qreal   minV;
     qreal   maxV;
     QColor  color;
+    float   p;
 
     if(propType == 0) {
         minV = 200;
@@ -210,18 +211,29 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     else if (propType == 2) {
         minV = 0;
         maxV = 7;
-        barheight  = float(prop[3] - minV) * propBarThickness / (maxV - minV);
+        barheight  = float(prop[8] - minV) * propBarThickness / (maxV - minV);
         qreal size = prop[9] > BlebSizeMin ? prop[9] - BlebSizeMin : 0;
         qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
         color = gradualColor(BLUE, 1-g);
     }
+    //qDebug() << barheight;
 
+    // draw bars
     for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
         for (int v = 0; v < barWidth; v++){
             QPointF rotP = rotate(QPointF(h,v), degree)+center;
             drawPoint(rotP, color);
         }
     }
+
+    // draw fragment
+    for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
+        for (int v = 0; v < ringArcThickness; v++){
+            QPointF rotP = rotate(QPointF(h,v), degree)+center;
+            drawPoint(rotP, gradualColor(GREEN, 0.2));
+        }
+    }
+
 
 }
 
@@ -563,44 +575,44 @@ void Narr::render(QPainter *painter)
     // draw Value
     painter->eraseRect(0, 0, width(), height());
     //    painter->eraseRect(width() - 70, 30, 60, 20);
-    painter->setPen(QColor(128, 0, 0));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
+    painter->setRenderHint(QPainter::Antialiasing);
 
 
     img = QImage(bufferr, width(), height(), QImage::Format_ARGB32);
     painter->drawImage(0, 0, img);
 
+    painter->setPen(QColor(128, 0, 0));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
 
     // draw current frame
-    painter->setRenderHint(QPainter::Antialiasing);
     QPen penContour(QColor(153, 204, 49));
     painter->setPen(penContour);
     painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(mouseIndex)));
     //    painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(angle/360.*(max-begin)+begin)));
 
-    // set (0,0) to the center of the canvas
-    qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
-    QPointF center(halfW, halfH*1.05);
-    painter->translate(center.x(), center.y());
+//    // set (0,0) to the center of the canvas
+//    qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
+//    QPointF center(halfW, halfH*1.05);
+//    painter->translate(center.x(), center.y());
 
-    // set the start angle to 0 o'clock;
-    painter->rotate(-90); //***x->up, y->right***
+//    // set the start angle to 0 o'clock;
+//    painter->rotate(-90); //***x->up, y->right***
 
-    // draw ring arcs background
-    qreal ringArcInnerRadius    = .30 * halfS;
-    qreal ringArcThickness      = .05 * halfS;
-    //drawRingArc1(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
+//    // draw ring arcs background
+//    qreal ringArcInnerRadius    = .30 * halfS;
+//    qreal ringArcThickness      = .05 * halfS;
+//    //drawRingArc1(painter, QPointF(0, 0), 0, 360, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240));
 
-    // draw real-time changing ring arcs
-    float p;
-    if(propType == 0) // area
-        p = float(area.size())/(max-begin);
-    else if (propType == 1)
-        p = float(perimeter.size())/(max-begin);
-    else if (propType == 2)
-        p = float(blebNum.size())/(max-begin);
-    qreal currAngle = p * 360 - 1.0;
-    //drawRingArc1(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, gradualColor(GREEN, /*p*/0.2));
+//    // draw real-time changing ring arcs
+//    float p;
+//    if(propType == 0) // area
+//        p = float(area.size())/(max-begin);
+//    else if (propType == 1)
+//        p = float(perimeter.size())/(max-begin);
+//    else if (propType == 2)
+//        p = float(blebNum.size())/(max-begin);
+//    qreal currAngle = p * 360 - 1.0;
+//    //drawRingArc1(painter, QPointF(0, 0), 0, currAngle, ringArcInnerRadius, ringArcThickness, gradualColor(GREEN, /*p*/0.2));
 
 
     painter->rotate(-90); //***x->left, y->up***
@@ -656,7 +668,7 @@ void Narr::render(QPainter *painter)
     //    }
 
 
-    painter->rotate(90); //***x->up, y->right***
+//    painter->rotate(90); //***x->up, y->right***
     //painter->drawLine(QPoint(0, 0), QPoint(50, 0)); // x
     //painter->drawLine(QPoint(0, 0), QPoint(0, 50)); // y
 
