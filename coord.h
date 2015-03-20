@@ -29,7 +29,7 @@ protected:
     QPointF translate_image2canvas_center(QPointF p, bool XGreaterThanY);
     QPointF translate_image2canvas_center(QPointF p, qreal ratio);
     QColor  gradColor(QColor color, qreal percent);
-    void    drawColorBar(QPainter *painter);
+    void    drawColorBarText(QPainter *painter);
 
 private:
     unsigned int        maxFrm;

@@ -386,18 +386,7 @@ QColor Coord::gradColor(QColor color, qreal percent){
                    color.blue() + (255-color.blue()) * percent * percent );
 }
 
-QColor mapNumToHue(int start, int range, int min, int max, int v){
-    // start:   starting hue (0-360)
-    // end:     ending hue (0-360)
-    // min:     min value
-    // max:     max value
-    // v:       value
-    QColor color;
-    color.setHsv(start+range*v/(max-min), 255, 200);
-    return color;
-}
-
-void Coord::drawColorBar(QPainter *painter)
+void Coord::drawColorBarText(QPainter *painter)
 {
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
@@ -414,29 +403,6 @@ void Coord::drawColorBar(QPainter *painter)
     painter->setPen(myPen);
     painter->drawText(txt_old, Qt::AlignRight, "0");
     painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIdx));
-
-//    painter->rotate(-90); //***x->up, y->right***
-//    float rto   = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
-//    int space   = /*50*/halfW/8;
-//    int bar_h   = /*bar_txt_h*/10;
-//    int bar_len = 2*(halfW - bar_txt_w - space)/**rto*/;
-//    int bar_w   = bar_len/bar_len;
-//    int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
-//    int bar_y   = -(halfW - bar_txt_w - space);
-
-//    QRect rect_empty = QRect(QPoint(bar_x, bar_y+bar_len*rto), QSize(bar_h, bar_len*(1.0-rto)));
-//    painter->fillRect(rect_empty, QBrush(QColor(220, 220, 220, 128)));
-
-//    for(int n = 0; n < bar_len*rto; n++){
-//        //QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
-//        CubicYFColorMap colorMap;
-//        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
-//        myPen.setWidth(0);
-//        painter->setPen(c);
-//        painter->setBrush(QBrush(c));
-//        QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
-//        painter->drawRect(rect);
-//    }
 }
 
 void Coord::render(QPainter *painter)
@@ -460,15 +426,11 @@ void Coord::render(QPainter *painter)
     QPointF center(halfW, halfH);
     // set (0,0) to the center of the canvas
 
-    // set the start angle to 0 o'clock;
-    painter->rotate(-90); //***x->up, y->right***
-
-    //draw the x-y coordinate system
+   //draw the x-y coordinate system
     QPen myPen(QColor(120, 120, 118));
     myPen.setWidth(1);
     painter->setPen(myPen);
 
-    painter->rotate(90);//***x->right, y->down***
     painter->translate(halfW, halfH);
 
     qreal indent    = 10;
@@ -506,7 +468,7 @@ void Coord::render(QPainter *painter)
         painter->drawText(rightX-5-20,  unit_y2-5, 20, 10, Qt::AlignCenter, unity );
     }
 
-    drawColorBar(painter);
+    drawColorBarText(painter);
 
     //    this->needUpdate = false;
 
