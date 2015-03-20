@@ -36,6 +36,7 @@ private slots:
     void loadSingleView();
     void propCheckBox_checked(int state);
     void paraCheckBox_checked(int state);
+    void timeEndSlider_valueChanged(int v);
 
 private:
     Ui::MainWindow      *ui;

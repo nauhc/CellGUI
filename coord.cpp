@@ -29,10 +29,10 @@ Coord::Coord(QWidget *parent, bool multv)
         timer->start(1);
     }
 
-    //    bufferSize = width() * height() * 4;
-    //    buffer = new unsigned char[bufferSize]();
-    //    for (int i = 0; i < bufferSize; i++)
-    //        buffer[i] = 255;
+    bufferSize = width() * height() * 4;
+    buffer = new unsigned char[bufferSize]();
+    for (int i = 0; i < bufferSize; i++)
+        buffer[i] = 255;
 
 }
 
@@ -66,6 +66,16 @@ Coord::~Coord()
 
 }
 
+void Coord::drawPoint(QPointF p, QColor c){
+    unsigned int px = (int(p.y()) * width() + int(p.x())) * 4;
+    if(px > 0 && px+3 < bufferSize){
+        buffer[ px + 3] = c.alpha();
+        buffer[ px + 2] = c.red();
+        buffer[ px + 1] = c.green();
+        buffer[ px + 0] = c.blue();
+    }
+}
+
 void Coord::updateCoord(QPointF point, int currFrame)
 {
     QPointF center(width()/2, height()/2);
@@ -86,24 +96,24 @@ void Coord::updateCoord(QPointF point, int currFrame)
 
     centroid.append(point);
 
-    ////    QPointF currCoord = (point-origin)*coordScale+center;
-    //    QPointF currCoord = QPointF((point.x() - origin.x())*coordScale, (point.y() - origin.y())*coordScale);
-    //    qDebug() << currCoord;
+    //    QPointF currCoord = (point-origin)*coordScale+center;
+    QPointF currCoord = QPointF((point.x() - origin.x())*coordScale+center.x(), (point.y() - origin.y())*coordScale+center.y());
 
-    //    centroid.append(currCoord);
+    unsigned int range = maxFrm - minFrm;
+    if(currFrm > range) currFrm = range;
+    CubicYFColorMap colormap;
+    QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // 5000 !!!!!
 
-    //    if(currFrm > range) currFrm = range;
-    //    CubicYFColorMap colormap;
-    //    QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // 5000 !!!!!
+    int r = 2;
+    for(int y = -r; y <= r; y++){
+        for(int x = -r; x <= r; x++){
+            QPointF p = currCoord + QPointF(float(x), float(y));
+            if(x*x+y*y <= r*r /*&& x*x+y*y >= (r-1)*(r-1)*/)
+                drawPoint(p, c);
+        }
+    }
 
-    //    unsigned int px = (int(currCoord.y()) * width() + int(currCoord.x())) * 4;
-    //    //unsigned int px = (height()/2 * width() + width()/2)*4;
-    //    if(px > 0 || px+3 <= bufferSize){
-    //        buffer[ px + 3] = /*c.alpha()*/255;
-    //        buffer[ px + 2] = c.red();
-    //        buffer[ px + 1] = c.green();
-    //        buffer[ px + 0] = c.blue();
-    //    }
+    //drawPoint(currCoord, c);
 
     currFrm++;
     update();
@@ -318,8 +328,6 @@ void Coord::render(QPainter *painter)
     // set the start angle to 0 o'clock;
     painter->rotate(-90); //***x->up, y->right***
 
-
-
     //draw the x-y coordinate system
     QPen myPen(QColor(120, 120, 118));
     myPen.setWidth(1);
@@ -347,7 +355,6 @@ void Coord::render(QPainter *painter)
     painter->drawLine(topleft, botleft); // ruler window - left
     painter->drawLine(topright, botright); // ruler window - right
     painter->drawLine(botleft, botright); // ruler window - bottom
-
 
     //    bool Xgreater = (centroid_max.x() - centroid_min.x()) > (centroid_max.y() - centroid_min.y());
     //    qDebug() << Xgreater;
@@ -403,25 +410,25 @@ void Coord::render(QPainter *painter)
 
 
     // *** draw coordinates of each frame ***
-    //int size = centroid.size();
-    int size = centroid.size() > maxFrm ? maxFrm : centroid.size();
-    int range = maxFrm - minFrm;
-    for(int n = startIndex; n < size; n++/*n+=10*/)
-    {
-        CubicYFColorMap colorMap;
-        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, n<=range?n:range);
-        QPen penDot(c);
-        painter->setPen(penDot);
-        painter->setBrush(c);
-        QPointF visPoint = translate_image2canvas_center(centroid[n], coordScale);
-        //qDebug() << visPoint;
-        painter->drawEllipse( visPoint, 2.0, 2.0);
-    }
+    //    //int size = centroid.size();
+    //    int size = centroid.size() > maxFrm ? maxFrm : centroid.size();
+    //    int range = maxFrm - minFrm;
+    //    for(int n = startIndex; n < size; n++/*n+=10*/)
+    //    {
+    //        CubicYFColorMap colorMap;
+    //        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, n<=range?n:range);
+    //        QPen penDot(c);
+    //        painter->setPen(penDot);
+    //        painter->setBrush(c);
+    //        QPointF visPoint = translate_image2canvas_center(centroid[n], coordScale);
+    //        //qDebug() << visPoint;
+    //        painter->drawEllipse( visPoint, 2.0, 2.0);
+    //    }
 
-    //    painter->translate(-halfW, -halfH);
-    //    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
-    //    painter->drawImage(0, 0, img);
-    //    painter->translate(halfW, halfH);
+    painter->translate(-halfW, -halfH);
+    img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
+    painter->drawImage(0, 0, img);
+    painter->translate(halfW, halfH);
 
     drawColorBar(painter);
 

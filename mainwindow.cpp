@@ -224,6 +224,11 @@ void MainWindow::paraCheckBox_checked(int state)
 
 }
 
+void MainWindow::timeEndSlider_valueChanged(int v)
+{
+
+}
+
 void MainWindow::createTimeSlider()
 {
     dockMainVLayout->addStretch();
@@ -242,9 +247,12 @@ void MainWindow::createTimeSlider()
     timeRangeLayout->addLayout(timeStartLayout);
     timeRangeLayout->addLayout(timeEndLayout);
 
+
+
     dockMainVLayout->addLayout(timeRangeLayout);
     dockMainVLayout->addStretch();
 
+    //connect(timeEndSlider, SIGNAL(valueChanged(int)), this, SLOT(timeEndSlider_valueChanged(int)));
 }
 
 void MainWindow::createProptyCheckbox()

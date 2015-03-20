@@ -60,6 +60,7 @@ private:
     unsigned int        bufferSize;
     QImage              img;
 
+    void                drawPoint(QPointF p, QColor c);
 private slots:
     void    setPixel(QString text);
     void    setMicMeter(QString text);

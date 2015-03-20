@@ -34,4 +34,7 @@ const QString CHECKBOX              = "color:rgb(82,89,99); font-size: 14px; bac
 const QString GROUPBOX              = "QGroupBox { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFFFFF, stop: 1  #E0E0E0); border: 1px solid gray; border-radius: 5px; margin-top: 1ex;} \
                                        QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top center; padding: 0 3px; background-color: #FFFFFF/*qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFOECE, stop: 1 #FFFFFF)*/;}";
 
+//const QString SCROLLBAR             ="QScrollBar:horizontal {background-color: rgb(68,68,68);\
+                                                            alternate-background-color: rgb(60, 60, 60);\
+                                                            color: rgb(200, 200, 200); }" ;
 #define PI 3.14159265

@@ -4,6 +4,8 @@
 #include <QDirIterator>
 #include <QtAlgorithms>
 #include <iostream>
+#include <QGraphicsItem>
+#include <QScroller>
 
 struct QPairFirstComparer
 {
@@ -25,6 +27,8 @@ MultiView::MultiView(QWidget *parent) :
     mainVLayout = new QVBoxLayout(this);
     scrollArea = new QScrollArea;
     scrollArea->setWidgetResizable(true);
+
+
     visGLayout = new QGridLayout();
 
 //    createLoadFilesButton();
@@ -36,6 +40,15 @@ MultiView::MultiView(QWidget *parent) :
     QWidget *temp = new QWidget();
     temp->setLayout(visGLayout);
     scrollArea->setWidget(temp);
+
+//    QScroller *scroller = QScroller::scroller(scrollArea);
+
+
+//    QGraphicsView *view = new QGraphicsView();
+//    view->setLayout(visGLayout);
+//    scrollArea->setWidget(view);
+
+
     mainVLayout->addWidget(scrollArea);
     //    mainVLayout->addLayout(visGLayout);
 
@@ -57,6 +70,10 @@ void MultiView::pushProps(int i)
 void MultiView::clearProps()
 {
     showProps.clear();
+//    QLayoutItem *child;
+//    while ((child = visGLayout->takeAt(0)) != 0)
+//        delete child;
+
 }
 
 void MultiView::clearData()
@@ -349,9 +366,7 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, f
 
 void MultiView::show()
 {
-//    QLayoutItem *child;
-//    while ((child = visGLayout->takeAt(0)) != 0)
-//        delete child;
+
 
     // file reading succeed and draw vis
     maxFrm = 5000;
