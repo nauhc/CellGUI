@@ -76,9 +76,9 @@ void Coord::drawPoint(QPointF p, QColor c){
     }
 }
 
-void Coord::drawHLine(QPointF p1, QPointF p2, QColor c) // p1.y = p2.y
+void Coord::drawHLine(QPointF p1, QPointF p2, QColor c, int w) // p1.y = p2.y
 {
-    int     line_w = 2;
+    //int     line_w = 2;
     float   x1, x2;
     if(p1.x() < p2.x()){
         x1 = p1.x();
@@ -89,15 +89,15 @@ void Coord::drawHLine(QPointF p1, QPointF p2, QColor c) // p1.y = p2.y
         x1 = p2.x();
     }
 
-    for (int y = 0; y < line_w; y++){
+    for (int y = 0; y < w; y++){
         for (int x = x1; x < x2; x++)
             drawPoint(QPointF(x,p1.y()+y), c);
     }
 }
 
-void Coord::drawVLine(QPointF p1, QPointF p2, QColor c) // p1.x = p2.x
+void Coord::drawVLine(QPointF p1, QPointF p2, QColor c, int w) // p1.x = p2.x
 {
-    int     line_w = 2;
+    //int     line_w = 2;
     float   y1, y2;
     if(p1.y() < p2.y()){
         y1 = p1.y();
@@ -109,7 +109,7 @@ void Coord::drawVLine(QPointF p1, QPointF p2, QColor c) // p1.x = p2.x
     }
 
     for (int y = y1; y < y2; y++){
-        for (int x = 0; x < line_w; x++)
+        for (int x = 0; x < w; x++)
             drawPoint(QPointF(p1.x()+x,y), c);
     }
 }
@@ -126,37 +126,76 @@ void Coord::drawRuler()
     QPointF botleft     = QPointF(leftX, bottomY);
     QPointF botright    = QPointF(rightX, bottomY);
     QColor  color       = QColor(120, 120, 118, 128);
-
+    int     lineWid     = 2;
     //qDebug() << topleft << topright << botleft << botright;
 
     // ruler window
-    drawHLine(topleft, topright, color);
-    drawHLine(botleft, botright, color);
-    drawVLine(topleft, botleft, color);
-    drawVLine(topright, botright, color);
+    drawHLine(topleft, topright, color, lineWid);
+    drawHLine(botleft, botright, color, lineWid);
+    drawVLine(topleft, botleft, color, lineWid);
+    drawVLine(topright, botright, color, lineWid);
 
     // ruler units
-    drawVLine(QPointF(width()/2, topY-5),    QPointF(width()/2, topY+5), color); //top
-    drawVLine(QPointF(width()/2, bottomY-5), QPointF(width()/2, bottomY+5), color); // bottom
-    drawHLine(QPointF(leftX-5, height()/2), QPointF(leftX+5, height()/2), color); // left
-    drawHLine(QPointF(rightX-5, height()/2), QPointF(rightX+5, height()/2), color); // right
+    drawVLine(QPointF(width()/2, topY-5),    QPointF(width()/2, topY+5), color, lineWid); //top
+    drawVLine(QPointF(width()/2, bottomY-5), QPointF(width()/2, bottomY+5), color, lineWid); // bottom
+    drawHLine(QPointF(leftX-5, height()/2), QPointF(leftX+5, height()/2), color, lineWid); // left
+    drawHLine(QPointF(rightX-5, height()/2), QPointF(rightX+5, height()/2), color, lineWid); // right
 
     float quarterxx = (rightX - leftX)/4.0;
     float unit_x1 = quarterxx + leftX;
     float unit_x2 = rightX - quarterxx;
-    drawVLine(QPointF(unit_x1, topY-5),    QPointF(unit_x1, topY+5), color); //topxx1
-    drawVLine(QPointF(unit_x2, topY-5),    QPointF(unit_x2, topY+5), color); //topxx2
-    drawVLine(QPointF(unit_x1, bottomY-5), QPointF(unit_x1, bottomY+5), color); // bottomxx1
-    drawVLine(QPointF(unit_x2, bottomY-5), QPointF(unit_x2, bottomY+5), color); // bottomxx2
+    drawVLine(QPointF(unit_x1, topY-5),    QPointF(unit_x1, topY+5), color, lineWid); //topxx1
+    drawVLine(QPointF(unit_x2, topY-5),    QPointF(unit_x2, topY+5), color, lineWid); //topxx2
+    drawVLine(QPointF(unit_x1, bottomY-5), QPointF(unit_x1, bottomY+5), color, lineWid); // bottomxx1
+    drawVLine(QPointF(unit_x2, bottomY-5), QPointF(unit_x2, bottomY+5), color, lineWid); // bottomxx2
 
     float quarteryy = (bottomY - topY)/4.0;
     float unit_y1 = quarteryy + topY;
     float unit_y2 = bottomY - quarterxx;
-    drawHLine(QPointF(leftX-5, unit_y1), QPointF(leftX+5, unit_y1), color); // leftyy1
-    drawHLine(QPointF(leftX-5, unit_y2), QPointF(leftX+5, unit_y2), color); // leftyy2
-    drawHLine(QPointF(rightX-5, unit_y1), QPointF(rightX+5, unit_y1), color); // rightyy1
-    drawHLine(QPointF(rightX-5, unit_y2), QPointF(rightX+5, unit_y2), color); // rightyy2
+    drawHLine(QPointF(leftX-5, unit_y1), QPointF(leftX+5, unit_y1), color, lineWid); // leftyy1
+    drawHLine(QPointF(leftX-5, unit_y2), QPointF(leftX+5, unit_y2), color, lineWid); // leftyy2
+    drawHLine(QPointF(rightX-5, unit_y1), QPointF(rightX+5, unit_y1), color, lineWid); // rightyy1
+    drawHLine(QPointF(rightX-5, unit_y2), QPointF(rightX+5, unit_y2), color, lineWid); // rightyy2
+}
 
+void Coord::fillRect(QPointF p1, QPointF p2, QColor c) // p1: topleft, p2: bottomright
+{
+    for (int x = p1.x(); x < p2.x(); x++){
+        QPointF up = QPointF(x, p1.y());
+        QPointF dn = QPointF(x, p2.y());
+        drawVLine(up, dn, c, 1);
+    }
+}
+
+void Coord::drawColorBar()
+{
+    // *** draw color map bar indicating time old / new ***
+    // ***x->right, y->down***
+    int space       = width()/16;
+    int bar_txt_y   = (height()-space)*6/7;
+    int bar_txt_h   = 20;
+    int bar_txt_w   = width()/8;
+    float rto   = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
+    int bar_h   = /*bar_txt_h*/10;
+    int bar_len = width() - 2*(bar_txt_w + space)/**rto*/;
+
+    int bar1frm_w   = bar_len/(maxIdx - minFrm) < 1 ? 1: bar_len/(maxIdx - minFrm);
+//    int bar_w   = 1;
+
+    //int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
+    //int bar_y   = -(halfW - bar_txt_w - space);
+    int bar_x   = (width() - bar_len)/2;
+    int bar_y   = bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2;
+
+    QRect rect_empty = QRect(QPoint(bar_x+bar_len*rto, bar_y), QSize( bar_len*(1.0-rto), bar_h+1));
+    fillRect(rect_empty.topLeft(), rect_empty.bottomRight(), QColor(220, 220, 220, 64));
+
+    for(int n = 0; n < bar_len*rto; n+= bar1frm_w){
+        CubicYFColorMap colorMap;
+        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
+        //QRect rect(QPoint(bar_x+n, bar_y), QSize(1, bar_h));
+        drawVLine(QPoint(bar_x+n, bar_y), QPoint(bar_x+n, bar_y+bar_h), c, bar1frm_w);
+    }
 
 }
 
@@ -271,6 +310,7 @@ void Coord::setValue(float v)
 {
     value = v;
     drawRuler();
+    drawColorBar();
 }
 
 void Coord::initializeGL()
@@ -370,27 +410,28 @@ void Coord::drawColorBar(QPainter *painter)
     painter->drawText(txt_old, Qt::AlignRight, "0");
     painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIdx));
 
-    painter->rotate(-90); //***x->up, y->right***
-    float rto   = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
-    int space   = /*50*/halfW/8;
-    int bar_h   = /*bar_txt_h*/10;
-    int bar_len = 2*(halfW - bar_txt_w - space)/**rto*/;
-    int bar_w   = bar_len/bar_len;
-    int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
-    int bar_y   = -(halfW - bar_txt_w - space);
+//    painter->rotate(-90); //***x->up, y->right***
+//    float rto   = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
+//    int space   = /*50*/halfW/8;
+//    int bar_h   = /*bar_txt_h*/10;
+//    int bar_len = 2*(halfW - bar_txt_w - space)/**rto*/;
+//    int bar_w   = bar_len/bar_len;
+//    int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
+//    int bar_y   = -(halfW - bar_txt_w - space);
 
-    QRect rect_empty = QRect(QPoint(bar_x, bar_y+bar_len*rto), QSize(bar_h, bar_len*(1.0-rto)));
-    painter->fillRect(rect_empty, QBrush(QColor(220, 220, 220, 128)));
-    for(int n = 0; n < bar_len*rto; n++){
-        //QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
-        CubicYFColorMap colorMap;
-        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
-        myPen.setWidth(0);
-        painter->setPen(c);
-        painter->setBrush(QBrush(c));
-        QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
-        painter->drawRect(rect);
-    }
+//    QRect rect_empty = QRect(QPoint(bar_x, bar_y+bar_len*rto), QSize(bar_h, bar_len*(1.0-rto)));
+//    painter->fillRect(rect_empty, QBrush(QColor(220, 220, 220, 128)));
+
+//    for(int n = 0; n < bar_len*rto; n++){
+//        //QColor c = mapNumToHue(60, COLOR_RANGE, 0, bar_len, n);
+//        CubicYFColorMap colorMap;
+//        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, bar_len, n);
+//        myPen.setWidth(0);
+//        painter->setPen(c);
+//        painter->setBrush(QBrush(c));
+//        QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
+//        painter->drawRect(rect);
+//    }
 }
 
 void Coord::render(QPainter *painter)
@@ -425,34 +466,15 @@ void Coord::render(QPainter *painter)
     painter->rotate(90);//***x->right, y->down***
     painter->translate(halfW, halfH);
 
-    //    QPointF topleft  = QPointF(win_off.x() - this->width()/2, win_off.y() - this->height()/2);
-    //    QPointF topright = QPointF(topleft.x() + win.x(), topleft.y());
-    //    QPointF botleft  = QPointF(topleft.x(), topleft.y() + win.y());
-    //    QPointF botright  = QPointF(topleft.x()+win.x(), topleft.y() + win.y());
-
-    // !!! need to move to other place (one-time calculation!) - start
     qreal indent    = 10;
     qreal topY      = indent-center.y();
     qreal leftX     = indent-center.x();
     qreal bottomY   = this->height()-indent-center.y();
     qreal rightX    = this->width()-indent-center.x();
-//    QPointF topleft  = QPointF(leftX, topY);
-//    QPointF topright = QPointF(rightX, topY);
-//    QPointF botleft  = QPointF(leftX, bottomY);
-//    QPointF botright  = QPointF(rightX, bottomY);
-//    painter->drawLine(topleft, topright); // ruler window - top
-//    painter->drawLine(topleft, botleft); // ruler window - left
-//    painter->drawLine(topright, botright); // ruler window - right
-//    painter->drawLine(botleft, botright); // ruler window - bottom
 
-    //    bool Xgreater = (centroid_max.x() - centroid_min.x()) > (centroid_max.y() - centroid_min.y());
-    //    qDebug() << Xgreater;
+    // draw text for ruler
     if(centroid.size() > startIndex){
         //draw units on the window edges
-//        painter->drawLine(QPointF(0, topY-5),    QPointF(0, topY+5)); //top
-//        painter->drawLine(QPointF(0, bottomY-5), QPointF(0, bottomY+5)); // bottom
-//        painter->drawLine(QPointF(leftX-5, 0), QPointF(leftX+5, 0)); // left
-//        painter->drawLine(QPointF(rightX-5, 0), QPointF(rightX+5, 0)); // right
         painter->drawText(0-10, topY+5+2, 20, 10, Qt::AlignCenter, "0" );
         painter->drawText(0-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
         painter->drawText(0-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, "0" );
@@ -464,14 +486,8 @@ void Coord::render(QPainter *painter)
         QString unitx = QString::number(quarterxx/coordScale*micMtr_Pixel,'f', 1);
         float unit_x1 = quarterxx + leftX;
         float unit_x2 = rightX - quarterxx;
-//        painter->drawLine(QPointF(unit_x1, topY-5),    QPointF(unit_x1, topY+5)); //topxx1
-//        painter->drawLine(QPointF(unit_x2, topY-5),    QPointF(unit_x2, topY+5)); //topxx2
         painter->drawText(unit_x1-10, topY+5+2, 20, 10, Qt::AlignCenter, unitx);
-//        painter->drawText(unit_x1-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
         painter->drawText(unit_x2-10, topY+5+2, 20, 10, Qt::AlignCenter, unitx);
-//        painter->drawText(unit_x2-10, topY+5+12, 20, 20, Qt::AlignCenter, "μm" );
-//        painter->drawLine(QPointF(unit_x1, bottomY-5), QPointF(unit_x1, bottomY+5)); // bottomxx1
-//        painter->drawLine(QPointF(unit_x2, bottomY-5), QPointF(unit_x2, bottomY+5)); // bottomxx2
         painter->drawText(unit_x1-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, unitx );
         painter->drawText(unit_x2-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, unitx );
 
@@ -479,40 +495,11 @@ void Coord::render(QPainter *painter)
         QString unity = QString::number(quarteryy/coordScale*micMtr_Pixel,'f', 1);
         float unit_y1 = quarteryy + topY;
         float unit_y2 = bottomY - quarterxx;
-//        painter->drawLine(QPointF(leftX-5, unit_y1), QPointF(leftX+5, unit_y1)); // leftyy1
-//        painter->drawLine(QPointF(leftX-5, unit_y2), QPointF(leftX+5, unit_y2)); // leftyy2
         painter->drawText(leftX+5+2,    unit_y1-5, 20, 10, Qt::AlignCenter, unity );
-//        painter->drawText(leftX+5+2+20, unit_y1-5, 20, 10, Qt::AlignCenter, "μm" );
         painter->drawText(leftX+5+2,    unit_y2-5, 20, 10, Qt::AlignCenter, unity );
-//        painter->drawText(leftX+5+2+20, unit_y2-5, 20, 10, Qt::AlignCenter, "μm" );
-//        painter->drawLine(QPointF(rightX-5, unit_y1), QPointF(rightX+5, unit_y1)); // rightyy1
-//        painter->drawLine(QPointF(rightX-5, unit_y2), QPointF(rightX+5, unit_y2)); // rightyy2
         painter->drawText(rightX-5-20,  unit_y1-5, 20, 10, Qt::AlignCenter, unity );
         painter->drawText(rightX-5-20,  unit_y2-5, 20, 10, Qt::AlignCenter, unity );
     }
-
-    //QPointF ruler = translate_canvas2image(QPointF(this->width()/6, indent));
-    //myPen.setWidth(5);
-    //painter->setPen(myPen);
-    //painter->drawPoint(ruler);
-
-
-    // *** draw coordinates of each frame ***
-    //    //int size = centroid.size();
-    //    int size = centroid.size() > maxFrm ? maxFrm : centroid.size();
-    //    int range = maxFrm - minFrm;
-    //    for(int n = startIndex; n < size; n++/*n+=10*/)
-    //    {
-    //        CubicYFColorMap colorMap;
-    //        QColor c = colorMap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, n<=range?n:range);
-    //        QPen penDot(c);
-    //        painter->setPen(penDot);
-    //        painter->setBrush(c);
-    //        QPointF visPoint = translate_image2canvas_center(centroid[n], coordScale);
-    //        //qDebug() << visPoint;
-    //        painter->drawEllipse( visPoint, 2.0, 2.0);
-    //    }
-
 
     drawColorBar(painter);
 

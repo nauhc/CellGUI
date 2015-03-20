@@ -61,9 +61,11 @@ private:
     QImage              img;
 
     void                drawPoint(QPointF p, QColor c);
-    void                drawHLine(QPointF p1, QPointF p2, QColor c);
-    void                drawVLine(QPointF p1, QPointF p2, QColor c);
+    void                drawHLine(QPointF p1, QPointF p2, QColor c, int w);
+    void                drawVLine(QPointF p1, QPointF p2, QColor c, int w);
     void                drawRuler();
+    void                fillRect(QPointF p1, QPointF p2, QColor c);
+    void                drawColorBar();
 
 private slots:
     void    setPixel(QString text);
