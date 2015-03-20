@@ -2,8 +2,6 @@
 #include <QPainter>
 #include <QTimer>
 #include <qdebug.h>
-//#include "cubehelix.h"
-//#include "colormap.h"
 #include "cubicYFColormap.h"
 
 const int Shape_COLOR_START = /*30*/0;
@@ -33,15 +31,6 @@ void Shape::clear()
     begin   = 0;
     curr    = 0;
     maxIndex     = 1;
-//    range   = 5000;
-//    blebs.clear();
-
-//    contours.clear();
-//    blebPoints.clear();
-
-//    if(buffer != NULL)
-//        delete[] buffer;
-
 
 }
 

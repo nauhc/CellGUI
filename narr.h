@@ -16,6 +16,7 @@ public:
     void setMaxFrm(unsigned int m);
     void setPropertyType(int);
     void setValue(float v);
+    void initialize();
     void updateProperty(floatArray prop, int currFrame);
     void updateCellImg(QImage &cell);
     void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour); // when need the cell image contours
@@ -30,6 +31,11 @@ protected:
 private:
     qreal                       halfW, halfH; // halfWidth, halfHeight of the OpenGLWindow
     unsigned int                propType; // property type for displaying 0:area 1:perimeter 2:bleb
+    qreal                       ringArcInnerRadius;
+    qreal                       ringArcThickness;
+    qreal                       propBarInnerRadius;
+    qreal                       propBarThickness;
+    QPointF                     center;
 
     QVector<unsigned int>       stage; // frame index that separates stages
     std::vector<floatArray>     propSeq;
@@ -52,7 +58,17 @@ private:
 
     float                       value; // pressure/force/offset
 
+    unsigned char               *bufferr;
+    unsigned int                bufferSize;
+    QImage                      img;
+
     void printAreaData();
+    void drawPoint(QPointF p, QColor c);
+    void drawRingArc(QPointF    center,
+                     qreal      innerRadius,
+                     qreal      thickness,
+                     QColor     color);
+
     void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
                               qreal innerRadius, qreal thickness,
                               qreal strtRto, QColor color);

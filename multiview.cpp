@@ -152,7 +152,7 @@ void MultiView::loadFilesButton_clicked() // first round
 //        prop2 = new QCheckBox("Blebs Number and Size"); // 2
 //        prop3 = new QCheckBox("Centroid Trajectory"); // 3
 //        prop4 = new QCheckBox("Shape"); // 4
-        pushProps(3);
+        pushProps(0);
         sortbyParameter(3);
      }
 
@@ -237,6 +237,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
         Narr *nar_tmp = new Narr();
         nar_tmp->setPropertyType(propTp); // 0:"area", 1:"perimeter", 2:"bleb"
         nar_tmp->setFixedSize(size, size/*+20*/);
+        nar_tmp->initialize();
         nar_tmp->setBeginFrm(idxMin);
         nar_tmp->setMaxFrm(idxMax);
         nar_tmp->setValue(value);
