@@ -1,5 +1,6 @@
 #ifndef STYLE_H
 #define STYLE_H
+#include <QString>
 
 #endif // STYLE_H
 
@@ -31,10 +32,62 @@ const QString FONT16                = "font: 16px";
 const QString FONT16BLD             = "font: bold 16px";
 
 const QString CHECKBOX              = "color:rgb(82,89,99); font-size: 14px; background-color:rgba(0,0,0,0%)";
-const QString GROUPBOX              = "QGroupBox { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFFFFF, stop: 1  #E0E0E0); border: 1px solid gray; border-radius: 5px; margin-top: 1ex;} \
-                                       QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top center; padding: 0 3px; background-color: #FFFFFF/*qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFOECE, stop: 1 #FFFFFF)*/;}";
+const QString GROUPBOX              = "QGroupBox { background-color: \
+                                                    qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFFFFF, stop: 1  #E0E0E0); \
+                                                    border: 1px solid gray; border-radius: 5px; margin-top: 1ex;} \
+                                                    QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top center; \
+                                                    padding: 0 3px; \
+                                                    background-color: #FFFFFF;}";
 
-//const QString SCROLLBAR             ="QScrollBar:horizontal {background-color: rgb(68,68,68);\
-                                                            alternate-background-color: rgb(60, 60, 60);\
-                                                            color: rgb(200, 200, 200); }" ;
+const QString SCROLLBAR             = "QScrollBar:vertical { \
+                                                                border: 1px solid #999999; \
+                                                                background:white; \
+                                                                width:10px; \
+                                                                margin: 0px 0px 0px 0px; \
+                                                            } \
+                                                            QScrollBar::handle:vertical { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%));\
+                                                                min-height: 0px; \
+                                                            } \
+                                                            QScrollBar::add-line:vertical { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%)); \
+                                                                height: px; \
+                                                                subcontrol-position: bottom; \
+                                                                subcontrol-origin: margin; \
+                                                            } \
+                                                            QScrollBar::sub-line:vertical { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%)); \
+                                                                height: 0px; \
+                                                                subcontrol-position: top;\
+                                                                subcontrol-origin: margin;\
+                                                            } \
+                                        QScrollBar:horizontal { \
+                                                                border: 1px solid #999999; \
+                                                                background:white; \
+                                                                height:10px; \
+                                                                margin: 0px 0px 0px 0px; \
+                                                            } \
+                                                            QScrollBar::handle:horizontal { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%));\
+                                                                min-width: 0px; \
+                                                            } \
+                                                            QScrollBar::add-line:horizontal { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%)); \
+                                                                width: px; \
+                                                                subcontrol-position: right; \
+                                                                subcontrol-origin: margin; \
+                                                            } \
+                                                            QScrollBar::sub-line:horizontal { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%)); \
+                                                                width: 0px; \
+                                                                subcontrol-position: left;\
+                                                                subcontrol-origin: margin;\
+                                                            }";
+
 #define PI 3.14159265

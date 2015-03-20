@@ -40,13 +40,7 @@ MultiView::MultiView(QWidget *parent) :
     QWidget *temp = new QWidget();
     temp->setLayout(visGLayout);
     scrollArea->setWidget(temp);
-
-//    QScroller *scroller = QScroller::scroller(scrollArea);
-
-
-//    QGraphicsView *view = new QGraphicsView();
-//    view->setLayout(visGLayout);
-//    scrollArea->setWidget(view);
+    scrollArea->setStyleSheet(SCROLLBAR);
 
 
     mainVLayout->addWidget(scrollArea);
