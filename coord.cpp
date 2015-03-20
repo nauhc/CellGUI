@@ -69,10 +69,16 @@ Coord::~Coord()
 void Coord::drawPoint(QPointF p, QColor c){
     unsigned int px = (int(p.y()) * width() + int(p.x())) * 4;
     if(px > 0 && px+3 < bufferSize){
-        buffer[ px + 3] = c.alpha();
-        buffer[ px + 2] = c.red();
-        buffer[ px + 1] = c.green();
-        buffer[ px + 0] = c.blue();
+//        buffer[ px + 3] = c.alpha();
+//        buffer[ px + 2] = c.red();
+//        buffer[ px + 1] = c.green();
+//        buffer[ px + 0] = c.blue();
+        int tmp = (255 - c.alpha());
+        buffer[px + 2] = (c.red()*c.alpha() + buffer[px + 2]*tmp)/255;
+        buffer[px + 1] = (c.green()*c.alpha() + buffer[px + 1]*tmp)/255;
+        buffer[px + 0] = (c.blue()*c.alpha() + buffer[px + 0]*tmp)/255;
+        buffer[px + 3] = c.alpha() + buffer[px + 3] <  255 ? c.alpha() + buffer[px + 3] : 255;
+
     }
 }
 
