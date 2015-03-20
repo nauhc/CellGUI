@@ -7,7 +7,6 @@
 const int Shape_COLOR_START = /*30*/0;
 const int Shape_COLOR_RANGE = /*90*/120;
 
-
 Shape::Shape(QObject *parent)
 {
     clear();
@@ -17,8 +16,8 @@ Shape::Shape(QObject *parent)
 //    timer->start(1);
     bufferSize = width() * height() * 4;
     buffer = new unsigned char[bufferSize]();
-    //    for (unsigned int i = 0; i < bufferSize; i++)
-    //        buffer[i] = 255;
+    for (unsigned int i = 0; i < bufferSize; i++)
+        buffer[i] = 255;
 }
 
 Shape::~Shape()
@@ -88,7 +87,6 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
     CubicYFColorMap colormap;
     QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, range, curr); // 5000 !!!!!
 
-//    QVector<QPoint> points_in1frm;
     for(int k = 0; k < bleb.size(); k++){ // one bleb
         vector<polarPoint>  polarPBunch = bleb[k].bunch_polar;
         int num = polarPBunch.size();
@@ -109,7 +107,6 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
             buffer[ pixel + 0] = c.blue();
         }
     }
-//    blebPoints.push_back(points_in1frm);
 
     /*
 //    qDebug() << "centroid " << cent;
@@ -135,9 +132,11 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 //    }
 */
 
-
-
     curr++; // local counter
+
+    int showBarFrm = maxIndex - begin - 50 < range ? maxIndex - begin - 50 : range;
+    if(curr == showBarFrm)
+        drawColorBar();
 }
 
 void Shape::initializeGL()
@@ -160,16 +159,22 @@ QColor _mapNumToHue_(int start, int range, int min, int max, int v){
 void Shape::drawColorBar(QPainter *painter){ //
 
 
-    halfW = this->width()/2;
-    halfH = this->height()/2;
+//    halfW = this->width()/2;
+//    halfH = this->height()/2;
 
-    painter->rotate(90); //***x->right, y->down***
+//    painter->rotate(90); //***x->right, y->down***
 
-    int bar_txt_y   = halfH*3/4;
+    //int bar_txt_y   = halfH*3/4;
+//    int bar_txt_h   = 20;
+//    int bar_txt_w   = halfW/4;
+//    QRect txt_old   = QRect(-halfW,              bar_txt_y, bar_txt_w, bar_txt_h);
+//    QRect txt_new   = QRect(halfW-bar_txt_w-10,  bar_txt_y, bar_txt_w, bar_txt_h);
+
+    int bar_txt_y   = height()*6/7;
     int bar_txt_h   = 20;
-    int bar_txt_w   = halfW/4;
-    QRect txt_old   = QRect(-halfW,           bar_txt_y, bar_txt_w, bar_txt_h);
-    QRect txt_new   = QRect(halfW-bar_txt_w-10,  bar_txt_y, bar_txt_w, bar_txt_h);
+    int bar_txt_w   = width()/8;
+    QRect txt_old   = QRect(0,                      bar_txt_y, bar_txt_w, bar_txt_h);
+    QRect txt_new   = QRect(width()-bar_txt_w-10,   bar_txt_y, bar_txt_w, bar_txt_h);
 
     QPen myPen(QColor(120, 120, 118));
     painter->setPen(myPen);
@@ -177,26 +182,104 @@ void Shape::drawColorBar(QPainter *painter){ //
     painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIndex));
 
 
-    painter->rotate(-90); //***x->up, y->right***
-    float rto   = float(maxIndex)/float(maxFrame) > 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
-    int space   = halfW/8;
-    int bar_h   = 10;
-    int bar_len = 2*(halfW - bar_txt_w - space);
-    int bar_w   = bar_len/bar_len;
-    int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
-    int bar_y   = -(halfW - bar_txt_w - space);
+//    painter->rotate(-90); //***x->up, y->right***
+//    float rto   = float(maxIndex)/float(maxFrame) > 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
+//    int space   = halfW/8;
+//    int bar_h   = 10;
+//    int bar_len = 2*(halfW - bar_txt_w - space);
+//    int bar_w   = bar_len/bar_len;
+//    int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
+//    int bar_y   = -(halfW - bar_txt_w - space);
 
-    QRect rect_empty = QRect(QPoint(bar_x, bar_y+bar_len*rto), QSize(bar_h, bar_len*(1.0-rto)));
-    painter->fillRect(rect_empty, QBrush(QColor(220, 220, 220, 128)));
+//    QRect rect_empty = QRect(QPoint(bar_x, bar_y+bar_len*rto), QSize(bar_h, bar_len*(1.0-rto)));
+//    painter->fillRect(rect_empty, QBrush(QColor(220, 220, 220, 128)));
 
-    for(int n = 0; n < bar_len*rto; n++){
+//    for(int n = 0; n < bar_len*rto; n++){
+//        CubicYFColorMap colorMap;
+//        QColor c = colorMap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, bar_len, n);
+//        myPen.setWidth(0);
+//        painter->setPen(c);
+//        painter->setBrush(QBrush(c));
+//        QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
+//        painter->drawRect(rect);
+//    }
+
+}
+
+void Shape::drawPoint(QPointF p, QColor c) // p1.y = p2.y
+{
+    unsigned int px = (int(p.y()) * width() + int(p.x())) * 4;
+    if(px > 0 && px+3 < bufferSize){
+//        buffer[ px + 3] = c.alpha();
+//        buffer[ px + 2] = c.red();
+//        buffer[ px + 1] = c.green();
+//        buffer[ px + 0] = c.blue();
+        int tmp = (255 - c.alpha());
+        buffer[px + 2] = (c.red()*c.alpha() + buffer[px + 2]*tmp)/255;
+        buffer[px + 1] = (c.green()*c.alpha() + buffer[px + 1]*tmp)/255;
+        buffer[px + 0] = (c.blue()*c.alpha() + buffer[px + 0]*tmp)/255;
+        buffer[px + 3] = min(c.alpha() + buffer[px + 3], 255);
+
+    }
+}
+
+void Shape::drawVLine(QPointF p1, QPointF p2, QColor c, int w)// p1.x = p2.x
+{
+    //int     line_w = 2;
+    float   y1, y2;
+    if(p1.y() < p2.y()){
+        y1 = p1.y();
+        y2 = p2.y();
+    }
+    else{
+        y2 = p1.y();
+        y1 = p2.y();
+    }
+
+    for (int y = y1; y < y2; y++){
+        for (int x = 0; x < w; x++)
+            drawPoint(QPointF(p1.x()+x,y), c);
+    }
+}
+
+void Shape::fillRect(QPointF p1, QPointF p2, QColor c)// p1: topleft, p2: bottomright
+{
+    for (int x = p1.x(); x < p2.x(); x++){
+        QPointF up = QPointF(x, p1.y());
+        QPointF dn = QPointF(x, p2.y());
+        drawVLine(up, dn, c, 1);
+    }
+}
+
+void Shape::drawColorBar()
+{
+    // *** draw color map bar indicating time old / new ***
+    // ***x->right, y->down***
+    int space       = width()/16;
+    int bar_txt_y   = (height()-space)*7/8;
+    int bar_txt_h   = 20;
+    int bar_txt_w   = width()/8;
+    float rto   = float(maxIndex)/float(maxFrame) >= 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
+    int bar_h   = /*bar_txt_h*/10;
+    int bar_len = width() - 2*(bar_txt_w + space)/**rto*/;
+
+    int bar1frm_w   = bar_len/(maxIndex - begin) < 1 ? 1: bar_len/(maxIndex - begin);
+
+    //int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
+    //int bar_y   = -(halfW - bar_txt_w - space);
+    int bar_x   = (width() - bar_len)/2;
+    int bar_y   = bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2;
+
+//    QRect rect_empty = QRect(QPoint(bar_x+bar_len*rto, bar_y), QSize( bar_len*(1.0-rto), bar_h+1));
+    QPointF empty_topleft  = QPoint(bar_x+bar_len*rto, bar_y);
+    QPointF empty_botright = QPoint(bar_x+bar_len*rto + bar_len*(1.0-rto), bar_y+bar_h+1);
+    fillRect(empty_topleft, empty_botright, QColor(220, 220, 220, 64));
+
+    for(int n = 0; n < bar_len*rto; n+= bar1frm_w){
         CubicYFColorMap colorMap;
         QColor c = colorMap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, bar_len, n);
-        myPen.setWidth(0);
-        painter->setPen(c);
-        painter->setBrush(QBrush(c));
-        QRect rect(QPoint(bar_x, bar_y+bar_w*n), QSize(bar_h, bar_w));
-        painter->drawRect(rect);
+        //QRect rect(QPoint(bar_x+n, bar_y), QSize(1, bar_h));
+        drawVLine(QPoint(bar_x+n, bar_y), QPoint(bar_x+n, bar_y+bar_h), c, bar1frm_w);
     }
 
 }
@@ -211,27 +294,28 @@ void Shape::render(QPainter *painter)
     unsigned char *buffer_tmp = new unsigned char[bufferSize]();
     for (unsigned int i = 0; i < bufferSize; i++)
         buffer_tmp[i] = 255;
+
     img = QImage(buffer_tmp, width(), height(), QImage::Format_ARGB32);
     painter->drawImage(0, 0, img);
-    //painter->eraseRect(0, 0, width(), height());
-    painter->setRenderHint(QPainter::Antialiasing);
 
-    // draw Value
-    painter->setPen(QColor(128, 0, 0));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
+    painter->setRenderHint(QPainter::Antialiasing);
 
 
     img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
     painter->drawImage(0, 0, img);
 
-    halfW = this->width()/2;
-    halfH = this->height()/2;
+    // draw Value
+    painter->setPen(QColor(128, 0, 0));
+    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
 
-    // set (0,0) to the center of the canvas
-    QPointF center(halfW, halfH);
+//    halfW = this->width()/2;
+//    halfH = this->height()/2;
 
-    painter->translate(center.x(), center.y());
-    painter->rotate(-90); //***x->up, y->right***
+//    // set (0,0) to the center of the canvas
+//    QPointF center(halfW, halfH);
+
+//    painter->translate(center.x(), center.y());
+//    painter->rotate(-90); //***x->up, y->right***
     drawColorBar(painter);
 
 //    this->needUpdate = false;

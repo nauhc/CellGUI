@@ -180,7 +180,6 @@ void Coord::drawColorBar()
     int bar_len = width() - 2*(bar_txt_w + space)/**rto*/;
 
     int bar1frm_w   = bar_len/(maxIdx - minFrm) < 1 ? 1: bar_len/(maxIdx - minFrm);
-//    int bar_w   = 1;
 
     //int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
     //int bar_y   = -(halfW - bar_txt_w - space);
