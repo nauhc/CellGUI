@@ -672,7 +672,8 @@ void SingleView::createScaleConverter()
 {
     //scale converter
     scaleConvertHLayout = new QHBoxLayout();
-    mmeter = new QLineEdit("300");
+//    mmeter = new QLineEdit("300");
+    mmeter = new QLineEdit("150");
     pixel = new QLineEdit("20");
     QLabel  *pixelas = new QLabel("pixel as");
     QLabel  *mm      = new QLabel("µm");

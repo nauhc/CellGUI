@@ -82,6 +82,17 @@ void MultiView::clearProps()
 
 }
 
+void MultiView::setTimeStt(int stt)
+{
+
+}
+
+void MultiView::setTimeEnd(int end)
+{
+    maxFrm = end;
+    display();
+}
+
 void MultiView::clearData()
 {
     if(!cellData.empty())
@@ -248,7 +259,10 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
         nar_tmp->setMaxFrm(idxMax);
         nar_tmp->setValue(value);
 
-        for(unsigned int n = 0; n < cellDataSize; n++){
+        int showSizeMin = minFrm > 0 ? minFrm : 0;
+        int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
+//        for(unsigned int n = 0; n < cellDataSize; n++){
+        for(unsigned int n = showSizeMin; n < showSizeMax; n++){
             //nar_tmp->clear();
             nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0]);
 //            for(int x = 0; x < cellData[index][n].size(); x++){
@@ -290,7 +304,10 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value)
         cod_tmp->setValue(value);
         //cod_tmp->setMaxSize(QSize(800, 600));
 
-        for(unsigned int n = 0; n < cellDataSize; n++){
+        int showSizeMin = minFrm > 0 ? minFrm : 0;
+        int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
+//        for(unsigned int n = 0; n < cellDataSize; n++){
+        for(unsigned int n = showSizeMin; n < showSizeMax; n++){
             cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
         }
         //qDebug() << cellData[index].size();
@@ -380,7 +397,7 @@ void MultiView::display()
 {
 
     // file reading succeed and draw vis
-    maxFrm = 5000;
+//    maxFrm = 5000;
     int containerSide = 300;
     int space = 5;
     //    if (fileNum > 4)
@@ -650,8 +667,8 @@ void canvasWidget::paintEvent(QPaintEvent *e)
     if(clearAll){
         //qDebug() << "clear!!!!";
         QPainter painter(this);
-        //painter.fillRect(0, 0, width(), height(), QBrush(QColor(255, 255, 255)));
-        painter.eraseRect(0, 0, width(), height());
+        painter.fillRect(0, 0, width(), height(), QBrush(QColor(0, 255, 255)));
+//        painter.eraseRect(0, 0, width(), height());
         clearAll = false;
     }
 }

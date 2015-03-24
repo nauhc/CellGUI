@@ -177,20 +177,21 @@ void Coord::drawColorBar()
 {
     // *** draw color map bar indicating time old / new ***
     // ***x->right, y->down***
-    int space       = width()/16;
-    int bar_txt_y   = (height()-space)*6/7;
-    int bar_txt_h   = 20;
-    int bar_txt_w   = width()/8;
-    float rto   = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
-    int bar_h   = /*bar_txt_h*/10;
-    int bar_len = width() - 2*(bar_txt_w + space)/**rto*/;
+    int     space       = width()/16;
+    int     bar_txt_y   = (height()-space)*6/7;
+    int     bar_txt_h   = 20;
+    int     bar_txt_w   = width()/8;
+    //float   rto         = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
+    float   rto         = float(maxIdx)/float(5000) >= 1.0 ? 1.0 : float(maxIdx)/float(5000);
+    int     bar_h       = /*bar_txt_h*/10;
+    int     bar_len     = width() - 2*(bar_txt_w + space)/**rto*/;
 
-    int bar1frm_w   = bar_len/(maxIdx - minFrm) < 1 ? 1: bar_len/(maxIdx - minFrm);
+    int     bar1frm_w   = bar_len/(maxIdx - minFrm) < 1 ? 1: bar_len/(maxIdx - minFrm);
 
-    //int bar_x   = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
-    //int bar_y   = -(halfW - bar_txt_w - space);
-    int bar_x   = (width() - bar_len)/2;
-    int bar_y   = bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2;
+    //int   bar_x       = -(bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2);
+    //int   bar_y       = -(halfW - bar_txt_w - space);
+    int     bar_x       = (width() - bar_len)/2;
+    int     bar_y       = bar_txt_y + (bar_txt_h-bar_h+bar_txt_h)/2;
 
     QRect rect_empty = QRect(QPoint(bar_x+bar_len*rto, bar_y), QSize( bar_len*(1.0-rto), bar_h+1));
     fillRect(rect_empty.topLeft(), rect_empty.bottomRight(), QColor(220, 220, 220, 64));
@@ -229,7 +230,8 @@ void Coord::updateCoord(QPointF point, int currFrame)
     //    QPointF currCoord = (point-origin)*coordScale+center;
     QPointF currCoord = QPointF((point.x() - origin.x())*coordScale+center.x(), (point.y() - origin.y())*coordScale+center.y());
 
-    unsigned int range = maxFrm - minFrm;
+//    unsigned int range = maxFrm - minFrm;
+    unsigned int range = 5000 - minFrm;
     if(currFrm > range) currFrm = range;
     CubicYFColorMap colormap;
     QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // 5000 !!!!!

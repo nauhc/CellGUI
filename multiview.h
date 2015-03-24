@@ -37,6 +37,8 @@ public:
     void    sortbyParameter(int i);
     void    pushProps(int i);
     void    clearProps();
+    void    setTimeStt(int stt);
+    void    setTimeEnd(int end);
 
 signals:
 //    void readProperties(floatArray prop);
@@ -53,7 +55,8 @@ private:
     QVector<QFileInfo>                      datafileInfos; //stores all the filenames
     //QVector<bool>                           datafileRead; //stores all the files read or not
     QVector<int>                            showProps; // stores the index of the properties that need to be showed
-    QWidget                                 *visContainer; // large conainer storing all the vis info
+    //QWidget                                 *visContainer; // large conainer storing all the vis info
+    canvasWidget                            *canvas;
     std::vector<std::vector<floatArray> >   cellData;
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
@@ -64,6 +67,8 @@ private:
     QVector<float>                          value_sort; // sorted value
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
+//    unsigned int                            timeStt;
+//    unsigned int                            timeEnd;
 
     QGridLayout                             *visGLayout;
     QScrollArea                             *scrollArea;
@@ -91,7 +96,6 @@ private:
 
 //    bool    clearAll;
 //    void    paintEvent(QPaintEvent *e);
-    canvasWidget    *canvas;
 
 };
 

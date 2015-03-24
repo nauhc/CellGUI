@@ -266,7 +266,7 @@ void MainWindow::timeEndSlider_valueChanged(int v)
         int sttV = timeEndSlider->value() < 1 ? 1 : timeEndSlider->value() - 1;
         timeSttLabel->setText("Frame range start: "+QString::number(int(sttV)));
     }
-
+    multiview->setTimeEnd(v);
 }
 
 void MainWindow::timeSrtSlider_valueChanged(int v)
