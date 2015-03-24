@@ -667,8 +667,8 @@ void canvasWidget::paintEvent(QPaintEvent *e)
     if(clearAll){
         //qDebug() << "clear!!!!";
         QPainter painter(this);
-        painter.fillRect(0, 0, width(), height(), QBrush(QColor(0, 255, 255)));
-//        painter.eraseRect(0, 0, width(), height());
+//        painter.fillRect(0, 0, width(), height(), QBrush(QColor(255, 255, 255)));
+        painter.eraseRect(0, 0, width(), height());
         clearAll = false;
     }
 }

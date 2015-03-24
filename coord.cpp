@@ -203,6 +203,10 @@ void Coord::drawColorBar()
         drawVLine(QPoint(bar_x+n, bar_y), QPoint(bar_x+n, bar_y+bar_h), c, bar1frm_w);
     }
 
+    float   posRto = float(maxFrm)/5000. >= 1.0 ? 1.0 : float(maxFrm)/5000.;
+    QColor posColor = QColor(128, 128, 128);
+    drawVLine(QPoint(bar_x+bar_len*posRto, bar_y-2), QPoint(bar_x+bar_len*posRto, bar_y+bar_h+2), posColor, 1);
+
 }
 
 
