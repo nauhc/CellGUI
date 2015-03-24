@@ -224,36 +224,61 @@ void MainWindow::paraCheckBox_checked(int state)
 
 }
 
-void MainWindow::timeEndSlider_valueChanged(int v)
-{
-
-}
-
 void MainWindow::createTimeSlider()
 {
     dockMainVLayout->addStretch();
 
     timeRangeLayout = new QVBoxLayout;
-    timeStartLayout = new QHBoxLayout;
-    timeEndLayout = new QHBoxLayout;
-    timeStartLabel = new QLabel("Frame range start ");
-    timeEndLabel = new QLabel("Frame range end ");
-    timeStartSlider = new QSlider(Qt::Horizontal);
+
+    timeSttLayout = new QVBoxLayout;
+    timeSttLabel = new QLabel("Frame range start: 0");
+    timeSttLabel->setFixedWidth(300);
+    timeSttSlider = new QSlider(Qt::Horizontal);
+    timeSttSlider->setRange(0, 5000-1);
+    timeSttSlider->setValue(0);
+    timeSttLayout->addWidget(timeSttLabel);
+    timeSttLayout->addWidget(timeSttSlider);
+
+    timeEndLayout = new QVBoxLayout;
+    timeEndLabel = new QLabel("Frame range end: 5000");
+    timeEndLabel->setFixedWidth(300);
     timeEndSlider = new QSlider(Qt::Horizontal);
-    timeStartLayout->addWidget(timeStartLabel);
-    timeStartLayout->addWidget(timeStartSlider);
+    timeEndSlider->setRange(1, 5000);
+    timeEndSlider->setValue(5000);
     timeEndLayout->addWidget(timeEndLabel);
     timeEndLayout->addWidget(timeEndSlider);
-    timeRangeLayout->addLayout(timeStartLayout);
+
+    timeRangeLayout->addLayout(timeSttLayout);
     timeRangeLayout->addLayout(timeEndLayout);
-
-
 
     dockMainVLayout->addLayout(timeRangeLayout);
     dockMainVLayout->addStretch();
 
-    //connect(timeEndSlider, SIGNAL(valueChanged(int)), this, SLOT(timeEndSlider_valueChanged(int)));
+    connect(timeSttSlider, SIGNAL(valueChanged(int)), this, SLOT(timeSrtSlider_valueChanged(int)));
+    connect(timeEndSlider, SIGNAL(valueChanged(int)), this, SLOT(timeEndSlider_valueChanged(int)));
 }
+
+void MainWindow::timeEndSlider_valueChanged(int v)
+{
+    timeEndLabel->setText("Frame range end: "+QString::number(int(v)));
+    if(timeSttSlider->value() > timeEndSlider->value()){
+        timeSttSlider->setValue(timeEndSlider->value());
+        int sttV = timeEndSlider->value() < 1 ? 1 : timeEndSlider->value() - 1;
+        timeSttLabel->setText("Frame range start: "+QString::number(int(sttV)));
+    }
+
+}
+
+void MainWindow::timeSrtSlider_valueChanged(int v)
+{
+    timeSttLabel->setText("Frame range start: "+QString::number(int(v)));
+    if(timeEndSlider->value() < timeSttSlider->value()){
+        timeEndSlider->setValue(timeSttSlider->value());
+        int endV = timeSttSlider->value() > 5000 ? 5000 : timeSttSlider->value() + 1;
+        timeEndLabel->setText("Frame range end: "+QString::number(int(endV)));
+    }
+}
+
 
 void MainWindow::createProptyCheckbox()
 {

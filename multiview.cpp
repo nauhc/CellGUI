@@ -37,11 +37,21 @@ MultiView::MultiView(QWidget *parent) :
 
 //    mainVLayout->addWidget(loadFilesButton);
 
-    QWidget *temp = new QWidget();
-    temp->setLayout(visGLayout);
-    scrollArea->setWidget(temp);
-    scrollArea->setStyleSheet(SCROLLBAR);
+//    QWidget *temp = new QWidget();
+//    temp->setLayout(visGLayout);
+//    scrollArea->setWidget(temp);
+    canvas = new canvasWidget();
+    canvas->setLayout(visGLayout);
+    scrollArea->setWidget(canvas);
 
+//    tstWidget *tWidget = new tstWidget();
+//    scrollArea->setWidget(tWidget);
+//    tWidget->setFixedSize(300*28, 300*10);
+//    QScrollArea *a = new QScrollArea();
+//    a->setWidget(tWidget);
+//    a->show();
+
+    scrollArea->setStyleSheet(SCROLLBAR);
 
     mainVLayout->addWidget(scrollArea);
     //    mainVLayout->addLayout(visGLayout);
@@ -58,15 +68,17 @@ void MultiView::pushProps(int i)
 //    showProps.clear();
     showProps.push_back(i); // shape
     //qDebug() << showProps;
-    show();
+    display();
 }
 
 void MultiView::clearProps()
 {
     showProps.clear();
-//    QLayoutItem *child;
-//    while ((child = visGLayout->takeAt(0)) != 0)
-//        delete child;
+    QLayoutItem *child;
+    while ((child = visGLayout->takeAt(0)) != 0)
+        delete child;
+    //clearAll = true;
+    canvas->clearCanvas();
 
 }
 
@@ -129,7 +141,7 @@ void MultiView::sortbyParameter(int i)
         }
     }
     //qDebug() << index_sort;
-    show();
+    display();
 
 }
 
@@ -202,7 +214,6 @@ bool MultiView::loadFiles()
 
     return true;
 }
-
 
 void MultiView::createVisCanvas()
 {
@@ -330,6 +341,11 @@ void MultiView::showShape(int index, int size, int i, int j, float value)
     }
 }
 
+//void MultiView::paintEvent(QPaintEvent *e)
+//{
+
+//}
+
 void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, float v)
 {
     switch (PropIdx){
@@ -360,9 +376,8 @@ void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, f
     }
 }
 
-void MultiView::show()
+void MultiView::display()
 {
-
 
     // file reading succeed and draw vis
     maxFrm = 5000;
@@ -376,6 +391,7 @@ void MultiView::show()
     containerSide = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
 
     int fileNum = datafileInfos.size();
+
 
     if(showProps.size() == 1){ // show all the movies in one property
         //visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
@@ -608,3 +624,34 @@ QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index
     return img;
 }
 
+
+
+canvasWidget::canvasWidget() : clearAll(false)
+{
+//    clearAll = false;
+}
+
+void canvasWidget::clearCanvas()
+{
+    clearAll = true;
+}
+
+void canvasWidget::paintEvent(QPaintEvent *e)
+{
+
+//    QPainter painter(this);
+
+//    for(unsigned int i = 0; i < 28; i++){
+//        for(unsigned int j = 0; j < 10; j++){
+//            painter.drawRect(i*300, j*300, 300, 300);
+//        }
+//    }
+
+    if(clearAll){
+        //qDebug() << "clear!!!!";
+        QPainter painter(this);
+        //painter.fillRect(0, 0, width(), height(), QBrush(QColor(255, 255, 255)));
+        painter.eraseRect(0, 0, width(), height());
+        clearAll = false;
+    }
+}

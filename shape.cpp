@@ -244,19 +244,19 @@ void Shape::render(QPainter *painter)
 //        return;
 
     // clean canvas
-    unsigned char *buffer_tmp = new unsigned char[bufferSize]();
-    for (unsigned int i = 0; i < bufferSize; i++)
-        buffer_tmp[i] = 255;
+//    unsigned char *buffer_tmp = new unsigned char[bufferSize]();
+//    for (unsigned int i = 0; i < bufferSize; i++)
+//        buffer_tmp[i] = 255;
 
-    img = QImage(buffer_tmp, width(), height(), QImage::Format_ARGB32);
-    painter->drawImage(0, 0, img);
+//    img = QImage(buffer_tmp, width(), height(), QImage::Format_ARGB32);
+//    painter->drawImage(0, 0, img);
 
-    painter->setRenderHint(QPainter::Antialiasing);
-
+    painter->eraseRect(QRect(0, 0, width(), height()));
 
     img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
     painter->drawImage(0, 0, img);
 
+    //painter->setRenderHint(QPainter::Antialiasing);
     // draw Value
     painter->setPen(QColor(128, 0, 0));
     painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));

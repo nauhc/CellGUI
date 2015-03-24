@@ -409,13 +409,17 @@ void Coord::render(QPainter *painter)
 {
     //    if(!this->needUpdate)
     //        return;
+//    static int cnt = 0;
+//    qDebug() << "Calling Coord Render()" << cnt++;
 
     // clear canvas
     painter->eraseRect(0, 0, width(), height());
-    painter->setRenderHint(QPainter::Antialiasing);
 
     img = QImage(buffer, width(), height(), QImage::Format_ARGB32);
     painter->drawImage(0, 0, img);
+
+
+//    painter->setRenderHint(QPainter::Antialiasing);
 
     // draw Value
     painter->setPen(QColor(128, 0, 0));

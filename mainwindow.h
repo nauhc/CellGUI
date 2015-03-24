@@ -37,6 +37,7 @@ private slots:
     void propCheckBox_checked(int state);
     void paraCheckBox_checked(int state);
     void timeEndSlider_valueChanged(int v);
+    void timeSrtSlider_valueChanged(int v);
 
 private:
     Ui::MainWindow      *ui;
@@ -56,11 +57,11 @@ private:
 
     // time Slider
     QVBoxLayout         *timeRangeLayout;
-    QHBoxLayout         *timeStartLayout;
-    QHBoxLayout         *timeEndLayout;
-    QLabel              *timeStartLabel;
+    QVBoxLayout         *timeSttLayout;
+    QVBoxLayout         *timeEndLayout;
+    QLabel              *timeSttLabel;
     QLabel              *timeEndLabel;
-    QSlider             *timeStartSlider;
+    QSlider             *timeSttSlider;
     QSlider             *timeEndSlider;
 
     // property to show

@@ -19,6 +19,16 @@
 #include "shape.h"
 #include "bleb.h"
 
+class canvasWidget : public QWidget{
+    Q_OBJECT
+public:
+    canvasWidget();
+    void clearCanvas();
+protected:
+    bool clearAll;
+    virtual void paintEvent(QPaintEvent *e);
+};
+
 class MultiView : public QWidget
 {
     Q_OBJECT
@@ -61,8 +71,9 @@ private:
 
     QPushButton                             *loadFilesButton;
 
+
     bool    loadFiles();
-    void    show();
+    void    display();
     bool    readDataFile(QString &filename);
     bool    readBlebsFile(QString &filename);
     bool    readContoursFile(QString &filename);
@@ -77,6 +88,10 @@ private:
     void    showCircularProp(int index, int size, int i, int j, int propTp, float value);
     void    showTrajectory(int index, int size, int i, int j, float value);
     void    showShape(int index, int size, int i, int j, float value);
+
+//    bool    clearAll;
+//    void    paintEvent(QPaintEvent *e);
+    canvasWidget    *canvas;
 
 };
 
