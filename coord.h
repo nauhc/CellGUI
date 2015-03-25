@@ -14,6 +14,7 @@ public:
     ~Coord();
 
     void updateCoord(QPointF point, int currFrame);
+    void updateRto(float r);
     void setMaxFrm(unsigned int im, unsigned int fm);
     void setBeginFrm(unsigned int m);
     void setMaxSize(QSize s);
@@ -59,6 +60,8 @@ private:
     unsigned char       *buffer;
     unsigned int        bufferSize;
     QImage              img;
+
+    float               maxTimeRatio;
 
     void                drawPoint(QPointF p, QColor c);
     void                drawHLine(QPointF p1, QPointF p2, QColor c, int w);

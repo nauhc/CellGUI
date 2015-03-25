@@ -51,13 +51,7 @@ void Coord::clear()
     micMeter = 20;
     pixel = 300;
     micMtr_Pixel = micMeter/pixel;
-
-    //    if(buffer != NULL)
-    //        delete[] buffer;
-    //    bufferSize = width() * height() * 4;
-    //    buffer = new unsigned char[bufferSize]();
-    //    for (unsigned int i = 0; i < bufferSize; i++)
-    //        buffer[i] = 255;
+    maxTimeRatio = 1.0;
 
 }
 
@@ -203,9 +197,12 @@ void Coord::drawColorBar()
         drawVLine(QPoint(bar_x+n, bar_y), QPoint(bar_x+n, bar_y+bar_h), c, bar1frm_w);
     }
 
-    float   posRto = float(maxFrm)/5000. >= 1.0 ? 1.0 : float(maxFrm)/5000.;
+//    float  posRto = float(maxFrm+minFrm)/5000. >= 1.0 ? 1.0 : float(maxFrm+minFrm)/5000.;
     QColor posColor = QColor(128, 128, 128);
-    drawVLine(QPoint(bar_x+bar_len*posRto, bar_y-2), QPoint(bar_x+bar_len*posRto, bar_y+bar_h+2), posColor, 1);
+//    drawVLine(QPoint(bar_x+bar_len*posRto, bar_y-2), QPoint(bar_x+bar_len*posRto, bar_y+bar_h+2), posColor, 1);
+    drawVLine(QPoint(bar_x+bar_len*maxTimeRatio, bar_y-2), QPoint(bar_x+bar_len*maxTimeRatio, bar_y+bar_h+2), posColor, 1);
+
+//    qDebug() << maxTimeRatio;
 
 }
 
@@ -257,11 +254,21 @@ void Coord::updateCoord(QPointF point, int currFrame)
     //qDebug() << point << origin;
 }
 
+void Coord::updateRto(float r)
+{
+    maxTimeRatio = r;
+//    update();
+//    qDebug() << maxTimeRatio;
+    drawColorBar();
+
+}
+
 void Coord::setMaxFrm(unsigned int im, unsigned int fm)
 {
     maxFrm = fm;
     maxIdx = im;
     //qDebug() << fm << im;
+//    update();
 }
 
 void Coord::setBeginFrm(unsigned int m)
@@ -321,7 +328,6 @@ void Coord::setValue(float v)
 {
     value = v;
     drawRuler();
-    drawColorBar();
 }
 
 void Coord::initializeGL()

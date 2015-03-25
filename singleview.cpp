@@ -210,7 +210,7 @@ void SingleView::loadButton_clicked()
             drawROI->setStyleSheet(BUTTON_RELEASED_OFF);
             playerSlider->setMaximum(controller->getNumberOfFrames());
             frmLabelRight->setText(" 0 / " + QString::number(controller->getNumberOfFrames()));
-            nar->setMaxFrm(controller->getNumberOfFrames());
+            nar->setMaxFrm(controller->getNumberOfFrames(), controller->getNumberOfFrames());
             cod->setMaxSize(controller->getVideoSize());
         }
     }

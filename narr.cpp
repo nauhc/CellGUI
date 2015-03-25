@@ -60,7 +60,9 @@ void Narr::clear()
 
     begin       = 0;
     curr        = 0;
-    max         = 1;
+    maxIdx      = 1;
+    maxFrm      = 1;
+    minFrm      = 0;
     angle       = 0;
     mouseIndex  = 0;
 
@@ -144,10 +146,10 @@ void Narr::setBeginFrm(int beginFrame)
     //std::cout << "NARRATIVE VIS BEGIN frame number " << begin << std::endl;
 }
 
-void Narr::setMaxFrm(unsigned int m)
+void Narr::setMaxFrm(unsigned int im, unsigned int fm)
 {
-    max = m;
-    //    max = 5000;
+    maxIdx = im;
+    maxFrm = fm;
     //std::cout << "NARRATIVE VIS MAX frame number " << max << std::endl;
 
 }
@@ -186,9 +188,18 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     blebNum.push_back(prop[8]);
     blebAvgSize.push_back(prop[9]);
 
+    unsigned int maxRange = /*maxFrm < 5000 ? 5000 - minFrm :*/ maxFrm - minFrm; //HEREHERE
+//    qDebug() << maxRange;
+    unsigned int currRange = maxIdx - begin;
+
     int     num         = area.size();
-    float   degree      = 2.*M_PI/(max-begin)*num - M_PI_2;
-    float   div         = 2.*M_PI*propBarInnerRadius/(max-begin);
+//    float   degree      = 2.*M_PI/(maxIdx-begin)*num - M_PI_2;
+//    float   div         = 2.*M_PI*propBarInnerRadius/(maxIdx-begin);
+//    int     num         = area.size() > maxRange ? maxRange : area.size();
+
+    if (num <= maxRange){
+    float   degree      = 2.*M_PI/maxRange*num - M_PI_2;
+    float   div         = 2.*M_PI*propBarInnerRadius/maxRange;
     int     barWidth    = div > 1 ? int(div) : 1;
     qreal   barheight;
     qreal   minV;
@@ -233,7 +244,7 @@ void Narr::updateProperty(floatArray prop, int currFrame)
             drawPoint(rotP, gradualColor(GREEN, 0.2));
         }
     }
-
+}
 
 }
 
@@ -320,12 +331,12 @@ void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
         for(int n = 0; n < number; n++){
             //qDebug() << feature[n];
             //rotate and translate from the center to location on the ring
-            float degree = 360./(max-begin) * n;
+            float degree = 360./(maxIdx-begin) * n;
             painter->rotate(degree);
             painter->translate(0, innerRadius);
             //draw a bar
             float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
-            float w = 2.*M_PI/(max-begin)*number;
+            float w = 2.*M_PI/(maxIdx-begin)*number;
             painter->drawRoundedRect(0, 0, w, barheight, 2.0, 2.0);
             // translate and rotate back to the center
             painter->translate(0, -innerRadius);
@@ -353,7 +364,7 @@ void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
         for(int n = 0; n < number; n++)
         {
             //rotate and translate from the center to location on the ring
-            float degree = (360./(max-begin) * n + 90) * M_PI/180;
+            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
             float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
             float radius    = barheight + innerRadius;
             QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
@@ -382,11 +393,11 @@ void Narr::drawCircularBarChart_fixMax(QPainter *painter,
         painter->setBrush(QBrush(color));
 
         //int number = feature.size();
-        int number = feature.size() < max ?  feature.size() : max;
+        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
         for(int n = 0; n < number; n++){
             //qDebug() << feature[n];
             //rotate and translate from the center to location on the ring
-            float degree = 360./(max-begin) * n;
+            float degree = 360./(maxIdx-begin) * n;
             painter->rotate(degree);
             painter->translate(0, innerRadius);
             //draw a bar
@@ -418,7 +429,7 @@ void Narr::drawCircularBarChart_bleb(QPainter *painter,
         //        painter->setBrush(QBrush(color));
 
         //int number = feature.size();
-        int number = feature.size() < max ?  feature.size() : max;
+        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
         for(int n = 0; n < number; n++){
             qreal size = blebAvgSize[n] > BlebSizeMin ? blebAvgSize[n] - BlebSizeMin : 0;
             qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
@@ -429,13 +440,13 @@ void Narr::drawCircularBarChart_bleb(QPainter *painter,
 
             //qDebug() << feature[n];
             //rotate and translate from the center to location on the ring
-            float degree = 360./(max-begin) * n;
+            float degree = 360./(maxIdx-begin) * n;
             painter->rotate(degree);
             painter->translate(0, innerRadius);
             //draw a bar
             float barheight = float(feature[n]) * thickness/ maxV;
             //float w = /*2.*M_PI/(max-begin)*number*/1;
-            float w = 2.*M_PI/(max-begin)*number;
+            float w = 2.*M_PI/(maxIdx-begin)*number;
             painter->drawRect(0, 0, w, barheight);
             // translate and rotate back to the center
             painter->translate(0, -innerRadius);
@@ -462,7 +473,7 @@ void Narr::drawCircularLineChart_fixMax(QPainter *painter,
         for(int n = 0; n < number; n++)
         {
             //rotate and translate from the center to location on the ring
-            float degree = (360./(max-begin) * n + 90) * M_PI/180;
+            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
             float barheight = float(feature[n]) * thickness/ maxV;
             float radius    = barheight + innerRadius;
             QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
@@ -490,7 +501,7 @@ void Narr::mouseMoveEvent(QMouseEvent *ev)
     }
     //    qDebug() << angle;
     //    update();
-    mouseIndex = int(angle/360.*(max-begin)+begin);
+    mouseIndex = int(angle/360.*(maxIdx-begin)+begin);
 
 }
 

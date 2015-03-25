@@ -13,7 +13,7 @@ public:
     Narr(QWidget *parent = 0, bool multv = true);
     ~Narr();
     void setBeginFrm(int beginFrame);
-    void setMaxFrm(unsigned int m);
+    void setMaxFrm(unsigned int im, unsigned int fm);
     void setPropertyType(int);
     void setValue(float v);
     void initialize();
@@ -50,7 +50,9 @@ private:
 
     unsigned int                begin; // beggining frame index
     unsigned int                curr; // current frame index
-    unsigned int                max; // total number of frame
+    unsigned int                maxIdx; // total number of frame
+    unsigned int                maxFrm; // max frame number
+    unsigned int                minFrm; // min frame number
     QVector<QImage>             cells; // keyframe of cells
 
     float                       angle; // mouse position angle

@@ -30,7 +30,7 @@ void Shape::clear()
     begin   = 0;
     curr    = 0;
     maxIndex     = 1;
-
+    maxTimeRatio = 1.0;
 }
 
 //void Shape::setNeedUpdate()
@@ -54,6 +54,7 @@ void Shape::setMaxFrm(int maxIdx, int maxFrm)
 void Shape::setValue(float v)
 {
     value = v;
+    //drawColorBar();
 }
 
 void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
@@ -82,7 +83,8 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 //    //qDebug() << contour;
 
 //    contours.push_back(contour);
-    range    = maxFrame - begin;
+//    range    = maxFrame - begin;
+    range    = 5000 - begin;
     if (curr > range) curr = range;
     CubicYFColorMap colormap;
     QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, range, curr); // 5000 !!!!!
@@ -105,6 +107,7 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
             buffer[ pixel + 2] = c.red();
             buffer[ pixel + 1] = c.green();
             buffer[ pixel + 0] = c.blue();
+//            drawPoint(QPoint(x, y), c);
         }
     }
 
@@ -134,9 +137,17 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 
     curr++; // local counter
 
-    int showBarFrm = maxIndex - begin - 50 < range ? maxIndex - begin - 50 : range;
-    if(curr == showBarFrm)
-        drawColorBar();
+//    int showBarFrm = maxIndex - begin - 50 < range ? maxIndex - begin - 50 : range;
+//    if(curr == showBarFrm)
+    //        drawColorBar();
+}
+
+void Shape::updateRto(float r)
+{
+    maxTimeRatio = r;
+    //qDebug() << maxTimeRatio;
+//    update();
+    drawColorBar();
 }
 
 void Shape::initializeGL()
@@ -212,7 +223,8 @@ void Shape::drawColorBar()
     int bar_txt_y   = (height()-space)*7/8;
     int bar_txt_h   = 20;
     int bar_txt_w   = width()/8;
-    float rto   = float(maxIndex)/float(maxFrame) >= 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
+    //float rto   = float(maxIndex)/float(maxFrame) >= 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
+    float rto   = float(maxIndex)/5000. >= 1.0 ? 1.0 : float(maxIndex)/5000.;
     int bar_h   = /*bar_txt_h*/10;
     int bar_len = width() - 2*(bar_txt_w + space)/**rto*/;
 
@@ -234,6 +246,11 @@ void Shape::drawColorBar()
         //QRect rect(QPoint(bar_x+n, bar_y), QSize(1, bar_h));
         drawVLine(QPoint(bar_x+n, bar_y), QPoint(bar_x+n, bar_y+bar_h), c, bar1frm_w);
     }
+
+//    float   posRto = float(maxFrame)/5000. >= 1.0 ? 1.0 : float(maxFrame)/5000.;
+    QColor posColor = QColor(128, 128, 128);
+//    drawVLine(QPoint(bar_x+bar_len*posRto, bar_y-2), QPoint(bar_x+bar_len*posRto, bar_y+bar_h+2), posColor, 1);
+    drawVLine(QPoint(bar_x+bar_len*maxTimeRatio, bar_y-2), QPoint(bar_x+bar_len*maxTimeRatio, bar_y+bar_h+2), posColor, 1);
 
 }
 

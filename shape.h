@@ -14,6 +14,7 @@ public:
     void setMaxFrm(int maxIndex, int maxFrame);
     void setValue(float v);
     void updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
+    void updateRto(float r);
     void clear();
 
     //void setNeedUpdate();
@@ -43,6 +44,8 @@ private:
     unsigned char               *buffer;
     unsigned int                bufferSize;
     QImage                      img;
+
+    float                       maxTimeRatio;
 
     void                drawPoint(QPointF p, QColor c);
     void                drawVLine(QPointF p1, QPointF p2, QColor c, int w);

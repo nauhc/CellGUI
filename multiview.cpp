@@ -77,7 +77,19 @@ void MultiView::clearProps()
     QLayoutItem *child;
     while ((child = visGLayout->takeAt(0)) != 0)
         delete child;
-    //clearAll = true;
+
+    for(unsigned int i = 0; i < 7; i++){
+        for(unsigned int j = 0; j < 5; j++){
+            canvasWidget *tmp = new canvasWidget();
+            tmp->setFixedSize(300, 300);
+            tmp->clearCanvas();
+            visGLayout->addWidget(tmp, i, j);
+        }
+    }
+    QLayoutItem *child1;
+    while ((child1 = visGLayout->takeAt(0)) != 0)
+        delete child1;
+
     canvas->clearCanvas();
 
 }
@@ -256,11 +268,12 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
         nar_tmp->setFixedSize(size, size/*+20*/);
         nar_tmp->initialize();
         nar_tmp->setBeginFrm(idxMin);
-        nar_tmp->setMaxFrm(idxMax);
+        nar_tmp->setMaxFrm(idxMax, maxFrm);
         nar_tmp->setValue(value);
 
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
+        nar_tmp->setMaxFrm(idxMax, maxFrm);
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){
             //nar_tmp->clear();
@@ -306,9 +319,12 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value)
 
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
+        cod_tmp->setMaxFrm(idxMax, showSizeMax);
+        cod_tmp->updateRto(float(maxFrm)/5000.);
+//        qDebug() << float(maxFrm)/5000.;
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){
-            cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
+             cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
         }
         //qDebug() << cellData[index].size();
 
@@ -346,7 +362,12 @@ void MultiView::showShape(int index, int size, int i, int j, float value)
 
         visGLayout->addWidget(shp_tmp, 2*j+1, i);
 
-        for(int n = 0; n < SIZE; n++){
+        int showSizeMin = minFrm > 0 ? minFrm : 0;
+        int showSizeMax = maxFrm < SIZE ? maxFrm : SIZE;
+        shp_tmp->setMaxFrm(idxMax, showSizeMax);
+        shp_tmp->updateRto(float(maxFrm)/5000.);
+        //for(int n = 0; n < SIZE; n++){
+        for(int n = showSizeMin; n < showSizeMax; n++){
             //emit readContourNBlebs(blebs[index][n], contours[index][n], centers[index][n]);
             //shp_tmp->clear();
             shp_tmp->updateContourNBleb(blebs[index][n], contours[index][n], centers[index][n]); //[movie][frm]
