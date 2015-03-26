@@ -488,22 +488,22 @@ void Narr::drawCircularLineChart_fixMax(QPainter *painter,
     }
 }
 
-void Narr::mouseMoveEvent(QMouseEvent *ev)
-{
-    if(ev->y() <= halfH){
-        float degree = atan((ev->x()-halfW)/(-ev->y()+halfH));
-        if(degree < 0)
-            degree = degree + 2*M_PI;
-        angle = degree*180/M_PI;
-    }else{
-        float degree = atan((ev->x()-halfW)/(ev->y()-halfH));
-        angle = 180-degree*180/M_PI;
-    }
-    //    qDebug() << angle;
-    //    update();
-    mouseIndex = int(angle/360.*(maxIdx-begin)+begin);
+//void Narr::mouseMoveEvent(QMouseEvent *ev)
+//{
+//    if(ev->y() <= halfH){
+//        float degree = atan((ev->x()-halfW)/(-ev->y()+halfH));
+//        if(degree < 0)
+//            degree = degree + 2*M_PI;
+//        angle = degree*180/M_PI;
+//    }else{
+//        float degree = atan((ev->x()-halfW)/(ev->y()-halfH));
+//        angle = 180-degree*180/M_PI;
+//    }
+//    //    qDebug() << angle;
+//    //    update();
+//    mouseIndex = int(angle/360.*(maxIdx-begin)+begin);
 
-}
+//}
 
 void Narr::setPropType(int propTp)
 {

@@ -206,7 +206,7 @@ void MainWindow::paraCheckBox_checked(int state)
             para3->setChecked(false);
             multiview->sortbyParameter(1);
         }
-        else if (checkBox->text() == "Force Offset"){
+        else if (checkBox->text() == "Temperature"){
             para0->setChecked(false);
             para1->setChecked(false);
             para2->setChecked(true);
@@ -334,7 +334,7 @@ void MainWindow::createParaCheckbox()
     paraGroup->setStyleSheet(GROUPBOX);
     para0   = new QCheckBox("Pressure Ascending (Pa)");
     para1   = new QCheckBox("Force Ascending (µN)");
-    para2   = new QCheckBox("Force Offset");
+    para2   = new QCheckBox("Temperature");
     para3   = new QCheckBox("Date Ascending");
     para0->setStyleSheet(CHECKBOX);
     para1->setStyleSheet(CHECKBOX);

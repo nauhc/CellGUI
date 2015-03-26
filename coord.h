@@ -13,13 +13,16 @@ public:
     Coord(QWidget *parent = 0, bool multv = true);
     ~Coord();
 
-    void updateCoord(QPointF point, int currFrame);
-    void updateRto(float r);
-    void setMaxFrm(unsigned int im, unsigned int fm);
-    void setBeginFrm(unsigned int m);
-    void setMaxSize(QSize s);
-    void setValue(float v);
-    void clear();
+    void    updateCoord(QPointF point, int currFrame);
+    void    updateRto(float r);
+    void    setMaxFrm(unsigned int im, unsigned int fm);
+    void    setBeginFrm(unsigned int m);
+    void    setMaxSize(QSize s);
+    void    setValue(float v);
+    void    setPixel(QString text);
+    void    setMicMeter(QString text);
+    void    setScale(qreal scale);
+    void    clear();
 
 protected:
     void    initializeGL();
@@ -71,9 +74,7 @@ private:
     void                drawColorBar();
 
 private slots:
-    void    setPixel(QString text);
-    void    setMicMeter(QString text);
-    void    setScale(qreal scale);
+
 
 };
 

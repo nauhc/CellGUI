@@ -153,8 +153,13 @@ void MultiView::sortbyParameter(int i)
         for(int n = 0; n < datafileInfos.size(); n++){
             //index_sort.push_back(pressure[n].second);
             //index_sort.replace(n, pressure[n].second);
-            index_sort.replace(n, n);
-            value_sort.replace(n, 0);
+            index_sort.replace(n, temprature[n].second);
+            float tmp;
+            if(temprature[n].first == "37")
+                tmp = 37;
+            else
+                tmp = 25;
+            value_sort.replace(n, tmp);
         }
     }
     else{
@@ -191,7 +196,8 @@ void MultiView::loadFilesButton_clicked() // first round
 bool MultiView::loadFiles()
 {
 //    QString folderPath = "../../../video/ExtractedData/";
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
+//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -235,6 +241,9 @@ bool MultiView::loadFiles()
     qSort(force.begin(), force.end(), QPairFirstComparer());
     //qDebug() << force;
 
+    qSort(temprature.begin(), temprature.end(), QPairFirstComparer());
+    //qDebug() << force;
+
     return true;
 }
 
@@ -247,7 +256,7 @@ void MultiView::createVisCanvas()
     //    visWindow->resize(/*visContainer->size()*/ QSize(1024, 768));
 }
 
-void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, float value)
+void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, float value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -293,7 +302,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
     }
 }
 
-void MultiView::showTrajectory(int index, int size, int i, int j, float value)
+void MultiView::showTrajectory(int index, int size, int i, int j, float value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -316,7 +325,15 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value)
         cod_tmp->setMaxFrm(idxMax, frmMax);
         cod_tmp->setValue(value);
         //cod_tmp->setMaxSize(QSize(800, 600));
+        if (roomT){
+            cod_tmp->setPixel("480");
+            cod_tmp->setMicMeter("78.47");
+        }
+        else{
+            cod_tmp->setPixel("300");
+            cod_tmp->setMicMeter("20");
 
+        }
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
         cod_tmp->setMaxFrm(idxMax, showSizeMax);
@@ -337,7 +354,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value)
     }
 }
 
-void MultiView::showShape(int index, int size, int i, int j, float value)
+void MultiView::showShape(int index, int size, int i, int j, float value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -384,32 +401,32 @@ void MultiView::showShape(int index, int size, int i, int j, float value)
 
 //}
 
-void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, float v)
+void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, float v, bool roomT)
 {
     switch (PropIdx){
     case 0:
         //std::cout << "Showing Property 'Area'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx, v);
+        showCircularProp(fileIdx, size, i, j, PropIdx, v, roomT);
         break;
     case 1:
         //std::cout << "Showing Property 'Perimeter'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx, v);
+        showCircularProp(fileIdx, size, i, j, PropIdx, v, roomT);
         break;
     case 2:
         //std::cout << "Showing Property 'Bleb size and number'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx, v);
+        showCircularProp(fileIdx, size, i, j, PropIdx, v, roomT);
         break;
     case 3:
         //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;
-        showTrajectory(fileIdx, size, i, j, v);
+        showTrajectory(fileIdx, size, i, j, v, roomT);
         break;
     case 4:
         //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-        showShape(fileIdx, size, i, j, v);
+        showShape(fileIdx, size, i, j, v, roomT);
         break;
     default:
         //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-        showShape(fileIdx, size, i, j, v);
+        showShape(fileIdx, size, i, j, v, roomT);
         break;
     }
 }
@@ -440,7 +457,13 @@ void MultiView::display()
                 if((idx > fileNum - 1) || (index_sort[idx] > fileNum-1))
                     continue;
                 //qDebug() << idx << i << j;
-                visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0], value_sort[idx]);
+                bool rt;
+                if(temprature[index_sort[idx]].first == "RT"){
+                    rt = true;
+                }else{
+                    rt = false;
+                }
+                visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0], value_sort[idx], rt);
             }
         }
     }
@@ -449,7 +472,13 @@ void MultiView::display()
         visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
         for(int p = 0; p < showProps.size(); p++){
             for (int n = 0; n < fileNum; n++){
-                visPropbyIdx(index_sort[n], containerSide, n, p, showProps[p], value_sort[n]);
+                bool rt;
+                if(temprature[index_sort[n]].first == "RT"){
+                    rt = true;
+                }else{
+                    rt = false;
+                }
+                visPropbyIdx(index_sort[n], containerSide, n, p, showProps[p], value_sort[n], rt);
             }
         }
     }
@@ -644,9 +673,11 @@ bool MultiView::readExpParaFile(QString &filename, int n)
         //qDebug() << line1.remove("     pressure(pa)");
         qreal pres = line1.remove("     pressure(pa)").toFloat();
         qreal forc = line2.remove("     ForceOffset(N)").toFloat();
+        QString temp = line3.remove("     Temperature ");
         //qDebug() << forc;
         pressure.append(qMakePair(pres, n));
         force.append(qMakePair(forc, n));
+        temprature.append(qMakePair(temp, n));
         return true;
     }
 

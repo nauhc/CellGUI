@@ -63,6 +63,7 @@ private:
     QVector<QVector<QPoint> >               centers;
     QList<QPair<qreal,int> >                pressure;
     QList<QPair<qreal,int> >                force;
+    QList<QPair<QString, int> >             temprature;
     QVector<unsigned int>                   index_sort; // sorted index
     QVector<float>                          value_sort; // sorted value
     unsigned int                            minFrm; // selecting frame range to show (min)
@@ -89,10 +90,10 @@ private:
     void    createLoadFilesButton();
     void    createVisCanvas();
 
-    void    visPropbyIdx(int index, int size, int i, int j, int propTp, float v);
-    void    showCircularProp(int index, int size, int i, int j, int propTp, float value);
-    void    showTrajectory(int index, int size, int i, int j, float value);
-    void    showShape(int index, int size, int i, int j, float value);
+    void    visPropbyIdx(int index, int size, int i, int j, int propTp, float v, bool roomT);
+    void    showCircularProp(int index, int size, int i, int j, int propTp, float value, bool roomT);
+    void    showTrajectory(int index, int size, int i, int j, float value, bool roomT);
+    void    showShape(int index, int size, int i, int j, float value, bool roomT);
 
 //    bool    clearAll;
 //    void    paintEvent(QPaintEvent *e);

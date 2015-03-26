@@ -18,8 +18,8 @@ Controller::Controller(QObject *parent) : QThread(parent),
     pause = true;
     encircled = false;
     scale = 1.0;
-    pixel = 300.0;
-//    pixel = 150.0;
+//    pixel = 300.0;
+    pixel = 150.0;
     micMeter = 20.0;
     micMtr_Pixel = micMeter/pixel;
 }

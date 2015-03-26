@@ -39,6 +39,7 @@ Coord::Coord(QWidget *parent, bool multv)
 void Coord::clear()
 {
     coordScale = 2.;
+//    coordScale = 4.;
     centroid.clear();
     currFrm = 0;
     maxFrm  = 1;
@@ -49,7 +50,8 @@ void Coord::clear()
     centroid_min = QPoint(100000, 100000);
     centroid_max = QPoint(0, 0);
     micMeter = 20;
-    pixel = 300;
+//    pixel = 300;
+    pixel = 150;
     micMtr_Pixel = micMeter/pixel;
     maxTimeRatio = 1.0;
 

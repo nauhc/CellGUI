@@ -96,7 +96,7 @@ private:
                                qreal innerRadius, qreal thickness,
                                QColor color);
 
-    void mouseMoveEvent(QMouseEvent *ev);
+    //void mouseMoveEvent(QMouseEvent *ev);
 
 private slots:
     void setPropType(int);

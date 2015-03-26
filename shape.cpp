@@ -57,6 +57,10 @@ void Shape::setValue(float v)
     //drawColorBar();
 }
 
+inline QPointF rotate(QPointF p, double theta/*, QPointF org*/){
+    return QPointF(p.x()*cos(theta)-p.y()*sin(theta), p.x()*sin(theta)+p.y()*cos(theta))/* + org*/;
+}
+
 void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
 {
 
@@ -65,9 +69,12 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
     for(int n = 0; n < smoothContour.size(); n++){
 //        contour << QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y()));/**0.5*/
         // x and y coordincates exchanged for drawing purpose
-        int x = (smoothContour[n].y()-cent.y())*scl+this->width()/2;
-        int y = (smoothContour[n].x()-cent.x())*scl+this->height()/2;
+        QPointF contP  = QPointF(smoothContour[n].x()-cent.x(), smoothContour[n].y()-cent.y());
+        QPointF contPR = rotate(contP, M_PI);
+        int x = contPR.x()*scl+this->width()/2;
+        int y = contPR.y()*scl+this->height()/2;
 //        contour << QPoint(x, y);/**0.5*/
+
         unsigned int pixel = (y*width()+x)*4;
         if(pixel< 0 || pixel+3 >= bufferSize)
             continue;

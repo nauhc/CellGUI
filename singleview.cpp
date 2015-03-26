@@ -169,7 +169,7 @@ void SingleView::loadButton_clicked()
     QFileDialog *dialog = new QFileDialog();
     QString filename = dialog->getOpenFileName(this,
                                                tr("Open Video"),
-                                               "../../../video", /*QDir::homePath()+"/Desktop/",*/
+                                               "../../../video/Ying_BV2_RT/Ying_RT", /*QDir::homePath()+"/Desktop/",*/
                                                tr("Video Files (*.mov *mp4 *wmv *mpeg)"));
 
     //prepare writing data to file
