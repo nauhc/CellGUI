@@ -84,6 +84,8 @@ void MultiView::clearCanvas()
 
 void MultiView::setTimeStt(int stt)
 {
+    minFrm = stt;
+    display();
 }
 
 void MultiView::setTimeEnd(int end)

@@ -318,6 +318,7 @@ void MainWindow::timeSrtSlider_valueChanged(int v)
         int endV = timeSttSlider->value() > 5000 ? 5000 : timeSttSlider->value() + 1;
         timeEndLabel->setText("Frame range end: "+QString::number(int(endV)));
     }
+    multiview->setTimeStt(v);
 }
 
 
