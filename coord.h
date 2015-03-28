@@ -14,7 +14,7 @@ public:
     ~Coord();
 
     void    updateCoord(QPointF point, int currFrame);
-    void    updateRto(float r);
+    void    updateRto(float minR, float maxR);
     void    setMaxFrm(unsigned int im, unsigned int fm);
     void    setBeginFrm(unsigned int m);
     void    setMaxSize(QSize s);
@@ -66,6 +66,7 @@ private:
     QImage              img;
 
     float               maxTimeRatio;
+    float               minTimeRatio;
     bool                roomT;
 
     void                drawPoint(QPointF p, QColor c);

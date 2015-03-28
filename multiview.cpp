@@ -328,7 +328,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value, b
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
         cod_tmp->setMaxFrm(idxMax, showSizeMax);
-        cod_tmp->updateRto(float(maxFrm)/5000.);
+        cod_tmp->updateRto(float(minFrm)/5000., float(maxFrm)/5000.);
 //        qDebug() << float(maxFrm)/5000.;
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){
@@ -373,7 +373,7 @@ void MultiView::showShape(int index, int size, int i, int j, float value, bool r
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < SIZE ? maxFrm : SIZE;
         shp_tmp->setMaxFrm(idxMax, showSizeMax);
-        shp_tmp->updateRto(float(maxFrm)/5000.);
+        shp_tmp->updateRto(float(minFrm)/5000., float(maxFrm)/5000.);
         shp_tmp->setTempType(roomT);
         //for(int n = 0; n < SIZE; n++){
         for(int n = showSizeMin; n < showSizeMax; n++){

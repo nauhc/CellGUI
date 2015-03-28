@@ -148,9 +148,10 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
     //        drawColorBar();
 }
 
-void Shape::updateRto(float r)
+void Shape::updateRto(float minR, float maxR)
 {
-    maxTimeRatio = r;
+    maxTimeRatio = maxR;
+    minTimeRatio = minR;
     //qDebug() << maxTimeRatio;
 //    update();
     drawColorBar();
@@ -262,6 +263,7 @@ void Shape::drawColorBar()
     QColor posColor = QColor(128, 128, 128);
 //    drawVLine(QPoint(bar_x+bar_len*posRto, bar_y-2), QPoint(bar_x+bar_len*posRto, bar_y+bar_h+2), posColor, 1);
     drawVLine(QPoint(bar_x+bar_len*maxTimeRatio, bar_y-2), QPoint(bar_x+bar_len*maxTimeRatio, bar_y+bar_h+2), posColor, 1);
+    drawVLine(QPoint(bar_x+bar_len*minTimeRatio, bar_y-2), QPoint(bar_x+bar_len*minTimeRatio, bar_y+bar_h+2), posColor, 1);
 
 }
 
