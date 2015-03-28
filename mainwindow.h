@@ -36,6 +36,7 @@ private slots:
     void loadSingleView();
     void propCheckBox_checked(int state);
     void paraCheckBox_checked(int state);
+    void visSideLenSlider_valueChanged(int v);
     void timeEndSlider_valueChanged(int v);
     void timeSrtSlider_valueChanged(int v);
 
@@ -56,6 +57,7 @@ private:
     QVBoxLayout         *dockMainVLayout;
 
     // time Slider
+    QGroupBox           *timeGroup;
     QVBoxLayout         *timeRangeLayout;
     QVBoxLayout         *timeSttLayout;
     QVBoxLayout         *timeEndLayout;
@@ -63,6 +65,11 @@ private:
     QLabel              *timeEndLabel;
     QSlider             *timeSttSlider;
     QSlider             *timeEndSlider;
+
+    // vis side lenth SLider
+    QVBoxLayout         *visSideLenLayout;
+    QLabel              *visSideLenLabel;
+    QSlider             *visSideLenSlider;
 
     // property to show
     QGroupBox           *propGroup;
@@ -84,6 +91,7 @@ private:
     QCheckBox           *para3;
 
     void createTimeSlider();
+    void createvisSizeSlider();
     void createProptyCheckbox();
     void createParaCheckbox();
 

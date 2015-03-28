@@ -64,15 +64,15 @@ inline QPointF rotate(QPointF p, double theta/*, QPointF org*/){
 void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
 {
 
-    qreal scl = 0.6;
+    qreal scl_c = 0.6;
 //    QPolygon contour;
     for(int n = 0; n < smoothContour.size(); n++){
 //        contour << QPoint((smoothContour[n].x()-cent.x()), (smoothContour[n].y()-cent.y()));/**0.5*/
         // x and y coordincates exchanged for drawing purpose
         QPointF contP  = QPointF(smoothContour[n].x()-cent.x(), smoothContour[n].y()-cent.y());
         QPointF contPR = rotate(contP, M_PI);
-        int x = contPR.x()*scl+this->width()/2;
-        int y = contPR.y()*scl+this->height()/2;
+        int x = contPR.x()*scl_c+this->width()/2;
+        int y = contPR.y()*scl_c+this->height()/2;
 //        contour << QPoint(x, y);/**0.5*/
 
         unsigned int pixel = (y*width()+x)*4;
@@ -89,8 +89,7 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 //        contour.push_back(QPoint((smoothContour[n].y()-cent.y()), (smoothContour[n].x()-cent.x())));/**0.5*/
 //    //qDebug() << contour;
 
-//    contours.push_back(contour);
-//    range    = maxFrame - begin;
+    qreal scl_b = 1.0;
     range    = 5000 - begin;
     if (curr > range) curr = range;
     CubicYFColorMap colormap;
@@ -104,8 +103,8 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
             polarPoint polarP = polarPBunch[l];
 //            int x = center.x + polarP.r * cos(polarP.theta);
 //            int y = center.y + polarP.r * sin(polarP.theta);
-            int x = (center.x + polarP.r * cos(polarP.theta))+this->width()/2;
-            int y = (center.y + polarP.r * sin(polarP.theta))+this->height()/2;
+            int x = (center.x + polarP.r * cos(polarP.theta) * scl_b)+this->width()/2;
+            int y = (center.y + polarP.r * sin(polarP.theta) * scl_b)+this->height()/2;
 //            points_in1frm.push_back(QPoint(x,y));
             unsigned int pixel = (y*width()+x)*4;
             if(pixel< 0 || pixel+3 >= bufferSize)

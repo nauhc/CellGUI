@@ -25,10 +25,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     // add dock for multiview
     dock = new QDockWidget(tr("Basic operations"), this);
     this->addDockWidget(Qt::RightDockWidgetArea, dock);
-    dock->setFixedSize(300, 600);
+    dock->setFixedSize(300, 700);
     dock->setFloating(true);
     dockWidget = new QWidget();
     dockMainVLayout = new QVBoxLayout;
+    createvisSizeSlider();
     createTimeSlider();
     createProptyCheckbox();
     createParaCheckbox();
@@ -225,25 +226,59 @@ void MainWindow::paraCheckBox_checked(int state)
 
 }
 
+void MainWindow::visSideLenSlider_valueChanged(int v)
+{
+    visSideLenLabel->setText("View Size: "+QString::number(int(260 +v*10)));
+    multiview->setVisSideLen(int(260 +v*10));
+}
+
+
+void MainWindow::createvisSizeSlider()
+{
+    visSideLenLayout = new QVBoxLayout;
+
+    visSideLenLabel = new QLabel("View Size: 300");
+    visSideLenLabel->setStyleSheet(CHECKBOX);
+    visSideLenLabel->setFixedWidth(300);
+    visSideLenSlider = new QSlider(Qt::Horizontal);
+    visSideLenSlider->setRange(0, 10);
+    visSideLenSlider->setValue(6);
+    visSideLenLayout->addWidget(visSideLenLabel);
+    visSideLenLayout->addWidget(visSideLenSlider);
+
+    dockMainVLayout->addLayout(visSideLenLayout);
+
+    connect(visSideLenSlider, SIGNAL(valueChanged(int)), this, SLOT(visSideLenSlider_valueChanged(int)));
+}
+
 void MainWindow::createTimeSlider()
 {
     dockMainVLayout->addStretch();
 
+    timeGroup = new QGroupBox(" Time Range Selection: ");
+    timeGroup->setStyleSheet(GROUPBOX);
+
     timeRangeLayout = new QVBoxLayout;
+    QLabel   *tmp = new QLabel("");
+    timeRangeLayout->addWidget(tmp);
 
     timeSttLayout = new QVBoxLayout;
-    timeSttLabel = new QLabel("Frame range start: 0");
-    timeSttLabel->setFixedWidth(300);
+    timeSttLabel = new QLabel("Frame Range Start: 0");
+    timeSttLabel->setFixedWidth(250);
+    timeSttLabel->setStyleSheet(CHECKBOX);
     timeSttSlider = new QSlider(Qt::Horizontal);
+    timeSttSlider->setStyleSheet(TRANS_BKGRD);
     timeSttSlider->setRange(0, 5000-1);
     timeSttSlider->setValue(0);
     timeSttLayout->addWidget(timeSttLabel);
     timeSttLayout->addWidget(timeSttSlider);
 
     timeEndLayout = new QVBoxLayout;
-    timeEndLabel = new QLabel("Frame range end: 5000");
-    timeEndLabel->setFixedWidth(300);
+    timeEndLabel = new QLabel("Frame Range End: 5000");
+    timeEndLabel->setFixedWidth(250);
+    timeEndLabel->setStyleSheet(CHECKBOX);
     timeEndSlider = new QSlider(Qt::Horizontal);
+    timeEndSlider->setStyleSheet(TRANS_BKGRD);
     timeEndSlider->setRange(1, 5000);
     timeEndSlider->setValue(5000);
     timeEndLayout->addWidget(timeEndLabel);
@@ -252,12 +287,17 @@ void MainWindow::createTimeSlider()
     timeRangeLayout->addLayout(timeSttLayout);
     timeRangeLayout->addLayout(timeEndLayout);
 
-    dockMainVLayout->addLayout(timeRangeLayout);
+    timeGroup->setLayout(timeRangeLayout);
+    timeGroup->setFixedHeight(130);
+
+    //dockMainVLayout->addLayout(timeRangeLayout);
+    dockMainVLayout->addWidget(timeGroup);
     dockMainVLayout->addStretch();
 
     connect(timeSttSlider, SIGNAL(valueChanged(int)), this, SLOT(timeSrtSlider_valueChanged(int)));
     connect(timeEndSlider, SIGNAL(valueChanged(int)), this, SLOT(timeEndSlider_valueChanged(int)));
 }
+
 
 void MainWindow::timeEndSlider_valueChanged(int v)
 {

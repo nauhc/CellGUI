@@ -22,6 +22,7 @@ MultiView::MultiView(QWidget *parent) :
   , maxFrm(5000)
 {
     setStyleSheet("background-color:rgb(251,251,251)");
+    visSideLen = 320;
 
     mainVLayout = new QVBoxLayout(this);
     scrollArea = new QScrollArea;
@@ -64,7 +65,11 @@ void MultiView::pushProps(int i)
 void MultiView::clearProps()
 {
     showProps.clear();
+    clearCanvas();
+}
 
+void MultiView::clearCanvas()
+{
     QLayoutItem *child;
     while ((child = visGLayout->takeAt(0)) != 0)
         delete child;
@@ -74,6 +79,7 @@ void MultiView::clearProps()
     canvas = new canvasWidget();
     canvas->setLayout(visGLayout);
     scrollArea->setWidget(canvas);
+
 }
 
 void MultiView::setTimeStt(int stt)
@@ -83,6 +89,14 @@ void MultiView::setTimeStt(int stt)
 void MultiView::setTimeEnd(int end)
 {
     maxFrm = end;
+    //clearCanvas();
+    display();
+}
+
+void MultiView::setVisSideLen(int len)
+{
+    visSideLen = len;
+    clearCanvas();
     display();
 }
 
@@ -413,16 +427,16 @@ void MultiView::display()
     // file reading succeed and draw vis
 //    maxFrm = 5000;
     int space = 5;
-    visSideLen = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
-    //visSideLen = 400;
+//    visSideLen = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
+    int num1Row = (parentWidget()->width()-space*8)/ visSideLen;
+    //qDebug() << parentWidget()->width()-space*8 << visSideLen;
 
     int fileNum = datafileInfos.size();
-
     if(showProps.size() == 1){ // show all the movies in one property
-        for(int j = 0; j <= int((fileNum-1)/7); j++){
-            int numtemp = fileNum <= 7 ? fileNum : 7;
+        for(int j = 0; j <= int((fileNum-1)/num1Row); j++){
+            int numtemp = fileNum <= num1Row ? fileNum : num1Row;
             for(int i = 0; i < /*fileNum*/numtemp; i++){
-                int   idx   = j * 7 + i;
+                int   idx   = j * num1Row + i;
                 if((idx > fileNum - 1) || (index_sort[idx] > fileNum-1))
                     continue;
                 //qDebug() << idx << i << j;

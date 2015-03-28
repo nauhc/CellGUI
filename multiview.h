@@ -37,8 +37,10 @@ public:
     void    sortbyParameter(int i);
     void    pushProps(int i);
     void    clearProps();
+    void    clearCanvas();
     void    setTimeStt(int stt);
     void    setTimeEnd(int end);
+    void    setVisSideLen(int len);
 
 signals:
 //    void readProperties(floatArray prop);
