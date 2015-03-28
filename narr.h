@@ -16,6 +16,7 @@ public:
     void setMaxFrm(unsigned int im, unsigned int fm);
     void setPropertyType(int);
     void setValue(float v);
+    void setDataScale(qreal scl);
     void initialize();
     void updateProperty(floatArray prop, int currFrame);
     void updateCellImg(QImage &cell);
@@ -63,6 +64,8 @@ private:
     unsigned char               *bufferr;
     unsigned int                bufferSize;
     QImage                      img;
+
+    qreal                       dataScale;
 
     void printAreaData();
     void drawPoint(QPointF p, QColor c);

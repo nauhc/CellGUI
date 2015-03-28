@@ -169,7 +169,7 @@ void SingleView::loadButton_clicked()
     QFileDialog *dialog = new QFileDialog();
     QString filename = dialog->getOpenFileName(this,
                                                tr("Open Video"),
-                                               "../../../video/Ying_BV2_RT/Ying_RT", /*QDir::homePath()+"/Desktop/",*/
+                                               "../../../video/BV2_16x_data/", /*QDir::homePath()+"/Desktop/",*/
                                                tr("Video Files (*.mov *mp4 *wmv *mpeg)"));
 
     //prepare writing data to file
@@ -192,8 +192,10 @@ void SingleView::loadButton_clicked()
         qDebug() << ff << " already exists";
     }
 
-    this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
-    //this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
+//    this->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
+    this->parentWidget()->parentWidget()->setWindowTitle(" Dancing Cell Visualization: "+fi.fileName());
+
+
     delete dialog;
     if (!filename.isEmpty()){
         if (!controller->loadVideo(filename.toStdString(), ff.toStdString(), fb.toStdString())){
@@ -673,8 +675,8 @@ void SingleView::createScaleConverter()
     //scale converter
     scaleConvertHLayout = new QHBoxLayout();
 //    mmeter = new QLineEdit("300");
-    mmeter = new QLineEdit("150");
-    pixel = new QLineEdit("20");
+    mmeter = new QLineEdit("480");
+    pixel = new QLineEdit("78.47");
     QLabel  *pixelas = new QLabel("pixel as");
     QLabel  *mm      = new QLabel("µm");
     mmeter->setMaximumHeight(30);
@@ -685,6 +687,9 @@ void SingleView::createScaleConverter()
     scaleConvertHLayout->addWidget(pixelas);
     scaleConvertHLayout->addWidget(pixel);
     scaleConvertHLayout->addWidget(mm);
+
+    connect(mmeter, SIGNAL(textChanged(QString)), controller, SLOT(setMicMeter(QString)));
+    connect(pixel, SIGNAL(textChanged(QString)), controller, SLOT(setPixel(QString)));
 }
 
 void SingleView::createPropertySelector()
@@ -719,9 +724,10 @@ void SingleView::createNarrVis()
 //    nar_container = QWidget::createWindowContainer(nar, this);
 //    nar_container->setMinimumSize(512, 512);
 //    nar_container->setMaximumSize(640, 640);
-    nar->setMinimumSize(512, 512);
-    nar->setMaximumSize(640, 640);
-
+//    nar->setMinimumSize(512, 512);
+//    nar->setMaximumSize(640, 640);
+    nar->setFixedSize(600, 600);
+    nar->initialize();
     connect(propComBox, SIGNAL(currentIndexChanged(int)),
             nar, SLOT(setPropType(int)));
 }
@@ -732,9 +738,10 @@ void SingleView::createCoordVis()
 //    cod_container = QWidget::createWindowContainer(cod, this);
 //    cod_container->setMinimumSize(512, 512);
 //    cod_container->setMaximumSize(640, 640);
-
-    cod->setMinimumSize(512, 512);
-    cod->setMaximumSize(640, 640);
+    cod->setFixedSize(600, 600);
+    cod->clear();
+//    cod->setMinimumSize(512, 512);
+//    cod->setMaximumSize(640, 640);
 
 }
 

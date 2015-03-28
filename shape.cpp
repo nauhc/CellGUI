@@ -157,6 +157,11 @@ void Shape::updateRto(float r)
     drawColorBar();
 }
 
+void Shape::setTempType(bool rt)
+{
+    roomT = rt;
+}
+
 void Shape::initializeGL()
 {
 
@@ -282,7 +287,10 @@ void Shape::render(QPainter *painter)
 
     //painter->setRenderHint(QPainter::Antialiasing);
     // draw Value
-    painter->setPen(QColor(128, 0, 0));
+    if(roomT)
+        painter->setPen(QColor(128, 0, 0));
+    else
+        painter->setPen(QColor(0, 0, 128));
     painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
 
     drawColorBarText(painter);

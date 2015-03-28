@@ -49,9 +49,10 @@ void Coord::clear()
     max = QPoint(50, 50);
     centroid_min = QPoint(100000, 100000);
     centroid_max = QPoint(0, 0);
-    micMeter = 20;
 //    pixel = 300;
-    pixel = 150;
+//    micMeter = 20;
+    pixel = 480;
+    micMeter = 78.47;
     micMtr_Pixel = micMeter/pixel;
     maxTimeRatio = 1.0;
 
@@ -297,6 +298,11 @@ void Coord::setScale(qreal scale)
     coordScale = scale;
 }
 
+void Coord::setTempType(bool rt)
+{
+    roomT = rt;
+}
+
 void Coord::setMaxSize(QSize s) // video size
 {
     max = QPoint(s.width(), s.height());
@@ -334,7 +340,6 @@ void Coord::setValue(float v)
 
 void Coord::initializeGL()
 {
-
 }
 
 void drawTextCoord(QPainter *painter, QPointF p, QString t){
@@ -436,7 +441,10 @@ void Coord::render(QPainter *painter)
 //    painter->setRenderHint(QPainter::Antialiasing);
 
     // draw Value
-    painter->setPen(QColor(128, 0, 0));
+    if(roomT)
+        painter->setPen(QColor(128, 0, 0));
+    else
+        painter->setPen(QColor(0, 0, 128));
     painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
 
     qreal halfW = this->width()/2;
@@ -471,19 +479,19 @@ void Coord::render(QPainter *painter)
         QString unitx = QString::number(quarterxx/coordScale*micMtr_Pixel,'f', 1);
         float unit_x1 = quarterxx + leftX;
         float unit_x2 = rightX - quarterxx;
-        painter->drawText(unit_x1-10, topY+5+2, 20, 10, Qt::AlignCenter, unitx);
-        painter->drawText(unit_x2-10, topY+5+2, 20, 10, Qt::AlignCenter, unitx);
-        painter->drawText(unit_x1-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, unitx );
-        painter->drawText(unit_x2-10, bottomY-5-2-10, 20, 10, Qt::AlignCenter, unitx );
+        painter->drawText(unit_x1-10, topY+5+2, 25, 10, Qt::AlignCenter, unitx);
+        painter->drawText(unit_x2-10, topY+5+2, 25, 10, Qt::AlignCenter, unitx);
+        painter->drawText(unit_x1-10, bottomY-5-2-10, 25, 10, Qt::AlignCenter, unitx );
+        painter->drawText(unit_x2-10, bottomY-5-2-10, 25, 10, Qt::AlignCenter, unitx );
 
         float quarteryy = (bottomY - topY)/4.0;
         QString unity = QString::number(quarteryy/coordScale*micMtr_Pixel,'f', 1);
         float unit_y1 = quarteryy + topY;
         float unit_y2 = bottomY - quarterxx;
-        painter->drawText(leftX+5+2,    unit_y1-5, 20, 10, Qt::AlignCenter, unity );
-        painter->drawText(leftX+5+2,    unit_y2-5, 20, 10, Qt::AlignCenter, unity );
-        painter->drawText(rightX-5-20,  unit_y1-5, 20, 10, Qt::AlignCenter, unity );
-        painter->drawText(rightX-5-20,  unit_y2-5, 20, 10, Qt::AlignCenter, unity );
+        painter->drawText(leftX+5+2,    unit_y1-5, 25, 10, Qt::AlignCenter, unity );
+        painter->drawText(leftX+5+2,    unit_y2-5, 25, 10, Qt::AlignCenter, unity );
+        painter->drawText(rightX-5-20,  unit_y1-5, 25, 10, Qt::AlignCenter, unity );
+        painter->drawText(rightX-5-20,  unit_y2-5, 25, 10, Qt::AlignCenter, unity );
     }
 
     drawColorBarText(painter);

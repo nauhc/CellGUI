@@ -4,6 +4,8 @@
 
 #endif // STYLE_H
 
+const int    MAXFRAMELEN            = 3000;
+
 //const QString BUTTON_PRESSED        = "color:rgb(200,200,200); font: bold 16px; border-style:inset; border-width:7px; \
 //                                         border-color:rgb(0,0,0); border-radius:4px; background-color:rgb(20,20,20)";
 //const QString BUTTON_RELEASED_ON    = "color:rgb(255,255,255); font: bold 16px; border-style:outset; border-width:2px; \
@@ -89,5 +91,6 @@ const QString SCROLLBAR             = "QScrollBar:vertical { \
                                                                 subcontrol-position: left;\
                                                                 subcontrol-origin: margin;\
                                                             }";
+
 
 #define PI 3.14159265

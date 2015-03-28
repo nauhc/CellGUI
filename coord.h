@@ -22,6 +22,7 @@ public:
     void    setPixel(QString text);
     void    setMicMeter(QString text);
     void    setScale(qreal scale);
+    void    setTempType(bool rt);
     void    clear();
 
 protected:
@@ -65,6 +66,7 @@ private:
     QImage              img;
 
     float               maxTimeRatio;
+    bool                roomT;
 
     void                drawPoint(QPointF p, QColor c);
     void                drawHLine(QPointF p1, QPointF p2, QColor c, int w);

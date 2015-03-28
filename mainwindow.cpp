@@ -95,6 +95,7 @@ void MainWindow::loadSingleView()
     }
 
     SingleView *singleview = new SingleView(this->centralWidget());
+
     centralLayout->addWidget(singleview);
 
 }

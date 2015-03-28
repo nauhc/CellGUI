@@ -38,6 +38,7 @@ private:
 
     string          filepath; // filepath for a particular movie
     ofstream        csvFile;// output to file
+    ofstream        csvFile1;// output to file (pixel unit)
     QFile           blebsFile; // output blebs positions to file
     QFile           contourFile; // output contours to file
 

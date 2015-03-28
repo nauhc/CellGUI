@@ -43,14 +43,6 @@ MultiView::MultiView(QWidget *parent) :
     canvas = new canvasWidget();
     canvas->setLayout(visGLayout);
     scrollArea->setWidget(canvas);
-
-//    tstWidget *tWidget = new tstWidget();
-//    scrollArea->setWidget(tWidget);
-//    tWidget->setFixedSize(300*28, 300*10);
-//    QScrollArea *a = new QScrollArea();
-//    a->setWidget(tWidget);
-//    a->show();
-
     scrollArea->setStyleSheet(SCROLLBAR);
 
     mainVLayout->addWidget(scrollArea);
@@ -74,24 +66,16 @@ void MultiView::pushProps(int i)
 void MultiView::clearProps()
 {
     showProps.clear();
+
     QLayoutItem *child;
     while ((child = visGLayout->takeAt(0)) != 0)
         delete child;
 
-    for(unsigned int i = 0; i < 7; i++){
-        for(unsigned int j = 0; j < 5; j++){
-            canvasWidget *tmp = new canvasWidget();
-            tmp->setFixedSize(300, 300);
-            tmp->clearCanvas();
-            visGLayout->addWidget(tmp, i, j);
-        }
-    }
-    QLayoutItem *child1;
-    while ((child1 = visGLayout->takeAt(0)) != 0)
-        delete child1;
-
-    canvas->clearCanvas();
-
+    delete canvas;
+    visGLayout = new QGridLayout();
+    canvas = new canvasWidget();
+    canvas->setLayout(visGLayout);
+    scrollArea->setWidget(canvas);
 }
 
 void MultiView::setTimeStt(int stt)
@@ -196,14 +180,15 @@ void MultiView::loadFilesButton_clicked() // first round
 bool MultiView::loadFiles()
 {
 //    QString folderPath = "../../../video/ExtractedData/";
-//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
+//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
+//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/BV2_16x_data/Arpad_BV2_37C_16x_hasPara_ajst_pureVisData";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
         dirIt.next();
         if (QFileInfo(dirIt.filePath()).isFile())
-            if (QFileInfo(dirIt.filePath()).suffix() == "csv")
+            if (QFileInfo(dirIt.filePath()).suffix() == "csv" && (!dirIt.fileName().contains("_pxl")))
                 datafileInfos.push_back(dirIt.fileInfo());
     }
 
@@ -324,16 +309,8 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value, b
         cod_tmp->setBeginFrm(idxMin);
         cod_tmp->setMaxFrm(idxMax, frmMax);
         cod_tmp->setValue(value);
+        cod_tmp->setTempType(roomT);
         //cod_tmp->setMaxSize(QSize(800, 600));
-        if (roomT){
-            cod_tmp->setPixel("480");
-            cod_tmp->setMicMeter("78.47");
-        }
-        else{
-            cod_tmp->setPixel("300");
-            cod_tmp->setMicMeter("20");
-
-        }
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
         cod_tmp->setMaxFrm(idxMax, showSizeMax);
@@ -383,6 +360,7 @@ void MultiView::showShape(int index, int size, int i, int j, float value, bool r
         int showSizeMax = maxFrm < SIZE ? maxFrm : SIZE;
         shp_tmp->setMaxFrm(idxMax, showSizeMax);
         shp_tmp->updateRto(float(maxFrm)/5000.);
+        shp_tmp->setTempType(roomT);
         //for(int n = 0; n < SIZE; n++){
         for(int n = showSizeMin; n < showSizeMax; n++){
             //emit readContourNBlebs(blebs[index][n], contours[index][n], centers[index][n]);
@@ -447,6 +425,7 @@ void MultiView::display()
 
     int fileNum = datafileInfos.size();
 
+//    canvas->setStyleSheet("background-color:rgb(0,222,224)");
 
     if(showProps.size() == 1){ // show all the movies in one property
         //visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
@@ -672,7 +651,7 @@ bool MultiView::readExpParaFile(QString &filename, int n)
         QString line4 = in.readLine();
         //qDebug() << line1.remove("     pressure(pa)");
         qreal pres = line1.remove("     pressure(pa)").toFloat();
-        qreal forc = line2.remove("     ForceOffset(N)").toFloat();
+        qreal forc = line2.remove("     Force(N)").toFloat();
         QString temp = line3.remove("     Temperature ");
         //qDebug() << forc;
         pressure.append(qMakePair(pres, n));
@@ -692,8 +671,6 @@ QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index
 
     return img;
 }
-
-
 
 canvasWidget::canvasWidget() : clearAll(false)
 {

@@ -15,6 +15,7 @@ public:
     void setValue(float v);
     void updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
     void updateRto(float r);
+    void setTempType(bool rt);
     void clear();
 
     //void setNeedUpdate();
@@ -46,6 +47,7 @@ private:
     QImage                      img;
 
     float                       maxTimeRatio;
+    bool                        roomT;
 
     void                drawPoint(QPointF p, QColor c);
     void                drawVLine(QPointF p1, QPointF p2, QColor c, int w);

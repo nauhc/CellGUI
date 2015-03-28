@@ -19,8 +19,10 @@ Controller::Controller(QObject *parent) : QThread(parent),
     encircled = false;
     scale = 1.0;
 //    pixel = 300.0;
-    pixel = 150.0;
-    micMeter = 20.0;
+//    pixel = 150.0;
+//    micMeter = 20.0;
+    pixel = 480.0;
+    micMeter = 78.47;
     micMtr_Pixel = micMeter/pixel;
 }
 Controller::~Controller(){
@@ -30,8 +32,11 @@ Controller::~Controller(){
     }
     if(csvFile.is_open())
         csvFile.close();
+    if(csvFile1.is_open())
+        csvFile1.close();
     if(blebsFile.isOpen())
         blebsFile.close();
+
     if(contourFile.isOpen())
         contourFile.close();
 
@@ -95,6 +100,7 @@ bool Controller::loadVideo(string file, string ff, string fb){
 
         filepath = ff; // file path
         string fn = ff+"/"+fb; //fn: file path and file name (file extension exclusive)
+        string fn1 = ""; //fn: file path and file name (file extension exclusive)
         string fn_b = "";
         string fn_c = "";
 
@@ -104,12 +110,14 @@ bool Controller::loadVideo(string file, string ff, string fb){
         if(compressedCell){  // compressed cell
             fn_b = fn + "_b_compressed.dat";
             fn_c = fn + "_c_compressed.dat";
-            fn = fn + "_compressed.csv";
+            fn1  = fn + "_compressed_pxl.csv";
+            fn   = fn + "_compressed.csv";
         }
         else{ // control cell
             fn_b = fn + "_b_control.dat";
             fn_c = fn + "_c_control.dat";
-            fn = fn + "_control.csv";
+            fn1  = fn + "_control_pxl.csv";
+            fn   = fn + "_control.csv";
         }
 
         const char* fnn = fn.c_str();
@@ -126,6 +134,7 @@ bool Controller::loadVideo(string file, string ff, string fb){
 
         cout << "writing data to file " << fn << endl;
         csvFile.open(fn, ios::out);
+        csvFile1.open(fn1, ios::out);
 
         blebsFile.setFileName(QString::fromStdString(fn_b));
         blebsFile.open(QIODevice::WriteOnly);
@@ -175,6 +184,7 @@ void Controller::releaseVideo()
     encircled = false;
     hull.clear();
     csvFile.close();
+    csvFile1.close();
     blebsFile.close();
     contourFile.close();
 }
@@ -533,8 +543,8 @@ void Controller::run(){
             //cout << centroid_avg << " " << centroid_pre1 << endl;
 
             //double subImgSize = contourImg.cols*contourImg.rows;
-            double area_ratio = micMtr_Pixel*micMtr_Pixel/scale/scale;
-            double len_ratio  = micMtr_Pixel/scale/scale;
+            double area_ratio = micMtr_Pixel*micMtr_Pixel/*/scale/scale*/;
+            double len_ratio  = micMtr_Pixel/*/scale/scale*/;
             //cout << "area_ratio " << area_ratio << endl;
             float  avg_blebsize = 0;
 
@@ -588,13 +598,27 @@ void Controller::run(){
                     << blebs.size() << ", "
                     << avg_blebsize * area_ratio << ", ";
 
+
+            csvFile1 << frameIdx << ","
+                    << area << ","
+                    << perimeter << ","
+                    << centroid.x << "," << centroid.y << ","
+                    << speed.x << "," << speed.y << ","
+                    << shape << ","
+                    << blebs.size() << ", "
+                    << avg_blebsize << ", ";
+
+
 //            for(unsigned int b = 0; b < blebs_bin.size(); b++)
 //                cout << blebs_bin[b] << " ";
 //            cout << endl;
 
-            for(unsigned int b = 0; b < blebs_bin.size(); b++)
+            for(unsigned int b = 0; b < blebs_bin.size(); b++){
                 csvFile << blebs_bin[b] << ",";
+                csvFile1 << blebs_bin[b] << ",";
+            }
             csvFile << endl;
+            csvFile1 << endl;
 
 
             QVector<QPoint> smoothContour;
@@ -621,6 +645,7 @@ void Controller::run(){
 
     if(cnt==frameCnt){
         csvFile.close();
+        csvFile1.close();
         blebsFile.close();
         contourFile.close();
         cout << "data file (csv) saved." << endl;

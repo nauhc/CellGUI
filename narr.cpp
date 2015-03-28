@@ -65,6 +65,7 @@ void Narr::clear()
     minFrm      = 0;
     angle       = 0;
     mouseIndex  = 0;
+    dataScale   = 1;
 
     //propType    = 1;
 }
@@ -207,22 +208,22 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     QColor  color;
     float   p;
 
-    if(propType == 0) {
+    if(propType == 0) { // area
         minV = 200;
         maxV = 1300;
-        barheight  = float(prop[1] - minV) * propBarThickness / (maxV - minV);
+        barheight  = float(prop[1]*dataScale*dataScale - minV) * propBarThickness / (maxV - minV);
         color = gradualColor(ORANGE, 0.3);
     }
-    else if (propType == 1) {
+    else if (propType == 1) { // perimeter
         minV = 50;
         maxV = 300;
-        barheight  = float(prop[2] - minV) * propBarThickness / (maxV - minV);
+        barheight  = float(prop[2]*dataScale - minV) * propBarThickness / (maxV - minV);
         color = gradualColor(PURPLE, 0.3);
     }
     else if (propType == 2) {
         minV = 0;
         maxV = 7;
-        barheight  = float(prop[8] - minV) * propBarThickness / (maxV - minV);
+        barheight  = float(prop[8]*dataScale - minV) * propBarThickness / (maxV - minV);
         qreal size = prop[9] > BlebSizeMin ? prop[9] - BlebSizeMin : 0;
         qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
         color = gradualColor(BLUE, 1-g);
@@ -547,6 +548,11 @@ void Narr::setPropertyType(int propTp)
 void Narr::setValue(float v)
 {
     value = v;
+}
+
+void Narr::setDataScale(qreal scl)
+{
+    dataScale = scl;
 }
 
 
