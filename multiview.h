@@ -61,6 +61,7 @@ private:
     QVector<QVector<QVector<Bleb> > >       blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
     QVector<QVector<QPoint> >               centers;
+    QVector<QVector<int> >                  clusters;
     QList<QPair<qreal,int> >                pressure;
     QList<QPair<qreal,int> >                force;
     QList<QPair<QString, int> >             temprature;
@@ -86,6 +87,7 @@ private:
     bool    readBlebsFile(QString &filename);
     bool    readContoursFile(QString &filename);
     bool    readExpParaFile(QString &filename, int n);
+    bool    readClusterFile(QString &filename);
     QImage  readImgFile(QString fp, unsigned int idx);
     void    clearData();
 

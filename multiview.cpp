@@ -21,13 +21,11 @@ MultiView::MultiView(QWidget *parent) :
   , minFrm(0)
   , maxFrm(5000)
 {
-
     setStyleSheet("background-color:rgb(251,251,251)");
 
     mainVLayout = new QVBoxLayout(this);
     scrollArea = new QScrollArea;
     scrollArea->setWidgetResizable(true);
-
 
     visGLayout = new QGridLayout();
 
@@ -80,7 +78,6 @@ void MultiView::clearProps()
 
 void MultiView::setTimeStt(int stt)
 {
-
 }
 
 void MultiView::setTimeEnd(int end)
@@ -203,8 +200,9 @@ bool MultiView::loadFiles()
             if(readDataFile(datafilename)){
                 //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
                 if(readBlebsFile(datafilename) &&
-                        readContoursFile(datafilename) &&
-                        readExpParaFile(datafilename, n)){
+                   readContoursFile(datafilename) &&
+                   readExpParaFile(datafilename, n) &&
+                   readClusterFile(datafilename)){
                     //std::cout << "blebs, contours and experiment-parameter files read." << std::endl;
                 }
                 else{
@@ -271,7 +269,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){
             //nar_tmp->clear();
-            nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0]);
+            nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0], clusters[index][n]);
 //            for(int x = 0; x < cellData[index][n].size(); x++){
 //                std::cout << cellData[index][n][x] << " ";
 //            }
@@ -642,26 +640,50 @@ bool MultiView::readExpParaFile(QString &filename, int n)
         return false;
     }else{
         QTextStream in(&f);
-        //        while(!in.atEnd()) { // each row
-        //            QString line = in.readLine();
-        //                qDebug() << line;
-        //        }
-        //        qDebug() << "";
         QString line1 = in.readLine();
         QString line2 = in.readLine();
         QString line3 = in.readLine();
-        QString line4 = in.readLine();
-        //qDebug() << line1.remove("     pressure(pa)");
         qreal pres = line1.remove("     pressure(pa)").toFloat();
         qreal forc = line2.remove("     Force(N)").toFloat();
         QString temp = line3.remove("     Temperature ");
-        //qDebug() << forc;
+
         pressure.append(qMakePair(pres, n));
         force.append(qMakePair(forc, n));
         temprature.append(qMakePair(temp, n));
+
         return true;
     }
 
+}
+
+bool MultiView::readClusterFile(QString &filename) // read clustering datafile
+{
+    QString tmp = filename;
+    QString fn_l;
+    if(tmp.contains("_compressed.csv"))
+        fn_l = tmp.remove(tmp.length()-15, 15) + "_l_compressed.dat" ;
+    else if(tmp.contains("_control.csv"))
+        fn_l = tmp.remove(tmp.length()-12, 12) + "_l_control.dat" ;
+//    qDebug() << fn_l;
+
+    QVector<int>    cluster;
+    QFile f(fn_l);
+    if(!f.open(QIODevice::ReadOnly)){
+        qDebug() << "Reading cluster's dat file not found.";
+        return false;
+    }
+    else{
+        QDataStream in(&f);
+        while(!in.atEnd()){
+            qint32  clusterID;
+            in >> clusterID;
+            //qDebug() << clusterID;
+            cluster.push_back(clusterID);
+        }
+    }
+    clusters.push_back(cluster);
+
+    return true;
 }
 
 QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index

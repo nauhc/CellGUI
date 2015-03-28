@@ -92,5 +92,4 @@ const QString SCROLLBAR             = "QScrollBar:vertical { \
                                                                 subcontrol-origin: margin;\
                                                             }";
 
-
 #define PI 3.14159265

@@ -226,7 +226,7 @@ void SingleView::loadButton_clicked()
 
 void SingleView::updatePropsVisUI_(floatArray property)
 {
-    nar->updateProperty(property, controller->getCurrentFrame()/*property[0]*/);
+    nar->updateProperty(property, controller->getCurrentFrame()/*property[0]*/, 0);
     cod->updateCoord(QPointF(property[3], property[4]), controller->getCurrentFrame()/*property[0]*/);
     //qDebug() << QPointF(property[3], property[4]) << controller->getCurrentFrame();
 }

@@ -171,7 +171,7 @@ void Narr::printAreaData(){
     std::cout << std::endl;
 }
 
-void Narr::updateProperty(floatArray prop, int currFrame)
+void Narr::updateProperty(floatArray prop, int currFrame, int clustr)
 {
     propSeq.push_back(prop);
     curr = currFrame;
@@ -224,7 +224,8 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
         for (int v = 0; v < ringArcThickness; v++){
             QPointF rotP = rotate(QPointF(h,v), degree)+center;
-            drawPoint(rotP, gradualColor(GREEN, 0.2));
+
+            drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
         }
     }
 }
