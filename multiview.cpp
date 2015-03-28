@@ -414,21 +414,13 @@ void MultiView::display()
 
     // file reading succeed and draw vis
 //    maxFrm = 5000;
-    int containerSide = 300;
     int space = 5;
-    //    if (fileNum > 4)
-    //        containerSide = (this->width()-space*((fileNum/7)-1))/(fileNum/7);
-    //    else
-    //        containerSide = this->height()/4-space;
-    //containerSide = (this->height()-space*6)/7;
-    containerSide = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
+    visSideLen = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
+    //visSideLen = 400;
 
     int fileNum = datafileInfos.size();
 
-//    canvas->setStyleSheet("background-color:rgb(0,222,224)");
-
     if(showProps.size() == 1){ // show all the movies in one property
-        //visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
         for(int j = 0; j <= int((fileNum-1)/7); j++){
             int numtemp = fileNum <= 7 ? fileNum : 7;
             for(int i = 0; i < /*fileNum*/numtemp; i++){
@@ -442,13 +434,23 @@ void MultiView::display()
                 }else{
                     rt = false;
                 }
-                visPropbyIdx(index_sort[idx], containerSide, i, j, showProps[0], value_sort[idx], rt);
+                visPropbyIdx(index_sort[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
             }
         }
     }
 
     else { // multiple properties showed at one time
-        visGLayout->setGeometry(QRect(QPoint(0,0), QPoint(fileNum*350, showProps.size()*350)));
+        // clear all rendering
+        QLayoutItem *child;
+        while ((child = visGLayout->takeAt(0)) != 0)
+            delete child;
+        delete canvas;
+        visGLayout = new QGridLayout();
+        canvas = new canvasWidget();
+        canvas->setLayout(visGLayout);
+        scrollArea->setWidget(canvas);
+
+        // draw all
         for(int p = 0; p < showProps.size(); p++){
             for (int n = 0; n < fileNum; n++){
                 bool rt;
@@ -457,7 +459,7 @@ void MultiView::display()
                 }else{
                     rt = false;
                 }
-                visPropbyIdx(index_sort[n], containerSide, n, p, showProps[p], value_sort[n], rt);
+                visPropbyIdx(index_sort[n], visSideLen, n, p, showProps[p], value_sort[n], rt);
             }
         }
     }

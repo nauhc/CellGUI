@@ -26,6 +26,15 @@ QColor RED      = QColor(208, 81, 38);
 float BlebSizeMax = 10.0/*1.5*//*12*//*7*/;
 float BlebSizeMin = 0.2/*2*/;
 
+const qreal area_minV = 100;
+const qreal area_maxV = 600;
+
+const qreal peri_minV = 10;
+const qreal peri_maxV = 80;
+
+const qreal blebN_minV = 0;
+const qreal blebN_maxV = 7;
+
 inline int larger(int a, int b){
     return (a > b ? a : b);
 }
@@ -165,29 +174,11 @@ void Narr::printAreaData(){
 void Narr::updateProperty(floatArray prop, int currFrame)
 {
     propSeq.push_back(prop);
-
     curr = currFrame;
-    /*
-//    property.push_back(float(frameIdx)); // 0
-//    property.push_back(float(area)); // 1
-//    property.push_back(float(perimeter)); //2
-//    property.push_back(centroid.x); // 3
-//    property.push_back(centroid.y); // 4
-//    property.push_back(speed.x); // 5
-//    property.push_back(speed.y); // 6
-//    property.push_back(shape); // 7
-//    property.push_back(blebs.size()); // 8
-//    property.push_back(avg_blebsize * area_ratio); // 9
-
-//    property.push_back(shape); // 5
-//    property.push_back(blebs.size()); // 6
-//    property.push_back(avg_blebsize); // 7
-*/
-
-    area.push_back(prop[1]);
-    perimeter.push_back(prop[2]);
-    blebNum.push_back(prop[8]);
-    blebAvgSize.push_back(prop[9]);
+    area.push_back(prop[1]); // area
+    perimeter.push_back(prop[2]); // perimeter
+    blebNum.push_back(prop[8]); // bleb number
+    blebAvgSize.push_back(prop[9]); // bleb average size
 
     unsigned int maxRange = /*maxFrm < 5000 ? 5000 - minFrm :*/ maxFrm - minFrm; //HEREHERE
 //    qDebug() << maxRange;
@@ -203,27 +194,18 @@ void Narr::updateProperty(floatArray prop, int currFrame)
     float   div         = 2.*M_PI*propBarInnerRadius/maxRange;
     int     barWidth    = div > 1 ? int(div) : 1;
     qreal   barheight;
-    qreal   minV;
-    qreal   maxV;
     QColor  color;
-    float   p;
 
     if(propType == 0) { // area
-        minV = 200;
-        maxV = 1300;
-        barheight  = float(prop[1]*dataScale*dataScale - minV) * propBarThickness / (maxV - minV);
+        barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
         color = gradualColor(ORANGE, 0.3);
     }
     else if (propType == 1) { // perimeter
-        minV = 50;
-        maxV = 300;
-        barheight  = float(prop[2]*dataScale - minV) * propBarThickness / (maxV - minV);
+        barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
         color = gradualColor(PURPLE, 0.3);
     }
-    else if (propType == 2) {
-        minV = 0;
-        maxV = 7;
-        barheight  = float(prop[8]*dataScale - minV) * propBarThickness / (maxV - minV);
+    else if (propType == 2) { // bleb
+        barheight  = float(prop[8]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
         qreal size = prop[9] > BlebSizeMin ? prop[9] - BlebSizeMin : 0;
         qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
         color = gradualColor(BLUE, 1-g);
@@ -612,26 +594,19 @@ void Narr::render(QPainter *painter)
     painter->translate(center.x(), center.y());
 
         if(propType == 0){ // area
-    //        // draw real-time changing ring arcs
-
-            qreal maxArea = 1300;
-            qreal minArea = 200;
             painter->setPen(ORANGE);
-            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxArea))+" μm²");
-            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(minArea))+" μm²");
+            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(area_maxV))+" μm²");
+            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(area_minV))+" μm²");
         }
         else if(propType == 1){ // perimeter
-            qreal maxPerimeter = 300;
-            qreal minPerimeter = 50;
             painter->setPen(PURPLE);
-            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxPerimeter))+" μm");
-            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(minPerimeter))+" μm");
+            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(peri_maxV))+" μm");
+            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(peri_minV))+" μm");
         }
         else if(propType == 2){ // bleb
-            qreal maxBlebNum = 7;
             painter->setPen(BLUE);
-            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(maxBlebNum))+" blebs");
-            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, "0 bleb");
+            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(blebN_maxV))+" blebs");
+            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(blebN_minV))+" blebs");
         }
 
     //    this->needUpdate = false;

@@ -71,6 +71,8 @@ private:
 //    unsigned int                            timeStt;
 //    unsigned int                            timeEnd;
 
+    int                                     visSideLen;
+
     QGridLayout                             *visGLayout;
     QScrollArea                             *scrollArea;
     QVBoxLayout                             *mainVLayout;
