@@ -41,6 +41,8 @@ public:
     void    setTimeStt(int stt);
     void    setTimeEnd(int end);
     void    setVisSideLen(int len);
+    QVector<QFileInfo>    getFilenames();
+    QVector<unsigned int> getUpdatedIndex();
 
 signals:
 //    void readProperties(floatArray prop);

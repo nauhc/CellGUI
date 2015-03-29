@@ -41,15 +41,15 @@ const QString GROUPBOX              = "QGroupBox { background-color: \
                                                     padding: 0 3px; \
                                                     background-color: #FFFFFF;}";
 
-const QString SCROLLBAR             = "QScrollBar:vertical { \
+const QString SCROLLBAR_WD          = "QScrollBar:vertical { \
                                                                 border: 1px solid #999999; \
                                                                 background:white; \
-                                                                width:10px; \
+                                                                width:15px; \
                                                                 margin: 0px 0px 0px 0px; \
                                                             } \
                                                             QScrollBar::handle:vertical { \
                                                                 background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
-                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%));\
+                                                                stop: 0  rgba(81,148,250,100%), stop: 0.5 rgba(81,148,250,100%),  stop:1 rgba(81,148,250,100%));\
                                                                 min-height: 0px; \
                                                             } \
                                                             QScrollBar::add-line:vertical { \
@@ -69,12 +69,12 @@ const QString SCROLLBAR             = "QScrollBar:vertical { \
                                         QScrollBar:horizontal { \
                                                                 border: 1px solid #999999; \
                                                                 background:white; \
-                                                                height:10px; \
+                                                                height:15px; \
                                                                 margin: 0px 0px 0px 0px; \
                                                             } \
                                                             QScrollBar::handle:horizontal { \
                                                                 background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
-                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%));\
+                                                                stop: 0  rgba(81,148,250,100%), stop: 0.5 rgba(81,148,250,100%),  stop:1 rgba(81,148,250,100%));\
                                                                 min-width: 0px; \
                                                             } \
                                                             QScrollBar::add-line:horizontal { \
@@ -91,5 +91,30 @@ const QString SCROLLBAR             = "QScrollBar:vertical { \
                                                                 subcontrol-position: left;\
                                                                 subcontrol-origin: margin;\
                                                             }";
+const QString SCROLLBAR_TN          = "QScrollBar:vertical { \
+                                                                border: 1px solid #999999; \
+                                                                background:white; \
+                                                                width:8px; \
+                                                                margin: 0px 0px 0px 0px; \
+                                                            } \
+                                                            QScrollBar::handle:vertical { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(81,148,250,100%), stop: 0.5 rgba(81,148,250,100%),  stop:1 rgba(81,148,250,100%));\
+                                                                min-height: 0px; \
+                                                            } \
+                                                            QScrollBar::add-line:vertical { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%)); \
+                                                                height: px; \
+                                                                subcontrol-position: bottom; \
+                                                                subcontrol-origin: margin; \
+                                                            } \
+                                                            QScrollBar::sub-line:vertical { \
+                                                                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, \
+                                                                stop: 0  rgba(28, 120, 159, 50%), stop: 0.5 rgba(28, 120, 159, 50%),  stop:1 rgba(28, 120, 159, 50%)); \
+                                                                height: 0px; \
+                                                                subcontrol-position: top;\
+                                                                subcontrol-origin: margin;\
+                                                            }" ;
 
 #define PI 3.14159265

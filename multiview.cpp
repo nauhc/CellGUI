@@ -42,7 +42,7 @@ MultiView::MultiView(QWidget *parent) :
     canvas = new canvasWidget();
     canvas->setLayout(visGLayout);
     scrollArea->setWidget(canvas);
-    scrollArea->setStyleSheet(SCROLLBAR);
+    scrollArea->setStyleSheet(SCROLLBAR_WD);
 
     mainVLayout->addWidget(scrollArea);
     //    mainVLayout->addLayout(visGLayout);
@@ -51,14 +51,7 @@ MultiView::MultiView(QWidget *parent) :
 
 void MultiView::pushProps(int i)
 {
-//    showProps.push_back(0); // area
-//    showProps.push_back(1); // perimeter
-//    showProps.push_back(2); // blebs number and size
-//    showProps.push_back(3); // centroid trajectory
-//    showProps.push_back(4); // shape
-//    showProps.clear();
     showProps.push_back(i); // shape
-    //qDebug() << showProps;
     display();
 }
 
@@ -100,6 +93,16 @@ void MultiView::setVisSideLen(int len)
     visSideLen = len;
     clearCanvas();
     display();
+}
+
+QVector<QFileInfo> MultiView::getFilenames()
+{
+    return datafileInfos;
+}
+
+QVector<unsigned int> MultiView::getUpdatedIndex()
+{
+    return index_sort;
 }
 
 void MultiView::clearData()
@@ -430,7 +433,7 @@ void MultiView::display()
 //    maxFrm = 5000;
     int space = 5;
 //    visSideLen = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
-    int num1Row = (parentWidget()->width()-space*8)/ visSideLen;
+    int num1Row = (parentWidget()->width()-space*8-20)/ visSideLen;
     //qDebug() << parentWidget()->width()-space*8 << visSideLen;
 
     int fileNum = datafileInfos.size();
@@ -445,7 +448,7 @@ void MultiView::display()
                 bool rt;
                 if(temprature[index_sort[idx]].first == "RT"){
                     rt = true;
-                }else{
+                }else{ // "37"
                     rt = false;
                 }
                 visPropbyIdx(index_sort[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
@@ -470,7 +473,7 @@ void MultiView::display()
                 bool rt;
                 if(temprature[index_sort[n]].first == "RT"){
                     rt = true;
-                }else{
+                }else{ // "37"
                     rt = false;
                 }
                 visPropbyIdx(index_sort[n], visSideLen, n, p, showProps[p], value_sort[n], rt);

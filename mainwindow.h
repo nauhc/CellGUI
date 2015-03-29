@@ -80,7 +80,7 @@ private:
     QCheckBox           *prop3;
     QCheckBox           *prop4;
     QCheckBox           *prop5;
-    QVector<QString>    checkedBoxes;
+    QVector<QString>     checkedBoxes;
 
     // sorting parameter
     QGroupBox           *paraGroup;
@@ -90,10 +90,17 @@ private:
     QCheckBox           *para2;
     QCheckBox           *para3;
 
+    // filelist checkboxes
+    QGroupBox           *fileGroup;
+    QVBoxLayout         *fileVLayout;
+    QVector<QCheckBox>  *fileCheckBoxes;
+
+
     void createTimeSlider();
     void createvisSizeSlider();
     void createProptyCheckbox();
     void createParaCheckbox();
+    void createFileCheckBoxes();
 
 signals:
     void readProperties(floatArray prop);

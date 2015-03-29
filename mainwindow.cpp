@@ -23,9 +23,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     //this->centralWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // add dock for multiview
-    dock = new QDockWidget(tr("Basic operations"), this);
+    dock = new QDockWidget(tr("Control"), this);
     this->addDockWidget(Qt::RightDockWidgetArea, dock);
-    dock->setFixedSize(300, 700);
+    dock->setFixedSize(400, 1280);
     dock->setFloating(true);
     dockWidget = new QWidget();
     dockMainVLayout = new QVBoxLayout;
@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     // set to multiview at the beginning
     loadMultiView();
+    createFileCheckBoxes();
 
     // Add menu to menu bar
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -83,6 +84,7 @@ void MainWindow::loadMultiView()
     connect(para1, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para2, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para3, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
+
 }
 
 void MainWindow::loadSingleView()
@@ -199,28 +201,40 @@ void MainWindow::paraCheckBox_checked(int state)
             para1->setChecked(false);
             para2->setChecked(false);
             para3->setChecked(false);
+            multiview->clearCanvas();
             multiview->sortbyParameter(0);
+            delete fileGroup;
+            createFileCheckBoxes();
         }
         else if (checkBox->text() == "Force Ascending (µN)"){
             para0->setChecked(false);
             para1->setChecked(true);
             para2->setChecked(false);
             para3->setChecked(false);
+            multiview->clearCanvas();
             multiview->sortbyParameter(1);
+            delete fileGroup;
+            createFileCheckBoxes();
         }
         else if (checkBox->text() == "Temperature"){
             para0->setChecked(false);
             para1->setChecked(false);
             para2->setChecked(true);
             para3->setChecked(false);
+            multiview->clearCanvas();
             multiview->sortbyParameter(2);
+            delete fileGroup;
+            createFileCheckBoxes();
         }
         else if (checkBox->text() == "Date Ascending"){
             para0->setChecked(false);
             para1->setChecked(false);
             para2->setChecked(false);
             para3->setChecked(true);
+            multiview->clearCanvas();
             multiview->sortbyParameter(3);
+            delete fileGroup;
+            createFileCheckBoxes();
         }
     }
 
@@ -228,8 +242,8 @@ void MainWindow::paraCheckBox_checked(int state)
 
 void MainWindow::visSideLenSlider_valueChanged(int v)
 {
-    visSideLenLabel->setText("View Size: "+QString::number(int(260 +v*10)));
-    multiview->setVisSideLen(int(260 +v*10));
+    visSideLenLabel->setText("View Size: "+QString::number(int(260 + v*10)));
+    multiview->setVisSideLen(int(260 + v*10));
 }
 
 
@@ -253,7 +267,7 @@ void MainWindow::createvisSizeSlider()
 
 void MainWindow::createTimeSlider()
 {
-    dockMainVLayout->addStretch();
+//    dockMainVLayout->addStretch();
 
     timeGroup = new QGroupBox(" Time Range Selection: ");
     timeGroup->setStyleSheet(GROUPBOX);
@@ -263,7 +277,7 @@ void MainWindow::createTimeSlider()
     timeRangeLayout->addWidget(tmp);
 
     timeSttLayout = new QVBoxLayout;
-    timeSttLabel = new QLabel("Frame Range Start: 0");
+    timeSttLabel = new QLabel("Frame Start: 0");
     timeSttLabel->setFixedWidth(250);
     timeSttLabel->setStyleSheet(CHECKBOX);
     timeSttSlider = new QSlider(Qt::Horizontal);
@@ -274,7 +288,7 @@ void MainWindow::createTimeSlider()
     timeSttLayout->addWidget(timeSttSlider);
 
     timeEndLayout = new QVBoxLayout;
-    timeEndLabel = new QLabel("Frame Range End: 5000");
+    timeEndLabel = new QLabel("Frame End: 5000");
     timeEndLabel->setFixedWidth(250);
     timeEndLabel->setStyleSheet(CHECKBOX);
     timeEndSlider = new QSlider(Qt::Horizontal);
@@ -292,7 +306,7 @@ void MainWindow::createTimeSlider()
 
     //dockMainVLayout->addLayout(timeRangeLayout);
     dockMainVLayout->addWidget(timeGroup);
-    dockMainVLayout->addStretch();
+//    dockMainVLayout->addStretch();
 
     connect(timeSttSlider, SIGNAL(valueChanged(int)), this, SLOT(timeSrtSlider_valueChanged(int)));
     connect(timeEndSlider, SIGNAL(valueChanged(int)), this, SLOT(timeEndSlider_valueChanged(int)));
@@ -301,22 +315,22 @@ void MainWindow::createTimeSlider()
 
 void MainWindow::timeEndSlider_valueChanged(int v)
 {
-    timeEndLabel->setText("Frame range end: "+QString::number(int(v)));
+    timeEndLabel->setText("Frame End: "+QString::number(int(v)));
     if(timeSttSlider->value() > timeEndSlider->value()){
         timeSttSlider->setValue(timeEndSlider->value());
         int sttV = timeEndSlider->value() < 1 ? 1 : timeEndSlider->value() - 1;
-        timeSttLabel->setText("Frame range start: "+QString::number(int(sttV)));
+        timeSttLabel->setText("Frame Start: "+QString::number(int(sttV)));
     }
     multiview->setTimeEnd(v);
 }
 
 void MainWindow::timeSrtSlider_valueChanged(int v)
 {
-    timeSttLabel->setText("Frame range start: "+QString::number(int(v)));
+    timeSttLabel->setText("Frame Start: "+QString::number(int(v)));
     if(timeEndSlider->value() < timeSttSlider->value()){
         timeEndSlider->setValue(timeSttSlider->value());
         int endV = timeSttSlider->value() > 5000 ? 5000 : timeSttSlider->value() + 1;
-        timeEndLabel->setText("Frame range end: "+QString::number(int(endV)));
+        timeEndLabel->setText("Frame End: "+QString::number(int(endV)));
     }
     multiview->setTimeStt(v);
 }
@@ -359,7 +373,7 @@ void MainWindow::createProptyCheckbox()
     propGroup->setFixedHeight(270);
 
     dockMainVLayout->addWidget(propGroup);
-    dockMainVLayout->addStretch();
+//    dockMainVLayout->addStretch();
 
     connect(prop0, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
     connect(prop1, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
@@ -372,7 +386,7 @@ void MainWindow::createProptyCheckbox()
 
 void MainWindow::createParaCheckbox()
 {
-    paraGroup = new QGroupBox(" Sort on: ");
+    paraGroup = new QGroupBox(" Sort: ");
     paraGroup->setStyleSheet(GROUPBOX);
     para0   = new QCheckBox("Pressure Ascending (Pa)");
     para1   = new QCheckBox("Force Ascending (µN)");
@@ -398,7 +412,59 @@ void MainWindow::createParaCheckbox()
     paraGroup->setFixedHeight(150);
 
     dockMainVLayout->addWidget(paraGroup);
-    dockMainVLayout->addStretch();
 
 }
+
+void MainWindow::createFileCheckBoxes()
+{
+    fileGroup = new QGroupBox(" File List: ");
+    fileGroup->setStyleSheet(GROUPBOX);
+
+    QVector<QFileInfo> fileInfos = multiview->getFilenames();
+    QVector<unsigned int> indices = multiview->getUpdatedIndex();
+
+    fileVLayout = new QVBoxLayout();
+
+    QScrollArea *area = new QScrollArea();
+    area->setWidgetResizable(true);
+    area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    QVBoxLayout *tmpLayout = new QVBoxLayout();
+    QWidget *tmpWidget = new QWidget();
+
+    for(int i = 0; i < fileInfos.size(); i++){
+        int idx = indices[i];
+        QString filename = fileInfos[idx].baseName();
+        QCheckBox *checkbox = new QCheckBox(filename);
+        checkbox->setChecked(true);
+
+        fileVLayout->addWidget(checkbox);
+    }
+    tmpWidget->setLayout(fileVLayout);
+    area->setWidget(tmpWidget);
+    area->setStyleSheet(SCROLLBAR_TN);
+    tmpLayout->addWidget(area);
+
+    fileGroup->setLayout(tmpLayout);
+    dockMainVLayout->addWidget(fileGroup);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
