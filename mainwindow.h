@@ -39,6 +39,7 @@ private slots:
     void visSideLenSlider_valueChanged(int v);
     void timeEndSlider_valueChanged(int v);
     void timeSrtSlider_valueChanged(int v);
+    void fileCheckBox_checked(int state);
 
 private:
     Ui::MainWindow      *ui;
@@ -93,8 +94,7 @@ private:
     // filelist checkboxes
     QGroupBox           *fileGroup;
     QVBoxLayout         *fileVLayout;
-    QVector<QCheckBox>  *fileCheckBoxes;
-
+    QList<QWidget*>      fileCheckBoxes;
 
     void createTimeSlider();
     void createvisSizeSlider();

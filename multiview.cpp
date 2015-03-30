@@ -30,15 +30,8 @@ MultiView::MultiView(QWidget *parent) :
 
     visGLayout = new QGridLayout();
 
-//    createLoadFilesButton();
     loadFilesButton_clicked();
-    //setShowProps();
 
-//    mainVLayout->addWidget(loadFilesButton);
-
-//    QWidget *temp = new QWidget();
-//    temp->setLayout(visGLayout);
-//    scrollArea->setWidget(temp);
     canvas = new canvasWidget();
     canvas->setLayout(visGLayout);
     scrollArea->setWidget(canvas);
@@ -103,6 +96,24 @@ QVector<QFileInfo> MultiView::getFilenames()
 QVector<unsigned int> MultiView::getUpdatedIndex()
 {
     return index_sort;
+}
+
+void MultiView::updateIndexAndValue(int id, int state)
+{
+    qDebug() << "updateIndexAndValue called" << id << state;
+
+    if(state == 0){ // uncheck
+        index_sort.insert(id, 65534);
+        value_sort.insert(id, 65534);
+
+    }
+    else if(state == 2){ // check
+        index_sort.replace(id, id);
+        value_sort.replace(id, id);
+    }
+//    qDebug() << index_sort;
+    clearCanvas();
+    display();
 }
 
 void MultiView::clearData()
@@ -215,6 +226,7 @@ bool MultiView::loadFiles()
         QString datafilename = datafileInfos[n].absoluteFilePath();
         index_sort.push_back(n);
         value_sort.push_back(0);
+
         if(!datafilename.isEmpty()){
             if(readDataFile(datafilename)){
                 //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
@@ -251,11 +263,6 @@ bool MultiView::loadFiles()
 
 void MultiView::createVisCanvas()
 {
-    //    visWindow = new VisWindow();
-    //    visContainer = QWidget::createWindowContainer(visWindow, this);
-    //    visContainer->setMinimumSize(this->width()*0.8, this->height()*0.8);
-    //    visContainer->setBaseSize(this->width()*0.8, this->height()*0.8);
-    //    visWindow->resize(/*visContainer->size()*/ QSize(1024, 768));
 }
 
 void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, float value, bool roomT)
@@ -391,11 +398,6 @@ void MultiView::showShape(int index, int size, int i, int j, float value, bool r
     }
 }
 
-//void MultiView::paintEvent(QPaintEvent *e)
-//{
-
-//}
-
 void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, float v, bool roomT)
 {
     switch (PropIdx){
@@ -444,6 +446,8 @@ void MultiView::display()
                 int   idx   = j * num1Row + i;
                 if((idx > fileNum - 1) || (index_sort[idx] > fileNum-1))
                     continue;
+                if(index_sort[idx] == 65534)
+                    continue;
                 //qDebug() << idx << i << j;
                 bool rt;
                 if(temprature[index_sort[idx]].first == "RT"){
@@ -470,6 +474,8 @@ void MultiView::display()
         // draw all
         for(int p = 0; p < showProps.size(); p++){
             for (int n = 0; n < fileNum; n++){
+                if(index_sort[n] == 65534)
+                    continue;
                 bool rt;
                 if(temprature[index_sort[n]].first == "RT"){
                     rt = true;

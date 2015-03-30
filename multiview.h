@@ -43,6 +43,7 @@ public:
     void    setVisSideLen(int len);
     QVector<QFileInfo>    getFilenames();
     QVector<unsigned int> getUpdatedIndex();
+    void    updateIndexAndValue(int id, int state);
 
 signals:
 //    void readProperties(floatArray prop);
@@ -71,6 +72,7 @@ private:
     QList<QPair<QString, int> >             temprature;
     QVector<unsigned int>                   index_sort; // sorted index
     QVector<float>                          value_sort; // sorted value
+    QVector<unsigned int>                   index_update;
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
 //    unsigned int                            timeStt;
@@ -83,7 +85,6 @@ private:
     QVBoxLayout                             *mainVLayout;
 
     QPushButton                             *loadFilesButton;
-
 
     bool    loadFiles();
     void    display();

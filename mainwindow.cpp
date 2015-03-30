@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     dockWidget->setLayout(dockMainVLayout);
 
     // set to singleview at the beginning
-//    loadSingleView();
+    //    loadSingleView();
 
     // set to multiview at the beginning
     loadMultiView();
@@ -172,23 +172,23 @@ void MainWindow::propCheckBox_checked(int state)
             multiview->pushProps(4);
         }
     }
-//    else if (state == Qt::Unchecked) {
-//        if(checkBox->text() == "Area"){
-//            multiview->popProps(0);
-//        }
-//        else if(checkBox->text() == "Perimeter"){
-//            multiview->popProps(1);
-//        }
-//        else if(checkBox->text() == "Blebs Number and Size"){
-//            multiview->popProps(2);
-//        }
-//        else if(checkBox->text() == "Centroid Trajectory"){
-//            multiview->popProps(3);
-//        }
-//        else if(checkBox->text() == "Shape"){
-//            multiview->popProps(4);
-//        }
-//    }
+    //    else if (state == Qt::Unchecked) {
+    //        if(checkBox->text() == "Area"){
+    //            multiview->popProps(0);
+    //        }
+    //        else if(checkBox->text() == "Perimeter"){
+    //            multiview->popProps(1);
+    //        }
+    //        else if(checkBox->text() == "Blebs Number and Size"){
+    //            multiview->popProps(2);
+    //        }
+    //        else if(checkBox->text() == "Centroid Trajectory"){
+    //            multiview->popProps(3);
+    //        }
+    //        else if(checkBox->text() == "Shape"){
+    //            multiview->popProps(4);
+    //        }
+    //    }
 }
 
 void MainWindow::paraCheckBox_checked(int state)
@@ -267,7 +267,7 @@ void MainWindow::createvisSizeSlider()
 
 void MainWindow::createTimeSlider()
 {
-//    dockMainVLayout->addStretch();
+    //    dockMainVLayout->addStretch();
 
     timeGroup = new QGroupBox(" Time Range Selection: ");
     timeGroup->setStyleSheet(GROUPBOX);
@@ -306,7 +306,7 @@ void MainWindow::createTimeSlider()
 
     //dockMainVLayout->addLayout(timeRangeLayout);
     dockMainVLayout->addWidget(timeGroup);
-//    dockMainVLayout->addStretch();
+    //    dockMainVLayout->addStretch();
 
     connect(timeSttSlider, SIGNAL(valueChanged(int)), this, SLOT(timeSrtSlider_valueChanged(int)));
     connect(timeEndSlider, SIGNAL(valueChanged(int)), this, SLOT(timeEndSlider_valueChanged(int)));
@@ -333,6 +333,15 @@ void MainWindow::timeSrtSlider_valueChanged(int v)
         timeEndLabel->setText("Frame End: "+QString::number(int(endV)));
     }
     multiview->setTimeStt(v);
+}
+
+void MainWindow::fileCheckBox_checked(int state)
+{
+    QObject* obj = sender();
+    int idx = obj->objectName().remove("fileName").toInt();
+
+    multiview->updateIndexAndValue(idx, state);
+
 }
 
 
@@ -373,7 +382,7 @@ void MainWindow::createProptyCheckbox()
     propGroup->setFixedHeight(270);
 
     dockMainVLayout->addWidget(propGroup);
-//    dockMainVLayout->addStretch();
+    //    dockMainVLayout->addStretch();
 
     connect(prop0, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
     connect(prop1, SIGNAL(stateChanged(int)), this, SLOT(propCheckBox_checked(int)));
@@ -432,14 +441,44 @@ void MainWindow::createFileCheckBoxes()
     QVBoxLayout *tmpLayout = new QVBoxLayout();
     QWidget *tmpWidget = new QWidget();
 
+
+
     for(int i = 0; i < fileInfos.size(); i++){
         int idx = indices[i];
         QString filename = fileInfos[idx].baseName();
+
         QCheckBox *checkbox = new QCheckBox(filename);
         checkbox->setChecked(true);
-
+        checkbox->setObjectName("fileName"+QString::number(i));
+        //checkbox->isChecked();
+        connect(checkbox, SIGNAL(stateChanged(int)), this, SLOT(fileCheckBox_checked(int)));
         fileVLayout->addWidget(checkbox);
     }
+
+    for (int i = 0; i < fileVLayout->count(); i++)
+    {
+        if (QWidgetItem *myItem = dynamic_cast <QWidgetItem*>(fileVLayout->itemAt(i))) {
+            QWidget *wid = myItem->widget();
+            //qDebug() << wid->objectName();
+            fileCheckBoxes << myItem->widget();
+        }
+    }
+
+    //qDebug() << fileCheckBoxes.size();
+
+    /*for (int i = 0; i < fileCheckBoxes.count(); i++)
+    {
+        QWidget *wid = qobject_cast <QWidget*>(fileCheckBoxes.at(i));
+        if (wid)
+            qDebug() << wid->objectName();
+    }*/
+
+
+
+
+
+
+
     tmpWidget->setLayout(fileVLayout);
     area->setWidget(tmpWidget);
     area->setStyleSheet(SCROLLBAR_TN);
@@ -447,6 +486,8 @@ void MainWindow::createFileCheckBoxes()
 
     fileGroup->setLayout(tmpLayout);
     dockMainVLayout->addWidget(fileGroup);
+
+    //    qDebug() << fileCheckBoxes;
 }
 
 
