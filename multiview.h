@@ -72,7 +72,7 @@ private:
     QList<QPair<QString, int> >             temprature;
     QVector<unsigned int>                   index_sort; // sorted index
     QVector<float>                          value_sort; // sorted value
-    QVector<unsigned int>                   index_update;
+    QVector<unsigned int>                   index_sort_copy; // copy of the index
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
 //    unsigned int                            timeStt;

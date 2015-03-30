@@ -100,18 +100,16 @@ QVector<unsigned int> MultiView::getUpdatedIndex()
 
 void MultiView::updateIndexAndValue(int id, int state)
 {
-    qDebug() << "updateIndexAndValue called" << id << state;
-
+    //qDebug() << "updateIndexAndValue called" << id << state;
     if(state == 0){ // uncheck
-        index_sort.insert(id, 65534);
-        value_sort.insert(id, 65534);
-
+        index_sort.replace(id, 65534);
+        //value_sort.replace(id, 65534);
     }
     else if(state == 2){ // check
-        index_sort.replace(id, id);
-        value_sort.replace(id, id);
+        index_sort.replace(id, index_sort_copy[id]);
+        //value_sort.replace(id, id);
     }
-//    qDebug() << index_sort;
+    qDebug() << index_sort;
     clearCanvas();
     display();
 }
@@ -150,6 +148,7 @@ void MultiView::sortbyParameter(int i)
         for(int n = 0; n < datafileInfos.size(); n++){
 //            index_sort.push_back(pressure[n].second);
             index_sort.replace(n, pressure[n].second);
+            index_sort_copy.replace(n, pressure[n].second);
             value_sort.replace(n, pressure[n].first);
         }
     }
@@ -157,6 +156,7 @@ void MultiView::sortbyParameter(int i)
         for(int n = 0; n < datafileInfos.size(); n++){
             //index_sort.push_back(force[n].second);
             index_sort.replace(n, force[n].second);
+            index_sort_copy.replace(n, force[n].second);
             value_sort.replace(n, force[n].first*1000000);
         }
     }
@@ -165,6 +165,7 @@ void MultiView::sortbyParameter(int i)
             //index_sort.push_back(pressure[n].second);
             //index_sort.replace(n, pressure[n].second);
             index_sort.replace(n, temprature[n].second);
+            index_sort_copy.replace(n, temprature[n].second);
             float tmp;
             if(temprature[n].first == "37")
                 tmp = 37;
@@ -176,6 +177,7 @@ void MultiView::sortbyParameter(int i)
     else{
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, n);
+            index_sort_copy.replace(n, n);
             value_sort.replace(n, 0);
         }
     }
@@ -225,6 +227,7 @@ bool MultiView::loadFiles()
 
         QString datafilename = datafileInfos[n].absoluteFilePath();
         index_sort.push_back(n);
+        index_sort_copy.push_back(n);
         value_sort.push_back(0);
 
         if(!datafilename.isEmpty()){
@@ -455,7 +458,7 @@ void MultiView::display()
                 }else{ // "37"
                     rt = false;
                 }
-                visPropbyIdx(index_sort[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
+                visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
             }
         }
     }
@@ -482,7 +485,7 @@ void MultiView::display()
                 }else{ // "37"
                     rt = false;
                 }
-                visPropbyIdx(index_sort[n], visSideLen, n, p, showProps[p], value_sort[n], rt);
+                visPropbyIdx(index_sort_copy[n], visSideLen, n, p, showProps[p], value_sort[n], rt);
             }
         }
     }
