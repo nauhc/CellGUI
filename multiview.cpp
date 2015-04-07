@@ -103,13 +103,11 @@ void MultiView::updateIndexAndValue(int id, int state)
     //qDebug() << "updateIndexAndValue called" << id << state;
     if(state == 0){ // uncheck
         index_sort.replace(id, 65534);
-        //value_sort.replace(id, 65534);
     }
     else if(state == 2){ // check
         index_sort.replace(id, index_sort_copy[id]);
-        //value_sort.replace(id, id);
     }
-    qDebug() << index_sort;
+//    qDebug() << index_sort;
     clearCanvas();
     display();
 }
@@ -146,7 +144,6 @@ void MultiView::sortbyParameter(int i)
     qDebug() << "para" << i << "is checked";
     if (i == 0){
         for(int n = 0; n < datafileInfos.size(); n++){
-//            index_sort.push_back(pressure[n].second);
             index_sort.replace(n, pressure[n].second);
             index_sort_copy.replace(n, pressure[n].second);
             value_sort.replace(n, pressure[n].first);
@@ -154,7 +151,6 @@ void MultiView::sortbyParameter(int i)
     }
     else if (i == 1){
         for(int n = 0; n < datafileInfos.size(); n++){
-            //index_sort.push_back(force[n].second);
             index_sort.replace(n, force[n].second);
             index_sort_copy.replace(n, force[n].second);
             value_sort.replace(n, force[n].first*1000000);
@@ -162,8 +158,6 @@ void MultiView::sortbyParameter(int i)
     }
     else if (i == 2){
         for(int n = 0; n < datafileInfos.size(); n++){
-            //index_sort.push_back(pressure[n].second);
-            //index_sort.replace(n, pressure[n].second);
             index_sort.replace(n, temprature[n].second);
             index_sort_copy.replace(n, temprature[n].second);
             float tmp;

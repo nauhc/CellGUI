@@ -36,10 +36,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     dockWidget->setLayout(dockMainVLayout);
 
     // set to singleview at the beginning
-    //    loadSingleView();
+    loadSingleView();
 
     // set to multiview at the beginning
-    loadMultiView();
+//    loadMultiView();
     createFileCheckBoxes();
 
     // Add menu to menu bar
@@ -472,11 +472,6 @@ void MainWindow::createFileCheckBoxes()
         if (wid)
             qDebug() << wid->objectName();
     }*/
-
-
-
-
-
 
 
     tmpWidget->setLayout(fileVLayout);
