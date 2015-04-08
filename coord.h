@@ -10,7 +10,7 @@ class Coord : public RenderWidget
     Q_OBJECT
 
 public:
-    Coord(QWidget *parent = 0, bool multv = true);
+    Coord(QWidget *parent = 0, bool multv = true, int sideLen = 400);
     ~Coord();
 
     void    updateCoord(QPointF point, int currFrame);
@@ -28,7 +28,7 @@ public:
 protected:
     void    initializeGL();
     void    render(QPainter *painter);
-    void    resizeGL(int w, int h);
+
     QPointF translateCoord(QPointF p, qreal scale);
     QPointF translate_canvas2image(QPointF p);
     QPointF translate_image2canvas_center(QPointF p, bool XGreaterThanY);

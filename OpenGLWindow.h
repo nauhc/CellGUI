@@ -64,6 +64,7 @@ class RenderWidget : public QWidget
 protected:
     virtual void render(QPainter *painter) = 0;
     virtual void paintEvent(QPaintEvent *e) { QPainter painter(this); render(&painter); }
+//    virtual void resizeEvent(QResizeEvent *e);
 };
 #else
 typedef GLRenderWidget RenderWidget;

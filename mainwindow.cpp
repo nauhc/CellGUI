@@ -29,31 +29,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     dock->setFloating(true);
     dockWidget = new QWidget();
     dockMainVLayout = new QVBoxLayout;
-    createvisSizeSlider();
-    createTimeSlider();
-    createProptyCheckbox();
-    createParaCheckbox();
-    dockWidget->setLayout(dockMainVLayout);
+
+//    qDebug() << "check point 0";
 
     // set to singleview at the beginning
     loadSingleView();
 
     // set to multiview at the beginning
 //    loadMultiView();
-    createFileCheckBoxes();
 
-    // Add menu to menu bar
-    fileMenu = menuBar()->addMenu(tr("&File"));
+//    qDebug() << "check point 1";
 
-    // Add MultiView to centralWidget layout
-    loadMultiViewAct = new QAction(tr("&Load Processed Temporal Data"), this);
-    connect(loadMultiViewAct, SIGNAL(triggered()), this, SLOT(loadMultiView()));
-    fileMenu->addAction(loadMultiViewAct);
+//    // Add menu to menu bar
+//    fileMenu = menuBar()->addMenu(tr("&File"));
 
-    // Add SigleView to centralWidget layout
-    loadSigleViewAct = new QAction(tr("&Extract Data From Video File"), this);
-    connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSingleView()));
-    fileMenu->addAction(loadSigleViewAct);
+//    // Add MultiView to centralWidget layout
+//    loadMultiViewAct = new QAction(tr("&Load Processed Temporal Data"), this);
+//    connect(loadMultiViewAct, SIGNAL(triggered()), this, SLOT(loadMultiView()));
+//    fileMenu->addAction(loadMultiViewAct);
+
+//    // Add SigleView to centralWidget layout
+//    loadSigleViewAct = new QAction(tr("&Extract Data From Video File"), this);
+//    connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSingleView()));
+//    fileMenu->addAction(loadSigleViewAct);
 
 }
 
@@ -67,7 +65,12 @@ MainWindow::~MainWindow(){
 void MainWindow::loadMultiView()
 {
     this->showMaximized();
-
+    multiview = new MultiView(this->centralWidget());
+    createvisSizeSlider();
+    createTimeSlider();
+    createProptyCheckbox();
+    createParaCheckbox();
+    dockWidget->setLayout(dockMainVLayout);
 
     if(!centralLayout->isEmpty()){
         delete centralLayout->itemAt(0)->widget();
@@ -76,15 +79,13 @@ void MainWindow::loadMultiView()
     dock->setWidget(dockWidget);
     dock->showMaximized();
 
-    multiview = new MultiView(this->centralWidget());
-
     centralLayout->addWidget(multiview);
 
     connect(para0, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para1, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para2, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para3, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
-
+    createFileCheckBoxes();
 }
 
 void MainWindow::loadSingleView()
@@ -97,7 +98,8 @@ void MainWindow::loadSingleView()
         delete centralLayout->itemAt(0)->widget();
     }
 
-    SingleView *singleview = new SingleView(this->centralWidget());
+    centralWidget()->resize(1280, 1280);
+    SingleView *singleview = new SingleView(centralWidget());
 
     centralLayout->addWidget(singleview);
 
@@ -246,7 +248,6 @@ void MainWindow::visSideLenSlider_valueChanged(int v)
     multiview->setVisSideLen(int(260 + v*10));
 }
 
-
 void MainWindow::createvisSizeSlider()
 {
     visSideLenLayout = new QVBoxLayout;
@@ -312,7 +313,6 @@ void MainWindow::createTimeSlider()
     connect(timeEndSlider, SIGNAL(valueChanged(int)), this, SLOT(timeEndSlider_valueChanged(int)));
 }
 
-
 void MainWindow::timeEndSlider_valueChanged(int v)
 {
     timeEndLabel->setText("Frame End: "+QString::number(int(v)));
@@ -343,7 +343,6 @@ void MainWindow::fileCheckBox_checked(int state)
     multiview->updateIndexAndValue(idx, state);
 
 }
-
 
 void MainWindow::createProptyCheckbox()
 {

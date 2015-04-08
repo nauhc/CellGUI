@@ -17,6 +17,7 @@ Encircle::Encircle(QWidget *parent) : QWidget(parent)
 }
 
 Encircle::~Encircle(){
+    std::cout << "Encircler deleted." << std::endl;
 }
 
 void Encircle::turnOnEncircleMode()
@@ -61,7 +62,7 @@ void Encircle::mousePressEvent(QMouseEvent *event)
 
 void Encircle::mouseMoveEvent(QMouseEvent *event)
 {
-//    qDebug() << 'mouse pressed';
+//    qDebug() << 'mouse moved';
     if(encircleMode && (event->buttons() & Qt::LeftButton) && encircling){
         currPoint = event->pos();
         drawLineTo(currPoint);

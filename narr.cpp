@@ -40,7 +40,7 @@ inline int larger(int a, int b){
 }
 
 
-Narr::Narr(QWidget *parent, bool multv)
+Narr::Narr(QWidget *parent, bool multv, int sideLen)
 {
     clear();
     if(!multv){
@@ -48,6 +48,8 @@ Narr::Narr(QWidget *parent, bool multv)
         connect(timer, SIGNAL(timeout()), this, SLOT(update()));
         timer->start(1);
     }
+
+    resize(sideLen, sideLen);
 
     bufferSize = width() * height() * 4;
     bufferr = new unsigned char[bufferSize]();
@@ -66,6 +68,7 @@ void Narr::clear()
     cells.clear();
     stage.push_back(0);
     cellImg.clear();
+//    cluster.clear();
 
     begin       = 0;
     curr        = 0;
@@ -125,7 +128,6 @@ void Narr::initialize()
     halfW = this->width()/2; // half width
     halfH = this->height()/2; // half height
 
-
     qreal   halfS = halfW > halfH ? halfH : halfW; // the smaller
     center.setX(halfW);
     center.setY(halfH*1.05);
@@ -179,53 +181,88 @@ void Narr::updateProperty(floatArray prop, int currFrame, int clustr)
     perimeter.push_back(prop[2]); // perimeter
     blebNum.push_back(prop[8]); // bleb number
     blebAvgSize.push_back(prop[9]); // bleb average size
+//    cluster.push_back(clustr);
 
     unsigned int maxRange = /*maxFrm < 5000 ? 5000 - minFrm :*/ maxFrm - minFrm; //HEREHERE
 //    qDebug() << maxRange;
     unsigned int currRange = maxIdx - begin;
-
+//    float   degree      = 2.*M_PI/maxRange*num - M_PI_2;
     int     num         = area.size();
 //    float   degree      = 2.*M_PI/(maxIdx-begin)*num - M_PI_2;
 //    float   div         = 2.*M_PI*propBarInnerRadius/(maxIdx-begin);
 //    int     num         = area.size() > maxRange ? maxRange : area.size();
 
     if (num <= maxRange){
-    float   degree      = 2.*M_PI/maxRange*num - M_PI_2;
+
     float   div         = 2.*M_PI*propBarInnerRadius/maxRange;
     int     barWidth    = div > 1 ? int(div) : 1;
-    qreal   barheight;
-    QColor  color;
+//    qreal   barheight;
+//    QVector<qreal>   barheight;
+//    QColor  color;
 
     if(propType == 0) { // area
-        barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
-        color = gradualColor(ORANGE, 0.3);
+//        barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
+        QColor color = gradualColor(ORANGE, 0.3);
+        for(unsigned int i = 0; i < area.size(); i++){
+            float   degree      = 2.*M_PI/maxRange*i - M_PI_2;
+            qreal barheight = float(area[i]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
+            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                for (int v = 0; v < barWidth; v++){
+                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                    drawPoint(rotP, color);
+                }
+            }
+        }
     }
     else if (propType == 1) { // perimeter
-        barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
-        color = gradualColor(PURPLE, 0.3);
+//        barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
+        QColor color = gradualColor(PURPLE, 0.3);
+        for(unsigned int i = 0; i < perimeter.size(); i++){
+            float   degree      = 2.*M_PI/maxRange*i - M_PI_2;
+            qreal barheight = float(perimeter[i]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
+            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                for (int v = 0; v < barWidth; v++){
+                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                    drawPoint(rotP, color);
+                }
+            }
+        }
     }
     else if (propType == 2) { // bleb
-        barheight  = float(prop[8]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
-        qreal size = prop[9] > BlebSizeMin ? prop[9] - BlebSizeMin : 0;
-        qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
-        color = gradualColor(BLUE, 1-g);
+//        barheight  = float(prop[8]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
+        for(unsigned int i = 0; i < blebNum.size(); i++){
+            qreal barheight = float(blebNum[i]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
+            qreal size = blebAvgSize[i] > BlebSizeMin ? blebAvgSize[i] - BlebSizeMin : 0;
+            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
+            QColor color = gradualColor(BLUE, 1-g);
+            float    degree = 2.*M_PI/maxRange*i - M_PI_2;
+            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                for (int v = 0; v < barWidth; v++){
+                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                    drawPoint(rotP, color);
+                }
+            }
+        }
+
     }
     //qDebug() << barheight;
 
-    // draw bars
-    for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
-        for (int v = 0; v < barWidth; v++){
-            QPointF rotP = rotate(QPointF(h,v), degree)+center;
-            drawPoint(rotP, color);
-        }
-    }
+//    // draw bars
+//    for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+//        for (int v = 0; v < barWidth; v++){
+//            QPointF rotP = rotate(QPointF(h,v), degree)+center;
+//            drawPoint(rotP, color);
+//        }
+//    }
 
     // draw fragment
-    for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
-        for (int v = 0; v < ringArcThickness; v++){
-            QPointF rotP = rotate(QPointF(h,v), degree)+center;
-
-            drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
+    for(unsigned int i = 0; i < area.size(); i++){
+        float degree = 2.*M_PI/maxRange*i - M_PI_2;
+        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
+            for (int v = 0; v < /*ringArcThickness*/barWidth; v++){
+                QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
+            }
         }
     }
 }
@@ -266,247 +303,26 @@ void Narr::initializeGL()
 
 }
 
-
-void drawRingArc1(QPainter   *painter,
-                 QPointF    center,
-                 qreal      startAngle,
-                 qreal      endAngle,
-                 qreal      innerRadius,
-                 qreal      thickness,
-                 QColor     color){ // clockwise
-
-    qreal outerRadius = innerRadius + thickness;
-    //        //debug
-    //        painter->setPen(QColor(255, 255, 0));
-    //        painter->drawRect(center.x() - outerRadius,
-    //                          center.y() - outerRadius,
-    //                          2 * outerRadius, 2 * outerRadius);
-
-    QPen myPen(color);
-    myPen.setCapStyle(Qt::FlatCap);
-    myPen.setWidth(thickness);
-    painter->setPen(myPen);
-
-    painter->drawArc(center.x() - outerRadius + .5 * thickness,
-                     center.y() - outerRadius + .5 * thickness,
-                     2 * outerRadius - thickness, 2 * outerRadius - thickness,
-                     -startAngle*16, -endAngle*16); //clockwise
-    //QRectF rect = QRectF();
-    //painter->drawText();
-
-}
-
-void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
-                                qreal innerRadius, qreal thickness,
-                                qreal strtRto, QColor color) //clockwise
-{
-    if (feature.size() != 0){
-        QPen myPen(color);
-        myPen.setCapStyle(Qt::FlatCap);
-        painter->setPen(myPen);
-        painter->setBrush(QBrush(color));
-        std::vector<float>::const_iterator max_it, min_it;
-        max_it = std::max_element(std::begin(feature), std::end(feature));
-        min_it = std::min_element(std::begin(feature), std::end(feature));
-        //qDebug() << "MAX" << *max << "MIN" << *min;
-
-        int number = feature.size();
-        //qDebug() << number;
-        for(int n = 0; n < number; n++){
-            //qDebug() << feature[n];
-            //rotate and translate from the center to location on the ring
-            float degree = 360./(maxIdx-begin) * n;
-            painter->rotate(degree);
-            painter->translate(0, innerRadius);
-            //draw a bar
-            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
-            float w = 2.*M_PI/(maxIdx-begin)*number;
-            painter->drawRoundedRect(0, 0, w, barheight, 2.0, 2.0);
-            // translate and rotate back to the center
-            painter->translate(0, -innerRadius);
-            painter->rotate(-degree);
-        }
-    }
-}
-
-void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
-                                 qreal innerRadius, qreal thickness,
-                                 qreal strtRto, QColor color) //clockwise
-{
-    if (feature.size() != 0){
-        QPen myPen(color);
-        myPen.setCapStyle(Qt::FlatCap);
-        painter->setPen(myPen);
-        painter->setBrush(QBrush(color));
-        std::vector<float>::const_iterator max_it, min_it;
-        max_it = std::max_element(std::begin(feature), std::end(feature));
-        min_it = std::min_element(std::begin(feature), std::end(feature));
-
-        int number  = feature.size();
-        QPolygon    polyline;
-        QPoint      start;
-        for(int n = 0; n < number; n++)
-        {
-            //rotate and translate from the center to location on the ring
-            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
-            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
-            float radius    = barheight + innerRadius;
-            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
-            if(n == 0)
-                start = point;
-            polyline << point;
-        }
-        //connect to the beginning
-        //polyline << begin;
-        //draw polyline
-        painter->drawPolyline(polyline);
-    }
-}
-
-void Narr::drawCircularBarChart_fixMax(QPainter *painter,
-                                       std::vector<float> feature,
-                                       qreal minV, qreal maxV,
-                                       qreal innerRadius,
-                                       qreal thickness,
-                                       QColor color)
-{
-    if (feature.size() != 0){
-        QPen myPen(color);
-        myPen.setCapStyle(Qt::FlatCap);
-        painter->setPen(myPen);
-        painter->setBrush(QBrush(color));
-
-        //int number = feature.size();
-        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
-        for(int n = 0; n < number; n++){
-            //qDebug() << feature[n];
-            //rotate and translate from the center to location on the ring
-            float degree = 360./(maxIdx-begin) * n;
-            painter->rotate(degree);
-            painter->translate(0, innerRadius);
-            //draw a bar
-            //float barheight = float(feature[n]) * thickness/ maxV; // minV == 0;
-            float barheight = float(feature[n] - minV) * thickness/ (maxV - minV);
-            float w = /*2.*M_PI/(max-begin)*number*/1;
-            painter->drawRect(0, 0, w, barheight);
-            // translate and rotate back to the center
-            painter->translate(0, -innerRadius);
-            painter->rotate(-degree);
-        }
-    }
-
-}
-
-void Narr::drawCircularBarChart_bleb(QPainter *painter,
-                                     std::vector<float> feature, qreal maxV,
-                                     qreal innerRadius,
-                                     qreal thickness,
-                                     QColor color)
-{
-    //    for(int n = 0; n < blebAvgSize.size(); n++)
-    //        std::cout << blebAvgSize[n];
-    //    std::cout << endl;
-    if (feature.size() != 0){
-        //        QPen myPen(color);
-        //        myPen.setCapStyle(Qt::FlatCap);
-        //        painter->setPen(myPen);
-        //        painter->setBrush(QBrush(color));
-
-        //int number = feature.size();
-        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
-        for(int n = 0; n < number; n++){
-            qreal size = blebAvgSize[n] > BlebSizeMin ? blebAvgSize[n] - BlebSizeMin : 0;
-            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
-            //qreal g = qreal(blebAvgSize[n])/BlebSizeMax;
-            QColor cc = gradualColor(color, 1-g);
-            painter->setPen(cc);
-            painter->setBrush(QBrush(cc));
-
-            //qDebug() << feature[n];
-            //rotate and translate from the center to location on the ring
-            float degree = 360./(maxIdx-begin) * n;
-            painter->rotate(degree);
-            painter->translate(0, innerRadius);
-            //draw a bar
-            float barheight = float(feature[n]) * thickness/ maxV;
-            //float w = /*2.*M_PI/(max-begin)*number*/1;
-            float w = 2.*M_PI/(maxIdx-begin)*number;
-            painter->drawRect(0, 0, w, barheight);
-            // translate and rotate back to the center
-            painter->translate(0, -innerRadius);
-            painter->rotate(-degree);
-        }
-    }
-
-}
-
-void Narr::drawCircularLineChart_fixMax(QPainter *painter,
-                                        std::vector<float> feature, qreal maxV,
-                                        qreal innerRadius, qreal thickness,
-                                        QColor color) //clockwise
-{
-    if (feature.size() != 0){
-        QPen myPen(color);
-        myPen.setCapStyle(Qt::FlatCap);
-        painter->setPen(myPen);
-        painter->setBrush(QBrush(color));
-
-        int number  = feature.size();
-        QPolygon    polyline;
-        QPoint      start;
-        for(int n = 0; n < number; n++)
-        {
-            //rotate and translate from the center to location on the ring
-            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
-            float barheight = float(feature[n]) * thickness/ maxV;
-            float radius    = barheight + innerRadius;
-            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
-            if(n == 0)
-                start = point;
-            polyline << point;
-        }
-        //connect to the beginning
-        //polyline << begin;
-        //draw polyline
-        painter->drawPolyline(polyline);
-    }
-}
-
-//void Narr::mouseMoveEvent(QMouseEvent *ev)
-//{
-//    if(ev->y() <= halfH){
-//        float degree = atan((ev->x()-halfW)/(-ev->y()+halfH));
-//        if(degree < 0)
-//            degree = degree + 2*M_PI;
-//        angle = degree*180/M_PI;
-//    }else{
-//        float degree = atan((ev->x()-halfW)/(ev->y()-halfH));
-//        angle = 180-degree*180/M_PI;
-//    }
-//    //    qDebug() << angle;
-//    //    update();
-//    mouseIndex = int(angle/360.*(maxIdx-begin)+begin);
-
-//}
-
 void Narr::setPropType(int propTp)
 {
     propType = propTp;
     switch(propType){
     case 0:
-        std::cout << "Property Type 'Area' selected. \n" << std::endl;
+        std::cout << "Property Type 'Area' selected." << std::endl;
         break;
     case 1:
-        std::cout << "Property Type: 'Perimeter' selected. \n" << std::endl;
+        std::cout << "Property Type: 'Perimeter' selected." << std::endl;
         break;
     case 2:
-        std::cout << "Property Type: 'Bleb' selected. \n" << std::endl;
+        std::cout << "Property Type: 'Bleb' selected." << std::endl;
         break;
     default:
-        std::cout << "Property Type: 'Area' selected. \n" << std::endl;
+        std::cout << "Property Type: 'Area' selected." << std::endl;
         break;
     }
-    update();
+    initialize();
+//    update();
+//    qDebug() << propType;
 }
 
 void Narr::setPropertyType(int propTp)
@@ -614,11 +430,234 @@ void Narr::render(QPainter *painter)
 
 }
 
+void Narr::resizeEvent(QResizeEvent *e)
+{
+
+}
 
 
 
+//void drawRingArc1(QPainter   *painter,
+//                 QPointF    center,
+//                 qreal      startAngle,
+//                 qreal      endAngle,
+//                 qreal      innerRadius,
+//                 qreal      thickness,
+//                 QColor     color){ // clockwise
 
+//    qreal outerRadius = innerRadius + thickness;
+//    //        //debug
+//    //        painter->setPen(QColor(255, 255, 0));
+//    //        painter->drawRect(center.x() - outerRadius,
+//    //                          center.y() - outerRadius,
+//    //                          2 * outerRadius, 2 * outerRadius);
 
+//    QPen myPen(color);
+//    myPen.setCapStyle(Qt::FlatCap);
+//    myPen.setWidth(thickness);
+//    painter->setPen(myPen);
+
+//    painter->drawArc(center.x() - outerRadius + .5 * thickness,
+//                     center.y() - outerRadius + .5 * thickness,
+//                     2 * outerRadius - thickness, 2 * outerRadius - thickness,
+//                     -startAngle*16, -endAngle*16); //clockwise
+//    //QRectF rect = QRectF();
+//    //painter->drawText();
+
+//}
+
+//void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
+//                                qreal innerRadius, qreal thickness,
+//                                qreal strtRto, QColor color) //clockwise
+//{
+//    if (feature.size() != 0){
+//        QPen myPen(color);
+//        myPen.setCapStyle(Qt::FlatCap);
+//        painter->setPen(myPen);
+//        painter->setBrush(QBrush(color));
+//        std::vector<float>::const_iterator max_it, min_it;
+//        max_it = std::max_element(std::begin(feature), std::end(feature));
+//        min_it = std::min_element(std::begin(feature), std::end(feature));
+//        //qDebug() << "MAX" << *max << "MIN" << *min;
+
+//        int number = feature.size();
+//        //qDebug() << number;
+//        for(int n = 0; n < number; n++){
+//            //qDebug() << feature[n];
+//            //rotate and translate from the center to location on the ring
+//            float degree = 360./(maxIdx-begin) * n;
+//            painter->rotate(degree);
+//            painter->translate(0, innerRadius);
+//            //draw a bar
+//            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
+//            float w = 2.*M_PI/(maxIdx-begin)*number;
+//            painter->drawRoundedRect(0, 0, w, barheight, 2.0, 2.0);
+//            // translate and rotate back to the center
+//            painter->translate(0, -innerRadius);
+//            painter->rotate(-degree);
+//        }
+//    }
+//}
+
+//void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
+//                                 qreal innerRadius, qreal thickness,
+//                                 qreal strtRto, QColor color) //clockwise
+//{
+//    if (feature.size() != 0){
+//        QPen myPen(color);
+//        myPen.setCapStyle(Qt::FlatCap);
+//        painter->setPen(myPen);
+//        painter->setBrush(QBrush(color));
+//        std::vector<float>::const_iterator max_it, min_it;
+//        max_it = std::max_element(std::begin(feature), std::end(feature));
+//        min_it = std::min_element(std::begin(feature), std::end(feature));
+
+//        int number  = feature.size();
+//        QPolygon    polyline;
+//        QPoint      start;
+//        for(int n = 0; n < number; n++)
+//        {
+//            //rotate and translate from the center to location on the ring
+//            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
+//            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
+//            float radius    = barheight + innerRadius;
+//            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
+//            if(n == 0)
+//                start = point;
+//            polyline << point;
+//        }
+//        //connect to the beginning
+//        //polyline << begin;
+//        //draw polyline
+//        painter->drawPolyline(polyline);
+//    }
+//}
+
+//void Narr::drawCircularBarChart_fixMax(QPainter *painter,
+//                                       std::vector<float> feature,
+//                                       qreal minV, qreal maxV,
+//                                       qreal innerRadius,
+//                                       qreal thickness,
+//                                       QColor color)
+//{
+//    if (feature.size() != 0){
+//        QPen myPen(color);
+//        myPen.setCapStyle(Qt::FlatCap);
+//        painter->setPen(myPen);
+//        painter->setBrush(QBrush(color));
+
+//        //int number = feature.size();
+//        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
+//        for(int n = 0; n < number; n++){
+//            //qDebug() << feature[n];
+//            //rotate and translate from the center to location on the ring
+//            float degree = 360./(maxIdx-begin) * n;
+//            painter->rotate(degree);
+//            painter->translate(0, innerRadius);
+//            //draw a bar
+//            //float barheight = float(feature[n]) * thickness/ maxV; // minV == 0;
+//            float barheight = float(feature[n] - minV) * thickness/ (maxV - minV);
+//            float w = /*2.*M_PI/(max-begin)*number*/1;
+//            painter->drawRect(0, 0, w, barheight);
+//            // translate and rotate back to the center
+//            painter->translate(0, -innerRadius);
+//            painter->rotate(-degree);
+//        }
+//    }
+
+//}
+
+//void Narr::drawCircularBarChart_bleb(QPainter *painter,
+//                                     std::vector<float> feature, qreal maxV,
+//                                     qreal innerRadius,
+//                                     qreal thickness,
+//                                     QColor color)
+//{
+//    //    for(int n = 0; n < blebAvgSize.size(); n++)
+//    //        std::cout << blebAvgSize[n];
+//    //    std::cout << endl;
+//    if (feature.size() != 0){
+//        //        QPen myPen(color);
+//        //        myPen.setCapStyle(Qt::FlatCap);
+//        //        painter->setPen(myPen);
+//        //        painter->setBrush(QBrush(color));
+
+//        //int number = feature.size();
+//        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
+//        for(int n = 0; n < number; n++){
+//            qreal size = blebAvgSize[n] > BlebSizeMin ? blebAvgSize[n] - BlebSizeMin : 0;
+//            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
+//            //qreal g = qreal(blebAvgSize[n])/BlebSizeMax;
+//            QColor cc = gradualColor(color, 1-g);
+//            painter->setPen(cc);
+//            painter->setBrush(QBrush(cc));
+
+//            //qDebug() << feature[n];
+//            //rotate and translate from the center to location on the ring
+//            float degree = 360./(maxIdx-begin) * n;
+//            painter->rotate(degree);
+//            painter->translate(0, innerRadius);
+//            //draw a bar
+//            float barheight = float(feature[n]) * thickness/ maxV;
+//            //float w = /*2.*M_PI/(max-begin)*number*/1;
+//            float w = 2.*M_PI/(maxIdx-begin)*number;
+//            painter->drawRect(0, 0, w, barheight);
+//            // translate and rotate back to the center
+//            painter->translate(0, -innerRadius);
+//            painter->rotate(-degree);
+//        }
+//    }
+
+//}
+
+//void Narr::drawCircularLineChart_fixMax(QPainter *painter,
+//                                        std::vector<float> feature, qreal maxV,
+//                                        qreal innerRadius, qreal thickness,
+//                                        QColor color) //clockwise
+//{
+//    if (feature.size() != 0){
+//        QPen myPen(color);
+//        myPen.setCapStyle(Qt::FlatCap);
+//        painter->setPen(myPen);
+//        painter->setBrush(QBrush(color));
+
+//        int number  = feature.size();
+//        QPolygon    polyline;
+//        QPoint      start;
+//        for(int n = 0; n < number; n++)
+//        {
+//            //rotate and translate from the center to location on the ring
+//            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
+//            float barheight = float(feature[n]) * thickness/ maxV;
+//            float radius    = barheight + innerRadius;
+//            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
+//            if(n == 0)
+//                start = point;
+//            polyline << point;
+//        }
+//        //connect to the beginning
+//        //polyline << begin;
+//        //draw polyline
+//        painter->drawPolyline(polyline);
+//    }
+//}
+
+//void Narr::mouseMoveEvent(QMouseEvent *ev)
+//{
+//    if(ev->y() <= halfH){
+//        float degree = atan((ev->x()-halfW)/(-ev->y()+halfH));
+//        if(degree < 0)
+//            degree = degree + 2*M_PI;
+//        angle = degree*180/M_PI;
+//    }else{
+//        float degree = atan((ev->x()-halfW)/(ev->y()-halfH));
+//        angle = 180-degree*180/M_PI;
+//    }
+//    //    qDebug() << angle;
+//    //    update();
+//    mouseIndex = int(angle/360.*(maxIdx-begin)+begin);
+
+//}
 
 
 

@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include "OpenGLWindow.h"
+#include <QDebug>
 
 #include <QVBoxLayout>
 
@@ -171,3 +172,9 @@ GLRenderWidget::GLRenderWidget()
     connect(win, SIGNAL(renderEvent(QPainter *)), this, SLOT(render(QPainter *)));
 }
 
+
+
+//void RenderWidget::resizeEvent(QResizeEvent *e)
+//{
+
+//}

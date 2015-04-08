@@ -43,7 +43,7 @@ Controller::~Controller(){
     delete roiFrame;
 //    delete frame; // Do not delete frame here. It has been released in FindContour class!
     delete contour;
-    cout << "controller deleted" << endl;
+    cout << "controller deleted." << endl;
 }
 
 inline QImage cvMatToQImage(const cv::Mat &inMat){

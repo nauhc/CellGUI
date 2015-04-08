@@ -280,7 +280,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
 
         Narr *nar_tmp = new Narr();
         nar_tmp->setPropertyType(propTp); // 0:"area", 1:"perimeter", 2:"bleb"
-        nar_tmp->setFixedSize(size, size/*+20*/);
+        nar_tmp->setFixedSize(size, size);
         nar_tmp->initialize();
         nar_tmp->setBeginFrm(idxMin);
         nar_tmp->setMaxFrm(idxMax, maxFrm);

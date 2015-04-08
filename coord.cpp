@@ -19,7 +19,7 @@ const int Coord_COLOR_START = /*30*/0;
 const int Coord_COLOR_RANGE = /*90*/120;
 
 
-Coord::Coord(QWidget *parent, bool multv)
+Coord::Coord(QWidget *parent, bool multv, int sidelen)
 {
     clear();
 
@@ -29,6 +29,7 @@ Coord::Coord(QWidget *parent, bool multv)
         timer->start(1);
     }
 
+    resize(sidelen, sidelen);
     bufferSize = width() * height() * 4;
     buffer = new unsigned char[bufferSize]();
     for (int i = 0; i < bufferSize; i++)
@@ -39,7 +40,6 @@ Coord::Coord(QWidget *parent, bool multv)
 void Coord::clear()
 {
     coordScale = 2.;
-//    coordScale = 4.;
     centroid.clear();
     currFrm = 0;
     maxFrm  = 1;
@@ -502,7 +502,3 @@ void Coord::render(QPainter *painter)
 
 }
 
-void Coord::resizeGL(int w, int h)
-{
-
-}

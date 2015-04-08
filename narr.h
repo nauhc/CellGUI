@@ -10,7 +10,7 @@ class Narr : public RenderWidget
     Q_OBJECT
 
 public:
-    Narr(QWidget *parent = 0, bool multv = true);
+    Narr(QWidget *parent = 0, bool multv = true, int sideLen = 400);
     ~Narr();
     void setBeginFrm(int beginFrame);
     void setMaxFrm(unsigned int im, unsigned int fm);
@@ -27,7 +27,8 @@ public:
 protected:
     void initializeGL();
     void render(QPainter *painter);
-    //void resizeGL(int w, int h);
+    void resizeEvent(QResizeEvent *e);
+    void resizeGL(int w, int h);
 
 private:
     qreal                       halfW, halfH; // halfWidth, halfHeight of the OpenGLWindow
@@ -45,6 +46,7 @@ private:
     std::vector<float>          perimeter; // the values of a particular feature
     std::vector<float>          blebNum; // the values of a particular feature
     std::vector<float>          blebAvgSize; // the values of a particular feature
+//    std::vector<int>            cluster;
     QVector<QPoint>             centroid; // the values of a particular feature
     QVector<QPolygon>           contours; // smoothed contours
     QVector<QImage>             cellImg; // all the cell imgs
@@ -74,30 +76,30 @@ private:
                      qreal      thickness,
                      QColor     color);
 
-    void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
-                              qreal innerRadius, qreal thickness,
-                              qreal strtRto, QColor color);
+//    void drawCircularBarChart(QPainter *painter, std::vector<float> feature,
+//                              qreal innerRadius, qreal thickness,
+//                              qreal strtRto, QColor color);
 
-    void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
-                               qreal innerRadius, qreal thickness,
-                               qreal strtRto, QColor color);
+//    void drawCircularLineChart(QPainter *painter, std::vector<float> feature,
+//                               qreal innerRadius, qreal thickness,
+//                               qreal strtRto, QColor color);
 
-    void drawCircularBarChart_fixMax(QPainter *painter,
-                                     std::vector<float> feature,
-                                     qreal minV, qreal maxV,
-                                     qreal innerRadius, qreal thickness,
-                                     QColor color);
+//    void drawCircularBarChart_fixMax(QPainter *painter,
+//                                     std::vector<float> feature,
+//                                     qreal minV, qreal maxV,
+//                                     qreal innerRadius, qreal thickness,
+//                                     QColor color);
 
-    void drawCircularBarChart_bleb(QPainter *painter,
-                                   std::vector<float> feature, qreal maxV,
-                                   qreal innerRadius,
-                                   qreal thickness,
-                                   QColor color);
+//    void drawCircularBarChart_bleb(QPainter *painter,
+//                                   std::vector<float> feature, qreal maxV,
+//                                   qreal innerRadius,
+//                                   qreal thickness,
+//                                   QColor color);
 
-    void drawCircularLineChart_fixMax(QPainter *painter,
-                               std::vector<float> feature, qreal maxV,
-                               qreal innerRadius, qreal thickness,
-                               QColor color);
+//    void drawCircularLineChart_fixMax(QPainter *painter,
+//                               std::vector<float> feature, qreal maxV,
+//                               qreal innerRadius, qreal thickness,
+//                               QColor color);
 
     //void mouseMoveEvent(QMouseEvent *ev);
 

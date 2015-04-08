@@ -13,7 +13,6 @@ SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Contro
     qRegisterMetaType<floatArray>("floatArray");
     qRegisterMetaType<QVector<QPoint> >("QVector<QPoint>");
 
-    //resize(1280, 1280);
     resize(parent->size());
     setStyleSheet("background-color:rgb(251,251,251)");
 
@@ -39,7 +38,12 @@ SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Contro
     createPropertySelector();
 
     topHLayout->addLayout(controlVLayout, 2);
-    topHLayout->setGeometry(QRect(0, 0, this->width(), this->height()/2));
+//    topHLayout->setGeometry(QRect(0, 0, this->width(), this->height()/2));
+
+    connect(controller, SIGNAL(load1stImage(QImage)),
+            this, SLOT(initialVideoPlayerUI(QImage)));
+    connect(controller, SIGNAL(processedImage(QImage,QImage,QImage)),
+            this, SLOT(updateVideoplayerUI_(QImage,QImage,QImage)));
 
 
     //*************** Bottom Half ***************
@@ -48,17 +52,18 @@ SingleView::SingleView(QWidget *parent) : QWidget(parent), controller(new Contro
 
     botHLayout->addWidget(nar);
     botHLayout->addWidget(cod);
+//    botHLayout->setGeometry(QRect(0, this->height()/2, this->width(), this->height()/2));
+
+
+//        botHLayout->addWidget(new QLabel("a"));
+//        botHLayout->addWidget(new QLabel("b"));
 
 
     //************* Main = top + bottom *********
     mainVLayout->addLayout(topHLayout, 1);
     mainVLayout->addLayout(botHLayout, 1);
 
-    connect(controller, SIGNAL(load1stImage(QImage)),
-            this, SLOT(initialVideoPlayerUI(QImage)));
-    connect(controller, SIGNAL(processedImage(QImage,QImage,QImage)),
-            this, SLOT(updateVideoplayerUI_(QImage,QImage,QImage)));
-
+    // must initial encircler latest since the layer should be topmost
     encircler_ = new Encircle(this);
     encircled_ = false;
 
@@ -588,14 +593,12 @@ void SingleView::drawROIButton_released()
 
 void SingleView::drawROIButton_clicked()
 {
+//    qDebug() << encircler_->geometry();
 
-//    encircler_->setGeometry(_orgVideo->x(), _orgVideo->y(),
-//                           _orgVideo->width(), _orgVideo->height());
-
-    cout << "video pos:  x " << _orgVideo->x()
-         << " y " << _orgVideo->y()
-         << " width " << _orgVideo->width()
-         << " height " << _orgVideo->height() << endl;
+//    cout << "video pos:  x " << _orgVideo->x()
+//         << " y " << _orgVideo->y()
+//         << " width " << _orgVideo->width()
+//         << " height " << _orgVideo->height() << endl;
 
     cout << "Encircle Cell Button clicked." << endl;
 
@@ -617,6 +620,7 @@ void SingleView::drawROIButton_clicked()
         int startFrm = controller->getCurrentFrame();
         int totalFrm = controller->getNumberOfFrames();
         nar->setBeginFrm(startFrm);
+        nar->setMaxFrm(totalFrm-startFrm, totalFrm-startFrm);
         cod->setBeginFrm(startFrm);
         cod->setMaxFrm(totalFrm-startFrm, totalFrm-startFrm);
 
@@ -720,28 +724,29 @@ void SingleView::createPropertySelector()
 
 void SingleView::createNarrVis()
 {
-    nar = new Narr(this, false);
-//    nar_container = QWidget::createWindowContainer(nar, this);
-//    nar_container->setMinimumSize(512, 512);
-//    nar_container->setMaximumSize(640, 640);
-//    nar->setMinimumSize(512, 512);
-//    nar->setMaximumSize(640, 640);
-    nar->setFixedSize(600, 600);
+    int sideLen = 600;
+    nar = new Narr(this, false, sideLen);
+    nar->setPropertyType(0);
+    nar->setFixedSize(sideLen, sideLen);
     nar->initialize();
+    nar->setBeginFrm(0);
+    nar->setMaxFrm(5000, 5000);
+    nar->setValue(0);
     connect(propComBox, SIGNAL(currentIndexChanged(int)),
             nar, SLOT(setPropType(int)));
 }
 
 void SingleView::createCoordVis()
 {
-    cod = new Coord(this, false);
-//    cod_container = QWidget::createWindowContainer(cod, this);
-//    cod_container->setMinimumSize(512, 512);
-//    cod_container->setMaximumSize(640, 640);
-    cod->setFixedSize(600, 600);
+    int sideLen = 600;
+    cod = new Coord(this, false, sideLen);
     cod->clear();
-//    cod->setMinimumSize(512, 512);
-//    cod->setMaximumSize(640, 640);
+    cod->setFixedSize(sideLen, sideLen);
+    cod->setBeginFrm(0);
+    cod->setMaxFrm(5000, 5000);
+    cod->setValue(0);
+    cod->setTempType(false);
+    cod->updateRto(0.0, 1.0);
 
 }
 
