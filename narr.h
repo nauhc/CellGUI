@@ -18,7 +18,8 @@ public:
     void setValue(float v);
     void setDataScale(qreal scl);
     void initialize();
-    void updateProperty(floatArray prop, int currFrame, int clustr);
+    void updateProperty_single(floatArray prop, int currFrame, int clustr);
+    void updateProperty_multi(floatArray prop, int currFrame, int clustr);
     void updateCellImg(QImage &cell);
     void updateCellImg(QImage &cell, QVector<QPoint> &smoothContour); // when need the cell image contours
     void updateStage(unsigned int index);

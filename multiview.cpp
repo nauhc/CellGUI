@@ -45,6 +45,7 @@ MultiView::MultiView(QWidget *parent) :
 void MultiView::pushProps(int i)
 {
     showProps.push_back(i); // shape
+//    qDebug() << "property " << i << " pushed.";
     display();
 }
 
@@ -292,7 +293,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){
             //nar_tmp->clear();
-            nar_tmp->updateProperty(cellData[index][n], cellData[index][n][0], clusters[index][n]);
+            nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0], clusters[index][n]);
 //            for(int x = 0; x < cellData[index][n].size(); x++){
 //                std::cout << cellData[index][n][x] << " ";
 //            }

@@ -173,7 +173,7 @@ void Narr::printAreaData(){
     std::cout << std::endl;
 }
 
-void Narr::updateProperty(floatArray prop, int currFrame, int clustr)
+void Narr::updateProperty_single(floatArray prop, int currFrame, int clustr)
 {
     propSeq.push_back(prop);
     curr = currFrame;
@@ -267,6 +267,66 @@ void Narr::updateProperty(floatArray prop, int currFrame, int clustr)
     }
 }
 
+}
+
+void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
+{
+    propSeq.push_back(prop);
+    curr = currFrame;
+    area.push_back(prop[1]); // area
+    perimeter.push_back(prop[2]); // perimeter
+    blebNum.push_back(prop[8]); // bleb number
+    blebAvgSize.push_back(prop[9]); // bleb average size
+
+    unsigned int maxRange = /*maxFrm < 5000 ? 5000 - minFrm :*/ maxFrm - minFrm; //HEREHERE
+    //    qDebug() << maxRange;
+    unsigned int currRange = maxIdx - begin;
+
+    int     num         = area.size();
+    //    float   degree      = 2.*M_PI/(maxIdx-begin)*num - M_PI_2;
+    //    float   div         = 2.*M_PI*propBarInnerRadius/(maxIdx-begin);
+    //    int     num         = area.size() > maxRange ? maxRange : area.size();
+
+    if (num <= maxRange){
+        float   degree      = 2.*M_PI/maxRange*num - M_PI_2;
+        float   div         = 2.*M_PI*propBarInnerRadius/maxRange;
+        int     barWidth    = div > 1 ? int(div) : 1;
+        qreal   barheight;
+        QColor  color;
+
+        if(propType == 0) { // area
+            barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
+            color = gradualColor(ORANGE, 0.3);
+        }
+        else if (propType == 1) { // perimeter
+            barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
+            color = gradualColor(PURPLE, 0.3);
+        }
+        else if (propType == 2) { // bleb
+            barheight  = float(prop[8]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
+            qreal size = prop[9] > BlebSizeMin ? prop[9] - BlebSizeMin : 0;
+            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
+            color = gradualColor(BLUE, 1-g);
+        }
+        //qDebug() << barheight;
+
+        // draw bars
+        for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+            for (int v = 0; v < barWidth; v++){
+                QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                drawPoint(rotP, color);
+            }
+        }
+
+        // draw fragment
+        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
+            for (int v = 0; v < ringArcThickness; v++){
+                QPointF rotP = rotate(QPointF(h,v), degree)+center;
+
+                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
+            }
+        }
+        }
 }
 
 void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){

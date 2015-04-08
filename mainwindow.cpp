@@ -27,31 +27,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->addDockWidget(Qt::RightDockWidgetArea, dock);
     dock->setFixedSize(400, 1280);
     dock->setFloating(true);
+    dock->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+
     dockWidget = new QWidget();
     dockMainVLayout = new QVBoxLayout;
 
-//    qDebug() << "check point 0";
-
     // set to singleview at the beginning
-    loadSingleView();
+//    loadSingleView();
 
     // set to multiview at the beginning
-//    loadMultiView();
+    loadMultiView();
 
-//    qDebug() << "check point 1";
+    // Add menu to menu bar
+    fileMenu = menuBar()->addMenu(tr("&File"));
 
-//    // Add menu to menu bar
-//    fileMenu = menuBar()->addMenu(tr("&File"));
+    // Add MultiView to centralWidget layout
+    loadMultiViewAct = new QAction(tr("&Load Processed Temporal Data"), this);
+    connect(loadMultiViewAct, SIGNAL(triggered()), this, SLOT(loadMultiView()));
+    fileMenu->addAction(loadMultiViewAct);
 
-//    // Add MultiView to centralWidget layout
-//    loadMultiViewAct = new QAction(tr("&Load Processed Temporal Data"), this);
-//    connect(loadMultiViewAct, SIGNAL(triggered()), this, SLOT(loadMultiView()));
-//    fileMenu->addAction(loadMultiViewAct);
-
-//    // Add SigleView to centralWidget layout
-//    loadSigleViewAct = new QAction(tr("&Extract Data From Video File"), this);
-//    connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSingleView()));
-//    fileMenu->addAction(loadSigleViewAct);
+    // Add SigleView to centralWidget layout
+    loadSigleViewAct = new QAction(tr("&Extract Data From Video File"), this);
+    connect(loadSigleViewAct, SIGNAL(triggered()), this, SLOT(loadSingleView()));
+    fileMenu->addAction(loadSigleViewAct);
 
 }
 
@@ -65,27 +63,29 @@ MainWindow::~MainWindow(){
 void MainWindow::loadMultiView()
 {
     this->showMaximized();
+    if(!centralLayout->isEmpty()){
+        delete centralLayout->itemAt(0)->widget();
+    }
+
     multiview = new MultiView(this->centralWidget());
+    centralLayout->addWidget(multiview);
+
     createvisSizeSlider();
     createTimeSlider();
     createProptyCheckbox();
     createParaCheckbox();
     dockWidget->setLayout(dockMainVLayout);
 
-    if(!centralLayout->isEmpty()){
-        delete centralLayout->itemAt(0)->widget();
-    }
-
     dock->setWidget(dockWidget);
     dock->showMaximized();
 
-    centralLayout->addWidget(multiview);
 
     connect(para0, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para1, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para2, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     connect(para3, SIGNAL(stateChanged(int)), this, SLOT(paraCheckBox_checked(int)));
     createFileCheckBoxes();
+
 }
 
 void MainWindow::loadSingleView()
