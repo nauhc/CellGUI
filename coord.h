@@ -18,7 +18,8 @@ public:
     void    setMaxFrm(unsigned int im, unsigned int fm);
     void    setBeginFrm(unsigned int m);
     void    setMaxSize(QSize s);
-    void    setValue(float v);
+//    void    setValue(float v);
+    void    setValue(QVector<float> v);
     void    setPixel(QString text);
     void    setMicMeter(QString text);
     void    setScale(qreal scale);
@@ -55,7 +56,7 @@ private:
     int                 cnt = 0;
     qreal               coordScale;
 
-    float               value; // pressure/force/offset
+    QVector<float>      value; // pressure/force/offset
 
     double              pixel;
     double              micMeter;

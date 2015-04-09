@@ -731,7 +731,11 @@ void SingleView::createNarrVis()
     nar->initialize();
     nar->setBeginFrm(0);
     nar->setMaxFrm(5000, 5000);
-    nar->setValue(0);
+    QVector<float> v;
+    v.push_back(0);
+    v.push_back(0);
+    v.push_back(0);
+    nar->setValue(v);
     connect(propComBox, SIGNAL(currentIndexChanged(int)),
             nar, SLOT(setPropType(int)));
 }
@@ -744,7 +748,11 @@ void SingleView::createCoordVis()
     cod->setFixedSize(sideLen, sideLen);
     cod->setBeginFrm(0);
     cod->setMaxFrm(5000, 5000);
-    cod->setValue(0);
+    QVector<float> v;
+    v.push_back(0);
+    v.push_back(0);
+    v.push_back(0);
+    cod->setValue(v);
     cod->setTempType(false);
     cod->updateRto(0.0, 1.0);
 

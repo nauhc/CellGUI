@@ -12,7 +12,8 @@ public:
 
     void setBeginFrm(int beginFrame);
     void setMaxFrm(int maxIndex, int maxFrame);
-    void setValue(float v);
+//    void setValue(float v);
+    void setValue(QVector<float> v);
     void updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
     void updateRto(float minR, float maxR);
     void setTempType(bool rt);
@@ -40,7 +41,7 @@ private:
 //    QVector<QVector<QPoint> >   contours; // smoothed contours
     QVector<QVector<QPoint> >   blebPoints; // blebs
 
-    float                       value; // pressure/force/offset
+    QVector<float>              value; // pressure/force/offset
 
     unsigned char               *buffer;
     unsigned int                bufferSize;

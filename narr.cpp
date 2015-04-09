@@ -404,7 +404,7 @@ void Narr::setPropertyType(int propTp)
     }
 }
 
-void Narr::setValue(float v)
+void Narr::setValue(QVector<float> v)
 {
     value = v;
 }
@@ -458,7 +458,10 @@ void Narr::render(QPainter *painter)
     painter->drawImage(0, 0, img);
 
     painter->setPen(QColor(128, 0, 0));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
+//    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
+    for (unsigned int k = 0; k < value.size(); k++)
+        painter->drawText(width() - 70, 30+k*15, 60, 20, Qt::AlignLeft, QString::number(value[k], 'f', 2));
+
 
     // draw current frame
     QPen penContour(QColor(153, 204, 49));

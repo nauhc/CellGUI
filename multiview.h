@@ -69,9 +69,9 @@ private:
     QVector<QVector<int> >                  clusters;
     QList<QPair<qreal,int> >                pressure;
     QList<QPair<qreal,int> >                force;
-    QList<QPair<QString, int> >             temprature;
+    QList<QPair<qreal, int> >               temprature;
     QVector<unsigned int>                   index_sort; // sorted index
-    QVector<float>                          value_sort; // sorted value
+    QVector<QVector<float> >                value_sort; // sorted value: pressre/force/temprture
     QVector<unsigned int>                   index_sort_copy; // copy of the index
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
@@ -99,10 +99,10 @@ private:
     void    createLoadFilesButton();
     void    createVisCanvas();
 
-    void    visPropbyIdx(int index, int size, int i, int j, int propTp, float v, bool roomT);
-    void    showCircularProp(int index, int size, int i, int j, int propTp, float value, bool roomT);
-    void    showTrajectory(int index, int size, int i, int j, float value, bool roomT);
-    void    showShape(int index, int size, int i, int j, float value, bool roomT);
+    void    visPropbyIdx(int index, int size, int i, int j, int propTp, QVector<float> v, bool roomT);
+    void    showCircularProp(int index, int size, int i, int j, int propTp, QVector<float> value, bool roomT);
+    void    showTrajectory(int index, int size, int i, int j, QVector<float> value, bool roomT);
+    void    showShape(int index, int size, int i, int j, QVector<float> value, bool roomT);
 
 //    bool    clearAll;
 //    void    paintEvent(QPaintEvent *e);

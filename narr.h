@@ -15,7 +15,8 @@ public:
     void setBeginFrm(int beginFrame);
     void setMaxFrm(unsigned int im, unsigned int fm);
     void setPropertyType(int);
-    void setValue(float v);
+//    void setValue(float v);
+    void setValue(QVector<float> v);
     void setDataScale(qreal scl);
     void initialize();
     void updateProperty_single(floatArray prop, int currFrame, int clustr);
@@ -62,7 +63,7 @@ private:
     float                       angle; // mouse position angle
     unsigned int                mouseIndex;
 
-    float                       value; // pressure/force/offset
+    QVector<float>              value; // pressure/force/offset
 
     unsigned char               *bufferr;
     unsigned int                bufferSize;

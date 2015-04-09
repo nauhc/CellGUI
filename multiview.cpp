@@ -142,41 +142,77 @@ void MultiView::clearData()
 
 void MultiView::sortbyParameter(int i)
 {
-    qDebug() << "para" << i << "is checked";
+//    qDebug() << "para" << i << "is checked";
     if (i == 0){
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, pressure[n].second);
             index_sort_copy.replace(n, pressure[n].second);
-            value_sort.replace(n, pressure[n].first);
+
+            QVector<float> value;
+            value.append(pressure[n].first);
+            for(unsigned int k = 0; k < datafileInfos.size(); k++){
+                if(pressure[n].second == force[k].second)
+                    value.append(force[k].first*1000000);
+                if(pressure[n].second == temprature[k].second)
+                    value.append(temprature[k].first);
+            }
+            value_sort.replace(n, value);
         }
     }
     else if (i == 1){
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, force[n].second);
             index_sort_copy.replace(n, force[n].second);
-            value_sort.replace(n, force[n].first*1000000);
+
+            QVector<float> value;
+            for(unsigned int k = 0; k < datafileInfos.size(); k++){
+                if(force[n].second == pressure[k].second)
+                    value.append(pressure[k].first);
+            }
+            value.append(force[n].first*1000000);
+            for(unsigned int k = 0; k < datafileInfos.size(); k++){
+                if(force[n].second == temprature[k].second)
+                    value.append(temprature[k].first);
+            }
+            value_sort.replace(n, value);
+
+//            value_sort.replace(n, force[n].first);
         }
     }
     else if (i == 2){
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, temprature[n].second);
             index_sort_copy.replace(n, temprature[n].second);
-            float tmp;
-            if(temprature[n].first == "37")
-                tmp = 37;
-            else
-                tmp = 25;
-            value_sort.replace(n, tmp);
+            float tmp = temprature[n].first;
+
+            QVector<float> value;
+            for(unsigned int k = 0; k < datafileInfos.size(); k++){
+                if(temprature[n].second == pressure[k].second)
+                    value.append(pressure[k].first);
+                if(temprature[n].second == force[k].second)
+                    value.append(force[k].first*1000000);
+            }
+            value.append(temprature[n].first);
+            value_sort.replace(n, value);
+
+//            value_sort.replace(n, tmp);
         }
     }
     else{
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, n);
             index_sort_copy.replace(n, n);
-            value_sort.replace(n, 0);
+            QVector<float> value;
+            value.append(0);
+            value.append(0);
+            value.append(0);
+            value_sort.replace(n, value);
         }
     }
-    //qDebug() << index_sort;
+
+//    qDebug() << index_sort;
+//    qDebug() << index_sort_copy;
+//    qDebug() << value_sort << "\n";
     display();
 
 }
@@ -223,7 +259,11 @@ bool MultiView::loadFiles()
         QString datafilename = datafileInfos[n].absoluteFilePath();
         index_sort.push_back(n);
         index_sort_copy.push_back(n);
-        value_sort.push_back(0);
+        QVector<float> v;
+        v.append(0);
+        v.append(0);
+        v.append(0);
+        value_sort.push_back(v);
 
         if(!datafilename.isEmpty()){
             if(readDataFile(datafilename)){
@@ -248,13 +288,13 @@ bool MultiView::loadFiles()
 
     // sort on pressure with index together
     qSort(pressure.begin(), pressure.end(), QPairFirstComparer());
-    //qDebug() << pressure;
+//    qDebug() << pressure << "\n";
 
     qSort(force.begin(), force.end(), QPairFirstComparer());
-    //qDebug() << force;
+//    qDebug() << force << "\n";
 
     qSort(temprature.begin(), temprature.end(), QPairFirstComparer());
-    //qDebug() << force;
+//    qDebug() << temprature << "\n";
 
     return true;
 }
@@ -263,7 +303,7 @@ void MultiView::createVisCanvas()
 {
 }
 
-void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, float value, bool roomT)
+void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, QVector<float> value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -309,7 +349,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
     }
 }
 
-void MultiView::showTrajectory(int index, int size, int i, int j, float value, bool roomT)
+void MultiView::showTrajectory(int index, int size, int i, int j, QVector<float> value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -353,7 +393,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j, float value, b
     }
 }
 
-void MultiView::showShape(int index, int size, int i, int j, float value, bool roomT)
+void MultiView::showShape(int index, int size, int i, int j, QVector<float> value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -396,7 +436,7 @@ void MultiView::showShape(int index, int size, int i, int j, float value, bool r
     }
 }
 
-void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, float v, bool roomT)
+void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, QVector<float> v, bool roomT)
 {
     switch (PropIdx){
     case 0:
@@ -448,11 +488,19 @@ void MultiView::display()
                     continue;
                 //qDebug() << idx << i << j;
                 bool rt;
-                if(temprature[index_sort[idx]].first == "RT"){
-                    rt = true;
-                }else{ // "37"
-                    rt = false;
-                }
+//                std::vector<float> value;
+//                for(int n = 0; n < fileNum; n++){
+//                    if (temprature[n].second == index_sort_copy[idx]){
+//                        rt = (temprature[n].first == 25);
+//                        value.push_back(temprature[n].first);
+//                    }
+//                    if (pressure[n].second == index_sort_copy[idx]){
+//                        value.push_back(pressure[n].first);
+//                    }
+//                    if (force[n].second == index_sort_copy[idx]){
+//                        value.push_back(force[n].first*1000000);
+//                    }
+//                }
                 visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
             }
         }
@@ -475,15 +523,22 @@ void MultiView::display()
                 if(index_sort[n] == 65534)
                     continue;
                 bool rt;
-                if(temprature[index_sort[n]].first == "RT"){
-                    rt = true;
-                }else{ // "37"
-                    rt = false;
-                }
+//                std::vector<float> value;
+//                for(int n = 0; n < fileNum; n++){
+//                    if (temprature[n].second == index_sort_copy[n]){
+//                        rt = (temprature[n].first == 25);
+//                        value.push_back(pressure[n].first);
+//                        value.push_back(force[n].first);
+//                        value.push_back(temprature[n].first);
+////                        std::cout << rt << " ";
+//                        break;
+//                    }
+//                }
                 visPropbyIdx(index_sort_copy[n], visSideLen, n, p, showProps[p], value_sort[n], rt);
             }
         }
     }
+    std::cout << std::endl;
 
 }
 
@@ -668,7 +723,8 @@ bool MultiView::readExpParaFile(QString &filename, int n)
         QString line3 = in.readLine();
         qreal pres = line1.remove("     pressure(pa)").toFloat();
         qreal forc = line2.remove("     Force(N)").toFloat();
-        QString temp = line3.remove("     Temperature ");
+        QString tmp = line3.remove("     Temperature ");
+        qreal temp = (tmp == "37") ? 37 : 25;
 
         pressure.append(qMakePair(pres, n));
         force.append(qMakePair(forc, n));

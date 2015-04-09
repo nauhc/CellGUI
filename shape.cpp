@@ -51,7 +51,7 @@ void Shape::setMaxFrm(int maxIdx, int maxFrm)
     //std::cout << "SHAPE VIS MAX frame number " << max << std::endl;
 }
 
-void Shape::setValue(float v)
+void Shape::setValue(QVector<float> v)
 {
     value = v;
     //drawColorBar();
@@ -288,11 +288,12 @@ void Shape::render(QPainter *painter)
 
     //painter->setRenderHint(QPainter::Antialiasing);
     // draw Value
-    if(roomT)
-        painter->setPen(QColor(128, 0, 0));
-    else
+    if(roomT) // 25 - blue
         painter->setPen(QColor(0, 0, 128));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
+    else // 37 - red
+        painter->setPen(QColor(128, 0, 0));
+    for (unsigned int k = 0; k < value.size(); k++)
+        painter->drawText(width() - 70, 30+k*15, 60, 20, Qt::AlignLeft, QString::number(value[k], 'f', 2));
 
     drawColorBarText(painter);
 

@@ -334,7 +334,7 @@ void Coord::setMaxSize(QSize s) // video size
     win_off = QPointF(X_MIN, Y_MIN);
 }
 
-void Coord::setValue(float v)
+void Coord::setValue(QVector<float> v)
 {
     value = v;
     drawRuler();
@@ -443,11 +443,13 @@ void Coord::render(QPainter *painter)
 //    painter->setRenderHint(QPainter::Antialiasing);
 
     // draw Value
-    if(roomT)
-        painter->setPen(QColor(128, 0, 0));
-    else
+    if(roomT) // 25 - blue
         painter->setPen(QColor(0, 0, 128));
-    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
+    else // 37 - red
+        painter->setPen(QColor(128, 0, 0));
+
+    for (unsigned int k = 0; k < value.size(); k++)
+        painter->drawText(width() - 70, 30+k*15, 60, 20, Qt::AlignLeft, QString::number(value[k], 'f', 2));
 
     qreal halfW = this->width()/2;
     qreal halfH = this->height()/2;
