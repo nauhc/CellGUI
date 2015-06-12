@@ -288,13 +288,44 @@ bool MultiView::loadFiles()
 
     // sort on pressure with index together
     qSort(pressure.begin(), pressure.end(), QPairFirstComparer());
-//    qDebug() << pressure << "\n";
+    qDebug() << "pressure" << "\n";
+    qDebug() << pressure << "\n";
 
+    // sort on force with index together
     qSort(force.begin(), force.end(), QPairFirstComparer());
 //    qDebug() << force << "\n";
 
-    qSort(temprature.begin(), temprature.end(), QPairFirstComparer());
+
+    // sort on temperature with index together ( classify and sort within each class base on pressure )
+//    qDebug() << "experimental parameters";
+//    for (int n = 0; n < expParas.size(); n++){
+//        std::cout /*<< expParas[n].idx << " " */<< expParas[n].tempra << " "  << expParas[n].pressu << " "  << expParas[n].foorce << "\n";
+//    }
+
+    qDebug() << "temprature" << "\n";
 //    qDebug() << temprature << "\n";
+
+    QList<QPair<qreal, int> >   tempr1;
+    QList<QPair<qreal, int> >   tempr2;
+    for(int n = 0; n < pressure.size(); n++){
+        QHash<int, expPara>::const_iterator i = expParas.find(pressure[n].second);
+        if(i.value().tempra == 25)
+            tempr1.append(qMakePair(i.value().tempra, pressure[n].second));
+        else
+            tempr2.append(qMakePair(i.value().tempra, pressure[n].second));
+    }
+
+
+//    qSort(tempr1.begin(), tempr1.end(), QPairFirstComparer());
+//    qSort(tempr2.begin(), tempr2.end(), QPairFirstComparer());
+
+    temprature.append(tempr1);
+    temprature.append(tempr2);
+
+
+    qDebug() << tempr1 << "\n";
+    qDebug() << tempr2 << "\n";
+    qDebug() << temprature << "\n";
 
     return true;
 }
@@ -475,6 +506,9 @@ void MultiView::display()
 //    visSideLen = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
     int num1Row = (parentWidget()->width()-space*8-20)/ visSideLen;
     //qDebug() << parentWidget()->width()-space*8 << visSideLen;
+
+    qDebug() << showProps;
+    qDebug() << index_sort;
 
     int fileNum = datafileInfos.size();
     if(showProps.size() == 1){ // show all the movies in one property
@@ -726,13 +760,21 @@ bool MultiView::readExpParaFile(QString &filename, int n)
         QString tmp = line3.remove("     Temperature ");
         qreal temp = (tmp == "37") ? 37 : 25;
 
+
+        expPara p;
+//        p.idx = n;
+        p.foorce = forc;
+        p.pressu = pres;
+        p.tempra = temp;
+        expParas.insert(n, p);
+//        expParas.append(p);
+
         pressure.append(qMakePair(pres, n));
         force.append(qMakePair(forc, n));
-        temprature.append(qMakePair(temp, n));
+        //temprature.append(qMakePair(temp, n));
 
         return true;
     }
-
 }
 
 bool MultiView::readClusterFile(QString &filename) // read clustering datafile

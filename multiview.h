@@ -19,6 +19,13 @@
 #include "shape.h"
 #include "bleb.h"
 
+struct expPara{  // experimental parameters
+//    int     idx;
+    qreal   pressu;
+    qreal   foorce;
+    qreal   tempra;
+};
+
 class canvasWidget : public QWidget{
     Q_OBJECT
 public:
@@ -67,9 +74,12 @@ private:
     QVector<QVector<QVector<QPoint> > >     contours;
     QVector<QVector<QPoint> >               centers;
     QVector<QVector<int> >                  clusters;
+
+    QHash<int, expPara>                     expParas; // all experimental parameters
     QList<QPair<qreal,int> >                pressure;
     QList<QPair<qreal,int> >                force;
     QList<QPair<qreal, int> >               temprature;
+
     QVector<unsigned int>                   index_sort; // sorted index
     QVector<QVector<float> >                value_sort; // sorted value: pressre/force/temprture
     QVector<unsigned int>                   index_sort_copy; // copy of the index
