@@ -211,7 +211,7 @@ void MultiView::sortbyParameter(int i)
     }
 
 //    qDebug() << index_sort;
-//    qDebug() << index_sort_copy;
+    qDebug() << index_sort_copy;
 //    qDebug() << value_sort << "\n";
     display();
 
@@ -288,23 +288,14 @@ bool MultiView::loadFiles()
 
     // sort on pressure with index together
     qSort(pressure.begin(), pressure.end(), QPairFirstComparer());
-    qDebug() << "pressure" << "\n";
-    qDebug() << pressure << "\n";
+    //qDebug() << pressure << "\n";
 
     // sort on force with index together
     qSort(force.begin(), force.end(), QPairFirstComparer());
-//    qDebug() << force << "\n";
+    //qDebug() << force << "\n";
 
 
     // sort on temperature with index together ( classify and sort within each class base on pressure )
-//    qDebug() << "experimental parameters";
-//    for (int n = 0; n < expParas.size(); n++){
-//        std::cout /*<< expParas[n].idx << " " */<< expParas[n].tempra << " "  << expParas[n].pressu << " "  << expParas[n].foorce << "\n";
-//    }
-
-    qDebug() << "temprature" << "\n";
-//    qDebug() << temprature << "\n";
-
     QList<QPair<qreal, int> >   tempr1;
     QList<QPair<qreal, int> >   tempr2;
     for(int n = 0; n < pressure.size(); n++){
@@ -314,18 +305,8 @@ bool MultiView::loadFiles()
         else
             tempr2.append(qMakePair(i.value().tempra, pressure[n].second));
     }
-
-
-//    qSort(tempr1.begin(), tempr1.end(), QPairFirstComparer());
-//    qSort(tempr2.begin(), tempr2.end(), QPairFirstComparer());
-
     temprature.append(tempr1);
     temprature.append(tempr2);
-
-
-    qDebug() << tempr1 << "\n";
-    qDebug() << tempr2 << "\n";
-    qDebug() << temprature << "\n";
 
     return true;
 }
@@ -356,6 +337,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
         nar_tmp->initialize();
         nar_tmp->setBeginFrm(idxMin);
         nar_tmp->setMaxFrm(idxMax, maxFrm);
+
         nar_tmp->setValue(value);
 
         int showSizeMin = minFrm > 0 ? minFrm : 0;
@@ -401,7 +383,9 @@ void MultiView::showTrajectory(int index, int size, int i, int j, QVector<float>
         cod_tmp->setFixedSize(size, size);
         cod_tmp->setBeginFrm(idxMin);
         cod_tmp->setMaxFrm(idxMax, frmMax);
+
         cod_tmp->setValue(value);
+
         cod_tmp->setTempType(roomT);
         //cod_tmp->setMaxSize(QSize(800, 600));
         int showSizeMin = minFrm > 0 ? minFrm : 0;
@@ -445,6 +429,7 @@ void MultiView::showShape(int index, int size, int i, int j, QVector<float> valu
         shp_tmp->setFixedSize(size, size);
         shp_tmp->setBeginFrm(idxMin);
         shp_tmp->setMaxFrm(idxMax, frmMax);
+
         shp_tmp->setValue(value);
 
         visGLayout->addWidget(shp_tmp, 2*j+1, i);
@@ -535,7 +520,13 @@ void MultiView::display()
 //                        value.push_back(force[n].first*1000000);
 //                    }
 //                }
-                visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
+                //visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
+                QHash<int, expPara>::const_iterator it = expParas.find(index_sort_copy[idx]);
+                QVector<float> abc;
+                abc.push_back(it.value().pressu);
+                abc.push_back(it.value().foorce*1000000);
+                abc.push_back(it.value().tempra);
+                visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0],  abc    , rt);
             }
         }
     }
