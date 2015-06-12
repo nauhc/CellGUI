@@ -147,34 +147,12 @@ void MultiView::sortbyParameter(int i)
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, pressure[n].second);
             index_sort_copy.replace(n, pressure[n].second);
-
-            QVector<float> value;
-            value.append(pressure[n].first);
-            for(unsigned int k = 0; k < datafileInfos.size(); k++){
-                if(pressure[n].second == force[k].second)
-                    value.append(force[k].first*1000000);
-                if(pressure[n].second == temprature[k].second)
-                    value.append(temprature[k].first);
-            }
-//            value_sort.replace(n, value);
         }
     }
     else if (i == 1){
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, force[n].second);
             index_sort_copy.replace(n, force[n].second);
-
-            QVector<float> value;
-            for(unsigned int k = 0; k < datafileInfos.size(); k++){
-                if(force[n].second == pressure[k].second)
-                    value.append(pressure[k].first);
-            }
-            value.append(force[n].first*1000000);
-            for(unsigned int k = 0; k < datafileInfos.size(); k++){
-                if(force[n].second == temprature[k].second)
-                    value.append(temprature[k].first);
-            }
-//            value_sort.replace(n, value);
         }
     }
     else if (i == 2){
@@ -182,36 +160,19 @@ void MultiView::sortbyParameter(int i)
             index_sort.replace(n, temprature[n].second);
             index_sort_copy.replace(n, temprature[n].second);
             float tmp = temprature[n].first;
-
-            QVector<float> value;
-            for(unsigned int k = 0; k < datafileInfos.size(); k++){
-                if(temprature[n].second == pressure[k].second)
-                    value.append(pressure[k].first);
-                if(temprature[n].second == force[k].second)
-                    value.append(force[k].first*1000000);
-            }
-            value.append(temprature[n].first);
-//            value_sort.replace(n, value);
-
         }
     }
     else{
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, n);
             index_sort_copy.replace(n, n);
-            QVector<float> value;
-            value.append(0);
-            value.append(0);
-            value.append(0);
-//            value_sort.replace(n, value);
         }
     }
-
 //    qDebug() << index_sort;
 //    qDebug() << index_sort_copy;
 //    qDebug() << value_sort << "\n";
-    display();
 
+    display();
 }
 
 void MultiView::loadFilesButton_clicked() // first round
@@ -504,26 +465,13 @@ void MultiView::display()
                     continue;
                 //qDebug() << idx << i << j;
                 bool rt;
-//                std::vector<float> value;
-//                for(int n = 0; n < fileNum; n++){
-//                    if (temprature[n].second == index_sort_copy[idx]){
-//                        rt = (temprature[n].first == 25);
-//                        value.push_back(temprature[n].first);
-//                    }
-//                    if (pressure[n].second == index_sort_copy[idx]){
-//                        value.push_back(pressure[n].first);
-//                    }
-//                    if (force[n].second == index_sort_copy[idx]){
-//                        value.push_back(force[n].first*1000000);
-//                    }
-//                }
                 //visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0], value_sort[idx], rt);
                 QHash<int, expPara>::const_iterator it = expParas.find(index_sort_copy[idx]);
                 QVector<float> abc;
                 abc.push_back(it.value().pressu);
                 abc.push_back(it.value().foorce*1000000);
                 abc.push_back(it.value().tempra);
-                visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0],  abc    , rt);
+                visPropbyIdx(index_sort_copy[idx], visSideLen, i, j, showProps[0], abc, rt);
             }
         }
     }

@@ -81,7 +81,7 @@ private:
     QList<QPair<qreal, int> >               temprature;
 
     QVector<unsigned int>                   index_sort; // sorted index
-    QVector<QVector<float> >                value_sort; // sorted value: pressre/force/temprture
+//    QVector<QVector<float> >                value_sort; // sorted value: pressre/force/temprture
     QVector<unsigned int>                   index_sort_copy; // copy of the index
     unsigned int                            minFrm; // selecting frame range to show (min)
     unsigned int                            maxFrm; // selecting frame range to show (max)
