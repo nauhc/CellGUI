@@ -156,7 +156,7 @@ void MultiView::sortbyParameter(int i)
                 if(pressure[n].second == temprature[k].second)
                     value.append(temprature[k].first);
             }
-            value_sort.replace(n, value);
+//            value_sort.replace(n, value);
         }
     }
     else if (i == 1){
@@ -174,9 +174,7 @@ void MultiView::sortbyParameter(int i)
                 if(force[n].second == temprature[k].second)
                     value.append(temprature[k].first);
             }
-            value_sort.replace(n, value);
-
-//            value_sort.replace(n, force[n].first);
+//            value_sort.replace(n, value);
         }
     }
     else if (i == 2){
@@ -193,9 +191,8 @@ void MultiView::sortbyParameter(int i)
                     value.append(force[k].first*1000000);
             }
             value.append(temprature[n].first);
-            value_sort.replace(n, value);
+//            value_sort.replace(n, value);
 
-//            value_sort.replace(n, tmp);
         }
     }
     else{
@@ -206,12 +203,12 @@ void MultiView::sortbyParameter(int i)
             value.append(0);
             value.append(0);
             value.append(0);
-            value_sort.replace(n, value);
+//            value_sort.replace(n, value);
         }
     }
 
 //    qDebug() << index_sort;
-    qDebug() << index_sort_copy;
+//    qDebug() << index_sort_copy;
 //    qDebug() << value_sort << "\n";
     display();
 
@@ -259,11 +256,11 @@ bool MultiView::loadFiles()
         QString datafilename = datafileInfos[n].absoluteFilePath();
         index_sort.push_back(n);
         index_sort_copy.push_back(n);
-        QVector<float> v;
-        v.append(0);
-        v.append(0);
-        v.append(0);
-        value_sort.push_back(v);
+//        QVector<float> v;
+//        v.append(0);
+//        v.append(0);
+//        v.append(0);
+//        value_sort.push_back(v);
 
         if(!datafilename.isEmpty()){
             if(readDataFile(datafilename)){
@@ -559,7 +556,12 @@ void MultiView::display()
 //                        break;
 //                    }
 //                }
-                visPropbyIdx(index_sort_copy[n], visSideLen, n, p, showProps[p], value_sort[n], rt);
+                QHash<int, expPara>::const_iterator it = expParas.find(index_sort_copy[n]);
+                QVector<float> abc;
+                abc.push_back(it.value().pressu);
+                abc.push_back(it.value().foorce*1000000);
+                abc.push_back(it.value().tempra);
+                visPropbyIdx(index_sort_copy[n], visSideLen, n, p, showProps[p], /*value_sort[n]*/abc, rt);
             }
         }
     }
