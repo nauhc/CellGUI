@@ -27,7 +27,8 @@ float BlebSizeMax = 10.0/*1.5*//*12*//*7*/;
 float BlebSizeMin = 0.2/*2*/;
 
 const qreal area_minV = 100;
-const qreal area_maxV = 600;
+//const qreal area_maxV = 600;
+const qreal area_maxV = 400;
 
 const qreal peri_minV = 10;
 const qreal peri_maxV = 80;

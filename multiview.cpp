@@ -198,7 +198,9 @@ void MultiView::loadFilesButton_clicked() // first round
 bool MultiView::loadFiles()
 {
 //    QString folderPath = "../../../video/ExtractedData/";
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
+//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_July04";
+
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/BV2_16x_data/Arpad_BV2_37C_16x_hasPara_ajst_pureVisData";
 
@@ -273,7 +275,7 @@ void MultiView::createVisCanvas()
 {
 }
 
-void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, QVector<float> value, bool roomT)
+void MultiView::showCircularProp(int index, QString filename, int size, int i, int j, int propTp, QVector<float> value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -282,8 +284,11 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
 
         idxMax = idxMin + maxFrm;
 
-        QString file = datafileInfos[index].fileName();
-        QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
+//        QString file = datafileInfos[index].fileName();
+//        QString name = file.remove(file.length()-4, 4);
+//        name = name.remove("_compressed");
+//        name = name.remove("_control");
+        QLabel *nameLabel = new QLabel(filename);
         nameLabel->setFixedSize(size, 15);
         nameLabel->setAlignment(Qt::AlignCenter);
 
@@ -320,7 +325,7 @@ void MultiView::showCircularProp(int index, int size, int i, int j, int propTp, 
     }
 }
 
-void MultiView::showTrajectory(int index, int size, int i, int j, QVector<float> value, bool roomT)
+void MultiView::showTrajectory(int index, QString filename, int size, int i, int j, QVector<float> value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -329,8 +334,9 @@ void MultiView::showTrajectory(int index, int size, int i, int j, QVector<float>
 
         int frmMax = idxMin + maxFrm;
 
-        QString file = datafileInfos[index].fileName();
-        QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
+//        QString file = datafileInfos[index].fileName();
+//        QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
+        QLabel *nameLabel = new QLabel(filename);
         nameLabel->setFixedSize(size, 15);
         nameLabel->setAlignment(Qt::AlignCenter);
 
@@ -366,7 +372,7 @@ void MultiView::showTrajectory(int index, int size, int i, int j, QVector<float>
     }
 }
 
-void MultiView::showShape(int index, int size, int i, int j, QVector<float> value, bool roomT)
+void MultiView::showShape(int index, QString filename, int size, int i, int j, QVector<float> value, bool roomT)
 {
     unsigned int cellDataSize = cellData[index].size();
     if(cellDataSize > 20){
@@ -375,8 +381,9 @@ void MultiView::showShape(int index, int size, int i, int j, QVector<float> valu
 
         int frmMax = idxMin + maxFrm;
 
-        QString file = datafileInfos[index].fileName();
-        QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
+//        QString file = datafileInfos[index].fileName();
+//        QLabel *nameLabel = new QLabel(file.remove(file.length()-4, 4));
+        QLabel *nameLabel = new QLabel(filename);
         nameLabel->setFixedSize(size, 15);
         nameLabel->setAlignment(Qt::AlignCenter);
 
@@ -412,30 +419,35 @@ void MultiView::showShape(int index, int size, int i, int j, QVector<float> valu
 
 void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, QVector<float> v, bool roomT)
 {
+    QString file = datafileInfos[fileIdx].fileName();
+    QString name = file.remove(file.length()-4, 4);
+    name = name.remove("_compressed");
+    name = name.remove("_control");
+
     switch (PropIdx){
     case 0:
         //std::cout << "Showing Property 'Area'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx, v, roomT);
+        showCircularProp(fileIdx, name, size, i, j, PropIdx, v, roomT);
         break;
     case 1:
         //std::cout << "Showing Property 'Perimeter'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx, v, roomT);
+        showCircularProp(fileIdx, name, size, i, j, PropIdx, v, roomT);
         break;
     case 2:
         //std::cout << "Showing Property 'Bleb size and number'. \n" << std::endl;
-        showCircularProp(fileIdx, size, i, j, PropIdx, v, roomT);
+        showCircularProp(fileIdx, name, size, i, j, PropIdx, v, roomT);
         break;
     case 3:
         //std::cout << "Showing Property 'Centroid Trajectory'. \n" << std::endl;
-        showTrajectory(fileIdx, size, i, j, v, roomT);
+        showTrajectory(fileIdx, name, size, i, j, v, roomT);
         break;
     case 4:
         //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-        showShape(fileIdx, size, i, j, v, roomT);
+        showShape(fileIdx, name, size, i, j, v, roomT);
         break;
     default:
         //std::cout << "Showing Property 'Shape'. \n" << std::endl;
-        showShape(fileIdx, size, i, j, v, roomT);
+        showShape(fileIdx, name, size, i, j, v, roomT);
         break;
     }
 }

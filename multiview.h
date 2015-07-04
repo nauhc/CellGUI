@@ -110,9 +110,9 @@ private:
     void    createVisCanvas();
 
     void    visPropbyIdx(int index, int size, int i, int j, int propTp, QVector<float> v, bool roomT);
-    void    showCircularProp(int index, int size, int i, int j, int propTp, QVector<float> value, bool roomT);
-    void    showTrajectory(int index, int size, int i, int j, QVector<float> value, bool roomT);
-    void    showShape(int index, int size, int i, int j, QVector<float> value, bool roomT);
+    void    showCircularProp(int index, QString filename, int size, int i, int j, int propTp, QVector<float> value, bool roomT);
+    void    showTrajectory(int index, QString filename, int size, int i, int j, QVector<float> value, bool roomT);
+    void    showShape(int index, QString filename, int size, int i, int j, QVector<float> value, bool roomT);
 
 //    bool    clearAll;
 //    void    paintEvent(QPaintEvent *e);
