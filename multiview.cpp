@@ -419,6 +419,11 @@ void MultiView::showShape(int index, QString filename, int size, int i, int j, Q
     }
 }
 
+void MultiView::showBinVec(int index, QString filename, int size, int i, int j, QVector<float> value, bool roomT)
+{
+
+}
+
 void MultiView::visPropbyIdx(int fileIdx, int size, int i, int j, int PropIdx, QVector<float> v, bool roomT)
 {
     QString file = datafileInfos[fileIdx].fileName();
