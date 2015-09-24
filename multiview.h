@@ -17,6 +17,7 @@
 #include "narr.h"
 #include "coord.h"
 #include "shape.h"
+#include "binvec.h"
 #include "bleb.h"
 
 struct expPara{  // experimental parameters

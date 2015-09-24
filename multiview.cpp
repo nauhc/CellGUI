@@ -198,8 +198,10 @@ void MultiView::loadFilesButton_clicked() // first round
 bool MultiView::loadFiles()
 {
 //    QString folderPath = "../../../video/ExtractedData/";
-//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_July04";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
+//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_July04";
+//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Glut_RT_Dead";
+//    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_xRhod5F";
 
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/BV2_16x_data/Arpad_BV2_37C_16x_hasPara_ajst_pureVisData";

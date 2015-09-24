@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     shape.cpp \
     colormap.cpp \
     viswindow.cpp \
-    cubicYFColormap.cpp
+    cubicYFColormap.cpp \
+    binvec.cpp
 
 HEADERS  += mainwindow.h \
     controller.h \
@@ -59,7 +60,8 @@ HEADERS  += mainwindow.h \
     shape.h \
     colormap.h \
     viswindow.h \
-    cubicYFColormap.h
+    cubicYFColormap.h \
+    binvec.h
 
 FORMS    += mainwindow.ui
 

@@ -69,7 +69,7 @@ private:
     //--- Original Video ---
     QVBoxLayout *orgVideoVLayout;
     QLabel *_orgVideo;
-    QLabel *_orgVideoBgd;
+//    QLabel *_orgVideoBgd;
 
     //--- ROI Video ---
     QVBoxLayout *roiVideoVLayout;
