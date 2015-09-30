@@ -1,77 +1,82 @@
 <!DOCTYPE html>
 <html>
-    <head lang="en">
-        <meta charset="UTF-8">
-        <title>Cell Video Processing Project Log</title>
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet"  href="mediaElement/mediaelementplayer.min.css">
-        <style>
-        .fade-in,.fade-out {
-            visibility: visible !important;
-            opacity: 1 !important;
-            transition-duration: 0s!important;
-        }
-        </style>
-    </head>
-    <body style="margin: 30px; text-align: justify; text-justify:newspaper">
-        <div class="container" style="max-width:720px">
-            
-            <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
-            <script type="text/javascript" src="js/bootstrap.min.js"></script>
-            <h1>Dancing Cell Visualization Project Log</h1>
-            Chuan Wang @ ViDi
-            <h2> ----- Sep 29<sup>th</sup> 2015 ----- </h2>
-            <h3> Visualization </h3>
-            Updated Visualizer for all videos from BV2 cell study. File checklist added to the control menu. <br><br>
-            <div class='row'>
-                <div class='col-md-12'>
-                    <video id="video1" width="360" height="240" controls autoplay>
-                        <source src="20150720_BV2_60um_Round_1_16x.mp4" type="video/mp4" />
-                    </video>
-                    <video id="video2" width="320" height="240" autoplay>
-                        <source src="20150720_BV2_60um_Round_1_x16_org.mp4" type="video/mp4" />
-                    </video>
-                </div>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Cell Video Processing Project Log</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet"  href="mediaElement/mediaelementplayer.min.css">
+
+</head>
+<body style="margin: 30px; text-align: justify; text-justify:newspaper; font-size:18px">
+    <div class="container" style="max-width:800px">
+
+        <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <h1>Dancing Cell Visualization Project Log</h1>
+        Chuan Wang @ ViDi
+        <h2> Cell/Bleb Detection Update </h2>
+        <h3> Result On Video </h3>
+        BV2 60um round cell detection result.
+        <font size="3"><br>(Two videos are synchronized. Please use the control on the top video to browse both.)<br><br></font>
+                 
+        <div class='row'>
+            <div align="center" class='col-md-12'>
+                <!-- <video id="video1" width="720" height="480" controls autoplay> -->
+                <b> Detection Result Video </b> <br> <font color="red">Red line</font>: detected dell contour; <font color="blue">Blue dots</font>: position of detected blebs <br>
+                <!-- <font color="red">This is some text!</font> -->
+                <video id="video1" width="720" height="480" controls >
+                    <source src="20150720_BV2_60um_Round_1_16x.mp4" type="video/mp4" />
+                </video>
+                
+                <b> Original Video</b>  <br>
+                    <!-- <video id="video2" width="720" height="480" autoplay> -->
+                <video id="video2" width="720" height="480" >
+                    <source src="20150720_BV2_60um_Round_1_x16_org.mp4" type="video/mp4" />
+                </video>
+            </div>
                 <!-- <div>
                     Frame: <input id="slider1" type="range" name="frame" min="0" max="10" onchange="changeFrame(this.value)">
                 </div> -->
-                
-            </div>
-            <br>
+        <br>                
         </div>
+        <h3> Detection vs. Annotation On Frames</h3>        
+        
+        <div class="row">
+            <div class="col-md-12 thumbnail" >
+                <img src = "comparison1.png" alt = "comparison1">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 thumbnail" >
+                <img src = "comparison2.png" alt = "comparison2">
+            </div>
+        </div>
+    </div>
+        
         <script src="mediaElement/mediaelement-and-player.min.js"></script>
         <script type="text/javascript">
 
-        var video1 = document.getElementById("video1");
-        var video2 = document.getElementById("video2");
+            var video1 = document.getElementById("video1");
+            var video2 = document.getElementById("video2");
         // video1.addEventListener('loadedmetadata', function() {
         //     var slider = document.getElementById('slider1');
         //     slider.max = ~~(video1.duration*25);
         //     console.log(slider)
         // });
-        
+
         video1.addEventListener('timeupdate', function(){
-            // if(video2.currentTime - video1.currentTime < 1)
-            video2.currentTime = video1.currentTime;
-        });
+                    // if(video2.currentTime - video1.currentTime < 1)
+                    video2.currentTime = video1.currentTime;
+                });
         video1.addEventListener('pause', function(){
             video2.pause();    
         });
         video1.addEventListener('play', function(){
             video2.play();    
         });
-        // video2.addEventListener('timeupdate', function(){
-        //     video1.currentTime = video2.currentTime;
-        // });
 
-        // var currentFrame = $('#video1');
-        // console.log(currentFrame);
-        // function changeFrame(f) {
-        //     video1.currentTime = f/25;
-        //     video2.currentTime = f/25;
-        // }
         
         
-        </script>
-    </body>
+    </script>
+</body>
 </html>
