@@ -8,7 +8,7 @@
 
 </head>
 <body style="margin: 30px; text-align: justify; text-justify:newspaper; font-size:18px">
-    <div class="container" style="max-width:800px">
+    <div class="container" style="max-width:720px">
 
         <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
@@ -24,13 +24,13 @@
                 <!-- <video id="video1" width="720" height="480" controls autoplay> -->
                 <b> Detection Result Video </b> <br> <font color="red">Red line</font>: detected cell contour;  <font color="blue">Blue squares</font>: positions of detected blebs <br>
                 <!-- <font color="red">This is some text!</font> -->
-                <video id="video1" width="720" height="480" controls >
+                <video id="video1" width="720"  controls >
                     <source src="20150720_BV2_60um_Round_1_16x.mp4" type="video/mp4" />
                 </video>
                 
                 <b> Original Video</b>  <br>
                     <!-- <video id="video2" width="720" height="480" autoplay> -->
-                <video id="video2" width="720" height="480" >
+                <video id="video2" width="720" >
                     <source src="20150720_BV2_60um_Round_1_x16_org.mp4" type="video/mp4" />
                 </video>
             </div>
@@ -39,23 +39,19 @@
                 </div> -->
         <br>                
         </div>
+        <br>                
         <h3> Detection vs. Annotation On Frames</h3>        
         Bleb numbers shown in yellow on the top left corners. <br><br>
-        <div class="row">
+
             <div class="col-md-12 thumbnail" >
                 <img src = "comp1.png" alt = "comparison1">
             </div>
-        </div>
-        <div class="row">
             <div class="col-md-12 thumbnail" >
                 <img src = "comp2.png" alt = "comparison2">
             </div>
-        </div>
-        <div class="row">
             <div class="col-md-12 thumbnail" >
                 <img src = "comp3.png" alt = "comparison3">
             </div>
-        </div>
     </div>
         
         <script src="mediaElement/mediaelement-and-player.min.js"></script>
