@@ -71,7 +71,8 @@ private:
     //QWidget                                 *visContainer; // large conainer storing all the vis info
     canvasWidget                            *canvas;
     std::vector<std::vector<floatArray> >   cellData;
-    QVector<QVector<QVector<Bleb> > >       blebs;
+    //QVector<QVector<QVector<Bleb> > >       blebs;
+    vector<vector<vector<Bleb> > >          blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
     QVector<QVector<QPoint> >               centers;
     QVector<QVector<int> >                  clusters;
@@ -79,7 +80,7 @@ private:
     QHash<int, expPara>                     expParas; // all experimental parameters
     QList<QPair<qreal,int> >                pressure;
     QList<QPair<qreal,int> >                force;
-    QList<QPair<qreal, int> >               temprature;
+    QList<QPair<qreal,int> >                temprature;
 
     QVector<unsigned int>                   index_sort; // sorted index
 //    QVector<QVector<float> >                value_sort; // sorted value: pressre/force/temprture
@@ -99,12 +100,12 @@ private:
 
     bool    loadFiles();
     void    display();
-    bool    readDataFile(QString &filename);
+    bool    readDataFile(QString &filename, float &maxA, float &maxP, float &maxBN, float &maxBS);
     bool    readBlebsFile(QString &filename);
     bool    readContoursFile(QString &filename);
     bool    readExpParaFile(QString &filename, int n);
     bool    readClusterFile(QString &filename);
-    QImage  readImgFile(QString fp, unsigned int idx);
+    //QImage  readImgFile(QString fp, unsigned int idx);
     void    clearData();
 
     void    createLoadFilesButton();

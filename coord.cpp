@@ -180,7 +180,8 @@ void Coord::drawColorBar()
     int     bar_txt_h   = 20;
     int     bar_txt_w   = width()/8;
     //float   rto         = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
-    float   rto         = float(maxIdx)/float(5000) >= 1.0 ? 1.0 : float(maxIdx)/float(5000);
+    //float   rto         = float(maxIdx)/float(5000) >= 1.0 ? 1.0 : float(maxIdx)/float(5000);
+    float   rto         = float(maxIdx)/MAXFRAMELEN >= 1.0 ? 1.0 : float(maxIdx)/MAXFRAMELEN;
     int     bar_h       = /*bar_txt_h*/10;
     int     bar_len     = width() - 2*(bar_txt_w + space)/**rto*/;
 
@@ -236,10 +237,10 @@ void Coord::updateCoord(QPointF point, int currFrame)
     QPointF currCoord = QPointF((point.x() - origin.x())*coordScale+center.x(), (point.y() - origin.y())*coordScale+center.y());
 
 //    unsigned int range = maxFrm - minFrm;
-    unsigned int range = 5000 - minFrm;
+    unsigned int range = MAXFRAMELEN - minFrm;
     if(currFrm > range) currFrm = range;
     CubicYFColorMap colormap;
-    QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // 5000 !!!!!
+    QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // MAXFRAMELEN !!!!!
 
     int r = 2;
     for(int y = -r; y <= r; y++){

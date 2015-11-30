@@ -1,7 +1,7 @@
 #ifndef CUBICYFCOLORMAP_H
 #define CUBICYFCOLORMAP_H
 #include <QColor>
-
+const float    MAXFRAMELEN            = 2500;
 
 class CubicYFColorMap{
 private:

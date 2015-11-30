@@ -283,19 +283,19 @@ void MainWindow::createTimeSlider()
     timeSttLabel->setStyleSheet(CHECKBOX);
     timeSttSlider = new QSlider(Qt::Horizontal);
     timeSttSlider->setStyleSheet(TRANS_BKGRD);
-    timeSttSlider->setRange(0, 5000-1);
+    timeSttSlider->setRange(0, 2500-1);
     timeSttSlider->setValue(0);
     timeSttLayout->addWidget(timeSttLabel);
     timeSttLayout->addWidget(timeSttSlider);
 
     timeEndLayout = new QVBoxLayout;
-    timeEndLabel = new QLabel("Frame End: 5000");
+    timeEndLabel = new QLabel("Frame End: 2500");
     timeEndLabel->setFixedWidth(250);
     timeEndLabel->setStyleSheet(CHECKBOX);
     timeEndSlider = new QSlider(Qt::Horizontal);
     timeEndSlider->setStyleSheet(TRANS_BKGRD);
-    timeEndSlider->setRange(1, 5000);
-    timeEndSlider->setValue(5000);
+    timeEndSlider->setRange(1, 2500);
+    timeEndSlider->setValue(2500);
     timeEndLayout->addWidget(timeEndLabel);
     timeEndLayout->addWidget(timeEndSlider);
 
@@ -329,7 +329,7 @@ void MainWindow::timeSrtSlider_valueChanged(int v)
     timeSttLabel->setText("Frame Start: "+QString::number(int(v)));
     if(timeEndSlider->value() < timeSttSlider->value()){
         timeEndSlider->setValue(timeSttSlider->value());
-        int endV = timeSttSlider->value() > 5000 ? 5000 : timeSttSlider->value() + 1;
+        int endV = timeSttSlider->value() > 2500 ? 2500 : timeSttSlider->value() + 1;
         timeEndLabel->setText("Frame End: "+QString::number(int(endV)));
     }
     multiview->setTimeStt(v);

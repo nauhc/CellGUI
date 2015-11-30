@@ -28,13 +28,17 @@ float BlebSizeMin = 0.2/*2*/;
 
 const qreal area_minV = 100;
 //const qreal area_maxV = 600;
-const qreal area_maxV = 400;
+qreal area_maxV = 500;
 
-const qreal peri_minV = 10;
-const qreal peri_maxV = 80;
+const qreal peri_minV = 30;
+qreal peri_maxV = 120;
 
 const qreal blebN_minV = 0;
-const qreal blebN_maxV = 7;
+qreal blebN_maxV = 7;
+
+const qreal blebS_minV = 0;
+qreal blebS_maxV = 200;
+
 
 inline int larger(int a, int b){
     return (a > b ? a : b);
@@ -147,8 +151,10 @@ void Narr::initialize()
     else if (propType == 2) {
         c = gradualColor(BLUE, 0.95);
     }
-    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
-    propBarThickness      = .28* halfS;
+//    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
+//    propBarThickness      = .28* halfS;
+    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .25 * halfS;
+    propBarThickness      = .33* halfS;
     drawRingArc(center, propBarInnerRadius, propBarThickness, c);
 
 }
@@ -403,6 +409,14 @@ void Narr::setPropertyType(int propTp)
         //std::cout << "Property Type: 'Area' selected. \n" << std::endl;
         break;
     }
+}
+
+void Narr::setMaxValue(float maxArea, float maxPeri, float maxBlebN, float maxBlebS)
+{
+    area_maxV = maxArea;
+    peri_maxV = maxPeri;
+    blebN_maxV = maxBlebN;
+    blebS_maxV = maxBlebS;
 }
 
 void Narr::setValue(QVector<float> v)

@@ -14,7 +14,8 @@ public:
     void setMaxFrm(int maxIndex, int maxFrame);
 //    void setValue(float v);
     void setValue(QVector<float> v);
-    void updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
+    //void updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
+    void updateContourNBleb(vector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent);
     void updateRto(float minR, float maxR);
     void setTempType(bool rt);
     void clear();

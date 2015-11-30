@@ -1,11 +1,16 @@
 #include "multiview.h"
 #include <QDebug>
 #include <iostream>
+#include <fstream>
 #include <QDirIterator>
 #include <QtAlgorithms>
 #include <iostream>
 #include <QGraphicsItem>
 #include <QScroller>
+
+const float MAXFRAMELEN = 2500;
+const float micMtr_Pixel = 78.47/480.;
+float maxA=600, maxP=160, maxBN=15, maxBS=100;
 
 struct QPairFirstComparer
 {
@@ -19,7 +24,7 @@ struct QPairFirstComparer
 MultiView::MultiView(QWidget *parent) :
     QWidget(parent)
   , minFrm(0)
-  , maxFrm(5000)
+  , maxFrm(2500)
 {
     setStyleSheet("background-color:rgb(251,251,251)");
     visSideLen = 320;
@@ -188,8 +193,8 @@ void MultiView::loadFilesButton_clicked() // first round
 //        prop2 = new QCheckBox("Blebs Number and Size"); // 2
 //        prop3 = new QCheckBox("Centroid Trajectory"); // 3
 //        prop4 = new QCheckBox("Shape"); // 4
-//        pushProps(0);
-        pushProps(3);
+        pushProps(1);
+//        pushProps(3);
         sortbyParameter(3);
      }
 
@@ -198,13 +203,13 @@ void MultiView::loadFilesButton_clicked() // first round
 bool MultiView::loadFiles()
 {
 //    QString folderPath = "../../../video/ExtractedData/";
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_July04";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Glut_RT_Dead";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_xRhod5F";
-
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/BV2_16x_data/Arpad_BV2_37C_16x_hasPara_ajst_pureVisData";
+
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData1";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -216,20 +221,22 @@ bool MultiView::loadFiles()
 
     // read files :
     int fileNum = datafileInfos.size();
+
     for(int n = 0; n < fileNum; n++){
 
         QString datafilename = datafileInfos[n].absoluteFilePath();
         index_sort.push_back(n);
         index_sort_copy.push_back(n);
-//        QVector<float> v;
-//        v.append(0);
-//        v.append(0);
-//        v.append(0);
-//        value_sort.push_back(v);
+        float maxAA, maxPP, maxBNN, maxBSS;
 
         if(!datafilename.isEmpty()){
-            if(readDataFile(datafilename)){
+            if(readDataFile(datafilename, maxAA, maxPP, maxBNN, maxBSS)){
                 //std::cout << "File " << datafilename.toUtf8().constData() << " read." << std::endl;
+                //qDebug() << "maxAA and maxPP" << maxAA << maxPP;
+                if(maxAA > maxA) maxA = (int(maxAA/10)+1)*10;
+                if(maxPP > maxP) maxP = (int(maxPP/10)+1)*10;
+                if(maxBNN > maxBN) maxBN = maxBNN;
+                if(maxBSS > maxBS) maxBS = maxBSS;
                 if(readBlebsFile(datafilename) &&
                    readContoursFile(datafilename) &&
                    readExpParaFile(datafilename, n) &&
@@ -297,6 +304,7 @@ void MultiView::showCircularProp(int index, QString filename, int size, int i, i
         visGLayout->addWidget(nameLabel, 2*j, i);
 
         Narr *nar_tmp = new Narr();
+        nar_tmp->setMaxValue(maxA, maxP, maxBN, maxBS);
         nar_tmp->setPropertyType(propTp); // 0:"area", 1:"perimeter", 2:"bleb"
         nar_tmp->setFixedSize(size, size);
         nar_tmp->initialize();
@@ -312,10 +320,10 @@ void MultiView::showCircularProp(int index, QString filename, int size, int i, i
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){
             //nar_tmp->clear();
             nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0], clusters[index][n]);
-//            for(int x = 0; x < cellData[index][n].size(); x++){
-//                std::cout << cellData[index][n][x] << " ";
-//            }
-//            std::cout << std::endl;
+            for(int x = 0; x < cellData[index][n].size(); x++){
+                std::cout << cellData[index][n][x] << " ";
+            }
+            std::cout << std::endl;
         }
 
         visGLayout->addWidget(nar_tmp, 2*j+1, i);
@@ -323,7 +331,7 @@ void MultiView::showCircularProp(int index, QString filename, int size, int i, i
         //shp_tmp->setNeedUpdate();
     }
     else {
-        qDebug( ) << "Cell Data Size ERROR!";
+        qDebug( ) << "Cell Data Size ERROR!" << filename;
     }
 }
 
@@ -333,6 +341,7 @@ void MultiView::showTrajectory(int index, QString filename, int size, int i, int
     if(cellDataSize > 20){
         int idxMin = cellData[index][0][0];
         int idxMax = cellData[index][cellDataSize-2][0];
+        qDebug() << idxMin << idxMax;
 
         int frmMax = idxMin + maxFrm;
 
@@ -357,8 +366,9 @@ void MultiView::showTrajectory(int index, QString filename, int size, int i, int
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
         cod_tmp->setMaxFrm(idxMax, showSizeMax);
-        cod_tmp->updateRto(float(minFrm)/5000., float(maxFrm)/5000.);
-//        qDebug() << float(maxFrm)/5000.;
+        //cod_tmp->updateRto(float(minFrm)/5000., float(maxFrm)/5000.);
+        cod_tmp->updateRto(float(minFrm)/MAXFRAMELEN, float(maxFrm)/MAXFRAMELEN);
+//        qDebug() << float(maxFrm)/MAXFRAMELEN;
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){
              cod_tmp->updateCoord(QPointF(cellData[index][n][3], cellData[index][n][4]), cellData[index][n][0]);
@@ -370,7 +380,7 @@ void MultiView::showTrajectory(int index, QString filename, int size, int i, int
         //shp_tmp->setNeedUpdate();
     }
     else {
-        qDebug( ) << "Cell Data Size ERROR!";
+        qDebug( ) << "Cell Data Size ERROR!" << filename;
     }
 }
 
@@ -404,7 +414,8 @@ void MultiView::showShape(int index, QString filename, int size, int i, int j, Q
         int showSizeMin = minFrm > 0 ? minFrm : 0;
         int showSizeMax = maxFrm < SIZE ? maxFrm : SIZE;
         shp_tmp->setMaxFrm(idxMax, showSizeMax);
-        shp_tmp->updateRto(float(minFrm)/5000., float(maxFrm)/5000.);
+        //shp_tmp->updateRto(float(minFrm)/5000., float(maxFrm)/5000.);
+        shp_tmp->updateRto(float(minFrm)/MAXFRAMELEN, float(maxFrm)/MAXFRAMELEN);
         shp_tmp->setTempType(roomT);
         //for(int n = 0; n < SIZE; n++){
         for(int n = showSizeMin; n < showSizeMax; n++){
@@ -415,7 +426,7 @@ void MultiView::showShape(int index, QString filename, int size, int i, int j, Q
         //shp_tmp->setNeedUpdate();
     }
     else {
-        qDebug( ) << "Cell Data Size ERROR!";
+        qDebug( ) << "Cell Data Size ERROR!" << filename;
     }
 }
 
@@ -463,7 +474,6 @@ void MultiView::display()
 {
 
     // file reading succeed and draw vis
-//    maxFrm = 5000;
     int space = 5;
 //    visSideLen = (/*height()*/parentWidget()->height()-space*3 - 20*4)/4 - 20;
     int num1Row = (parentWidget()->width()-space*8-20)/ visSideLen;
@@ -536,8 +546,9 @@ void MultiView::display()
 
 }
 
-bool MultiView::readDataFile(QString &filename)
+bool MultiView::readDataFile(QString &filename, float &maxA, float &maxP, float &maxBN, float &maxBS)
 {
+    maxA=0; maxP=0; maxBN=0; maxBS=0;
     std::vector<floatArray> cellData1;
     QFile f(/**dataFilename*/filename);
     if(!f.open(QIODevice::ReadOnly)){
@@ -545,6 +556,7 @@ bool MultiView::readDataFile(QString &filename)
         return false;
     }else{
         QTextStream in(&f);
+
         while(!in.atEnd()) { // each row
             QString line = in.readLine();
             if(line.isEmpty()){
@@ -560,18 +572,27 @@ bool MultiView::readDataFile(QString &filename)
             }
             //qDebug() << row;
             floatArray prop;
+            float area  = float(row[1])*micMtr_Pixel*micMtr_Pixel;
+            float peri  = float(row[2])*micMtr_Pixel;
+            float blebN = float(row[50]);
+            float blebS = float(row[51]);
+            if(area > maxA) maxA = area;
+            if(peri > maxP) maxP = peri;
+            if(blebN > maxBN) maxBN = blebN;
+            if(blebS > maxBS) maxBS = blebS;
+
             prop.push_back(float(row[0])); // frameIndex
-            prop.push_back(float(row[1])); // area
-            prop.push_back(float(row[2])); // perimeter
+            prop.push_back(area); // area
+            prop.push_back(peri); // perimeter
             prop.push_back(float(row[3])); // centroid.x
             prop.push_back(float(row[4])); // centroid.y
-            //            prop.push_back(float(row[5])); // shape
-            //            prop.push_back(float(row[6])); // blebNum
-            prop.push_back(float(row[5])); // speed.dist
-            prop.push_back(float(row[6])); // speed.theta
-            prop.push_back(float(row[7])); // shape
-            prop.push_back(float(row[8])); // blebNum
-            prop.push_back(float(row[9])); // blebSize
+            prop.push_back(blebN); // blebNum
+            prop.push_back(blebS); // blebSize
+//            prop.push_back(float(row[5])); // speed.dist
+//            prop.push_back(float(row[6])); // speed.theta
+//            prop.push_back(float(row[7])); // shape
+//            prop.push_back(float(row[8])); // blebNum
+//            prop.push_back(float(row[9])); // blebSize
 
             //            for(unsigned int n = 0; n < prop.size(); n++)
             //                std::cout << prop[n] << " ";
@@ -595,59 +616,152 @@ bool MultiView::readBlebsFile(QString &filename)
         fn_b = tmp.remove(tmp.length()-15, 15) + "_b_compressed.dat" ;
     else if(tmp.contains("_control"))
         fn_b = tmp.remove(tmp.length()-12, 12) + "_b_control.dat" ;
+    else
+        fn_b = tmp.remove(tmp.length()-4, 4) + "_b.dat" ;
 
-    QVector<QVector<Bleb> > blebs1;
-    QVector<QPoint>         centers1;
+    vector<vector<Bleb> > blebs1;
+    QVector<QPoint>       centers1;
 
-    QFile f(fn_b);
-    if(!f.open(QIODevice::ReadOnly)){
-        qDebug() << "Reading bleb's dat file not found.";
-        return false;
+
+    ifstream infile;
+    infile.open(fn_b.toStdString(), ios::binary|ios::in);
+
+    if (!infile){
+        std::cout << "cannot load bleb file " << fn_b.toStdString() << std::endl;
+        return 0;
     }
-    else{
-        QDataStream in(&f);
-        while(!in.atEnd()){
-            qint32  blebsNum;
-            qreal   centX, centY;
-            in >> centX;
-            in >> centY;
-            in >> blebsNum;
-            QVector<Bleb> blebs_1frm;
-            for(int i = 0; i < blebsNum; i++){
-                qint32 blebSize;
-                in >> blebSize;
-                Bleb bleb;
-                bleb.size = blebSize;
-                for(int j = 0; j < blebSize; j++){
-                    polarPoint p;
-                    in >> p.r;
-                    in >> p.theta;
-                    bleb.bunch_polar.push_back(p);
-                }
-                blebs_1frm.push_back(bleb);
+
+    infile.seekg(0, infile.end);
+    int len = infile.tellg();
+    infile.seekg(0, infile.beg);
+
+    vector<double> blebdata;
+    int s = len/(sizeof(double));
+    //qDebug() << len << s;
+    blebdata.resize(s);
+    infile.read(reinterpret_cast<char*>(blebdata.data()), s*sizeof(double));
+    infile.close();
+
+    vector<double>::iterator it = blebdata.begin();
+    while(it != blebdata.end()){
+        double centX = *it; it++;
+        double centY = *it; it++;
+        double blebsNum = *it; it++;
+        //cout << centX << " " << centY << " " << blebsNum << endl;
+
+        vector<Bleb> blebs_1frm;
+        for(int i= 0; i < blebsNum; i++){
+            double blebpxlnum = *it; it++;
+            //cout << blebpxlnum << endl;
+            vector<double> blebpxl(it, it+2*blebpxlnum); it = it+2*blebpxlnum;
+
+            Bleb bleb;
+            bleb.size = blebpxlnum;
+            for(unsigned int n = 0; n < blebpxlnum; n=n+2){
+                //cout << blebpxl[n] << " " << blebpxl[n+1] << endl;
+                polarPoint p;
+                p.r = blebpxl[n];
+                p.theta = blebpxl[n+1];
+                bleb.bunch_polar.push_back(p);
             }
-            blebs1.push_back(blebs_1frm);
-            centers1.push_back(QPoint(centX, centY));
+            blebs_1frm.push_back(bleb);
         }
-
-        blebs.push_back(blebs1);
-        centers.push_back(centers1);
+        blebs1.push_back(blebs_1frm);
+        centers1.push_back(QPoint(centX, centY));
     }
+    blebs.push_back(blebs1);
+    centers.push_back(centers1);
+/*
 
-    //    std::cout << "blebs sizes load to file " << blebs.size() << std::endl;
-    //    for(unsigned int n = 0; n < blebs.size(); n++){
-    //        std::cout << "frame  " << n << std::endl;
-    //        std::cout << "centroid  (" << centers[n].x() << ", " << centers[n].y() << ")" << std::endl;
-    ////        for(unsigned int m = 0; m < blebs[n].size(); m++){
-    ////            std::cout << "bleb  " << m << std::endl;
-    ////            for(unsigned int k = 0; k < blebs[n][m].bunch_polar.size(); k++){
-    ////                std::cout << "(r " << blebs[n][m].bunch_polar[k].r
-    ////                          << " , theta " << blebs[n][m].bunch_polar[k].theta << ") ";
-    ////            }
-    ////            std::cout << std::endl;
-    ////        }
-    ////        std::cout << std::endl;
-    //    }
+//    while(!infile.eof()){
+
+//        double centX, centY, blebsNum;
+//        infile.read(reinterpret_cast<char*>(&centX), sizeof(double));
+//        infile.read(reinterpret_cast<char*>(&centY), sizeof(double));
+//        infile.read(reinterpret_cast<char*>(&blebsNum), sizeof(double));
+
+//        vector<Bleb> blebs_1frm;
+//        for(int i= 0; i < blebsNum; i++){
+//            double blebpxlnum;
+//            infile.read(reinterpret_cast<char*>(&blebpxlnum), sizeof(double));
+//            qDebug()<<blebpxlnum;
+//            vector<double> blebpxl;
+//            blebpxl.resize(blebpxlnum);
+//            infile.read(reinterpret_cast<char*>(blebpxl.data()), blebpxlnum*2*sizeof(double));
+
+//            Bleb bleb;
+//            bleb.size = blebpxlnum;
+//            for(unsigned int n = 0; n < blebpxlnum; n=n+2){
+//                cout << blebpxl[n] << " " << blebpxl[n+1] << endl;
+//                polarPoint p;
+//                p.r = blebpxl[n];
+//                p.theta = blebpxl[n+1];
+//                bleb.bunch_polar.push_back(p);
+//            }
+//            blebs_1frm.push_back(bleb);
+//        }
+//        blebs1.push_back(blebs_1frm);
+//        centers1.push_back(QPoint(centX, centY));
+//    }
+//    blebs.push_back(blebs1);
+//    centers.push_back(centers1);
+
+
+//    QFile f(fn_b);
+//    if(!f.open(QIODevice::ReadOnly)){
+//        qDebug() << "Reading bleb's dat file not found.";
+//        return false;
+//    }
+//    else{
+//        QDataStream in(&f);
+
+//        while(!in.atEnd()){
+//            double  blebsNum;
+//            double  centX, centY;
+//            in >> centX;
+//            in >> centY;
+//            in >> blebsNum;
+//            qDebug() << centX << centY << blebsNum;
+//            QVector<Bleb> blebs_1frm;
+//            for(int i = 0; i < blebsNum; i++){
+//                double blebSize;
+//                in >> blebSize;
+//                Bleb bleb;
+//                bleb.size = blebSize;
+//                for(int j = 0; j < blebSize; j++){
+//                    double r, theta;
+//                    in >> r;
+//                    in >> theta;
+//                    polarPoint p;
+//                    p.r = r; //in >> p.r;
+//                    p.theta = theta; //in >> p.theta;
+//                    bleb.bunch_polar.push_back(p);
+//                }
+//                blebs_1frm.push_back(bleb);
+//            }
+//            blebs1.push_back(blebs_1frm);
+//            centers1.push_back(QPoint(centX, centY));
+//        }
+
+//        blebs.push_back(blebs1);
+//        centers.push_back(centers1);
+//    } */
+
+//        std::cout << "blebs sizes load to file " << blebs.size() << std::endl;
+//        for(unsigned int n = 0; n < blebs.size(); n++){
+//            std::cout << "frame  " << n << std::endl;
+//            std::cout << "centroid  (" << centers[n].x() << ", " << centers[n].y() << ")" << std::endl;
+//    //        for(unsigned int m = 0; m < blebs[n].size(); m++){
+//    //            std::cout << "bleb  " << m << std::endl;
+//    //            for(unsigned int k = 0; k < blebs[n][m].bunch_polar.size(); k++){
+//    //                std::cout << "(r " << blebs[n][m].bunch_polar[k].r
+//    //                          << " , theta " << blebs[n][m].bunch_polar[k].theta << ") ";
+//    //            }
+//    //            std::cout << std::endl;
+//    //        }
+//    //        std::cout << std::endl;
+//        }
+
     return true;
 }
 
@@ -660,9 +774,47 @@ bool MultiView::readContoursFile(QString &filename)
         fn_c = tmp.remove(tmp.length()-15, 15) + "_c_compressed.dat" ;
     else if(tmp.contains("_control"))
         fn_c = tmp.remove(tmp.length()-12, 12) + "_c_control.dat" ;
+    else
+        fn_c = tmp.remove(tmp.length()-4, 4) + "_c.dat" ;
 
     QVector<QVector<QPoint> >   contours1;
 
+    ifstream infile;
+    infile.open(fn_c.toStdString(), ios::binary|ios::in);
+
+    if (!infile){
+        cout << "cannot load bleb file " << fn_c.toStdString() << endl;
+        return 0;
+    }
+
+    infile.seekg(0, infile.end);
+    int len = infile.tellg();
+    infile.seekg(0, infile.beg);
+
+    vector<double> blebdata;
+    int s = len/(sizeof(double));
+    //qDebug() << len << s;
+    blebdata.resize(s);
+    infile.read(reinterpret_cast<char*>(blebdata.data()), s*sizeof(double));
+    infile.close();
+
+    vector<double>::iterator it = blebdata.begin();
+    while(it != blebdata.end()){
+        double contourSize = *it; it++;
+        //cout << contourSize << endl;
+        QVector<QPoint> contour;
+        for(int i = 0; i < contourSize; i++){
+            double x = *it; it++;
+            double y = *it; it++;
+            contour.push_back(QPoint(x, y));
+            //cout << "x " << x << " y " << y << endl;
+        }
+        contours1.push_back(contour);
+    }
+    contours.push_back(contours1);
+
+
+    /*
     QFile ff(fn_c);
     if(!ff.open(QIODevice::ReadOnly)){
         qDebug() << "Reading contours' dat file not found.";
@@ -683,16 +835,16 @@ bool MultiView::readContoursFile(QString &filename)
             contours1.push_back(contour);
         }
         contours.push_back(contours1);
-    }
+    } */
 
-    //    std::cout << "contours sizes load to file " << contours.size() << std::endl;
-    //    for(unsigned int n = 0; n < contours.size(); n++){
-    //        std::cout << "frame  " << n << std::endl;
-    //        for(unsigned int m = 0; m < contours[n].size(); m++){
-    //            std::cout << "(x "  << contours[n][m].x() << ", y " << contours[n][m].y() << ") ";
-    //        }
-    //        std::cout << std::endl;
-    //    }
+//    std::cout << "contours sizes load to file " << contours.size() << std::endl;
+//    for( int n = 0; n < contours.size(); n++){
+//        std::cout << "frame  " << n << std::endl;
+//        for( int m = 0; m < contours[n].size(); m++){
+//            std::cout << "(x "  << contours[n][m].x() << ", y " << contours[n][m].y() << ") ";
+//        }
+//        std::cout << std::endl;
+//    }
 
     return true;
 }
@@ -705,6 +857,8 @@ bool MultiView::readExpParaFile(QString &filename, int n)
         fn_e = tmp.remove(tmp.length()-15, 15) + "_e_compressed.data" ;
     else if(tmp.contains("_control"))
         fn_e = tmp.remove(tmp.length()-12, 12) + "_e_control.data" ;
+    else
+        fn_e = tmp.remove(tmp.length()-4, 4) + "_e.data" ;
 
     QFile f(fn_e);
     if(!f.open(QIODevice::ReadOnly)){
@@ -715,7 +869,7 @@ bool MultiView::readExpParaFile(QString &filename, int n)
         QString line1 = in.readLine();
         QString line2 = in.readLine();
         QString line3 = in.readLine();
-        qreal pres = line1.remove("     pressure(pa)").toFloat();
+        qreal pres = line1.remove("     Probe(um)").toFloat();
         qreal forc = line2.remove("     Force(N)").toFloat();
         QString tmp = line3.remove("     Temperature ");
         qreal temp = (tmp == "37") ? 37 : 25;
@@ -745,6 +899,9 @@ bool MultiView::readClusterFile(QString &filename) // read clustering datafile
         fn_l = tmp.remove(tmp.length()-15, 15) + "_l_compressed.dat" ;
     else if(tmp.contains("_control.csv"))
         fn_l = tmp.remove(tmp.length()-12, 12) + "_l_control.dat" ;
+    else
+        fn_l = tmp.remove(tmp.length()-4, 4) + "_l.dat" ;
+
 //    qDebug() << fn_l;
 
     QVector<int>    cluster;
@@ -767,15 +924,15 @@ bool MultiView::readClusterFile(QString &filename) // read clustering datafile
     return true;
 }
 
-QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index
-{
-    QImage img;
-    QString str = fp+"/cell"+QString::number(int(idx))+".png";
-    //qDebug() << str;
-    img.load(str);
+//QImage MultiView::readImgFile(QString fp, unsigned int idx) // filepath, index
+//{
+//    QImage img;
+//    QString str = fp+"/cell"+QString::number(int(idx))+".png";
+//    //qDebug() << str;
+//    img.load(str);
 
-    return img;
-}
+//    return img;
+//}
 
 canvasWidget::canvasWidget() : clearAll(false)
 {

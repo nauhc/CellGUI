@@ -61,7 +61,7 @@ inline QPointF rotate(QPointF p, double theta/*, QPointF org*/){
     return QPointF(p.x()*cos(theta)-p.y()*sin(theta), p.x()*sin(theta)+p.y()*cos(theta))/* + org*/;
 }
 
-void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
+void Shape::updateContourNBleb(vector<Bleb> &bleb, QVector<QPoint> &smoothContour, QPoint &cent)
 {
 
     qreal scl_c = 0.6;
@@ -90,10 +90,10 @@ void Shape::updateContourNBleb(QVector<Bleb> &bleb, QVector<QPoint> &smoothConto
 //    //qDebug() << contour;
 
     qreal scl_b = 1.0;
-    range    = 5000 - begin;
+    range    = MAXFRAMELEN - begin;     //range = 5000 - begin;
     if (curr > range) curr = range;
     CubicYFColorMap colormap;
-    QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, range, curr); // 5000 !!!!!
+    QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, range, curr); // MAXFRAMELEN !!!!!
 
     for(int k = 0; k < bleb.size(); k++){ // one bleb
         vector<polarPoint>  polarPBunch = bleb[k].bunch_polar;
@@ -236,7 +236,8 @@ void Shape::drawColorBar()
     int bar_txt_h   = 20;
     int bar_txt_w   = width()/8;
     //float rto   = float(maxIndex)/float(maxFrame) >= 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
-    float rto   = float(maxIndex)/5000. >= 1.0 ? 1.0 : float(maxIndex)/5000.;
+    //float rto   = float(maxIndex)/5000. >= 1.0 ? 1.0 : float(maxIndex)/5000.;
+    float rto   = float(maxIndex)/MAXFRAMELEN >= 1.0 ? 1.0 : float(maxIndex)/MAXFRAMELEN;
     int bar_h   = /*bar_txt_h*/10;
     int bar_len = width() - 2*(bar_txt_w + space)/**rto*/;
 

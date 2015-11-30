@@ -15,7 +15,7 @@ public:
     void setBeginFrm(int beginFrame);
     void setMaxFrm(unsigned int im, unsigned int fm);
     void setPropertyType(int);
-//    void setValue(float v);
+    void setMaxValue(float maxArea, float maxPeri, float maxBlebN, float maxBlebS);
     void setValue(QVector<float> v);
     void setDataScale(qreal scl);
     void initialize();
