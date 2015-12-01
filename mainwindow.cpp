@@ -198,7 +198,7 @@ void MainWindow::paraCheckBox_checked(int state)
     QCheckBox *checkBox = qobject_cast<QCheckBox*>(sender());
     if (!checkBox) return;
     if (state == Qt::Checked)    {
-        if (checkBox->text() == "Pressure Ascending (Pa)"){
+        if (checkBox->text() == "Probe (µN)"){
             para0->setChecked(true);
             para1->setChecked(false);
             para2->setChecked(false);
@@ -396,7 +396,7 @@ void MainWindow::createParaCheckbox()
 {
     paraGroup = new QGroupBox(" Sort: ");
     paraGroup->setStyleSheet(GROUPBOX);
-    para0   = new QCheckBox("Pressure Ascending (Pa)");
+    para0   = new QCheckBox("Probe Size (µN)");
     para1   = new QCheckBox("Force Ascending (µN)");
     para2   = new QCheckBox("Temperature");
     para3   = new QCheckBox("Date Ascending");

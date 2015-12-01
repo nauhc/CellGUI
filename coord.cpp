@@ -181,7 +181,7 @@ void Coord::drawColorBar()
     int     bar_txt_w   = width()/8;
     //float   rto         = float(maxIdx)/float(maxFrm) >= 1.0 ? 1.0 : float(maxIdx)/float(maxFrm);
     //float   rto         = float(maxIdx)/float(5000) >= 1.0 ? 1.0 : float(maxIdx)/float(5000);
-    float   rto         = float(maxIdx)/MAXFRAMELEN >= 1.0 ? 1.0 : float(maxIdx)/MAXFRAMELEN;
+    float   rto         = float(maxIdx - minFrm)/MAXFRAMELEN >= 1.0 ? 1.0 : float(maxIdx - minFrm)/MAXFRAMELEN;
     int     bar_h       = /*bar_txt_h*/10;
     int     bar_len     = width() - 2*(bar_txt_w + space)/**rto*/;
 
@@ -237,7 +237,7 @@ void Coord::updateCoord(QPointF point, int currFrame)
     QPointF currCoord = QPointF((point.x() - origin.x())*coordScale+center.x(), (point.y() - origin.y())*coordScale+center.y());
 
 //    unsigned int range = maxFrm - minFrm;
-    unsigned int range = MAXFRAMELEN - minFrm;
+    unsigned int range = MAXFRAMELEN;
     if(currFrm > range) currFrm = range;
     CubicYFColorMap colormap;
     QColor c = colormap.cubicYFmap(Coord_COLOR_START, Coord_COLOR_RANGE, 0, range, currFrm); // MAXFRAMELEN !!!!!
@@ -424,7 +424,7 @@ void Coord::drawColorBarText(QPainter *painter)
     QPen myPen(QColor(120, 120, 118));
     painter->setPen(myPen);
     painter->drawText(txt_old, Qt::AlignRight, "0");
-    painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIdx));
+    painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIdx - minFrm));
 }
 
 void Coord::render(QPainter *painter)

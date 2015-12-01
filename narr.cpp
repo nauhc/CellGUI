@@ -17,14 +17,14 @@
 
 QColor GREEN    = QColor(97, 149, 5);
 QColor ORANGE   = QColor(247, 154, 1);
-QColor BLUE     = QColor(28, 120, 159);
+QColor BLUE     = /*QColor(102, 177, 50)*/QColor(28, 120, 159);
 QColor PURPLE   = QColor(123, 57, 144);
 QColor WHITE    = QColor(255, 255, 255);
 QColor YELLOW   = QColor(247, 154, 1);
 QColor RED      = QColor(208, 81, 38);
 
-float BlebSizeMax = 10.0/*1.5*//*12*//*7*/;
-float BlebSizeMin = 0.2/*2*/;
+float BlebSizeMax = /*10.0*//*1.5*//*12*/7;
+float BlebSizeMin = 0;
 
 const qreal area_minV = 100;
 //const qreal area_maxV = 600;
@@ -34,7 +34,7 @@ const qreal peri_minV = 30;
 qreal peri_maxV = 120;
 
 const qreal blebN_minV = 0;
-qreal blebN_maxV = 7;
+qreal blebN_maxV = 15;
 
 const qreal blebS_minV = 0;
 qreal blebS_maxV = 200;
@@ -137,9 +137,10 @@ void Narr::initialize()
     center.setX(halfW);
     center.setY(halfH*1.05);
 
-    ringArcInnerRadius    = .30 * halfS;
+//    ringArcInnerRadius    = .30 * halfS;
+    ringArcInnerRadius    = .25 * halfS;
     ringArcThickness      = .05 * halfS;
-    drawRingArc(center, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240, 255));
+    //drawRingArc(center, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240, 255));
 
     QColor c;
     if(propType == 0) {
@@ -153,8 +154,8 @@ void Narr::initialize()
     }
 //    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
 //    propBarThickness      = .28* halfS;
-    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .25 * halfS;
-    propBarThickness      = .33* halfS;
+    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .20 * halfS;
+    propBarThickness      = .38* halfS;
     drawRingArc(center, propBarInnerRadius, propBarThickness, c);
 
 }
@@ -262,16 +263,16 @@ void Narr::updateProperty_single(floatArray prop, int currFrame, int clustr)
 //        }
 //    }
 
-    // draw fragment
-    for(unsigned int i = 0; i < area.size(); i++){
-        float degree = 2.*M_PI/maxRange*i - M_PI_2;
-        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
-            for (int v = 0; v < /*ringArcThickness*/barWidth; v++){
-                QPointF rotP = rotate(QPointF(h,v), degree)+center;
-                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
-            }
-        }
-    }
+//    // draw fragment
+//    for(unsigned int i = 0; i < area.size(); i++){
+//        float degree = 2.*M_PI/maxRange*i - M_PI_2;
+//        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
+//            for (int v = 0; v < /*ringArcThickness*/barWidth; v++){
+//                QPointF rotP = rotate(QPointF(h,v), degree)+center;
+//                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
+//            }
+//        }
+//    }
 }
 
 }
@@ -282,8 +283,12 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
     curr = currFrame;
     area.push_back(prop[1]); // area
     perimeter.push_back(prop[2]); // perimeter
-    blebNum.push_back(prop[8]); // bleb number
-    blebAvgSize.push_back(prop[9]); // bleb average size
+//    blebNum.push_back(prop[8]); // bleb number
+//    blebAvgSize.push_back(prop[9]); // bleb average size
+    int bN = prop[5];
+    float bS = prop[6];
+    blebNum.push_back(bN); // bleb number
+    blebAvgSize.push_back(bS); // bleb average size
 
     unsigned int maxRange = /*maxFrm < 5000 ? 5000 - minFrm :*/ maxFrm - minFrm; //HEREHERE
     //    qDebug() << maxRange;
@@ -310,8 +315,8 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
             color = gradualColor(PURPLE, 0.3);
         }
         else if (propType == 2) { // bleb
-            barheight  = float(prop[8]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
-            qreal size = prop[9] > BlebSizeMin ? prop[9] - BlebSizeMin : 0;
+            barheight  = float(bN*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
+            qreal size = bS > BlebSizeMin ? bS - BlebSizeMin : 0;
             qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
             color = gradualColor(BLUE, 1-g);
         }
@@ -325,14 +330,14 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
             }
         }
 
-        // draw fragment
-        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
-            for (int v = 0; v < ringArcThickness; v++){
-                QPointF rotP = rotate(QPointF(h,v), degree)+center;
+//        // draw fragment
+//        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
+//            for (int v = 0; v < ringArcThickness; v++){
+//                QPointF rotP = rotate(QPointF(h,v), degree)+center;
 
-                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
-            }
-        }
+//                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
+//            }
+//        }
         }
 }
 
@@ -415,8 +420,8 @@ void Narr::setMaxValue(float maxArea, float maxPeri, float maxBlebN, float maxBl
 {
     area_maxV = maxArea;
     peri_maxV = maxPeri;
-    blebN_maxV = maxBlebN;
-    blebS_maxV = maxBlebS;
+//    blebN_maxV = maxBlebN;
+//    blebS_maxV = maxBlebS;
 }
 
 void Narr::setValue(QVector<float> v)

@@ -10,6 +10,7 @@
 
 const float MAXFRAMELEN = 2500;
 const float micMtr_Pixel = 78.47/480.;
+const float micMtr_Pixel_squre = micMtr_Pixel*micMtr_Pixel;
 float maxA=600, maxP=160, maxBN=15, maxBS=100;
 
 struct QPairFirstComparer
@@ -147,7 +148,7 @@ void MultiView::clearData()
 
 void MultiView::sortbyParameter(int i)
 {
-//    qDebug() << "para" << i << "is checked";
+    qDebug() << "para" << i << "is checked";
     if (i == 0){
         for(int n = 0; n < datafileInfos.size(); n++){
             index_sort.replace(n, pressure[n].second);
@@ -166,6 +167,7 @@ void MultiView::sortbyParameter(int i)
             index_sort_copy.replace(n, temprature[n].second);
             float tmp = temprature[n].first;
         }
+        //qDebug() << "sort by temp " << index_sort;
     }
     else{
         for(int n = 0; n < datafileInfos.size(); n++){
@@ -193,8 +195,8 @@ void MultiView::loadFilesButton_clicked() // first round
 //        prop2 = new QCheckBox("Blebs Number and Size"); // 2
 //        prop3 = new QCheckBox("Centroid Trajectory"); // 3
 //        prop4 = new QCheckBox("Shape"); // 4
-        pushProps(1);
-//        pushProps(3);
+//        pushProps(4);
+        pushProps(3);
         sortbyParameter(3);
      }
 
@@ -209,7 +211,7 @@ bool MultiView::loadFiles()
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/BV2_16x_data/Arpad_BV2_37C_16x_hasPara_ajst_pureVisData";
 
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData1";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataAll";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -268,14 +270,15 @@ bool MultiView::loadFiles()
     QList<QPair<qreal, int> >   tempr1;
     QList<QPair<qreal, int> >   tempr2;
     for(int n = 0; n < pressure.size(); n++){
-        QHash<int, expPara>::const_iterator i = expParas.find(pressure[n].second);
+        QHash<int, expPara>::const_iterator i = expParas.find(force[n].second);
         if(i.value().tempra == 25)
-            tempr1.append(qMakePair(i.value().tempra, pressure[n].second));
+            tempr1.append(qMakePair(i.value().tempra, force[n].second));
         else
-            tempr2.append(qMakePair(i.value().tempra, pressure[n].second));
+            tempr2.append(qMakePair(i.value().tempra, force[n].second));
     }
     temprature.append(tempr1);
     temprature.append(tempr2);
+    //qDebug() << temprature << "\n";
 
     return true;
 }
@@ -317,13 +320,13 @@ void MultiView::showCircularProp(int index, QString filename, int size, int i, i
         int showSizeMax = maxFrm < cellDataSize ? maxFrm : cellDataSize;
         nar_tmp->setMaxFrm(idxMax, maxFrm);
 //        for(unsigned int n = 0; n < cellDataSize; n++){
-        for(unsigned int n = showSizeMin; n < showSizeMax; n++){
+        for(unsigned int n = showSizeMin; n < showSizeMax; n++){ // n: frame index
             //nar_tmp->clear();
             nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0], clusters[index][n]);
-            for(int x = 0; x < cellData[index][n].size(); x++){
-                std::cout << cellData[index][n][x] << " ";
-            }
-            std::cout << std::endl;
+//            for(int x = 0; x < cellData[index][n].size(); x++){
+//                std::cout << cellData[index][n][x] << " ";
+//            }
+//            std::cout << std::endl;
         }
 
         visGLayout->addWidget(nar_tmp, 2*j+1, i);
@@ -341,7 +344,7 @@ void MultiView::showTrajectory(int index, QString filename, int size, int i, int
     if(cellDataSize > 20){
         int idxMin = cellData[index][0][0];
         int idxMax = cellData[index][cellDataSize-2][0];
-        qDebug() << idxMin << idxMax;
+        //qDebug() << idxMin << idxMax;
 
         int frmMax = idxMin + maxFrm;
 
@@ -572,10 +575,11 @@ bool MultiView::readDataFile(QString &filename, float &maxA, float &maxP, float 
             }
             //qDebug() << row;
             floatArray prop;
-            float area  = float(row[1])*micMtr_Pixel*micMtr_Pixel;
+
+            float area  = float(row[1])*micMtr_Pixel_squre;
             float peri  = float(row[2])*micMtr_Pixel;
             float blebN = float(row[50]);
-            float blebS = float(row[51]);
+            float blebS = float(row[51]*micMtr_Pixel_squre);
             if(area > maxA) maxA = area;
             if(peri > maxP) maxP = peri;
             if(blebN > maxBN) maxBN = blebN;
@@ -647,7 +651,7 @@ bool MultiView::readBlebsFile(QString &filename)
         double centX = *it; it++;
         double centY = *it; it++;
         double blebsNum = *it; it++;
-        //cout << centX << " " << centY << " " << blebsNum << endl;
+        //cout << "centX centY " << centX << " " << centY << " " << blebsNum << endl;
 
         vector<Bleb> blebs_1frm;
         for(int i= 0; i < blebsNum; i++){
@@ -657,11 +661,11 @@ bool MultiView::readBlebsFile(QString &filename)
 
             Bleb bleb;
             bleb.size = blebpxlnum;
-            for(unsigned int n = 0; n < blebpxlnum; n=n+2){
+            for(unsigned int n = 0; n < blebpxlnum*2; n=n+2){
                 //cout << blebpxl[n] << " " << blebpxl[n+1] << endl;
                 polarPoint p;
-                p.r = blebpxl[n];
-                p.theta = blebpxl[n+1];
+                p.theta = blebpxl[n];
+                p.r = blebpxl[n+1];
                 bleb.bunch_polar.push_back(p);
             }
             blebs_1frm.push_back(bleb);

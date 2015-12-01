@@ -90,7 +90,7 @@ void Shape::updateContourNBleb(vector<Bleb> &bleb, QVector<QPoint> &smoothContou
 //    //qDebug() << contour;
 
     qreal scl_b = 1.0;
-    range    = MAXFRAMELEN - begin;     //range = 5000 - begin;
+    range    = MAXFRAMELEN;     //range = 5000 - begin;
     if (curr > range) curr = range;
     CubicYFColorMap colormap;
     QColor c = colormap.cubicYFmap(Shape_COLOR_START, Shape_COLOR_RANGE, 0, range, curr); // MAXFRAMELEN !!!!!
@@ -98,13 +98,17 @@ void Shape::updateContourNBleb(vector<Bleb> &bleb, QVector<QPoint> &smoothContou
     for(int k = 0; k < bleb.size(); k++){ // one bleb
         vector<polarPoint>  polarPBunch = bleb[k].bunch_polar;
         int num = polarPBunch.size();
-        Point center = bleb[k].center;
+//        Point center = bleb[k].center;
         for(int l = 0; l < num; l++){ // one point
             polarPoint polarP = polarPBunch[l];
 //            int x = center.x + polarP.r * cos(polarP.theta);
 //            int y = center.y + polarP.r * sin(polarP.theta);
-            int x = (center.x + polarP.r * cos(polarP.theta) * scl_b)+this->width()/2;
-            int y = (center.y + polarP.r * sin(polarP.theta) * scl_b)+this->height()/2;
+//            int x = (center.x + polarP.r * cos(polarP.theta) * scl_b)+this->width()/2;
+//            int y = (center.y + polarP.r * sin(polarP.theta) * scl_b)+this->height()/2;
+            int x = (polarP.r * cos(polarP.theta) - cent.x()) * scl_b + this->width()/2;
+            int y = (polarP.r * sin(polarP.theta) - cent.y()) * scl_b + this->width()/2;
+//            qDebug() << x << y;
+
 //            points_in1frm.push_back(QPoint(x,y));
             unsigned int pixel = (y*width()+x)*4;
             if(pixel< 0 || pixel+3 >= bufferSize)
@@ -178,7 +182,7 @@ void Shape::drawColorBarText(QPainter *painter){
     QPen myPen(QColor(120, 120, 118));
     painter->setPen(myPen);
     painter->drawText(txt_old, Qt::AlignRight, "0");
-    painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIndex));
+    painter->drawText(txt_new, Qt::AlignLeft,  QString::number(maxIndex-begin));
 }
 
 void Shape::drawPoint(QPointF p, QColor c) // p1.y = p2.y
@@ -237,7 +241,7 @@ void Shape::drawColorBar()
     int bar_txt_w   = width()/8;
     //float rto   = float(maxIndex)/float(maxFrame) >= 1.0 ? 1.0 : float(maxIndex)/float(maxFrame);
     //float rto   = float(maxIndex)/5000. >= 1.0 ? 1.0 : float(maxIndex)/5000.;
-    float rto   = float(maxIndex)/MAXFRAMELEN >= 1.0 ? 1.0 : float(maxIndex)/MAXFRAMELEN;
+    float rto   = float(maxIndex - begin)/MAXFRAMELEN >= 1.0 ? 1.0 : float(maxIndex - begin)/MAXFRAMELEN;
     int bar_h   = /*bar_txt_h*/10;
     int bar_len = width() - 2*(bar_txt_w + space)/**rto*/;
 
