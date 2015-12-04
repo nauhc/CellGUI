@@ -23,8 +23,16 @@ QColor WHITE    = QColor(255, 255, 255);
 QColor YELLOW   = QColor(247, 154, 1);
 QColor RED      = QColor(208, 81, 38);
 
+float blebColorMap[7][3] = {{255,255,204},
+                            {199,233,180},
+                            {127,205,187},
+                            {65,182,196},
+                            {29,145,192},
+                            {34,94,168},
+                            {12,44,132}};
+
 float BlebSizeMax = /*10.0*//*1.5*//*12*/7;
-float BlebSizeMin = 0;
+float BlebSizeMin = -0.5;
 
 const qreal area_minV = 100;
 //const qreal area_maxV = 600;
@@ -73,7 +81,7 @@ void Narr::clear()
     cells.clear();
     stage.push_back(0);
     cellImg.clear();
-//    cluster.clear();
+    //    cluster.clear();
 
     begin       = 0;
     curr        = 0;
@@ -137,9 +145,9 @@ void Narr::initialize()
     center.setX(halfW);
     center.setY(halfH*1.05);
 
-//    ringArcInnerRadius    = .30 * halfS;
-    ringArcInnerRadius    = .25 * halfS;
-    ringArcThickness      = .05 * halfS;
+    //    ringArcInnerRadius    = .30 * halfS;
+    ringArcInnerRadius    = .15 * halfS;
+    ringArcThickness      = .01 * halfS;
     //drawRingArc(center, ringArcInnerRadius, ringArcThickness, QColor(240, 240, 240, 255));
 
     QColor c;
@@ -152,10 +160,10 @@ void Narr::initialize()
     else if (propType == 2) {
         c = gradualColor(BLUE, 0.95);
     }
-//    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
-//    propBarThickness      = .28* halfS;
-    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .20 * halfS;
-    propBarThickness      = .38* halfS;
+    //    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
+    //    propBarThickness      = .28* halfS;
+    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .10 * halfS;
+    propBarThickness      = .68* halfS;
     drawRingArc(center, propBarInnerRadius, propBarThickness, c);
 
 }
@@ -189,91 +197,91 @@ void Narr::updateProperty_single(floatArray prop, int currFrame, int clustr)
     perimeter.push_back(prop[2]); // perimeter
     blebNum.push_back(prop[8]); // bleb number
     blebAvgSize.push_back(prop[9]); // bleb average size
-//    cluster.push_back(clustr);
+    //    cluster.push_back(clustr);
 
     unsigned int maxRange = /*maxFrm < 5000 ? 5000 - minFrm :*/ maxFrm - minFrm; //HEREHERE
-//    qDebug() << maxRange;
+    //    qDebug() << maxRange;
     unsigned int currRange = maxIdx - begin;
-//    float   degree      = 2.*M_PI/maxRange*num - M_PI_2;
+    //    float   degree      = 2.*M_PI/maxRange*num - M_PI_2;
     int     num         = area.size();
-//    float   degree      = 2.*M_PI/(maxIdx-begin)*num - M_PI_2;
-//    float   div         = 2.*M_PI*propBarInnerRadius/(maxIdx-begin);
-//    int     num         = area.size() > maxRange ? maxRange : area.size();
+    //    float   degree      = 2.*M_PI/(maxIdx-begin)*num - M_PI_2;
+    //    float   div         = 2.*M_PI*propBarInnerRadius/(maxIdx-begin);
+    //    int     num         = area.size() > maxRange ? maxRange : area.size();
 
     if (num <= maxRange){
 
-    float   div         = 2.*M_PI*propBarInnerRadius/maxRange;
-    int     barWidth    = div > 1 ? int(div) : 1;
-//    qreal   barheight;
-//    QVector<qreal>   barheight;
-//    QColor  color;
+        float   div         = 2.*M_PI*propBarInnerRadius/maxRange;
+        int     barWidth    = div > 1 ? int(div) : 1;
+        //    qreal   barheight;
+        //    QVector<qreal>   barheight;
+        //    QColor  color;
 
-    if(propType == 0) { // area
-//        barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
-        QColor color = gradualColor(ORANGE, 0.3);
-        for(unsigned int i = 0; i < area.size(); i++){
-            float   degree      = 2.*M_PI/maxRange*i - M_PI_2;
-            qreal barheight = float(area[i]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
-            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
-                for (int v = 0; v < barWidth; v++){
-                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
-                    drawPoint(rotP, color);
+        if(propType == 0) { // area
+            //        barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
+            QColor color = gradualColor(ORANGE, 0.3);
+            for(unsigned int i = 0; i < area.size(); i++){
+                float   degree      = 2.*M_PI/maxRange*i - M_PI_2;
+                qreal barheight = float(area[i]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
+                for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                    for (int v = 0; v < barWidth; v++){
+                        QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                        drawPoint(rotP, color);
+                    }
                 }
             }
         }
-    }
-    else if (propType == 1) { // perimeter
-//        barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
-        QColor color = gradualColor(PURPLE, 0.3);
-        for(unsigned int i = 0; i < perimeter.size(); i++){
-            float   degree      = 2.*M_PI/maxRange*i - M_PI_2;
-            qreal barheight = float(perimeter[i]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
-            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
-                for (int v = 0; v < barWidth; v++){
-                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
-                    drawPoint(rotP, color);
+        else if (propType == 1) { // perimeter
+            //        barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
+            QColor color = gradualColor(PURPLE, 0.3);
+            for(unsigned int i = 0; i < perimeter.size(); i++){
+                float   degree      = 2.*M_PI/maxRange*i - M_PI_2;
+                qreal barheight = float(perimeter[i]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
+                for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                    for (int v = 0; v < barWidth; v++){
+                        QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                        drawPoint(rotP, color);
+                    }
                 }
             }
         }
-    }
-    else if (propType == 2) { // bleb
-//        barheight  = float(prop[8]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
-        for(unsigned int i = 0; i < blebNum.size(); i++){
-            qreal barheight = float(blebNum[i]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
-            qreal size = blebAvgSize[i] > BlebSizeMin ? blebAvgSize[i] - BlebSizeMin : 0;
-            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
-            QColor color = gradualColor(BLUE, 1-g);
-            float    degree = 2.*M_PI/maxRange*i - M_PI_2;
-            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
-                for (int v = 0; v < barWidth; v++){
-                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
-                    drawPoint(rotP, color);
+        else if (propType == 2) { // bleb
+            //        barheight  = float(prop[8]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
+            for(unsigned int i = 0; i < blebNum.size(); i++){
+                qreal barheight = float(blebNum[i]*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
+                qreal size = blebAvgSize[i] > BlebSizeMin ? blebAvgSize[i] - BlebSizeMin : 0;
+                qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
+                QColor color = gradualColor(BLUE, 1-g);
+                float    degree = 2.*M_PI/maxRange*i - M_PI_2;
+                for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                    for (int v = 0; v < barWidth; v++){
+                        QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                        drawPoint(rotP, color);
+                    }
                 }
             }
+
         }
+        //qDebug() << barheight;
 
+        //    // draw bars
+        //    for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+        //        for (int v = 0; v < barWidth; v++){
+        //            QPointF rotP = rotate(QPointF(h,v), degree)+center;
+        //            drawPoint(rotP, color);
+        //        }
+        //    }
+
+        //    // draw fragment
+        //    for(unsigned int i = 0; i < area.size(); i++){
+        //        float degree = 2.*M_PI/maxRange*i - M_PI_2;
+        //        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
+        //            for (int v = 0; v < /*ringArcThickness*/barWidth; v++){
+        //                QPointF rotP = rotate(QPointF(h,v), degree)+center;
+        //                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
+        //            }
+        //        }
+        //    }
     }
-    //qDebug() << barheight;
-
-//    // draw bars
-//    for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
-//        for (int v = 0; v < barWidth; v++){
-//            QPointF rotP = rotate(QPointF(h,v), degree)+center;
-//            drawPoint(rotP, color);
-//        }
-//    }
-
-//    // draw fragment
-//    for(unsigned int i = 0; i < area.size(); i++){
-//        float degree = 2.*M_PI/maxRange*i - M_PI_2;
-//        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
-//            for (int v = 0; v < /*ringArcThickness*/barWidth; v++){
-//                QPointF rotP = rotate(QPointF(h,v), degree)+center;
-//                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
-//            }
-//        }
-//    }
-}
 
 }
 
@@ -283,8 +291,8 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
     curr = currFrame;
     area.push_back(prop[1]); // area
     perimeter.push_back(prop[2]); // perimeter
-//    blebNum.push_back(prop[8]); // bleb number
-//    blebAvgSize.push_back(prop[9]); // bleb average size
+    //    blebNum.push_back(prop[8]); // bleb number
+    //    blebAvgSize.push_back(prop[9]); // bleb average size
     int bN = prop[5];
     float bS = prop[6];
     blebNum.push_back(bN); // bleb number
@@ -307,18 +315,27 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
         QColor  color;
 
         if(propType == 0) { // area
-            barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
+            if (prop[1] > area_maxV) barheight = propBarThickness;
+            else
+                barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
             color = gradualColor(ORANGE, 0.3);
         }
         else if (propType == 1) { // perimeter
-            barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
+            if (prop[2] > peri_maxV) barheight = propBarThickness;
+            else
+                barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
             color = gradualColor(PURPLE, 0.3);
         }
         else if (propType == 2) { // bleb
-            barheight  = float(bN*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
+            if (bN > blebN_maxV ) barheight = propBarThickness;
+            else
+                barheight  = float(bN*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
             qreal size = bS > BlebSizeMin ? bS - BlebSizeMin : 0;
-            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
-            color = gradualColor(BLUE, 1-g);
+            size = bS < BlebSizeMax ? bS - BlebSizeMin: BlebSizeMax - BlebSizeMin;
+//            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
+//            color = gradualColor(BLUE, 1-g);
+            int colorlevel = int(size/BlebSizeMax * 7);
+            color = QColor(blebColorMap[colorlevel][0], blebColorMap[colorlevel][1], blebColorMap[colorlevel][2]);
         }
         //qDebug() << barheight;
 
@@ -334,11 +351,10 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
 //        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){
 //            for (int v = 0; v < ringArcThickness; v++){
 //                QPointF rotP = rotate(QPointF(h,v), degree)+center;
-
 //                drawPoint(rotP, gradualColor(GREEN, 0.2*(clustr*2)));
 //            }
 //        }
-        }
+    }
 }
 
 void Narr::updateCellImg(QImage &cell, QVector<QPoint> &smoothContour){
@@ -393,8 +409,8 @@ void Narr::setPropType(int propTp)
         break;
     }
     initialize();
-//    update();
-//    qDebug() << propType;
+    //    update();
+    //    qDebug() << propType;
 }
 
 void Narr::setPropertyType(int propTp)
@@ -419,9 +435,9 @@ void Narr::setPropertyType(int propTp)
 void Narr::setMaxValue(float maxArea, float maxPeri, float maxBlebN, float maxBlebS)
 {
     area_maxV = maxArea;
-    peri_maxV = maxPeri;
-//    blebN_maxV = maxBlebN;
-//    blebS_maxV = maxBlebS;
+    peri_maxV = 250/*maxPeri*/;
+    //    blebN_maxV = maxBlebN;
+    //    blebS_maxV = maxBlebS;
 }
 
 void Narr::setValue(QVector<float> v)
@@ -478,36 +494,36 @@ void Narr::render(QPainter *painter)
     painter->drawImage(0, 0, img);
 
     painter->setPen(QColor(128, 0, 0));
-//    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
+    //    painter->drawText(width() - 70, 30, 60, 20, Qt::AlignLeft, QString::number(value, 'f', 2));
     for (unsigned int k = 0; k < value.size(); k++)
-        painter->drawText(width() - 70, 30+k*15, 60, 20, Qt::AlignLeft, QString::number(value[k], 'f', 2));
+        painter->drawText(width() - 60, 20+k*15, 60, 20, Qt::AlignLeft, QString::number(value[k], 'f', 2));
 
 
-    // draw current frame
-    QPen penContour(QColor(153, 204, 49));
-    painter->setPen(penContour);
-    painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(mouseIndex)));
-    //    painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(angle/360.*(max-begin)+begin)));
+    //    // draw current frame
+    //    QPen penContour(QColor(153, 204, 49));
+    //    painter->setPen(penContour);
+    //    painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(mouseIndex)));
+    //    //    painter->drawText(0, 0, 50, 30, Qt::AlignCenter, QString::number(int(angle/360.*(max-begin)+begin)));
 
-//    // set (0,0) to the center of the canvas
+    //    // set (0,0) to the center of the canvas
     QPointF center(halfW, halfH*1.05);
     painter->translate(center.x(), center.y());
 
-        if(propType == 0){ // area
-            painter->setPen(ORANGE);
-            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(area_maxV))+" μm²");
-            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(area_minV))+" μm²");
-        }
-        else if(propType == 1){ // perimeter
-            painter->setPen(PURPLE);
-            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(peri_maxV))+" μm");
-            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(peri_minV))+" μm");
-        }
-        else if(propType == 2){ // bleb
-            painter->setPen(BLUE);
-            painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(blebN_maxV))+" blebs");
-            painter->drawText(-40, -propBarInnerRadius, 80, 20, Qt::AlignCenter, QString::number(int(blebN_minV))+" blebs");
-        }
+    if(propType == 0){ // area
+        painter->setPen(ORANGE);
+        painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(area_maxV))+" μm²");
+        painter->drawText(-40, -propBarInnerRadius, 80, 30, Qt::AlignCenter, QString::number(int(area_minV))+" μm²");
+    }
+    else if(propType == 1){ // perimeter
+        painter->setPen(PURPLE);
+        painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(peri_maxV))+" μm");
+        painter->drawText(-40, -propBarInnerRadius, 80, 30, Qt::AlignCenter, QString::number(int(peri_minV))+" μm");
+    }
+    else if(propType == 2){ // bleb
+        painter->setPen(BLUE);
+        painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(blebN_maxV))+" blebs");
+        painter->drawText(-40, -propBarInnerRadius, 80, 30, Qt::AlignCenter, QString::number(int(blebN_minV))+" blebs");
+    }
 
     //    this->needUpdate = false;
 
@@ -518,229 +534,6 @@ void Narr::resizeEvent(QResizeEvent *e)
 
 }
 
-
-
-//void drawRingArc1(QPainter   *painter,
-//                 QPointF    center,
-//                 qreal      startAngle,
-//                 qreal      endAngle,
-//                 qreal      innerRadius,
-//                 qreal      thickness,
-//                 QColor     color){ // clockwise
-
-//    qreal outerRadius = innerRadius + thickness;
-//    //        //debug
-//    //        painter->setPen(QColor(255, 255, 0));
-//    //        painter->drawRect(center.x() - outerRadius,
-//    //                          center.y() - outerRadius,
-//    //                          2 * outerRadius, 2 * outerRadius);
-
-//    QPen myPen(color);
-//    myPen.setCapStyle(Qt::FlatCap);
-//    myPen.setWidth(thickness);
-//    painter->setPen(myPen);
-
-//    painter->drawArc(center.x() - outerRadius + .5 * thickness,
-//                     center.y() - outerRadius + .5 * thickness,
-//                     2 * outerRadius - thickness, 2 * outerRadius - thickness,
-//                     -startAngle*16, -endAngle*16); //clockwise
-//    //QRectF rect = QRectF();
-//    //painter->drawText();
-
-//}
-
-//void Narr::drawCircularBarChart(QPainter *painter, std::vector<float> feature,
-//                                qreal innerRadius, qreal thickness,
-//                                qreal strtRto, QColor color) //clockwise
-//{
-//    if (feature.size() != 0){
-//        QPen myPen(color);
-//        myPen.setCapStyle(Qt::FlatCap);
-//        painter->setPen(myPen);
-//        painter->setBrush(QBrush(color));
-//        std::vector<float>::const_iterator max_it, min_it;
-//        max_it = std::max_element(std::begin(feature), std::end(feature));
-//        min_it = std::min_element(std::begin(feature), std::end(feature));
-//        //qDebug() << "MAX" << *max << "MIN" << *min;
-
-//        int number = feature.size();
-//        //qDebug() << number;
-//        for(int n = 0; n < number; n++){
-//            //qDebug() << feature[n];
-//            //rotate and translate from the center to location on the ring
-//            float degree = 360./(maxIdx-begin) * n;
-//            painter->rotate(degree);
-//            painter->translate(0, innerRadius);
-//            //draw a bar
-//            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
-//            float w = 2.*M_PI/(maxIdx-begin)*number;
-//            painter->drawRoundedRect(0, 0, w, barheight, 2.0, 2.0);
-//            // translate and rotate back to the center
-//            painter->translate(0, -innerRadius);
-//            painter->rotate(-degree);
-//        }
-//    }
-//}
-
-//void Narr::drawCircularLineChart(QPainter *painter, std::vector<float> feature,
-//                                 qreal innerRadius, qreal thickness,
-//                                 qreal strtRto, QColor color) //clockwise
-//{
-//    if (feature.size() != 0){
-//        QPen myPen(color);
-//        myPen.setCapStyle(Qt::FlatCap);
-//        painter->setPen(myPen);
-//        painter->setBrush(QBrush(color));
-//        std::vector<float>::const_iterator max_it, min_it;
-//        max_it = std::max_element(std::begin(feature), std::end(feature));
-//        min_it = std::min_element(std::begin(feature), std::end(feature));
-
-//        int number  = feature.size();
-//        QPolygon    polyline;
-//        QPoint      start;
-//        for(int n = 0; n < number; n++)
-//        {
-//            //rotate and translate from the center to location on the ring
-//            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
-//            float barheight = float(feature[n] - (*min_it)) / (*max_it - *min_it) * thickness*(1-strtRto) + thickness *strtRto;
-//            float radius    = barheight + innerRadius;
-//            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
-//            if(n == 0)
-//                start = point;
-//            polyline << point;
-//        }
-//        //connect to the beginning
-//        //polyline << begin;
-//        //draw polyline
-//        painter->drawPolyline(polyline);
-//    }
-//}
-
-//void Narr::drawCircularBarChart_fixMax(QPainter *painter,
-//                                       std::vector<float> feature,
-//                                       qreal minV, qreal maxV,
-//                                       qreal innerRadius,
-//                                       qreal thickness,
-//                                       QColor color)
-//{
-//    if (feature.size() != 0){
-//        QPen myPen(color);
-//        myPen.setCapStyle(Qt::FlatCap);
-//        painter->setPen(myPen);
-//        painter->setBrush(QBrush(color));
-
-//        //int number = feature.size();
-//        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
-//        for(int n = 0; n < number; n++){
-//            //qDebug() << feature[n];
-//            //rotate and translate from the center to location on the ring
-//            float degree = 360./(maxIdx-begin) * n;
-//            painter->rotate(degree);
-//            painter->translate(0, innerRadius);
-//            //draw a bar
-//            //float barheight = float(feature[n]) * thickness/ maxV; // minV == 0;
-//            float barheight = float(feature[n] - minV) * thickness/ (maxV - minV);
-//            float w = /*2.*M_PI/(max-begin)*number*/1;
-//            painter->drawRect(0, 0, w, barheight);
-//            // translate and rotate back to the center
-//            painter->translate(0, -innerRadius);
-//            painter->rotate(-degree);
-//        }
-//    }
-
-//}
-
-//void Narr::drawCircularBarChart_bleb(QPainter *painter,
-//                                     std::vector<float> feature, qreal maxV,
-//                                     qreal innerRadius,
-//                                     qreal thickness,
-//                                     QColor color)
-//{
-//    //    for(int n = 0; n < blebAvgSize.size(); n++)
-//    //        std::cout << blebAvgSize[n];
-//    //    std::cout << endl;
-//    if (feature.size() != 0){
-//        //        QPen myPen(color);
-//        //        myPen.setCapStyle(Qt::FlatCap);
-//        //        painter->setPen(myPen);
-//        //        painter->setBrush(QBrush(color));
-
-//        //int number = feature.size();
-//        int number = feature.size() < maxIdx ?  feature.size() : maxIdx;
-//        for(int n = 0; n < number; n++){
-//            qreal size = blebAvgSize[n] > BlebSizeMin ? blebAvgSize[n] - BlebSizeMin : 0;
-//            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
-//            //qreal g = qreal(blebAvgSize[n])/BlebSizeMax;
-//            QColor cc = gradualColor(color, 1-g);
-//            painter->setPen(cc);
-//            painter->setBrush(QBrush(cc));
-
-//            //qDebug() << feature[n];
-//            //rotate and translate from the center to location on the ring
-//            float degree = 360./(maxIdx-begin) * n;
-//            painter->rotate(degree);
-//            painter->translate(0, innerRadius);
-//            //draw a bar
-//            float barheight = float(feature[n]) * thickness/ maxV;
-//            //float w = /*2.*M_PI/(max-begin)*number*/1;
-//            float w = 2.*M_PI/(maxIdx-begin)*number;
-//            painter->drawRect(0, 0, w, barheight);
-//            // translate and rotate back to the center
-//            painter->translate(0, -innerRadius);
-//            painter->rotate(-degree);
-//        }
-//    }
-
-//}
-
-//void Narr::drawCircularLineChart_fixMax(QPainter *painter,
-//                                        std::vector<float> feature, qreal maxV,
-//                                        qreal innerRadius, qreal thickness,
-//                                        QColor color) //clockwise
-//{
-//    if (feature.size() != 0){
-//        QPen myPen(color);
-//        myPen.setCapStyle(Qt::FlatCap);
-//        painter->setPen(myPen);
-//        painter->setBrush(QBrush(color));
-
-//        int number  = feature.size();
-//        QPolygon    polyline;
-//        QPoint      start;
-//        for(int n = 0; n < number; n++)
-//        {
-//            //rotate and translate from the center to location on the ring
-//            float degree = (360./(maxIdx-begin) * n + 90) * M_PI/180;
-//            float barheight = float(feature[n]) * thickness/ maxV;
-//            float radius    = barheight + innerRadius;
-//            QPoint point    = QPoint(radius*cos(degree), radius*sin(degree));
-//            if(n == 0)
-//                start = point;
-//            polyline << point;
-//        }
-//        //connect to the beginning
-//        //polyline << begin;
-//        //draw polyline
-//        painter->drawPolyline(polyline);
-//    }
-//}
-
-//void Narr::mouseMoveEvent(QMouseEvent *ev)
-//{
-//    if(ev->y() <= halfH){
-//        float degree = atan((ev->x()-halfW)/(-ev->y()+halfH));
-//        if(degree < 0)
-//            degree = degree + 2*M_PI;
-//        angle = degree*180/M_PI;
-//    }else{
-//        float degree = atan((ev->x()-halfW)/(ev->y()-halfH));
-//        angle = 180-degree*180/M_PI;
-//    }
-//    //    qDebug() << angle;
-//    //    update();
-//    mouseIndex = int(angle/360.*(maxIdx-begin)+begin);
-
-//}
 
 
 

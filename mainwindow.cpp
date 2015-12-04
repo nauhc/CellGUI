@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     // add dock for multiview
     dock = new QDockWidget(tr("Control"), this);
     this->addDockWidget(Qt::RightDockWidgetArea, dock);
-    dock->setFixedSize(400, 1500);
+    dock->setFixedSize(300, 1500);
     dock->setFloating(true);
     dock->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
 

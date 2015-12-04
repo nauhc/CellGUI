@@ -199,7 +199,6 @@ void MultiView::loadFilesButton_clicked() // first round
         pushProps(3);
         sortbyParameter(3);
      }
-
 }
 
 bool MultiView::loadFiles()
@@ -210,6 +209,12 @@ bool MultiView::loadFiles()
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_xRhod5F";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData_Mar25_RT";
 //    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/BV2_16x_data/Arpad_BV2_37C_16x_hasPara_ajst_pureVisData";
+
+    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData40";
+    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedData60";
+    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataTraj";
+    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataElg";
+    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataDie";
 
     QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataAll";
 
@@ -597,6 +602,27 @@ bool MultiView::readDataFile(QString &filename, float &maxA, float &maxP, float 
 //            prop.push_back(float(row[7])); // shape
 //            prop.push_back(float(row[8])); // blebNum
 //            prop.push_back(float(row[9])); // blebSize
+
+//            // find out the size of each bleb
+//            QVector<float> blebsizes1frm;
+//            float s = 0;
+//            for (int i = 52; i < 97; i++){
+//                cout << row[i] << " ";
+//                if (row[i-1] <= 0 && row[i] > 0) {
+//                    s += row[i];
+//                }
+//                else if (row[i-1] != 0 && row[i] > 0){
+//                    s += row[i];
+//                }
+//                else if (i>52 && row[i-1]!=0 && row[i] <= 0){
+//                    //cout << "s " << s << " ";
+//                    blebsizes1frm.append(s);
+//                    s = 0;
+//                }
+//            }
+//            cout << endl;
+
+//            qDebug() << blebN << blebsizes1frm;
 
             //            for(unsigned int n = 0; n < prop.size(); n++)
             //                std::cout << prop[n] << " ";
