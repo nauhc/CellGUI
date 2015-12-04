@@ -75,7 +75,7 @@ private:
     vector<vector<vector<Bleb> > >          blebs;
     QVector<QVector<QVector<QPoint> > >     contours;
     QVector<QVector<QPoint> >               centers;
-    QVector<QVector<int> >                  clusters;
+//    QVector<QVector<int> >                  clusters;
 
     QHash<int, expPara>                     expParas; // all experimental parameters
     QList<QPair<qreal,int> >                pressure;

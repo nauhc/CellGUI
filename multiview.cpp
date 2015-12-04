@@ -246,8 +246,7 @@ bool MultiView::loadFiles()
                 if(maxBSS > maxBS) maxBS = maxBSS;
                 if(readBlebsFile(datafilename) &&
                    readContoursFile(datafilename) &&
-                   readExpParaFile(datafilename, n) &&
-                   readClusterFile(datafilename)){
+                   readExpParaFile(datafilename, n) /*&& readClusterFile(datafilename)*/){
                     //std::cout << "blebs, contours and experiment-parameter files read." << std::endl;
                 }
                 else{
@@ -327,7 +326,7 @@ void MultiView::showCircularProp(int index, QString filename, int size, int i, i
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){ // n: frame index
             //nar_tmp->clear();
-            nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0], clusters[index][n]);
+            nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0]/*, clusters[index][n]*/);
 //            for(int x = 0; x < cellData[index][n].size(); x++){
 //                std::cout << cellData[index][n][x] << " ";
 //            }
@@ -923,33 +922,33 @@ bool MultiView::readExpParaFile(QString &filename, int n)
 
 bool MultiView::readClusterFile(QString &filename) // read clustering datafile
 {
-    QString tmp = filename;
-    QString fn_l;
-    if(tmp.contains("_compressed.csv"))
-        fn_l = tmp.remove(tmp.length()-15, 15) + "_l_compressed.dat" ;
-    else if(tmp.contains("_control.csv"))
-        fn_l = tmp.remove(tmp.length()-12, 12) + "_l_control.dat" ;
-    else
-        fn_l = tmp.remove(tmp.length()-4, 4) + "_l.dat" ;
+//    QString tmp = filename;
+//    QString fn_l;
+//    if(tmp.contains("_compressed.csv"))
+//        fn_l = tmp.remove(tmp.length()-15, 15) + "_l_compressed.dat" ;
+//    else if(tmp.contains("_control.csv"))
+//        fn_l = tmp.remove(tmp.length()-12, 12) + "_l_control.dat" ;
+//    else
+//        fn_l = tmp.remove(tmp.length()-4, 4) + "_l.dat" ;
 
-//    qDebug() << fn_l;
+////    qDebug() << fn_l;
 
-    QVector<int>    cluster;
-    QFile f(fn_l);
-    if(!f.open(QIODevice::ReadOnly)){
-        qDebug() << "Reading cluster's dat file not found.";
-        return false;
-    }
-    else{
-        QDataStream in(&f);
-        while(!in.atEnd()){
-            qint32  clusterID;
-            in >> clusterID;
-            //qDebug() << clusterID;
-            cluster.push_back(clusterID);
-        }
-    }
-    clusters.push_back(cluster);
+//    QVector<int>    cluster;
+//    QFile f(fn_l);
+//    if(!f.open(QIODevice::ReadOnly)){
+//        qDebug() << "Reading cluster's dat file not found.";
+//        return false;
+//    }
+//    else{
+//        QDataStream in(&f);
+//        while(!in.atEnd()){
+//            qint32  clusterID;
+//            in >> clusterID;
+//            //qDebug() << clusterID;
+//            cluster.push_back(clusterID);
+//        }
+//    }
+//    clusters.push_back(cluster);
 
     return true;
 }

@@ -285,7 +285,7 @@ void Narr::updateProperty_single(floatArray prop, int currFrame, int clustr)
 
 }
 
-void Narr::updateProperty_multi(floatArray prop, int currFrame, int clustr)
+void Narr::updateProperty_multi(floatArray prop, int currFrame/*, int clustr*/)
 {
     propSeq.push_back(prop);
     curr = currFrame;
