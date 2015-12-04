@@ -294,8 +294,15 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame/*, int clustr*/)
     //    blebNum.push_back(prop[8]); // bleb number
     //    blebAvgSize.push_back(prop[9]); // bleb average size
     int bN = prop[5];
-    float bS = prop[6];
     blebNum.push_back(bN); // bleb number
+
+    float bS = 0;
+    floatArray blebsSize;
+    for (int i=0; i<bN; i++){
+        bS += prop[i];
+        blebsSize.push_back(prop[i]);
+    }
+    bS = float(bS)/float(bN);
     blebAvgSize.push_back(bS); // bleb average size
 
     unsigned int maxRange = /*maxFrm < 5000 ? 5000 - minFrm :*/ maxFrm - minFrm; //HEREHERE
@@ -319,33 +326,64 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame/*, int clustr*/)
             else
                 barheight  = float(prop[1]*dataScale*dataScale - area_minV) * propBarThickness / (area_maxV - area_minV);
             color = gradualColor(ORANGE, 0.3);
+            // draw bars
+            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                for (int v = 0; v < barWidth; v++){
+                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                    drawPoint(rotP, color);
+                }
+            }
         }
         else if (propType == 1) { // perimeter
             if (prop[2] > peri_maxV) barheight = propBarThickness;
             else
                 barheight  = float(prop[2]*dataScale - peri_minV) * propBarThickness / (peri_maxV - peri_minV);
             color = gradualColor(PURPLE, 0.3);
+            // draw bars
+            for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
+                for (int v = 0; v < barWidth; v++){
+                    QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                    drawPoint(rotP, color);
+                }
+            }
         }
         else if (propType == 2) { // bleb
-            if (bN > blebN_maxV ) barheight = propBarThickness;
+            if (bN > blebN_maxV )
+                barheight = propBarThickness;
             else
                 barheight  = float(bN*dataScale - blebN_minV) * propBarThickness / (blebN_maxV - blebN_minV);
-            qreal size = bS > BlebSizeMin ? bS - BlebSizeMin : 0;
-            size = bS < BlebSizeMax ? bS - BlebSizeMin: BlebSizeMax - BlebSizeMin;
+
+            int blebHeight = barheight/float(blebsSize.size());
+            //qDebug() << "blebHeight" << blebHeight;
+
+//            qreal size = bS > BlebSizeMin ? bS - BlebSizeMin : 0;
+//            size = bS < BlebSizeMax ? bS - BlebSizeMin: BlebSizeMax - BlebSizeMin;
 //            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
 //            color = gradualColor(BLUE, 1-g);
-            int colorlevel = int(size/BlebSizeMax * 7);
-            color = QColor(blebColorMap[colorlevel][0], blebColorMap[colorlevel][1], blebColorMap[colorlevel][2]);
+
+
+            // draw bars
+            //for (int i = blebsSize.size(); i > 0; i--){
+            for (int i = 0; i < blebsSize.size();i++){
+                qreal size = blebsSize[i] > BlebSizeMin ? blebsSize[i] - BlebSizeMin : 0;
+                size = blebsSize[i] < BlebSizeMax ? blebsSize[i] - BlebSizeMin: BlebSizeMax - BlebSizeMin;
+                int colorlevel = int(size/BlebSizeMax * 7) >= 7 ? 6 : int(size/BlebSizeMax * 7);
+                color = QColor(blebColorMap[colorlevel][0], blebColorMap[colorlevel][1], blebColorMap[colorlevel][2]);
+
+                //qDebug() << i << propBarInnerRadius+blebHeight*i << propBarInnerRadius+blebHeight*(i+1) << colorlevel;
+
+                for (int h = propBarInnerRadius+blebHeight*i; h < propBarInnerRadius+blebHeight*(i+1); h++){
+                    for (int v = 0; v < barWidth; v++){
+                        QPointF rotP = rotate(QPointF(h,v), degree)+center;
+                        drawPoint(rotP, color);
+                    }
+                }
+            }
+
         }
         //qDebug() << barheight;
 
-        // draw bars
-        for (int h = propBarInnerRadius; h < propBarInnerRadius+barheight; h++){
-            for (int v = 0; v < barWidth; v++){
-                QPointF rotP = rotate(QPointF(h,v), degree)+center;
-                drawPoint(rotP, color);
-            }
-        }
+
 
 //        // draw fragment
 //        for (int h = ringArcInnerRadius; h < ringArcInnerRadius+ringArcThickness; h++){

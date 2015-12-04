@@ -216,7 +216,8 @@ bool MultiView::loadFiles()
     //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataElg";
     //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataDie";
 
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataAll";
+    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataAll";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataTmp";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -325,8 +326,11 @@ void MultiView::showCircularProp(int index, QString filename, int size, int i, i
         nar_tmp->setMaxFrm(idxMax, maxFrm);
 //        for(unsigned int n = 0; n < cellDataSize; n++){
         for(unsigned int n = showSizeMin; n < showSizeMax; n++){ // n: frame index
+            nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0]);
+
             //nar_tmp->clear();
-            nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0]/*, clusters[index][n]*/);
+            //nar_tmp->updateProperty_multi(cellData[index][n], cellData[index][n][0], clusters[index][n]);
+
 //            for(int x = 0; x < cellData[index][n].size(); x++){
 //                std::cout << cellData[index][n][x] << " ";
 //            }
@@ -583,45 +587,42 @@ bool MultiView::readDataFile(QString &filename, float &maxA, float &maxP, float 
             float area  = float(row[1])*micMtr_Pixel_squre;
             float peri  = float(row[2])*micMtr_Pixel;
             float blebN = float(row[50]);
-            float blebS = float(row[51]*micMtr_Pixel_squre);
+
+            //float blebS = float(row[51]*micMtr_Pixel_squre);
+            QVector<float> blebsizes1frm;
+            for(int i = 51; i < 72; i++){
+                if(row[i] != 0)
+                    blebsizes1frm.append(row[i]);
+                else
+                    break;
+            }
+            //qDebug() << blebN << blebsizes1frm;
+
+
             if(area > maxA) maxA = area;
             if(peri > maxP) maxP = peri;
             if(blebN > maxBN) maxBN = blebN;
-            if(blebS > maxBS) maxBS = blebS;
+//            if(blebS > maxBS) maxBS = blebS;
 
             prop.push_back(float(row[0])); // frameIndex
             prop.push_back(area); // area
             prop.push_back(peri); // perimeter
             prop.push_back(float(row[3])); // centroid.x
             prop.push_back(float(row[4])); // centroid.y
-            prop.push_back(blebN); // blebNum
-            prop.push_back(blebS); // blebSize
+            prop.push_back(blebsizes1frm.size()); // blebNum
+            // blebSize
+            for(int i = 0; i < blebsizes1frm.size(); i++){
+                prop.push_back(blebsizes1frm[i]*micMtr_Pixel_squre);
+            }
+
+//            prop.push_back(blebS); // blebSize
 //            prop.push_back(float(row[5])); // speed.dist
 //            prop.push_back(float(row[6])); // speed.theta
 //            prop.push_back(float(row[7])); // shape
 //            prop.push_back(float(row[8])); // blebNum
 //            prop.push_back(float(row[9])); // blebSize
 
-//            // find out the size of each bleb
-//            QVector<float> blebsizes1frm;
-//            float s = 0;
-//            for (int i = 52; i < 97; i++){
-//                cout << row[i] << " ";
-//                if (row[i-1] <= 0 && row[i] > 0) {
-//                    s += row[i];
-//                }
-//                else if (row[i-1] != 0 && row[i] > 0){
-//                    s += row[i];
-//                }
-//                else if (i>52 && row[i-1]!=0 && row[i] <= 0){
-//                    //cout << "s " << s << " ";
-//                    blebsizes1frm.append(s);
-//                    s = 0;
-//                }
-//            }
-//            cout << endl;
 
-//            qDebug() << blebN << blebsizes1frm;
 
             //            for(unsigned int n = 0; n < prop.size(); n++)
             //                std::cout << prop[n] << " ";
