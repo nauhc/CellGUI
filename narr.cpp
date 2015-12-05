@@ -31,8 +31,8 @@ float blebColorMap[7][3] = {{255,255,204},
                             {34,94,168},
                             {12,44,132}};
 
-float BlebSizeMax = /*10.0*//*1.5*//*12*/7;
-float BlebSizeMin = -0.5;
+float BlebSizeMax = 7.0; /*10.0*//*1.5*//*12*/
+float BlebSizeMin = 0.5;
 
 const qreal area_minV = 100;
 //const qreal area_maxV = 600;
@@ -163,7 +163,7 @@ void Narr::initialize()
     //    propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .30 * halfS;
     //    propBarThickness      = .28* halfS;
     propBarInnerRadius    = ringArcInnerRadius + ringArcThickness + .10 * halfS;
-    propBarThickness      = .68* halfS;
+    propBarThickness      = .65* halfS;
     drawRingArc(center, propBarInnerRadius, propBarThickness, c);
 
 }
@@ -298,7 +298,7 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame/*, int clustr*/)
 
     float bS = 0;
     floatArray blebsSize;
-    for (int i=0; i<bN; i++){
+    for (int i=6; i<6+bN; i++){
         bS += prop[i];
         blebsSize.push_back(prop[i]);
     }
@@ -361,16 +361,32 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame/*, int clustr*/)
 //            qreal g =  size > BlebSizeMax ? 1 : size/BlebSizeMax;
 //            color = gradualColor(BLUE, 1-g);
 
-
             // draw bars
             //for (int i = blebsSize.size(); i > 0; i--){
             for (int i = 0; i < blebsSize.size();i++){
-                qreal size = blebsSize[i] > BlebSizeMin ? blebsSize[i] - BlebSizeMin : 0;
-                size = blebsSize[i] < BlebSizeMax ? blebsSize[i] - BlebSizeMin: BlebSizeMax - BlebSizeMin;
-                int colorlevel = int(size/BlebSizeMax * 7) >= 7 ? 6 : int(size/BlebSizeMax * 7);
+                qreal size = blebsSize[i] > BlebSizeMin ? blebsSize[i]: BlebSizeMin;
+                size = blebsSize[i] < BlebSizeMax ? blebsSize[i]: BlebSizeMax;
+//                int colorlevel = int(size/BlebSizeMax * 7) >= 7 ? 6 : int(size/BlebSizeMax * 7);
+                int colorlevel = 0;
+                if(size < BlebSizeMin || size < 0.1* (BlebSizeMax-BlebSizeMin))
+                    colorlevel = 0;
+                else if (size < 0.2 * (BlebSizeMax-BlebSizeMin))
+                    colorlevel = 1;
+                else if (size < 0.4 * (BlebSizeMax-BlebSizeMin))
+                    colorlevel = 2;
+                else if (size < 0.6 * (BlebSizeMax-BlebSizeMin))
+                    colorlevel = 3;
+                else if (size < 0.8 * (BlebSizeMax-BlebSizeMin))
+                    colorlevel = 4;
+                else if (size < 0.9 * (BlebSizeMax-BlebSizeMin))
+                    colorlevel = 5;
+                else{
+                    colorlevel = 6;
+                    //qDebug() << i << size << BlebSizeMax-BlebSizeMin << colorlevel;
+                }
                 color = QColor(blebColorMap[colorlevel][0], blebColorMap[colorlevel][1], blebColorMap[colorlevel][2]);
 
-                //qDebug() << i << propBarInnerRadius+blebHeight*i << propBarInnerRadius+blebHeight*(i+1) << colorlevel;
+                //qDebug() << i << size << propBarInnerRadius+blebHeight*i << propBarInnerRadius+blebHeight*(i+1) << colorlevel << prop[1];
 
                 for (int h = propBarInnerRadius+blebHeight*i; h < propBarInnerRadius+blebHeight*(i+1); h++){
                     for (int v = 0; v < barWidth; v++){
@@ -379,6 +395,24 @@ void Narr::updateProperty_multi(floatArray prop, int currFrame/*, int clustr*/)
                     }
                 }
             }
+
+//            // draw bars (single color - average bleb size - on one bar )
+//            //for (int i = blebsSize.size(); i > 0; i--){
+//            for (int i = 0; i < blebsSize.size();i++){
+//                qreal size = blebsSize[i] > BlebSizeMin ? blebsSize[i] - BlebSizeMin : 0;
+//                size = blebsSize[i] < BlebSizeMax ? blebsSize[i] - BlebSizeMin: BlebSizeMax - BlebSizeMin;
+//                int colorlevel = int(size/BlebSizeMax * 7) >= 7 ? 6 : int(size/BlebSizeMax * 7);
+//                color = QColor(blebColorMap[colorlevel][0], blebColorMap[colorlevel][1], blebColorMap[colorlevel][2]);
+
+//                //qDebug() << i << propBarInnerRadius+blebHeight*i << propBarInnerRadius+blebHeight*(i+1) << colorlevel;
+
+//                for (int h = propBarInnerRadius+blebHeight*i; h < propBarInnerRadius+blebHeight*(i+1); h++){
+//                    for (int v = 0; v < barWidth; v++){
+//                        QPointF rotP = rotate(QPointF(h,v), degree)+center;
+//                        drawPoint(rotP, color);
+//                    }
+//                }
+//            }
 
         }
         //qDebug() << barheight;
@@ -472,8 +506,8 @@ void Narr::setPropertyType(int propTp)
 
 void Narr::setMaxValue(float maxArea, float maxPeri, float maxBlebN, float maxBlebS)
 {
-    area_maxV = maxArea;
-    peri_maxV = 250/*maxPeri*/;
+    area_maxV = 580/*maxArea*/;
+    peri_maxV = 300/*maxPeri*/;
     //    blebN_maxV = maxBlebN;
     //    blebS_maxV = maxBlebS;
 }
@@ -550,17 +584,17 @@ void Narr::render(QPainter *painter)
     if(propType == 0){ // area
         painter->setPen(ORANGE);
         painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(area_maxV))+" μm²");
-        painter->drawText(-40, -propBarInnerRadius, 80, 30, Qt::AlignCenter, QString::number(int(area_minV))+" μm²");
+        painter->drawText(-40, -propBarInnerRadius+10, 80, 30, Qt::AlignCenter, QString::number(int(area_minV))+" μm²");
     }
     else if(propType == 1){ // perimeter
         painter->setPen(PURPLE);
         painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(peri_maxV))+" μm");
-        painter->drawText(-40, -propBarInnerRadius, 80, 30, Qt::AlignCenter, QString::number(int(peri_minV))+" μm");
+        painter->drawText(-40, -propBarInnerRadius+10, 80, 30, Qt::AlignCenter, QString::number(int(peri_minV))+" μm");
     }
     else if(propType == 2){ // bleb
         painter->setPen(BLUE);
         painter->drawText(-40, -propBarInnerRadius-propBarThickness-20, 80, 20, Qt::AlignCenter, QString::number(int(blebN_maxV))+" blebs");
-        painter->drawText(-40, -propBarInnerRadius, 80, 30, Qt::AlignCenter, QString::number(int(blebN_minV))+" blebs");
+        painter->drawText(-40, -propBarInnerRadius+10, 80, 30, Qt::AlignCenter, QString::number(int(blebN_minV))+" blebs");
     }
 
     //    this->needUpdate = false;

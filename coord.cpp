@@ -39,7 +39,7 @@ Coord::Coord(QWidget *parent, bool multv, int sidelen)
 
 void Coord::clear()
 {
-    coordScale = /*2.*/1.;
+    coordScale = /*2.3*/1.1/*2.*/;
     centroid.clear();
     currFrm = 0;
     maxFrm  = 1;

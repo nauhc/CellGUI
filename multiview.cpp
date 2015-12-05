@@ -216,8 +216,8 @@ bool MultiView::loadFiles()
     //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataElg";
     //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataDie";
 
-    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataAll";
-    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataTmp";
+    //QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataOld/ExtractedDataAll";
+    QString folderPath = "/Users/chuanwang/Sourcecode/CellGUI/video/ExtractedDataNew";
 
     QDirIterator dirIt(folderPath, QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -614,6 +614,7 @@ bool MultiView::readDataFile(QString &filename, float &maxA, float &maxP, float 
             for(int i = 0; i < blebsizes1frm.size(); i++){
                 prop.push_back(blebsizes1frm[i]*micMtr_Pixel_squre);
             }
+            //qDebug() << blebsizes1frm << micMtr_Pixel_squre;
 
 //            prop.push_back(blebS); // blebSize
 //            prop.push_back(float(row[5])); // speed.dist
@@ -621,7 +622,6 @@ bool MultiView::readDataFile(QString &filename, float &maxA, float &maxP, float 
 //            prop.push_back(float(row[7])); // shape
 //            prop.push_back(float(row[8])); // blebNum
 //            prop.push_back(float(row[9])); // blebSize
-
 
 
             //            for(unsigned int n = 0; n < prop.size(); n++)
