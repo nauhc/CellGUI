@@ -12,26 +12,21 @@
 
         <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <h1>Dancing Cell Visualization Project Log</h1>
-        Chuan Wang @ VIDi Labs
-        <h2> Cell/Bleb Detection Update </h2>
-        <h3> Result On Video </h3>
-        BV2 60um round cell detection result.
-        <font size="3"><br>(Two videos are synchronized. Please use the control on the top video to browse both.)<br><br></font>
+        <h1 align="center">An Interactive Visual Analysis Tool for Cellular Behavior Studies Using Large Collections of Microscopy Videos</h1>
+        <br>                
+        <h4 align="center"> Chuan Wang, Jia-Kai Chou, Kwan-Liu Ma </h4>
+        <h4 align="center"> Arpad Karsai, Ying X Liu, Evgeny Ogorodnik, Victoria Tran, Gang-Yu Liu  </h4>
+        <h4 align="center"> University of California, Davis</h4>
+        <br>  
                  
         <div class='row'>
             <div align="center" class='col-md-12'>
                 <!-- <video id="video1" width="720" height="480" controls autoplay> -->
-                <b> Detection Result Video </b> <br> <font color="red">Red line</font>: detected cell contour;  <font color="blue">Blue squares</font>: positions of detected blebs <br>
+                <b> A Example of Input Video </b> 
+                <br>  
                 <!-- <font color="red">This is some text!</font> -->
                 <video id="video1" width="720"  controls >
-                    <source src="20150720_BV2_60um_Round_1_16x.mp4" type="video/mp4" />
-                </video>
-                
-                <b> Original Video</b>  <br>
-                    <!-- <video id="video2" width="720" height="480" autoplay> -->
-                <video id="video2" width="720" >
-                    <source src="20150720_BV2_60um_Round_1_x16_org.mp4" type="video/mp4" />
+                    <source src="Example_InputVideo_30x.mp4" type="video/mp4" />
                 </video>
             </div>
                 <!-- <div>
@@ -41,41 +36,7 @@
         </div>
         <br>                
         
-        <h3> Detection vs. Annotation On Frames</h3>        
-        Bleb numbers shown in yellow on the top left corners. <br><br>
-
-    </div>
-    <div class="container" style="max-width:720px">
-
-            <img src="comp1.png" class="img-rounded" width = "720">
-            <img src="comp2.png" class="img-rounded" width = "720">
-            <img src="comp3.png" class="img-rounded" width = "720">
-<!--             <div class="col-md-12 thumbnail" >
-                <img src = "comp2.png" alt = "comparison2">
-            </div>
- -->    </div>
         
-        <script src="mediaElement/mediaelement-and-player.min.js"></script>
-        <script type="text/javascript">
-
-            var video1 = document.getElementById("video1");
-            var video2 = document.getElementById("video2");
-        // video1.addEventListener('loadedmetadata', function() {
-        //     var slider = document.getElementById('slider1');
-        //     slider.max = ~~(video1.duration*25);
-        //     console.log(slider)
-        // });
-
-        video1.addEventListener('timeupdate', function(){
-                    // if(video2.currentTime - video1.currentTime < 1)
-                    video2.currentTime = video1.currentTime;
-                });
-        video1.addEventListener('pause', function(){
-            video2.pause();    
-        });
-        video1.addEventListener('play', function(){
-            video2.play();    
-        });
 
         
         
