@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Cell Video Processing Project Log</title>
+    <title>Cellular Video Processing Project</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet"  href="mediaElement/mediaelementplayer.min.css">
 
@@ -22,21 +22,64 @@
         <div class='row'>
             <div align="center" class='col-md-12'>
                 <!-- <video id="video1" width="720" height="480" controls autoplay> -->
-                <b> An Example of Input Video </b>
                 <br>
+                <b> <p>An Example of Original Input Video </p></b>  
                 <!-- <font color="red">This is some text!</font> -->
-                <video id="video1" width="720"  controls >
+                <video id="video0" width="720"  controls >
                     <source src="Example_InputVideo_30x.mp4" type="video/mp4" />
                 </video>
             </div>
                 <!-- <div>
                     Frame: <input id="slider1" type="range" name="frame" min="0" max="10" onchange="changeFrame(this.value)">
                 </div> -->
+
+            <br>
+            <br>
+            <br>
+
+            <div align="center" class='col-md-12'>
+              <br><br>
+              <b> Another Example of Original Input Video </b>
+              <b> <p>And The Background Processing Illustration</p> </b>
+                  <!-- <video id="video2" width="720" height="480" autoplay> -->
+              <video id="video1" width="720" controls>
+                  <source src="20150720_BV2_60um_Round_1_x16_org.mp4" type="video/mp4" />
+              </video>
+
+              <b>  </b> <br> <font color="red">Red line</font>: detected cell contour;  <font color="blue">Blue squares</font>: positions of detected blebs <br>
+              <!-- <font color="red">This is some text!</font> -->
+              <video id="video2" width="720" >
+                  <source src="20150720_BV2_60um_Round_1_16x.mp4" type="video/mp4" />
+              </video>
+
+
+            </div>
+
         <br>
         </div>
         <br>
 
+        <script src="mediaElement/mediaelement-and-player.min.js"></script>
+        <script type="text/javascript">
 
+            var video1 = document.getElementById("video1");
+            var video2 = document.getElementById("video2");
+        // video1.addEventListener('loadedmetadata', function() {
+        //     var slider = document.getElementById('slider1');
+        //     slider.max = ~~(video1.duration*25);
+        //     console.log(slider)
+        // });
+
+        video1.addEventListener('timeupdate', function(){
+                    // if(video2.currentTime - video1.currentTime < 1)
+                    video1.currentTime = video2.currentTime;
+                });
+        video1.addEventListener('pause', function(){
+            video2.pause();
+        });
+        video1.addEventListener('play', function(){
+            video2.play();
+        });
 
 
 
